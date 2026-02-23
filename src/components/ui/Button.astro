@@ -1,0 +1,30 @@
+---
+interface Props {
+  text: string;
+  href?: string;
+  variant?: 'primary' | 'outline';
+  className?: string;
+}
+
+const { text, href, variant = 'primary', className = "" } = Astro.props;
+
+const baseStyles = "relative group px-8 py-4 font-bold rounded-trias transition-all duration-300 active:scale-95 overflow-hidden inline-flex items-center justify-center gap-3";
+const variants = {
+  primary: "bg-trias-power text-white hover:shadow-[0_20px_50px_rgba(0,102,178,0.3)]",
+  outline: "border-2 border-trias-power text-trias-power hover:bg-trias-power hover:text-white"
+};
+---
+
+{href ? (
+  <a href={href} class:list={[baseStyles, variants[variant], className]}>
+    <span class="relative z-10">{text}</span>
+    <span class="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/25 to-transparent -translate-x-full group-hover:animate-shimmer"></span>
+    <slot name="icon-right" />
+  </a>
+) : (
+  <button class:list={[baseStyles, variants[variant], className]}>
+    <span class="relative z-10">{text}</span>
+    <span class="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/25 to-transparent -translate-x-full group-hover:animate-shimmer"></span>
+    <slot name="icon-right" />
+  </button>
+)}

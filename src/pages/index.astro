@@ -1,11 +1,42 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/shared/Navbar.astro';
+import Hero from '../components/Hero.astro';
+import Stats from '../components/Stats.astro';
+import BentoGrid from '../components/BentoGrid.astro';
+import Testimonials from '../components/Testimonials.astro';
+import Contact from '../components/Contact.astro'; // Deine bestehende Komponente
+import Footer from '../components/shared/Footer.astro'; // Deine bestehende Komponente
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+const title = "TRIAS SCHULE | Moderne Lernräume & Schulausstattung Südtirol";
+const description = "Von der Planung bis zur Montage: Wir gestalten ergonomische und zukunftsorientierte Bildungsräume in Südtirol.";
 ---
 
-<Layout>
-	<Welcome />
+<Layout title={title} description={description}>
+	<main class="relative">
+		<Navbar />
+
+		<Hero />
+
+		<Stats />
+
+		<BentoGrid />
+
+		<Testimonials />
+
+		<Contact />
+	</main>
+
+	<Footer />
 </Layout>
+
+<style is:global>
+	html {
+		scroll-behavior: smooth;
+	}
+
+	/* Offset für die Fixed Navbar bei Anker-Links */
+	section[id] {
+		scroll-margin-top: 5rem;
+	}
+</style>

@@ -1,0 +1,81 @@
+---
+const stats = [
+  { value: 500, suffix: "+", label: "Projekte in Südtirol", detail: "Von Grundschule bis Uni." },
+  { value: 20, suffix: "", label: "Jahre Erfahrung", detail: "Lokal verwurzelt." },
+  { value: 100, suffix: "%", label: "Montage-Service", detail: "Eigene Teams." }
+];
+---
+
+<section id="stats" class="relative bg-[#1e293b] text-white overflow-hidden border-y border-slate-800">
+  <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(circle_at_center,_#243b55_0%,_transparent_70%)] opacity-50"></div>
+
+  <div class="max-w-7xl mx-auto px-6 relative z-20 py-24 lg:py-32">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-16 lg:gap-16">
+      {stats.map(s => (
+        <div class="group flex flex-col items-center md:items-start reveal-stat opacity-0 translate-y-10 transition-all duration-700">
+          <div class="text-6xl lg:text-7xl font-black text-[#0066B2] mb-4 flex italic">
+            <span class="count-up" data-target={s.value}>0</span>
+            <span>{s.suffix}</span>
+          </div>
+          <div class="text-center md:text-left">
+            <h3 class="text-xl font-bold mb-2 tracking-tight">{s.label}</h3>
+            <p class="text-slate-400 text-sm max-w-[220px] leading-relaxed">{s.detail}</p>
+          </div>
+          <div class="w-10 h-1 bg-[#0066B2] mt-8 group-hover:w-20 transition-all duration-500"></div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  function initStats() {
+    // Typisierung der Observer-Elemente
+    const statsContainers = document.querySelectorAll<HTMLElement>('.reveal-stat');
+    
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const targetEl = entry.target as HTMLElement;
+          targetEl.classList.remove('opacity-0', 'translate-y-10');
+          
+          const counter = targetEl.querySelector<HTMLElement>('.count-up');
+          
+          if (counter) {
+            // Explizites Casting und Fallback für Attribute
+            const targetValue = parseInt(counter.getAttribute('data-target') || "0", 10);
+            let startTime: number | null = null;
+            const duration = 2000;
+
+            const animate = (currentTime: number) => {
+              if (startTime === null) startTime = currentTime;
+              const elapsed = currentTime - startTime;
+              const progress = Math.min(elapsed / duration, 1);
+              
+              // Easing: easeOutQuart
+              const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+              const currentValue = Math.floor(easeOutQuart * targetValue);
+              
+              counter.textContent = currentValue.toString();
+
+              if (progress < 1) {
+                requestAnimationFrame(animate);
+              } else {
+                counter.textContent = targetValue.toString();
+              }
+            };
+            
+            requestAnimationFrame(animate);
+          }
+          observer.unobserve(targetEl);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    statsContainers.forEach(el => observer.observe(el));
+  }
+
+  // Initialisierung
+  initStats();
+  document.addEventListener('astro:after-swap', initStats);
+</script>

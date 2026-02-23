@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+@theme {
+  --color-trias-power: #0066B2;
+  --color-trias-navy: #1e293b;
+  --radius-trias: 2rem;
+
+  --animate-shimmer: shimmer 2s linear infinite;
+
+  @keyframes shimmer {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(100%); }
+  }
+}
+
+@layer base {
+  html { @apply scroll-smooth; }
+  body { @apply bg-white text-trias-navy antialiased; }
+}

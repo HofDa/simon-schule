@@ -1,0 +1,27 @@
+---
+// src/components/Hero.astro
+import Button from './ui/Button.astro';
+const repPlaceholder = "https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&q=80&w=800";
+---
+
+<section class="relative min-h-[85vh] flex items-center pt-32 pb-32 lg:pt-20 lg:pb-40 overflow-hidden bg-white">
+  <div class="absolute top-0 right-0 w-1/4 h-full bg-slate-50/50 -skew-x-12 translate-x-20 -z-10 hidden lg:block"></div>
+  
+  <div class="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
+    <div class="space-y-10">
+      <div class="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-blue-50 text-trias-power text-[10px] font-black tracking-[0.2em] uppercase">
+        <span class="relative flex h-2 w-2"><span class="animate-ping absolute h-full w-full rounded-full bg-trias-power opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-trias-power"></span></span>
+        Persönliche Beratung in Südtirol
+      </div>
+      <h1 class="text-6xl lg:text-8xl font-extrabold text-trias-navy leading-[0.95] tracking-tighter">Lernräume <br /><span class="text-trias-power">neu denken.</span></h1>
+      <p class="text-xl text-slate-500 max-w-lg leading-relaxed font-medium">Ergonomie trifft auf Südtiroler Qualität. Wir begleiten Ihre Schule von der Skizze bis zur Montage.</p>
+      <Button text="Planungsgespräch vereinbaren" href="#kontakt" />
+    </div>
+
+    <div class="relative py-10"> <div class="relative z-10 w-full max-w-[480px] aspect-[4/5] rounded-trias overflow-hidden shadow-[0_50px_100px_-20px_rgba(30,41,59,0.25)] border-[12px] border-white mx-auto lg:ml-auto">
+        <img src={repPlaceholder} alt="Fachberater" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000" />
+      </div>
+      <div class="absolute -bottom-10 -left-10 w-64 h-64 bg-trias-power/5 rounded-full blur-3xl -z-10"></div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,88 @@
+---
+import Hamburger from './Hamburger.astro';
+
+const navLinks = [
+  { name: 'Home', href: '#' },
+  { name: 'Lösungen', href: '#bento' },
+  { name: 'Über uns', href: '#stats' },
+  { name: 'Kontakt', href: '#kontakt' },
+];
+---
+
+<nav class="fixed w-full z-[100] bg-white/80 backdrop-blur-md border-b border-slate-100 h-20">
+  <div class="max-w-7xl mx-auto px-6 h-full flex items-center justify-between relative z-[110]">
+    <div id="nav-logo" class="text-2xl font-extrabold tracking-tighter text-trias-navy leading-none transition-colors duration-500">
+      TRIAS <span class="text-trias-power italic transition-colors duration-500">SCHULE</span>
+    </div>
+    <Hamburger />
+  </div>
+
+  <div 
+    id="mobile-menu" 
+    class="fixed inset-0 h-screen w-screen bg-trias-navy/95 backdrop-blur-xl z-[105] flex flex-col items-center justify-center transition-all duration-500 ease-in-out opacity-0 pointer-events-none translate-x-full"
+  >
+    <div class="flex flex-col items-center gap-8 pt-20">
+      {navLinks.map((link, index) => (
+        <a 
+          href={link.href} 
+          class="mobile-nav-link text-4xl font-bold text-white hover:text-trias-power transition-all tracking-tight opacity-0 translate-y-8 active:scale-95"
+          style={`--i: ${index}`}
+        >
+          {link.name}
+        </a>
+      ))}
+      <div class="w-16 h-1 bg-trias-power rounded-full mt-4 opacity-0 transition-opacity duration-1000 delay-500 mobile-divider"></div>
+    </div>
+  </div>
+</nav>
+
+<style>
+  #mobile-menu.is-visible .mobile-nav-link {
+    opacity: 1;
+    translate: 0 0;
+    transition-delay: calc(var(--i) * 100ms + 200ms);
+  }
+  #mobile-menu.is-visible .mobile-divider {
+    opacity: 1;
+  }
+</style>
+
+<script>
+  function initMenu() {
+    const btn = document.getElementById('menu-toggle');
+    const menu = document.getElementById('mobile-menu');
+    const logo = document.getElementById('nav-logo');
+    const links = document.querySelectorAll('.mobile-nav-link');
+
+    if (!btn || !menu || !logo) return;
+
+    btn.addEventListener('click', () => {
+      const isActive = btn.classList.toggle('is-active');
+      if (isActive) {
+        menu.classList.remove('translate-x-full', 'opacity-0', 'pointer-events-none');
+        menu.classList.add('translate-x-0', 'opacity-100', 'is-visible');
+        logo.classList.add('text-white');
+        logo.querySelector('span')?.classList.add('text-white');
+        document.body.style.overflow = 'hidden';
+      } else {
+        menu.classList.add('translate-x-full', 'opacity-0', 'pointer-events-none');
+        menu.classList.remove('translate-x-0', 'opacity-100', 'is-visible');
+        logo.classList.remove('text-white');
+        logo.querySelector('span')?.classList.remove('text-white');
+        document.body.style.overflow = '';
+      }
+    });
+
+    links.forEach(link => {
+      link.addEventListener('click', () => {
+        btn.classList.remove('is-active');
+        menu.classList.add('translate-x-full', 'opacity-0', 'pointer-events-none');
+        menu.classList.remove('is-visible');
+        logo.classList.remove('text-white');
+        document.body.style.overflow = '';
+      });
+    });
+  }
+  initMenu();
+  document.addEventListener('astro:after-swap', initMenu);
+</script>
