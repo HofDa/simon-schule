@@ -1,0 +1,238 @@
+---
+import { projects } from '../data/projects';
+import { asset } from '../lib/paths';
+import ProjectTestimonial from './ProjectTestimonial.astro';
+
+const layouts = ['left', 'right', 'full'] as const;
+const src = (file: string, w: number) => asset(`images/projects/${file}-${w}.webp`);
+---
+
+<div class="projects shell relative pb-24 lg:pb-36" data-projects>
+  <div class="projects-inner relative" data-projects-inner>
+    <svg class="p-line pointer-events-none absolute inset-0 hidden h-full w-full lg:block" data-pline aria-hidden="true">
+      <path class="p-path" data-ppath d="" />
+      <path class="p-ticks" data-pticks d="" />
+      <circle class="p-head" data-phead r="4.5" cx="-20" cy="-20" />
+    </svg>
+
+    {projects.map((project, i) => {
+      const layout = layouts[i % layouts.length];
+      const [main, detail] = project.images;
+      return (
+        <>
+          <article class={`project project--${layout}`} data-project data-layout={layout} aria-labelledby={`p-${project.id}`}>
+            <div class="p-media" data-media>
+              <img
+                src={src(main.file, 900)}
+                srcset={`${src(main.file, 900)} 900w, ${src(main.file, 1800)} 1800w`}
+                sizes={layout === 'full' ? '(min-width: 1024px) 92vw, 100vw' : '(min-width: 1024px) 60vw, 100vw'}
+                alt={main.alt}
+                width="1800"
+                height="1200"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+
+            <div class="p-info" data-info>
+              {project.placeholder && <p class="tag-placeholder mb-5">Beispielprojekt · Platzhalter</p>}
+              <h3 id={`p-${project.id}`} class="p-title">{project.title}</h3>
+              <dl class="p-meta">
+                <div><dt>Ort</dt><dd>{project.location ?? <span class="open-fact">folgt</span>}</dd></div>
+                <div><dt>Gebäude</dt><dd>{project.type}</dd></div>
+                <div><dt>Leistungen</dt><dd>{project.services.join(' · ')}</dd></div>
+                {project.year && <div><dt>Jahr</dt><dd>{project.year}</dd></div>}
+                {project.architect && <div><dt>Architektur</dt><dd>{project.architect}</dd></div>}
+                {project.client && <div><dt>Auftraggeber</dt><dd>{project.client}</dd></div>}
+              </dl>
+              <p class="p-desc">{project.description}</p>
+              {detail && layout !== 'full' && (
+                <img
+                  class="p-detail"
+                  src={src(detail.file, 900)}
+                  alt={detail.alt}
+                  width="900"
+                  height="675"
+                  loading="lazy"
+                  decoding="async"
+                />
+              )}
+            </div>
+          </article>
+          {project.testimonial && <ProjectTestimonial testimonial={project.testimonial} project={project.title} />}
+        </>
+      );
+    })}
+  </div>
+</div>
+
+<style>
+  .projects-inner { display: flex; flex-direction: column; gap: 88px; padding-top: 24px; }
+
+  .p-media { overflow: hidden; background: var(--color-surface); }
+  .p-media img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    transform: translateY(calc(var(--r, 0) * 3%)) scale(calc(1 + var(--r, 0) * 0.05));
+    transform-origin: 50% 0;
+  }
+  .p-media { clip-path: inset(calc(var(--r, 0) * 10%) 0 0 0); }
+
+  .p-info { margin-top: 28px; opacity: var(--io, 1); transform: translateY(calc((1 - var(--io, 1)) * 14px)); }
+  .p-title { font-size: clamp(1.9rem, 3vw, 2.75rem); line-height: 1.02; letter-spacing: -0.04em; max-width: 16ch; }
+  .p-meta { margin: 28px 0 0; border-top: 1px solid var(--color-line); }
+  .p-meta div { display: grid; grid-template-columns: 7.5rem 1fr; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--color-line); font-size: 0.92rem; }
+  .p-meta dt { color: var(--color-muted); }
+  .p-meta dd { margin: 0; }
+  .p-desc { margin-top: 22px; max-width: 46ch; color: var(--color-muted); line-height: 1.65; }
+  .p-detail { display: block; width: 62%; margin-top: 36px; aspect-ratio: 4 / 3; object-fit: cover; }
+
+  .p-path { fill: none; stroke: var(--color-ink); stroke-width: 1.5; stroke-linecap: square; }
+  .p-ticks { fill: none; stroke: var(--color-ink); stroke-width: 1; opacity: var(--ticks, 1); transition: opacity 300ms var(--ease-draw); }
+  .p-head { fill: var(--color-ginster); }
+
+  @media (min-width: 1024px) {
+    .projects-inner { gap: clamp(120px, 14vh, 180px); padding-right: var(--lane); padding-top: 40px; }
+    .project { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(24px, 2.6vw, 44px); align-items: start; }
+    .project--left .p-media { grid-column: 1 / 9; }
+    .project--left .p-info { grid-column: 9 / 13; margin-top: 0; padding-top: 12px; }
+    .project--right .p-info { grid-column: 1 / 5; grid-row: 1; margin-top: 0; padding-top: 12px; }
+    .project--right .p-media { grid-column: 5 / 13; grid-row: 1; }
+    .project--full .p-media { grid-column: 1 / -1; }
+    .project--full .p-media img { aspect-ratio: 21 / 9; }
+    .project--full .p-info {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: inherit;
+      margin-top: 36px;
+    }
+    .project--full .p-info > :global(*) { grid-column: 1 / 5; }
+    .project--full .p-meta { grid-column: 6 / 9; grid-row: 1 / span 3; margin-top: 0; }
+    .project--full .p-desc { grid-column: 10 / 13; grid-row: 1 / span 3; margin-top: 0; }
+  }
+</style>
+
+<script>
+  import { addScene, clamp, range, viewProgress } from '../scripts/motion';
+
+  // Image reveals: a mask opens upwards, the photo settles inside it.
+  document.querySelectorAll<HTMLElement>('[data-project]').forEach((article) => {
+    const media = article.querySelector<HTMLElement>('[data-media]');
+    const info = article.querySelector<HTMLElement>('[data-info]');
+    if (!media || !info) return;
+    addScene({
+      el: media,
+      progress: viewProgress(1, 0.3),
+      render(p) {
+        media.style.setProperty('--r', String(1 - p));
+        info.style.setProperty('--io', String(range(p, 0.45, 1)));
+      },
+    });
+  });
+
+  // The plan line continues down the lane, steps aside for right-hand images
+  // and ends as a dimension line above the full-width project.
+  const inner = document.querySelector<HTMLElement>('[data-projects-inner]');
+  const svg = inner?.querySelector<SVGSVGElement>('[data-pline]');
+  const path = inner?.querySelector<SVGPathElement>('[data-ppath]');
+  const ticks = inner?.querySelector<SVGPathElement>('[data-pticks]');
+  const head = inner?.querySelector<SVGCircleElement>('[data-phead]');
+
+  type Seg = { kind: 'v' | 'h'; y0: number; y1: number; len: number; cost: number };
+
+  if (inner && svg && path && ticks && head) {
+    let segs: Seg[] = [];
+    let total = 1;
+    const H_COST = 140;
+
+    addScene({
+      el: inner,
+      media: '(min-width: 1024px)',
+      measure(active) {
+        const box = inner.getBoundingClientRect();
+        const w = box.width;
+        const h = inner.scrollHeight;
+        svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+        const lane = parseFloat(getComputedStyle(inner).paddingRight) || 56;
+        const xR = w - lane / 2;
+        let x = xR;
+        let y = 0;
+        let d = `M${xR} 0`;
+        segs = [];
+        const v = (to: number) => {
+          segs.push({ kind: 'v', y0: y, y1: to, len: Math.abs(to - y), cost: Math.abs(to - y) });
+          y = to;
+          d += ` V${to}`;
+        };
+        const hz = (to: number, cost = H_COST) => {
+          segs.push({ kind: 'h', y0: y, y1: y, len: Math.abs(to - x), cost });
+          x = to;
+          d += ` H${to}`;
+        };
+
+        let tail = '';
+        for (const article of inner.querySelectorAll<HTMLElement>('[data-project]')) {
+          const r = article.getBoundingClientRect();
+          const top = r.top - box.top;
+          const bottom = r.bottom - box.top;
+          const media = article.querySelector<HTMLElement>('[data-media]')!.getBoundingClientRect();
+          const layout = article.dataset.layout;
+          if (layout === 'right') {
+            const gap = parseFloat(getComputedStyle(article).columnGap) || 32;
+            const xG = media.left - box.left - gap / 2;
+            v(top - 48);
+            hz(xG);
+            v(bottom + 48);
+            hz(xR);
+          } else if (layout === 'full') {
+            const yDim = media.top - box.top - 28;
+            const xL = media.left - box.left;
+            v(yDim);
+            hz(xL, 320);
+            tail = `M${xR} ${yDim - 6} V${yDim + 6} M${xL} ${yDim - 6} V${yDim + 6}`;
+          }
+        }
+        if (!tail) v(h);
+
+        path.setAttribute('d', d);
+        ticks.setAttribute('d', tail);
+        total = path.getTotalLength();
+        path.style.strokeDasharray = `${total}`;
+        if (!active) path.style.strokeDashoffset = '0';
+      },
+      progress(rect, vh) {
+        // Encode the head's y (in container px) as a 0..1 value for the engine.
+        const t = vh * 0.62 - rect.top;
+        return clamp(t / Math.max(1, rect.height));
+      },
+      render(p) {
+        const t = p * inner.getBoundingClientRect().height;
+        let len = 0;
+        let offset = 0;
+        let done = true;
+        for (const s of segs) {
+          const frac = s.kind === 'v' ? clamp((t - offset - s.y0) / Math.max(1, s.y1 - s.y0)) : clamp((t - offset - s.y0) / s.cost);
+          len += s.len * frac;
+          if (s.kind === 'h') offset += s.cost;
+          if (frac < 1) {
+            done = false;
+            break;
+          }
+        }
+        if (p >= 1) {
+          len = total;
+          done = true;
+        }
+        path.style.strokeDashoffset = String(total - len);
+        const pt = path.getPointAtLength(len);
+        head.setAttribute('cx', String(pt.x));
+        head.setAttribute('cy', String(pt.y));
+        head.style.opacity = done || len <= 0 ? '0' : '1';
+        inner.style.setProperty('--ticks', done ? '1' : '0');
+      },
+    });
+  }
+</script>

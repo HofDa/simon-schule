@@ -1,0 +1,215 @@
+---
+import { projects } from '../data/projects';
+import ProjectPhoto from './ProjectPhoto.astro';
+
+const [a, b, c] = projects;
+---
+
+<section id="top" class="hero relative pt-[calc(var(--nav-h)+8px)]" aria-labelledby="hero-title">
+  <div class="shell">
+    <div class="board relative">
+      <div class="board-surface relative h-full overflow-hidden">
+        <!-- sketch layer (desktop) -->
+        <svg class="sketch pointer-events-none absolute inset-0 hidden h-full w-full lg:block" viewBox="0 0 1000 600" preserveAspectRatio="none" aria-hidden="true">
+          <path class="ghost" d="M120 470 C220 430 300 520 420 470 S560 430 600 480" />
+          <g class="ink-lines" fill="none" stroke="#20201D" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke">
+            <path class="draw" style="--d: 1.05s" pathLength="1" d="M662 27 C694 22 716 34 728 52" vector-effect="non-scaling-stroke" />
+            <path class="draw" style="--d: 1.2s" pathLength="1" d="M720 45 L728 53 L735 43" vector-effect="non-scaling-stroke" />
+            <path class="draw" style="--d: 1.1s" pathLength="1" d="M566 432 C586 432 600 420 612 404" vector-effect="non-scaling-stroke" />
+            <path class="draw" style="--d: 1.25s" pathLength="1" d="M602 406 L612 403 L613 414" vector-effect="non-scaling-stroke" />
+            <path class="draw dashed" style="--d: 1.15s" pathLength="1" d="M660 300 C672 316 690 322 706 330" vector-effect="non-scaling-stroke" />
+            <path class="draw" style="--d: 1.3s" pathLength="1" d="M846 64 C866 60 890 62 910 60" vector-effect="non-scaling-stroke" />
+          </g>
+          <!-- floor-plan sketch -->
+          <g class="plan" fill="none" stroke="#20201D" stroke-linecap="round" vector-effect="non-scaling-stroke">
+            <path class="draw" style="--d: 0.95s" pathLength="1" stroke-width="2" d="M866 372 H972 V452 H866 Z" vector-effect="non-scaling-stroke" />
+            <path class="draw" style="--d: 1.1s" pathLength="1" stroke-width="1.2" d="M882 386 h18 v10 h-18 Z M912 386 h18 v10 h-18 Z M942 386 h18 v10 h-18 Z M882 418 h26 v14 h-26 Z M926 418 h34 v14 h-34 Z" vector-effect="non-scaling-stroke" />
+            <path class="draw" style="--d: 1.25s" pathLength="1" stroke-width="1.2" d="M866 466 H972 M866 461 V471 M972 461 V471" vector-effect="non-scaling-stroke" />
+          </g>
+        </svg>
+
+        <div class="relative grid h-full lg:block">
+          <!-- copy -->
+          <div class="hero-copy relative z-10 px-6 pt-10 pb-8 sm:px-10 lg:absolute lg:left-0 lg:top-0 lg:w-[44%] lg:pl-[clamp(40px,4vw,64px)] lg:pr-0 lg:pt-[clamp(40px,8vh,88px)]">
+            <h1 id="hero-title" class="hero-title rise text-[clamp(2.9rem,min(7vw,10.5vh),6rem)] leading-[0.94] tracking-[-0.045em]">
+              Lernräume für Südtirol.
+            </h1>
+            <p class="rise mt-7 max-w-[38ch] text-[1.05rem] leading-[1.6] text-muted sm:text-[1.12rem]" style="--d: 0.12s">
+              Trias Schule plant und realisiert Lernräume für Schulen und Kindergärten – persönlich begleitet und mit Einrichtungslösungen von VS Möbel.
+            </p>
+            <div class="rise mt-9 flex flex-wrap items-center gap-x-7 gap-y-4" style="--d: 0.22s">
+              <a href="#projekte" class="btn btn-ink">
+                Projekte entdecken
+                <svg class="btn-arrow h-3.5 w-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M8 2v11M4 9l4 4 4-4" /></svg>
+              </a>
+              <a href="#anfrage" class="link-line text-[0.95rem] font-semibold" data-open-form>Projekt besprechen</a>
+            </div>
+          </div>
+
+          <!-- pinned photos -->
+          <div class="pins relative mx-6 mb-10 h-[min(78vw,520px)] sm:mx-10 lg:absolute lg:inset-0 lg:m-0 lg:h-auto">
+            <ProjectPhoto project={a} class="pin-a" sizes="(min-width: 1024px) 31vw, 62vw" priority magnet="tr" />
+            <ProjectPhoto project={b} class="pin-b" sizes="(min-width: 1024px) 16vw, 48vw" magnet="tc" />
+            <ProjectPhoto project={c} class="pin-c hidden lg:block" sizes="22vw" magnet="tl" />
+
+            <span class="note note-flex marker" style="--d: 0.95s">Flexibilität</span>
+            <span class="note note-akustik marker hidden lg:block" style="--d: 1.1s">Akustik?</span>
+            <span class="note note-gruppe marker hidden lg:block" style="--d: 1.2s">Gruppenarbeit</span>
+            <span class="note note-dim marker hidden lg:block" style="--d: 1.3s">7,20 m</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- marker tray -->
+      <div class="tray" aria-hidden="true">
+        <span class="pen pen-ink"></span>
+        <span class="pen pen-ginster"></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .board {
+    --board-h: clamp(600px, calc(100svh - var(--nav-h) - 30px), 1000px);
+    border-radius: 6px;
+    background: #f7f7f4;
+    padding: 9px;
+    box-shadow:
+      inset 0 0 0 1px #d8d6ce,
+      inset 0 1px 0 1px #ffffff,
+      0 1px 1px rgba(32, 32, 29, 0.05),
+      0 24px 48px -32px rgba(32, 32, 29, 0.28);
+  }
+  @media (min-width: 1024px) {
+    .board { height: var(--board-h); }
+  }
+
+  .board-surface {
+    border-radius: 2px;
+    background-color: #fcfcfa;
+    background-image:
+      linear-gradient(112deg, rgba(255, 255, 255, 0) 32%, rgba(255, 255, 255, 0.85) 44%, rgba(255, 255, 255, 0) 56%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .13 0 0 0 0 .13 0 0 0 0 .11 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    box-shadow: inset 0 0 0 1px rgba(32, 32, 29, 0.06), inset 0 2px 6px rgba(32, 32, 29, 0.05);
+  }
+
+  .ghost {
+    fill: none;
+    stroke: #20201d;
+    stroke-width: 14;
+    stroke-linecap: round;
+    opacity: 0.012;
+    filter: blur(3px);
+  }
+  .dashed { stroke-dasharray: 0.02 0.025; }
+
+  .tray {
+    position: absolute;
+    left: 10%;
+    right: 10%;
+    bottom: -7px;
+    height: 12px;
+    border-radius: 1px 1px 3px 3px;
+    background: linear-gradient(#f1f0ec, #d9d7cf);
+    box-shadow: 0 6px 10px -6px rgba(32, 32, 29, 0.35);
+  }
+  .pen {
+    position: absolute;
+    bottom: 9px;
+    height: 9px;
+    border-radius: 2px 5px 5px 2px;
+    background: #2a2a27;
+  }
+  .pen::after {
+    content: '';
+    position: absolute;
+    right: -10px;
+    top: 1px;
+    width: 12px;
+    height: 7px;
+    border-radius: 1px 4px 4px 1px;
+    background: #3a3a36;
+  }
+  .pen-ink { right: 16%; width: 84px; }
+  .pen-ginster { right: calc(16% + 110px); width: 84px; background: #ebeae4; }
+  .pen-ginster::after { background: var(--color-ginster); }
+
+  .note {
+    position: absolute;
+    z-index: 3;
+    color: #2b2b27;
+    font-size: clamp(1.35rem, 1.8vw, 1.9rem);
+    white-space: nowrap;
+  }
+  .note-flex { left: 52%; top: -2%; transform: rotate(-3deg); }
+  @media (min-width: 1024px) {
+    .note-flex { left: 56%; top: 2.2%; }
+    .note-akustik { left: 84.6%; top: 6.4%; transform: rotate(2deg); }
+    .note-gruppe { left: 44.5%; top: 68.5%; transform: rotate(-2deg); }
+    .note-dim { left: 88.6%; top: 78.6%; font-size: 1.25rem; }
+  }
+
+  /* pins: mobile */
+  .pins :global(.pin-a) { left: 0; top: 10%; width: 64%; transform: rotate(-1.5deg); }
+  .pins :global(.pin-b) { right: 0; top: 46%; width: 48%; transform: rotate(2deg); }
+  @media (min-width: 1024px) {
+    .pins :global(.pin-a) { left: 47%; top: 9%; width: 31%; }
+    .pins :global(.pin-b) { left: auto; right: 3.8%; top: 16%; width: 15.5%; }
+    .pins :global(.pin-c) { left: 61.5%; top: 55%; width: 22%; transform: rotate(1deg); }
+  }
+
+  /* load choreography: the board is already there, the plan gets pinned up */
+  @media (prefers-reduced-motion: no-preference) {
+    :global(html.js) .rise {
+      animation: hero-rise 800ms var(--ease-draw) both;
+      animation-delay: calc(var(--d, 0s) + 0.1s);
+    }
+    .pins :global(.pin-a) { --pin-d: 0.35s; }
+    .pins :global(.pin-b) { --pin-d: 0.5s; }
+    .pins :global(.pin-c) { --pin-d: 0.65s; }
+    :global(html.js) .pins :global(.pin) {
+      animation: pin-in 700ms var(--ease-draw) both;
+      animation-delay: var(--pin-d, 0.35s);
+    }
+    :global(html.js) .pins :global(.magnet) {
+      animation: magnet-in 380ms var(--ease-draw) both;
+      animation-delay: calc(var(--pin-d, 0.35s) + 0.42s);
+    }
+    :global(html.js) .note {
+      animation: note-in 700ms var(--ease-draw) both;
+      animation-delay: var(--d, 1s);
+    }
+    :global(html.js) .draw {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+      animation: draw 700ms var(--ease-draw) forwards;
+      animation-delay: var(--d, 1s);
+    }
+    :global(html.js) .draw.dashed {
+      stroke-dasharray: 0.02 0.025;
+      stroke-dashoffset: 0;
+      animation: fade 600ms ease forwards;
+      opacity: 0;
+    }
+  }
+
+  @keyframes hero-rise {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes pin-in {
+    from { opacity: 0; translate: 0 8px; }
+    to { opacity: 1; translate: 0 0; }
+  }
+  @keyframes magnet-in {
+    from { opacity: 0; scale: 0.6; }
+    to { opacity: 1; scale: 1; }
+  }
+  @keyframes note-in {
+    from { opacity: 0; clip-path: inset(0 100% 0 0); }
+    to { opacity: 1; clip-path: inset(0 0 0 0); }
+  }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  @keyframes fade { to { opacity: 1; } }
+</style>

@@ -1,0 +1,47 @@
+---
+import type { Testimonial } from '../data/projects';
+
+/** A client's words as an editorial interruption inside the project flow. */
+interface Props {
+  testimonial: Testimonial;
+  project: string;
+}
+const { testimonial, project } = Astro.props;
+const pending = !testimonial.author;
+---
+
+<figure class="p-quote m-0" data-quote>
+  <blockquote class={pending ? 'is-pending' : ''}>
+    <p>„{testimonial.quote}“</p>
+  </blockquote>
+  <figcaption class="mt-8 flex flex-wrap gap-x-3 gap-y-1 text-[0.92rem]">
+    {pending ? (
+      <>
+        <span class="open-fact">Name · Funktion · Schule / Gemeinde</span>
+        <span class="text-muted">– Zitat folgt nach Freigabe, zu „{project}“</span>
+      </>
+    ) : (
+      <>
+        <span class="font-semibold">{testimonial.author}</span>
+        {testimonial.role && <span class="text-muted">{testimonial.role}</span>}
+        {testimonial.organisation && <span class="text-muted">{testimonial.organisation}</span>}
+      </>
+    )}
+  </figcaption>
+</figure>
+
+<style>
+  .p-quote { max-width: 30ch; font-size: clamp(1.6rem, 2.9vw, 2.6rem); }
+  .p-quote blockquote { margin: 0; }
+  .p-quote p {
+    font-weight: 500;
+    line-height: 1.18;
+    letter-spacing: -0.03em;
+    text-indent: -0.42em;
+  }
+  .p-quote .is-pending p { color: #86837a; }
+  .p-quote figcaption { font-size: 0.92rem; letter-spacing: 0; }
+  @media (min-width: 1024px) {
+    .p-quote { margin-left: calc(100% / 12 * 2); }
+  }
+</style>

@@ -1,0 +1,186 @@
+---
+import { inquiry, projectPhases } from '../data/site';
+---
+
+<form
+  class="inquiry"
+  action={`mailto:${inquiry.mailto}`}
+  method="post"
+  enctype="text/plain"
+  novalidate
+  data-inquiry
+  data-endpoint={inquiry.endpoint ?? ''}
+  data-mailto={inquiry.mailto}
+  aria-labelledby="inquiry-title"
+>
+  <div class="flex items-baseline justify-between gap-6">
+    <h3 id="inquiry-title" class="text-[1.6rem] tracking-[-0.03em]">Ihr Projekt</h3>
+    <p class="text-[0.82rem] text-muted">* Pflichtfeld</p>
+  </div>
+
+  <div class="fields mt-6">
+    <div class="field">
+      <label for="f-name">Name *</label>
+      <input id="f-name" name="Name" type="text" autocomplete="name" required aria-describedby="f-name-err" />
+      <p class="err" id="f-name-err" data-msg="Bitte geben Sie Ihren Namen an."></p>
+    </div>
+    <div class="field">
+      <label for="f-org">Schule, Kindergarten oder Gemeinde *</label>
+      <input id="f-org" name="Organisation" type="text" autocomplete="organization" required aria-describedby="f-org-err" />
+      <p class="err" id="f-org-err" data-msg="Für wen planen wir? Bitte Einrichtung oder Gemeinde angeben."></p>
+    </div>
+    <div class="field">
+      <label for="f-mail">E-Mail *</label>
+      <input id="f-mail" name="E-Mail" type="email" autocomplete="email" required aria-describedby="f-mail-err" />
+      <p class="err" id="f-mail-err" data-msg="Bitte eine gültige E-Mail-Adresse angeben, z. B. name@schule.it."></p>
+    </div>
+    <div class="field">
+      <label for="f-tel">Telefon <span class="text-muted">(optional)</span></label>
+      <input id="f-tel" name="Telefon" type="tel" autocomplete="tel" />
+    </div>
+    <div class="field">
+      <label for="f-ort">Projektort</label>
+      <input id="f-ort" name="Projektort" type="text" autocomplete="address-level2" placeholder="z. B. Gemeinde oder Gebäude" />
+    </div>
+    <fieldset class="field field-wide phases">
+      <legend>Projektphase</legend>
+      <div class="chips">
+        {projectPhases.map((phase, i) => (
+          <label class="chip">
+            <input type="radio" name="Projektphase" value={phase} class="sr-only" />
+            <span>{phase}</span>
+          </label>
+        ))}
+      </div>
+    </fieldset>
+    <div class="field field-wide">
+      <label for="f-msg">Nachricht *</label>
+      <textarea id="f-msg" name="Nachricht" rows="3" required aria-describedby="f-msg-err" placeholder="Um welchen Raum geht es, und was soll er künftig können?"></textarea>
+      <p class="err" id="f-msg-err" data-msg="Ein, zwei Sätze zum Projekt helfen uns, gut vorbereitet zurückzurufen."></p>
+    </div>
+  </div>
+
+  <div class="mt-7 flex flex-wrap items-center gap-x-6 gap-y-3">
+    <button type="submit" class="btn btn-ginster">
+      Anfrage senden
+      <svg class="btn-arrow h-3.5 w-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" /></svg>
+    </button>
+    <p class="status text-[0.9rem] text-muted" role="status" aria-live="polite" data-status></p>
+  </div>
+</form>
+
+<style>
+  .fields { display: grid; gap: 18px 28px; }
+  @media (min-width: 640px) {
+    .fields { grid-template-columns: 1fr 1fr; }
+    .field-wide { grid-column: 1 / -1; }
+  }
+  .field { display: flex; flex-direction: column; min-width: 0; border: 0; margin: 0; padding: 0; }
+  .field label, .field legend { font-size: 0.82rem; font-weight: 500; margin-bottom: 4px; padding: 0; }
+  .field input,
+  .field textarea {
+    width: 100%;
+    border: 0;
+    border-bottom: 1px solid #b9b6ad;
+    border-radius: 0;
+    background: transparent;
+    padding: 8px 0 9px;
+    font: inherit;
+    font-size: 1rem;
+    color: var(--color-ink);
+    transition: border-color 200ms var(--ease-draw), box-shadow 200ms var(--ease-draw);
+  }
+  .field textarea { resize: vertical; min-height: 84px; }
+  .field input::placeholder, .field textarea::placeholder { color: #8f8c83; }
+  .field input:focus, .field textarea:focus { outline: none; border-color: var(--color-ink); box-shadow: 0 1px 0 0 var(--color-ink); }
+  .field input:focus-visible, .field textarea:focus-visible { box-shadow: 0 2px 0 0 var(--color-ginster); }
+  .field [aria-invalid='true'] { border-color: #a4331c; box-shadow: 0 1px 0 0 #a4331c; }
+  .err { margin: 6px 0 0; font-size: 0.82rem; color: #a4331c; min-height: 0; }
+  .err:empty { display: none; }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+  .chip { position: relative; }
+  .chip span {
+    display: inline-flex;
+    align-items: center;
+    min-height: 36px;
+    padding: 0 12px;
+    border: 1px solid #c9c6bc;
+    border-radius: 2px;
+    font-size: 0.88rem;
+    cursor: pointer;
+    transition: background-color 180ms var(--ease-draw), border-color 180ms var(--ease-draw), color 180ms var(--ease-draw);
+  }
+  .chip:hover span { border-color: var(--color-ink); }
+  .chip input:checked + span { background: var(--color-ink); border-color: var(--color-ink); color: #fff; }
+  .chip input:checked + span::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    margin-right: 8px;
+    border-radius: 50%;
+    background: var(--color-ginster);
+  }
+  .chip input:focus-visible + span { outline: 2px solid var(--color-ink); outline-offset: 2px; }
+  .status.is-ok { color: var(--color-ink); }
+</style>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('[data-inquiry]');
+  const status = form?.querySelector<HTMLElement>('[data-status]');
+
+  if (form && status) {
+    const fields = Array.from(form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('input[required], textarea[required]'));
+
+    const showError = (field: HTMLInputElement | HTMLTextAreaElement) => {
+      const err = document.getElementById(`${field.id}-err`);
+      const valid = field.checkValidity();
+      field.setAttribute('aria-invalid', String(!valid));
+      if (err) err.textContent = valid ? '' : (err.dataset.msg ?? '');
+      return valid;
+    };
+
+    fields.forEach((f) => {
+      f.addEventListener('blur', () => f.value && showError(f));
+      f.addEventListener('input', () => f.getAttribute('aria-invalid') === 'true' && showError(f));
+    });
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const invalid = fields.filter((f) => !showError(f));
+      if (invalid.length) {
+        invalid[0].focus();
+        status.classList.remove('is-ok');
+        status.textContent = 'Bitte prüfen Sie die markierten Felder.';
+        return;
+      }
+
+      const data = new FormData(form);
+      const endpoint = form.dataset.endpoint;
+      if (endpoint) {
+        status.textContent = 'Anfrage wird gesendet …';
+        try {
+          const res = await fetch(endpoint, { method: 'POST', body: data, headers: { Accept: 'application/json' } });
+          if (!res.ok) throw new Error(String(res.status));
+          form.reset();
+          status.classList.add('is-ok');
+          status.textContent = 'Danke. Ihre Anfrage ist angekommen – wir melden uns persönlich.';
+        } catch {
+          status.classList.remove('is-ok');
+          status.textContent = `Senden hat nicht geklappt. Bitte schreiben Sie direkt an ${form.dataset.mailto}.`;
+        }
+        return;
+      }
+
+      const org = String(data.get('Organisation') ?? '');
+      const lines: string[] = [];
+      for (const [key, value] of data.entries()) {
+        if (String(value).trim()) lines.push(`${key}: ${value}`);
+      }
+      const href = `mailto:${form.dataset.mailto}?subject=${encodeURIComponent(`Projektanfrage – ${org}`)}&body=${encodeURIComponent(lines.join('\n'))}`;
+      window.location.href = href;
+      status.classList.add('is-ok');
+      status.textContent = `Ihr E-Mail-Programm öffnet eine vorbereitete Nachricht an ${form.dataset.mailto}. Bitte dort absenden.`;
+    });
+  }
+</script>

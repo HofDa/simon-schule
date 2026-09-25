@@ -1,0 +1,52 @@
+---
+import type { Project } from '../data/projects';
+import { asset } from '../lib/paths';
+import Magnet from './Magnet.astro';
+
+/** A project photo pinned to the whiteboard with a ginstergelb magnet. */
+interface Props {
+  project: Project;
+  class?: string;
+  sizes: string;
+  priority?: boolean;
+  magnet?: 'tl' | 'tc' | 'tr';
+}
+const { project, class: className = '', sizes, priority = false, magnet = 'tc' } = Astro.props;
+const img = project.images[0];
+const src = (w: number) => asset(`images/projects/${img.file}-${w}.webp`);
+---
+
+<figure class={`pin absolute m-0 ${className}`}>
+  <div class="pin-print">
+    <img
+      src={src(900)}
+      srcset={`${src(900)} 900w, ${src(1800)} 1800w`}
+      sizes={sizes}
+      alt={img.alt}
+      width="900"
+      height="675"
+      loading={priority ? 'eager' : 'lazy'}
+      fetchpriority={priority ? 'high' : 'auto'}
+      decoding="async"
+    />
+  </div>
+  <Magnet position={magnet} />
+  <figcaption class="marker mt-2 text-[clamp(1.1rem,1.4vw,1.45rem)] text-ink/80">{project.boardLabel}</figcaption>
+</figure>
+
+<style>
+  .pin { z-index: 2; }
+  .pin-print {
+    background: #fff;
+    padding: 5px;
+    box-shadow:
+      0 1px 1px rgba(32, 32, 29, 0.08),
+      0 12px 22px -12px rgba(32, 32, 29, 0.35);
+  }
+  .pin-print img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+</style>

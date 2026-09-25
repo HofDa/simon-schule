@@ -1,0 +1,122 @@
+---
+import { contact, fullName, people } from '../data/site';
+import StandingFigure from './art/StandingFigure.astro';
+
+const questions = [
+  'Wie viele Kinder nutzen den Raum?',
+  'Wie flexibel muss er sein?',
+  'Welche Möbel bleiben bestehen?',
+  'Was ändert sich im Laufe des Tages?',
+];
+---
+
+<section id="menschen" class="people border-t border-line bg-paper py-28 lg:py-40" aria-labelledby="people-title">
+  <div class="shell">
+    <div class="max-w-[60rem]">
+      <h2 id="people-title" class="text-[clamp(2.4rem,5vw,4.75rem)] leading-[0.98] tracking-[-0.045em]">
+        Direkte Ansprechpartner. Von der ersten Idee bis zur Montage.
+      </h2>
+      <p class="mt-7 max-w-[52ch] text-[1.08rem] leading-[1.65] text-muted">
+        Bei Trias Schule sprechen Sie nicht mit einem Shop, sondern mit den zwei Menschen, die Ihr Projekt planen, koordinieren und nach der Übergabe weiter betreuen.
+      </p>
+    </div>
+
+    <div class="people-grid mt-20 lg:mt-28">
+      {people.map((person, i) => (
+        <article class={`person person-${i === 0 ? 'a' : 'b'}`} data-person>
+          <div class="portrait">
+            <StandingFigure class="figure" label={`Platzhalter für das Portrait von ${fullName(person)}`} />
+            <span class="tag-placeholder absolute left-4 top-4">Portrait folgt</span>
+          </div>
+          <div class="mt-6">
+            <h3 class="text-[1.6rem] tracking-[-0.03em]">
+              {person.firstName} {person.lastName ?? <span class="open-fact text-[0.8em] font-normal tracking-normal">Nachname folgt</span>}
+            </h3>
+            <p class="mt-1.5 text-muted">{person.role ?? <span class="open-fact">Rolle / Zuständigkeit folgt</span>}</p>
+            <ul class="mt-5 space-y-1.5 text-[0.95rem]">
+              <li>{person.phone ? <a class="link-line" href={`tel:${person.phone.replace(/\s/g, '')}`}>{person.phone}</a> : <span class="open-fact">Telefon folgt</span>}</li>
+              <li>
+                {person.email ? (
+                  <a class="link-line" href={`mailto:${person.email}`}>{person.email}</a>
+                ) : (
+                  <a class="link-line" href={`mailto:${contact.email}`}>{contact.email}</a>
+                )}
+              </li>
+            </ul>
+          </div>
+        </article>
+      ))}
+
+      <div class="notes" aria-label="Fragen aus einem Planungsgespräch">
+        <span class="notes-line" aria-hidden="true"></span>
+        <ul>
+          {questions.map((q, i) => (
+            <li class="note marker" style={`--i: ${i}`} data-note>{q}</li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .people-grid { display: grid; gap: 64px; }
+  .portrait {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    background: var(--color-surface);
+    overflow: hidden;
+  }
+  .portrait :global(.figure) {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    height: 74%;
+    width: auto;
+    aspect-ratio: 200 / 520;
+    transform: translateX(-50%);
+    color: #d3cfc4;
+  }
+
+  .notes { position: relative; }
+  .notes ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 22px; }
+  .note {
+    font-size: clamp(1.55rem, 2.1vw, 2rem);
+    color: #2b2b27;
+    line-height: 1.1;
+  }
+  .note:nth-child(odd) { transform: rotate(-1.2deg); }
+  .note:nth-child(even) { transform: rotate(0.8deg); padding-left: 1.2em; }
+  .notes-line { display: none; }
+
+  @media (min-width: 1024px) {
+    .people-grid { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(24px, 2.6vw, 44px); align-items: start; }
+    .person-a { grid-column: 1 / 5; grid-row: 1; }
+    .person-b { grid-column: 9 / 13; grid-row: 1; margin-top: 140px; }
+    .notes { grid-column: 5 / 9; grid-row: 1; padding: 80px 0 0 clamp(20px, 3vw, 48px); align-self: stretch; }
+    .notes-line { display: block; position: absolute; left: 0; top: 0; bottom: 0; width: 1px; background: var(--color-line); }
+    .notes ul { gap: 40px; }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    :global(html.js) .person {
+      opacity: 0;
+      translate: var(--from, -18px) 0;
+      transition: opacity 900ms var(--ease-draw), translate 900ms var(--ease-draw);
+    }
+    :global(html.js) .person-b { --from: 18px; transition-delay: 120ms; }
+    :global(html.js) .person.is-in { opacity: 1; translate: 0 0; }
+    :global(html.js) .note {
+      opacity: 0;
+      clip-path: inset(0 100% 0 0);
+      transition: opacity 500ms var(--ease-draw), clip-path 700ms var(--ease-draw);
+      transition-delay: calc(var(--i) * 260ms + 200ms);
+    }
+    :global(html.js) .notes.is-in .note { opacity: 1; clip-path: inset(-10% -5% -10% 0); }
+  }
+</style>
+
+<script>
+  import { revealOnce } from '../scripts/motion';
+  revealOnce(document.querySelectorAll('[data-person], .notes'));
+</script>

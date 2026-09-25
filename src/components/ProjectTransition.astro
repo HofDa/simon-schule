@@ -1,0 +1,157 @@
+---
+/**
+ * The ruler-drawn line: continues the services axis, crosses the page,
+ * reveals "Unsere Projekte" and turns 90° down into the project lane.
+ */
+---
+
+<section id="projekte" class="transition relative" aria-labelledby="projects-title" data-transition>
+  <div class="t-stage relative overflow-hidden" data-stage>
+    <svg class="t-svg absolute inset-0 h-full w-full" data-svg aria-hidden="true">
+      <path class="t-path" data-path d="" />
+      <path class="t-corner" data-corner d="" />
+      <circle class="t-node" data-start r="4.5" cx="-20" cy="-20" />
+      <circle class="t-head" data-head r="4.5" cx="-20" cy="-20" />
+    </svg>
+
+    <div class="t-title-wrap absolute inset-x-0" data-title-wrap>
+      <div class="shell">
+        <h2 id="projects-title" class="t-title" data-title>Unsere Projekte</h2>
+      </div>
+    </div>
+    <div class="t-sub-wrap absolute inset-x-0" data-sub-wrap>
+      <div class="shell">
+        <p class="t-sub" data-sub>Schulen und Kindergärten in Südtirol – geplant, eingerichtet und begleitet von Trias Schule.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .t-stage { height: 460px; }
+  .t-path, .t-corner {
+    fill: none;
+    stroke: var(--color-ink);
+    stroke-width: 1.5;
+    stroke-linecap: square;
+  }
+  .t-corner { stroke-width: 1; }
+  .t-node { fill: var(--color-ink); }
+  .t-head { fill: var(--color-ginster); }
+
+  .t-title-wrap { bottom: calc(100% - var(--ym, 50%) + 14px); }
+  .t-sub-wrap { top: calc(var(--ym, 50%) + 20px); }
+  .t-title {
+    display: inline-block;
+    font-size: clamp(2.8rem, 7vw, 6rem);
+    line-height: 0.95;
+    letter-spacing: -0.045em;
+    clip-path: inset(-10% calc((1 - var(--reveal, 1)) * 100%) -20% 0);
+    margin-left: var(--title-x, 0px);
+  }
+  .t-sub {
+    max-width: 44ch;
+    color: var(--color-muted);
+    font-size: 1.02rem;
+    margin-left: var(--title-x, 0px);
+    opacity: var(--sub, 1);
+    transform: translateY(calc((1 - var(--sub, 1)) * 6px));
+  }
+
+  .transition.is-scrub { height: 220vh; }
+  .transition.is-scrub .t-stage { position: sticky; top: 0; height: 100vh; }
+</style>
+
+<script>
+  import { addScene, clamp, range, viewProgress } from '../scripts/motion';
+
+  const section = document.querySelector<HTMLElement>('[data-transition]');
+  const stage = section?.querySelector<HTMLElement>('[data-stage]');
+  const svg = section?.querySelector<SVGSVGElement>('[data-svg]');
+  const path = section?.querySelector<SVGPathElement>('[data-path]');
+  const corner = section?.querySelector<SVGPathElement>('[data-corner]');
+  const head = section?.querySelector<SVGCircleElement>('[data-head]');
+  const start = section?.querySelector<SVGCircleElement>('[data-start]');
+  const title = section?.querySelector<HTMLElement>('[data-title]');
+
+  if (section && stage && svg && path && corner && head && start && title) {
+    let total = 1;
+    let cornerAt = 1;
+    let x0 = 0;
+    let x1 = 0;
+    let ym = 0;
+    let titleLeft = 0;
+    let titleW = 1;
+    let desktop = false;
+
+    const lane = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--lane')) || 56;
+
+    const measure = (scrub: boolean, isDesktop: boolean) => {
+      desktop = isDesktop;
+      section.classList.toggle('is-scrub', scrub && isDesktop);
+      const w = stage.clientWidth;
+      const h = stage.clientHeight;
+      svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+      const shell = title.parentElement as HTMLElement;
+      const pad = parseFloat(getComputedStyle(shell).paddingLeft);
+      const inner = document.querySelector<HTMLElement>('[data-projects-inner]');
+      const axis = document.querySelector<HTMLElement>('[data-axis]');
+      const axisRect = axis?.getBoundingClientRect();
+      const stageRect = stage.getBoundingClientRect();
+
+      x0 = isDesktop && axisRect && axisRect.width ? axisRect.left + axisRect.width / 2 - stageRect.left : pad;
+      x1 = isDesktop && inner ? inner.getBoundingClientRect().right - lane() / 2 - stageRect.left : pad + (w - 2 * pad) * 0.72;
+      ym = Math.round(h * (isDesktop ? 0.5 : 0.46));
+
+      section.style.setProperty('--ym', `${ym}px`);
+      const tw = title.offsetWidth;
+      const titleX = isDesktop ? Math.max(0, (w - tw) / 2 - pad) : 0;
+      section.style.setProperty('--title-x', `${titleX}px`);
+      titleLeft = pad + titleX;
+      titleW = tw;
+
+      path.setAttribute('d', `M${x0} 0 V${ym} H${x1} V${h}`);
+      total = path.getTotalLength();
+      cornerAt = ym + (x1 - x0);
+      path.style.strokeDasharray = `${total}`;
+      const c = 14;
+      corner.setAttribute('d', `M${x1 - c} ${ym} V${ym + c} H${x1}`);
+      start.setAttribute('cx', String(x0));
+      start.setAttribute('cy', String(ym));
+    };
+
+    const render = (p: number) => {
+      const len = total * p;
+      path.style.strokeDashoffset = String(total - len);
+      const pt = path.getPointAtLength(len);
+      head.setAttribute('cx', String(pt.x));
+      head.setAttribute('cy', String(pt.y));
+      head.style.opacity = p > 0.002 && p < 0.998 ? '1' : '0';
+      start.style.opacity = len >= ym ? '1' : '0';
+      corner.style.opacity = len >= cornerAt + 18 ? '1' : '0';
+      const headX = len <= ym ? x0 : Math.min(x1, x0 + (len - ym));
+      const reveal = clamp((headX - titleLeft) / titleW);
+      section.style.setProperty('--reveal', String(len > ym ? reveal : 0));
+      section.style.setProperty('--sub', String(range(headX, titleLeft + titleW * 0.6, x1)));
+    };
+
+    addScene({
+      el: section,
+      media: '(min-width: 1024px) and (min-height: 640px)',
+      measure: (active) => measure(active, window.matchMedia('(min-width: 1024px) and (min-height: 640px)').matches),
+      // starts drawing while the stage scrolls in, so the line never leaves an empty screen
+      progress: (rect, vh) => (vh * 0.55 - rect.top) / Math.max(1, rect.height - vh * 0.45),
+      render: (p) => desktop && render(range(p, 0, 0.92)),
+    });
+
+    addScene({
+      el: section,
+      media: '(max-width: 1023px), (max-height: 639px)',
+      measure: (active) => {
+        if (active || !window.matchMedia('(min-width: 1024px) and (min-height: 640px)').matches) measure(false, false);
+      },
+      progress: viewProgress(0.95, 0.15),
+      render: (p) => !desktop && render(p),
+    });
+  }
+</script>

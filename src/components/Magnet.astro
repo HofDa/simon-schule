@@ -1,0 +1,28 @@
+---
+/** Matte ginstergelb whiteboard magnet. */
+interface Props {
+  position?: 'tl' | 'tc' | 'tr';
+}
+const { position = 'tc' } = Astro.props;
+---
+
+<span class={`magnet magnet-${position}`} aria-hidden="true"></span>
+
+<style>
+  .magnet {
+    position: absolute;
+    top: -9px;
+    z-index: 4;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 36% 30%, #f3c032 0%, #e2a300 52%, #cd9300 100%);
+    box-shadow:
+      inset 0 -1px 1px rgba(120, 80, 0, 0.35),
+      0 2px 2px rgba(32, 32, 29, 0.22),
+      0 6px 10px -4px rgba(32, 32, 29, 0.3);
+  }
+  .magnet-tl { left: 14px; }
+  .magnet-tr { right: 14px; }
+  .magnet-tc { left: calc(50% - 11px); }
+</style>

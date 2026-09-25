@@ -1,0 +1,279 @@
+---
+import VSChair from './art/VSChair.astro';
+
+const services = [
+  { title: 'Beraten', text: 'Wir hören zu und verstehen, wie ein Raum tatsächlich genutzt wird – von allen, die darin lernen und arbeiten.' },
+  { title: 'Planen', text: 'Möblierung, Raumorganisation und Nutzung werden gemeinsam gedacht, nicht nacheinander.' },
+  { title: 'Ausstatten', text: 'Wir kombinieren passende Systeme und Möbel von VS mit den Anforderungen des Projekts.' },
+  { title: 'Umsetzen', text: 'Von Bestellung und Koordination bis zur Montage: ein Ablauf, ein Ansprechpartner.' },
+  { title: 'Begleiten', text: 'Direkte Ansprechpartner in Südtirol – auch nach Projektabschluss.' },
+];
+---
+
+<section id="leistungen" class="services relative z-20" aria-labelledby="services-title" data-services>
+  <div class="services-stick" data-stick>
+    <div class="shell">
+      <div class="services-grid">
+        <div class="chair-cell" aria-hidden="false">
+          <VSChair id="story-chair" class="chair block w-full" />
+          <svg class="dim" viewBox="0 0 100 12" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M0 6 H100 M0.5 1 V11 M99.5 1 V11" vector-effect="non-scaling-stroke" />
+          </svg>
+        </div>
+
+        <div class="steps-cell relative">
+          <span class="axis" data-axis aria-hidden="true"></span>
+          <ol class="steps" data-steps>
+            {services.map((s, i) => (
+              <li class="step" data-step>
+                <div class="step-head">
+                  <span class="step-n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+                  <h3 class="step-title">
+                    <span class="step-title-text">{s.title}</span>
+                    <svg class="step-underline" viewBox="0 0 200 12" preserveAspectRatio="none" aria-hidden="true">
+                      <path pathLength="1" d="M2 8 C40 4 90 10 130 6 S186 5 198 7" />
+                    </svg>
+                  </h3>
+                </div>
+                <p class="step-text">{s.text}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+
+        <div class="intro-cell">
+          <h2 id="services-title" class="text-[clamp(2.2rem,4.2vw,4rem)] leading-[1] tracking-[-0.04em]">
+            Vom ersten Gespräch bis lange nach der Montage.
+          </h2>
+          <p class="mt-6 max-w-[44ch] text-[1.05rem] leading-[1.65] text-muted">
+            Ein Lernraum entsteht nicht im Katalog. Er entsteht im Gespräch mit den Menschen, die ihn jeden Tag nutzen – und wird dann Schritt für Schritt präzise umgesetzt.
+          </p>
+          <div class="progress mt-10 hidden lg:block" aria-hidden="true">
+            <div class="progress-track">
+              {services.map(() => <span class="progress-tick"></span>)}
+              <span class="progress-node" data-node></span>
+            </div>
+            <p class="mt-3 text-[0.85rem] text-muted">Schritt <span data-now>1</span> von {services.length}</p>
+          </div>
+          <div class="detail" aria-hidden="true">
+            {services.map((s, i) => (
+              <div class="detail-item" data-detail>
+                <p class="detail-title">{s.title}</p>
+                <p class="detail-text">{s.text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .services {
+    --col-w: clamp(250px, 21vw, 330px);
+    --peek: clamp(120px, 22vh, 220px);
+    pointer-events: none;
+  }
+  .steps-cell, .intro-cell { pointer-events: auto; }
+
+  .services-grid {
+    display: grid;
+    gap: 0 clamp(48px, 9vw, 160px);
+    padding-block: 72px 96px;
+  }
+
+  .chair-cell { width: 150px; }
+  .intro-cell { order: -1; margin-bottom: 48px; }
+  .detail { display: none; }
+  .dim {
+    display: block;
+    width: 100%;
+    height: 12px;
+    margin-top: 10px;
+    fill: none;
+    stroke: var(--color-muted);
+    stroke-width: 1;
+  }
+
+  .steps { list-style: none; margin: 40px 0 0; padding: 0; }
+  .step { padding: 22px 0 24px; border-top: 1px solid var(--color-line); }
+  .step:last-child { border-bottom: 1px solid var(--color-line); }
+  .step-head { display: flex; align-items: baseline; gap: 14px; }
+  .step-n { font-size: 0.78rem; font-variant-numeric: tabular-nums; color: var(--color-muted); min-width: 1.6em; }
+  .step-title {
+    position: relative;
+    display: inline-block;
+    font-size: clamp(1.75rem, 2.3vw, 2.25rem);
+    letter-spacing: -0.035em;
+    line-height: 1.05;
+  }
+  .step-underline {
+    position: absolute;
+    left: -2%;
+    bottom: -9px;
+    width: 104%;
+    height: 12px;
+    overflow: visible;
+    fill: none;
+    stroke: var(--color-ginster);
+    stroke-width: 3.5;
+    stroke-linecap: round;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+  }
+  .step-text {
+    margin: 12px 0 0 calc(1.6em * 0.78 + 14px);
+    font-size: 0.97rem;
+    line-height: 1.55;
+    color: var(--color-muted);
+    max-width: 40ch;
+  }
+
+  .axis { display: none; }
+
+  .progress-track {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    width: min(100%, 360px);
+    height: 11px;
+    border-bottom: 1px solid var(--color-ink);
+  }
+  .progress-tick { width: 1px; height: 11px; background: var(--color-ink); }
+  .progress-node {
+    position: absolute;
+    bottom: -5px;
+    width: 9px;
+    height: 9px;
+    margin-left: -4px;
+    border-radius: 50%;
+    background: var(--color-ginster);
+    left: calc(var(--node, 1) * 100%);
+  }
+
+  @media (min-width: 1024px) {
+    .services { margin-top: calc(-1 * var(--peek)); }
+    .services-grid {
+      grid-template-columns: var(--col-w) minmax(0, 1fr);
+      grid-template-rows: auto auto;
+      padding-block: 0 110px;
+      padding-left: clamp(40px, 4vw, 64px);
+    }
+    .chair-cell { width: var(--col-w); grid-column: 1; grid-row: 1; }
+    .steps-cell { grid-column: 1; grid-row: 2; }
+    .intro-cell { grid-column: 2; grid-row: 1 / 3; align-self: end; order: 0; margin-bottom: 0; padding-bottom: 8px; }
+    .steps { margin-top: 36px; }
+    .step { padding: 16px 0 18px; }
+    .step-text { margin-left: 0; font-size: 0.92rem; }
+    .step-head { gap: 12px; }
+
+    .axis {
+      display: block;
+      position: absolute;
+      left: 0;
+      top: 36px;
+      bottom: 0;
+      width: 1.5px;
+      margin-left: calc(-1 * clamp(40px, 4vw, 64px) / 2);
+      background: var(--color-ink);
+      transform-origin: top;
+      transform: scaleY(var(--axis, 1));
+    }
+  }
+
+  /* scrubbed desktop sequence (class set by the scene when it is active) */
+  .services.is-scrub { height: calc(var(--stick-h, 100vh) + 170vh); }
+  .services.is-scrub .services-stick { position: sticky; top: var(--stick-top, 0px); }
+  .services.is-scrub .step-title-text {
+    clip-path: inset(-12% calc((1 - var(--t, 1)) * 100%) -12% 0);
+  }
+  .services.is-scrub .step { padding: 13px 0 15px; }
+  .services.is-scrub .step-text {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .services.is-scrub .detail { display: grid; margin-top: 44px; min-height: 9.5rem; }
+  .detail-item {
+    grid-area: 1 / 1;
+    opacity: var(--o, 0);
+    transform: translateY(calc((1 - var(--o, 0)) * 10px));
+  }
+  .detail-title { font-family: var(--font-marker); font-weight: 600; font-size: 1.9rem; line-height: 1; color: var(--color-ink); }
+  .detail-text { margin-top: 12px; max-width: 34ch; font-size: clamp(1.25rem, 1.6vw, 1.55rem); line-height: 1.35; letter-spacing: -0.015em; }
+  .services .step-underline { stroke-dashoffset: calc(1 - var(--u, 0)); transition: opacity 300ms var(--ease-draw); }
+  .services .step.is-done .step-underline { opacity: 0; }
+  .services .step.is-active .step-n { color: var(--color-ink); }
+
+  /* mobile / reduced: simple reveal */
+  @media (prefers-reduced-motion: no-preference) {
+    :global(html.js) .services:not(.is-scrub) .step {
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 600ms var(--ease-draw), transform 600ms var(--ease-draw);
+    }
+    :global(html.js) .services:not(.is-scrub) .step.is-in { opacity: 1; transform: none; }
+  }
+</style>
+
+<script>
+  import { addScene, clamp, easeOut, range, revealOnce } from '../scripts/motion';
+
+  const section = document.querySelector<HTMLElement>('[data-services]');
+  const stick = section?.querySelector<HTMLElement>('[data-stick]');
+  if (section && stick) {
+    const steps = Array.from(section.querySelectorAll<HTMLElement>('[data-step]'));
+    const now = section.querySelector<HTMLElement>('[data-now]');
+    const node = section.querySelector<HTMLElement>('[data-node]');
+    const details = Array.from(section.querySelectorAll<HTMLElement>('[data-detail]'));
+    const n = steps.length;
+    let stickTop = 0;
+    let stickH = 0;
+    let lastActive = -1;
+
+    revealOnce(steps);
+
+    addScene({
+      el: section,
+      media: '(min-width: 1024px) and (min-height: 640px)',
+      measure(active) {
+        section.classList.toggle('is-scrub', active);
+        if (!active) return;
+        stickH = stick.offsetHeight;
+        const vh = window.innerHeight;
+        const navH = 72;
+        stickTop = Math.min(navH + 8, vh - stickH - 24);
+        section.style.setProperty('--stick-h', `${stickH}px`);
+        section.style.setProperty('--stick-top', `${stickTop}px`);
+      },
+      progress: (rect) => (stickTop - rect.top) / Math.max(1, rect.height - stickH),
+      render(p) {
+        const q = range(p, 0.03, 0.94) * n;
+        const active = Math.min(n - 1, Math.floor(q));
+        steps.forEach((step, i) => {
+          const t = clamp(q - i);
+          step.style.setProperty('--t', String(easeOut(range(t, 0, 0.55))));
+          step.style.setProperty('--o', String(range(t, 0.3, 0.75)));
+          step.style.setProperty('--u', String(easeOut(range(t, 0.25, 0.85))));
+          step.classList.toggle('is-active', i === active && t > 0);
+          step.classList.toggle('is-done', i < active);
+        });
+        details.forEach((d, i) => {
+          const t = clamp(q - i);
+          const out = i < n - 1 ? 1 - range(q - i, 0.85, 1) : 1;
+          d.style.setProperty('--o', String(Math.min(range(t, 0.3, 0.7), out)));
+        });
+        section.style.setProperty('--axis', String(range(p, 0, 0.97)));
+        node?.style.setProperty('--node', String(clamp((q - 0.5) / (n - 1))));
+        if (active !== lastActive && now) {
+          now.textContent = String(active + 1);
+          lastActive = active;
+        }
+      },
+    });
+  }
+</script>

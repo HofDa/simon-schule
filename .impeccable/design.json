@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-25T10:30:00Z",
+  "title": "Design System: Trias Schule",
+  "extensions": {
+    "colorMeta": {
+      "ink": { "role": "primary", "displayName": "Plan Ink", "tonalRamp": ["#0e0e0c", "#20201d", "#3a3a35", "#55544e", "#75736c", "#9a978f", "#c4c1b8", "#e9e7e1"] },
+      "ginster": { "role": "secondary", "displayName": "Ginstergelb (RAL 1032)", "tonalRamp": ["#4d3700", "#7a5800", "#a07300", "#b88400", "#e2a300", "#f1c23b", "#f7da85", "#fcf0cc"] },
+      "paper": { "role": "neutral", "displayName": "Paper", "tonalRamp": ["#2b2a27", "#55534d", "#8a877e", "#b9b6ad", "#dddad1", "#f2f1ec", "#f6f5f0", "#ffffff"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Hero H1 only." },
+      "headline": { "displayName": "Headline", "purpose": "Section H2." },
+      "marker": { "displayName": "Marker", "purpose": "Whiteboard annotations and planning notes only." }
+    },
+    "shadows": [
+      { "name": "board", "value": "inset 0 0 0 1px #d8d6ce, 0 24px 48px -32px rgba(32,32,29,.28)", "purpose": "Whiteboard frame." },
+      { "name": "print", "value": "0 1px 1px rgba(32,32,29,.08), 0 12px 22px -12px rgba(32,32,29,.35)", "purpose": "Photos pinned to the board." },
+      { "name": "magnet", "value": "0 2px 2px rgba(32,32,29,.22), 0 6px 10px -4px rgba(32,32,29,.3)", "purpose": "Ginstergelb magnets." }
+    ],
+    "motion": [
+      { "name": "ease-draw", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "All reveals and state changes." },
+      { "name": "micro", "value": "200ms", "purpose": "Hover and focus feedback." },
+      { "name": "reveal", "value": "700–900ms", "purpose": "Load choreography and one-off reveals." },
+      { "name": "scrub", "value": "scroll-linked", "purpose": "Services column, drawn line, project masks, contact scene." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "lg", "value": "1024px" },
+      { "name": "scrub", "value": "(min-width: 1024px) and (min-height: 640px)" },
+      { "name": "contact-scrub", "value": "(min-width: 1024px) and (min-height: 760px)" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Default action, ink on white.",
+      "html": "<a class=\"ds-btn\" href=\"#\">Projekte entdecken</a>",
+      "css": ".ds-btn { display:inline-flex; align-items:center; gap:12px; min-height:48px; padding:0 1.4rem; border-radius:2px; background:#20201d; color:#fff; font:600 0.95rem Archivo, system-ui, sans-serif; text-decoration:none; transition:background-color .2s; } .ds-btn:hover { background:#000; } .ds-btn:focus-visible { outline:2px solid #20201d; outline-offset:3px; }"
+    },
+    {
+      "name": "CTA Button",
+      "kind": "button",
+      "refersTo": "button-cta",
+      "description": "The one conversion action per screen.",
+      "html": "<a class=\"ds-btn-cta\" href=\"#\">Projekt anfragen</a>",
+      "css": ".ds-btn-cta { display:inline-flex; align-items:center; min-height:48px; padding:0 1.4rem; border-radius:2px; background:#e2a300; color:#20201d; font:600 0.95rem Archivo, system-ui, sans-serif; text-decoration:none; transition:background-color .2s; } .ds-btn-cta:hover { background:#f1c23b; } .ds-btn-cta:focus-visible { outline:2px solid #20201d; outline-offset:3px; }"
+    },
+    {
+      "name": "Underline Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Form field with a label above and an underline only.",
+      "html": "<label class=\"ds-field\"><span>Name *</span><input type=\"text\"></label>",
+      "css": ".ds-field { display:flex; flex-direction:column; font:500 0.82rem Archivo, system-ui, sans-serif; color:#20201d; } .ds-field input { border:0; border-bottom:1px solid #b9b6ad; padding:8px 0 9px; font:400 1rem Archivo, system-ui, sans-serif; background:transparent; } .ds-field input:focus { outline:none; border-color:#20201d; box-shadow:0 1px 0 0 #20201d; } .ds-field input:focus-visible { box-shadow:0 2px 0 0 #e2a300; }"
+    },
+    {
+      "name": "Phase Chip",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "Radio chip for the project phase.",
+      "html": "<span class=\"ds-chip\">Planung läuft</span> <span class=\"ds-chip is-on\">Erste Idee</span>",
+      "css": ".ds-chip { display:inline-flex; align-items:center; min-height:36px; padding:0 12px; border:1px solid #c9c6bc; border-radius:2px; font:400 0.88rem Archivo, system-ui, sans-serif; } .ds-chip:hover { border-color:#20201d; } .ds-chip.is-on { background:#20201d; color:#fff; border-color:#20201d; } .ds-chip.is-on::before { content:''; width:6px; height:6px; margin-right:8px; border-radius:50%; background:#e2a300; }"
+    },
+    {
+      "name": "Open Fact",
+      "kind": "custom",
+      "refersTo": "open-fact",
+      "description": "Marks an unconfirmed fact instead of inventing it.",
+      "html": "<span class=\"ds-open\">Telefon folgt</span>",
+      "css": ".ds-open { color:#6e6c65; text-decoration:underline dashed #b88400; text-underline-offset:4px; font:400 0.95rem Archivo, system-ui, sans-serif; }"
+    },
+    {
+      "name": "Drawn Line",
+      "kind": "custom",
+      "refersTo": "drawn-line",
+      "description": "Scroll-drawn 1.5px ink line with a 90° bend and a ginstergelb head.",
+      "html": "<svg class=\"ds-line\" viewBox=\"0 0 240 120\"><path d=\"M10 60 H200 V116\" /><path class=\"c\" d=\"M188 60 V72 H200\" /><circle cx=\"200\" cy=\"100\" r=\"4.5\" /></svg>",
+      "css": ".ds-line { width:240px; } .ds-line path { fill:none; stroke:#20201d; stroke-width:1.5; } .ds-line .c { stroke-width:1; } .ds-line circle { fill:#e2a300; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "A planning surface that becomes a building",
+    "overview": "One continuous architectural drawing: whiteboard, chair-width column, a ruler-drawn line that turns into the projects, and two people who finally turn to face the visitor.",
+    "keyCharacteristics": ["white space", "hairlines not containers", "ginstergelb as rare points", "scroll-scrubbed drawing", "handwriting only as annotation"],
+    "rules": [
+      { "name": "The Rare Yellow Rule", "body": "Ginstergelb marks objects and points, never regions.", "section": "colors" },
+      { "name": "The Honest Blank Rule", "body": "Unconfirmed facts render as marked open fields, never invented.", "section": "colors" },
+      { "name": "The Annotation Rule", "body": "Handwriting annotates; it never states the offer.", "section": "typography" }
+    ],
+    "dos": ["Do scrub motion with scroll and render final states under reduced motion.", "Do keep content visible without JavaScript."],
+    "donts": ["Don't use cards, gradients, glass, eyebrows or UI shadows.", "Don't invent testimonials, facts or titles."]
+  }
+}

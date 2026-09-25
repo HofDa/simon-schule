@@ -1,0 +1,62 @@
+/**
+ * Central contact and navigation facts.
+ * `null` means the fact is not confirmed yet: components render it as an
+ * open, visibly marked field instead of inventing a value.
+ */
+
+export interface Person {
+  firstName: string;
+  lastName: string | null;
+  role: string | null;
+  phone: string | null;
+  email: string | null;
+}
+
+export const contact = {
+  email: 'beratung@trias.it',
+  phone: null as string | null,
+  address: null as string | null,
+};
+
+/**
+ * Where the inquiry form sends to. With `endpoint: null` the form composes a
+ * pre-filled e-mail (mailto). Set a Formspree/Web3Forms URL to POST instead.
+ */
+export const inquiry = {
+  endpoint: null as string | null,
+  mailto: contact.email,
+};
+
+export const people: Person[] = [
+  { firstName: 'Simon', lastName: 'Brugger', role: null, phone: null, email: null },
+  { firstName: 'Rene', lastName: null, role: null, phone: null, email: null },
+];
+
+export const fullName = (p: Person) => [p.firstName, p.lastName].filter(Boolean).join(' ');
+
+export const nav = [
+  { label: 'Projekte', href: '#projekte' },
+  { label: 'Leistungen', href: '#leistungen' },
+  { label: 'Über uns', href: '#menschen' },
+  { label: 'VS Möbel', href: '#vs-moebel' },
+  { label: 'Kontakt', href: '#kontakt' },
+];
+
+export const vs = {
+  catalogUrl: 'https://www.vs.de/de/',
+};
+
+export const projectPhases = [
+  'Erste Idee',
+  'Planung läuft',
+  'Konkrete Ausstattung',
+  'Ausschreibung',
+  'Umbau / Erweiterung',
+];
+
+/** Temporary photos (Wikimedia Commons). Replace with real project photography. */
+export const photoCredits = [
+  { author: 'PantheraLeo1359531', license: 'CC BY 4.0', url: 'https://commons.wikimedia.org/wiki/File:JCRG_%E2%80%93_Klassenzimmer_HOF5022-HDR_RAW-Export.jpg' },
+  { author: 'MaxMustermannFoto', license: 'CC BY-SA 4.0', url: 'https://commons.wikimedia.org/wiki/File:Neuer_Kindergarten_Rotenturm_H%C3%B6hle_und_Spielk%C3%BCche.jpg' },
+  { author: 'Mosborne01', license: 'CC BY-SA 3.0', url: 'https://commons.wikimedia.org/wiki/File:Ashs-learning-common-kauri.jpg' },
+];

@@ -1,74 +1,32 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Navbar from '../components/shared/Navbar.astro';
-import Hero from '../components/Hero.astro';
-import Stats from '../components/Stats.astro';
-import BentoGrid from '../components/BentoGrid.astro';
-import Testimonials from '../components/Testimonials.astro';
-import Contact from '../components/Contact.astro';
 import Footer from '../components/shared/Footer.astro';
+import WhiteboardHero from '../components/WhiteboardHero.astro';
+import ServicesStory from '../components/ServicesStory.astro';
+import ProjectTransition from '../components/ProjectTransition.astro';
+import Projects from '../components/Projects.astro';
+import People from '../components/People.astro';
+import VSProducts from '../components/VSProducts.astro';
+import ClosingTestimonial from '../components/ClosingTestimonial.astro';
+import ContactScene from '../components/ContactScene.astro';
 
-const title = "TRIAS SCHULE | Moderne Lernräume & Schulausstattung Südtirol";
-const description = "Vom Klassenzimmer bis zum Fachraum: TRIAS ist Ihr Partner für ergonomische und zukunftsorientierte Schulausstattung in Südtirol. Jetzt Fachberatung anfragen.";
+const title = 'Trias Schule – Lernräume für Schulen und Kindergärten in Südtirol';
+const description =
+  'Trias Schule plant und realisiert Lernräume für Schulen und Kindergärten in Südtirol: Beratung, Planung, Schuleinrichtung und Montage – persönlich begleitet und als Exklusivvertretung von VS Möbel.';
 ---
 
 <Layout title={title} description={description}>
-    <Navbar />
-
-    <main class="relative bg-white">
-        <div class="relative z-10">
-            <Hero />
-        </div>
-
-        <div class="relative z-20">
-            <Stats />
-        </div>
-
-        <div class="relative z-10">
-            <BentoGrid />
-        </div>
-
-        <div class="relative z-10">
-            <Testimonials />
-        </div>
-
-        <div class="relative z-20">
-            <Contact />
-        </div>
-    </main>
-
-    <Footer />
+  <Navbar />
+  <main id="inhalt">
+    <WhiteboardHero />
+    <ServicesStory />
+    <ProjectTransition />
+    <Projects />
+    <People />
+    <VSProducts />
+    <ClosingTestimonial />
+    <ContactScene />
+  </main>
+  <Footer />
 </Layout>
-
-<style is:global>
-    :root {
-        --trias-navy: #0F172A; /* Slate-900 */
-        --trias-power: #0066B2;
-    }
-
-    html {
-        scroll-behavior: smooth;
-        /* Verhindert horizontales Wackeln bei Animationen */
-        overflow-x: hidden;
-    }
-
-    body {
-        /* Verbessert das Font-Rendering auf MacOS/iOS */
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        text-rendering: optimizeLegibility;
-    }
-
-    /* Optimiertes Scroll-Padding für Anker-Links 
-       Verhindert, dass die Fixed Navbar die Überschrift verdeckt.
-    */
-    section[id] {
-        scroll-margin-top: 6rem;
-    }
-
-    /* Selection Color passend zum Branding */
-    ::selection {
-        background-color: rgba(0, 102, 178, 0.2);
-        color: #0F172A;
-    }
-</style>

@@ -1,49 +1,58 @@
 ---
-const currentYear = new Date().getFullYear();
-const baseUrl = import.meta.env.BASE_URL.endsWith('/')
-  ? import.meta.env.BASE_URL
-  : `${import.meta.env.BASE_URL}/`;
+import { contact, nav, photoCredits, vs } from '../../data/site';
+const year = new Date().getFullYear();
 ---
 
-<footer class="bg-trias-navy text-white pt-20 pb-10">
-  <div class="max-w-7xl mx-auto px-6">
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
-      
-      <div class="md:col-span-2 space-y-6">
-        <div class="text-2xl font-extrabold tracking-tighter">
-          TRIAS <span class="text-trias-power italic">SCHULE</span>
-        </div>
-        <p class="text-slate-400 max-w-sm leading-relaxed">
-          Ihr Partner für innovative Lernwelten in Südtirol. Wir verbinden moderne Pädagogik mit erstklassigem Möbeldesign.
+<footer class="bg-warm pt-20 pb-10 text-[0.92rem]">
+  <div class="shell">
+    <div class="grid gap-12 border-b border-line pb-14 md:grid-cols-12">
+      <div class="md:col-span-5">
+        <p class="flex items-baseline gap-[0.4em] text-[0.95rem] uppercase tracking-[0.14em]">
+          <span class="font-bold">Trias</span><span class="text-muted">Schule</span>
+        </p>
+        <p class="mt-5 max-w-[34ch] leading-relaxed text-muted">
+          Lernräume für Schulen und Kindergärten in Südtirol. Exklusivvertretung von VS Möbel in Südtirol.
         </p>
       </div>
 
-      <div>
-        <h4 class="font-bold mb-6 uppercase text-xs tracking-[0.2em] text-trias-power">Navigation</h4>
-        <ul class="space-y-4 text-slate-400">
-          <li><a href={baseUrl} class="hover:text-white transition-colors">Home</a></li>
-          <li><a href="#kontakt" class="hover:text-white transition-colors">Beratung</a></li>
-          <li><a href="#" class="hover:text-white transition-colors">Produkte</a></li>
-          <li><a href="#" class="hover:text-white transition-colors">Über uns</a></li>
+      <div class="md:col-span-3">
+        <h2 class="mb-4 text-[0.92rem] font-semibold tracking-normal">Kontakt</h2>
+        <ul class="space-y-2 text-muted">
+          <li><a class="link-line text-ink" href={`mailto:${contact.email}`}>{contact.email}</a></li>
+          <li>{contact.phone ? <a href={`tel:${contact.phone.replace(/\s/g, '')}`}>{contact.phone}</a> : <span class="open-fact">Telefon folgt</span>}</li>
+          <li>{contact.address ?? <span class="open-fact">Adresse folgt</span>}</li>
         </ul>
       </div>
 
-      <div>
-        <h4 class="font-bold mb-6 uppercase text-xs tracking-[0.2em] text-trias-power">Rechtliches</h4>
-        <ul class="space-y-4 text-slate-400">
-          <li><a href="#" class="hover:text-white transition-colors">Impressum</a></li>
-          <li><a href="#" class="hover:text-white transition-colors">Datenschutz</a></li>
-          <li><a href="#" class="hover:text-white transition-colors">AGB</a></li>
+      <div class="md:col-span-2">
+        <h2 class="mb-4 text-[0.92rem] font-semibold tracking-normal">Seite</h2>
+        <ul class="space-y-2 text-muted">
+          {nav.map((item) => <li><a class="transition-colors hover:text-ink" href={item.href}>{item.label}</a></li>)}
+        </ul>
+      </div>
+
+      <div class="md:col-span-2">
+        <h2 class="mb-4 text-[0.92rem] font-semibold tracking-normal">Rechtliches</h2>
+        <ul class="space-y-2 text-muted">
+          <li><a class="transition-colors hover:text-ink" href="#impressum">Impressum</a></li>
+          <li><a class="transition-colors hover:text-ink" href="#datenschutz">Datenschutz</a></li>
         </ul>
       </div>
     </div>
 
-    <div class="pt-8 border-t border-slate-800 flex flex-col md:row justify-between items-center gap-4 text-sm text-slate-500">
-      <p>&copy; {currentYear} Trias Schule. Alle Rechte vorbehalten.</p>
-      <div class="flex items-center gap-2">
-        <span>Ein Projekt der</span>
-        <span class="text-white font-bold tracking-widest text-xs">TRIAS OHG</span>
-      </div>
+    <div class="flex flex-col gap-4 pt-8 text-[0.82rem] text-muted md:flex-row md:items-start md:justify-between">
+      <p>© {year} Trias Schule · ein Geschäftsbereich der Trias OHG</p>
+      <p>
+        <a class="link-line" href={vs.catalogUrl} target="_blank" rel="noopener">Partner von VS Möbel</a>
+      </p>
     </div>
+    <p class="mt-6 max-w-[90ch] text-[0.75rem] leading-relaxed text-muted/90">
+      Platzhalterfotos von Wikimedia Commons:
+      {photoCredits.map((c, i) => (
+        <>
+          <a class="underline underline-offset-2 hover:text-ink" href={c.url} target="_blank" rel="noopener">{c.author}</a> ({c.license}){i < photoCredits.length - 1 ? ', ' : '.'}
+        </>
+      ))}
+    </p>
   </div>
 </footer>

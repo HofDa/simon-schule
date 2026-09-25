@@ -1,0 +1,194 @@
+---
+import { contact, fullName, people } from '../data/site';
+import SeatedPerson from './art/SeatedPerson.astro';
+import ContactForm from './ContactForm.astro';
+
+const [simon, rene] = people;
+---
+
+<section id="kontakt" class="contact relative" aria-labelledby="contact-title" data-contact>
+  <div class="c-stage" data-cstage>
+    <div class="shell c-inner">
+      <div class="c-people" aria-hidden="false">
+        <figure class="c-person c-a m-0">
+          <div class="c-figure" data-figure data-dir="1">
+            <SeatedPerson id="sit-a" class="block h-full w-auto" label={`${fullName(simon)} auf einem ginstergelben VS-Hocker (Platzhalterzeichnung)`} />
+          </div>
+          <figcaption class="c-name">{fullName(simon)}</figcaption>
+        </figure>
+        <p class="c-chat marker" aria-hidden="true" data-chat>… und die Gruppentische ans Fenster?</p>
+        <figure class="c-person c-b m-0">
+          <div class="c-figure" data-figure data-dir="-1">
+            <SeatedPerson id="sit-b" mirror class="block h-full w-auto" label={`${fullName(rene)} auf einem ginstergelben VS-Hocker (Platzhalterzeichnung)`} />
+          </div>
+          <figcaption class="c-name">{fullName(rene)}</figcaption>
+        </figure>
+      </div>
+
+      <div class="c-center">
+        <div class="c-cta" data-cta>
+          <h2 id="contact-title" class="c-title">Sprechen wir über Ihren nächsten Lernraum.</h2>
+          <p class="c-lead">Eine kurze Nachricht genügt. Simon und Rene melden sich persönlich bei Ihnen.</p>
+          <div class="c-actions">
+            <a href="#anfrage" class="btn btn-ginster" data-open-form aria-controls="anfrage">
+              Projekt anfragen
+              <svg class="btn-arrow h-3.5 w-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" /></svg>
+            </a>
+            {contact.phone ? (
+              <a class="link-line text-[0.95rem] font-semibold" href={`tel:${contact.phone.replace(/\s/g, '')}`}>Direkt anrufen</a>
+            ) : (
+              <a class="link-line text-[0.95rem] font-semibold" href={`mailto:${contact.email}`}>E-Mail an {contact.email}</a>
+            )}
+          </div>
+        </div>
+
+        <div id="anfrage" class="c-form" data-form-wrap tabindex="-1">
+          <div class="c-form-inner">
+            <ContactForm />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .contact { border-top: 1px solid var(--color-line); }
+  .c-inner { display: grid; gap: 48px; padding-block: 88px 96px; }
+
+  .c-people {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 16px;
+    border-bottom: 1px solid var(--color-ink);
+  }
+  .c-person { display: flex; flex-direction: column; align-items: center; }
+  .c-figure { height: min(58vw, 280px); perspective: 900px; }
+  .c-figure :global(svg) { transform: rotateY(var(--ry, 0deg)); transform-origin: 50% 80%; }
+  .c-figure :global(.pose) { opacity: 0; transition: opacity 140ms linear; }
+  .c-figure[data-frame='side'] :global([data-pose='side']),
+  .c-figure[data-frame='quarter'] :global([data-pose='quarter']),
+  .c-figure[data-frame='front'] :global([data-pose='front']),
+  .c-figure:not([data-frame]) :global([data-pose='front']) { opacity: 1; }
+  .c-name { position: absolute; bottom: -30px; font-size: 0.85rem; color: var(--color-muted); white-space: nowrap; }
+  .c-person { position: relative; }
+  .c-chat { display: none; }
+
+  .c-title { font-size: clamp(2.4rem, 5vw, 4.5rem); line-height: 0.98; letter-spacing: -0.045em; }
+  .c-lead { margin-top: 20px; max-width: 42ch; color: var(--color-muted); font-size: 1.05rem; }
+  .c-actions { margin-top: 32px; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 28px; }
+
+  /* The form slides into the free space when requested (always visible without JS). */
+  :global(html.js) .c-form { display: grid; grid-template-rows: 0fr; opacity: 0; visibility: hidden; transition: grid-template-rows 700ms var(--ease-draw), opacity 500ms var(--ease-draw), visibility 0s 700ms; }
+  :global(html.js) .contact.is-form .c-form { grid-template-rows: 1fr; opacity: 1; visibility: visible; transition: grid-template-rows 700ms var(--ease-draw), opacity 600ms 150ms var(--ease-draw), visibility 0s; }
+  .c-form-inner { min-height: 0; overflow: hidden; }
+  .c-form { outline: none; margin-top: 8px; }
+  .contact.is-form .c-form-inner { padding-top: 40px; }
+
+  @media (min-width: 1024px) {
+    .c-inner { grid-template-columns: 1fr; padding-block: 120px 140px; }
+    .c-figure { height: 300px; }
+    .c-people { max-width: 900px; width: 100%; margin-inline: auto; padding-inline: 40px; }
+    .c-center { max-width: 760px; margin-inline: auto; width: 100%; text-align: left; }
+  }
+
+  /* Scrubbed desktop scene: people turn, then the conversation opens */
+  .contact.is-scrub { height: 260vh; }
+  .contact.is-scrub .c-stage { position: sticky; top: 0; height: 100vh; overflow: hidden; }
+  .contact.is-scrub .c-inner { height: 100%; padding: 0; position: relative; display: block; }
+  .contact.is-scrub .c-people {
+    position: absolute;
+    left: var(--gutter);
+    right: var(--gutter);
+    bottom: 12vh;
+    max-width: none;
+    padding-inline: 12%;
+    border-bottom: 1px solid var(--color-ink);
+  }
+  .contact.is-scrub .c-figure { height: min(46vh, 440px); }
+  .contact.is-scrub .c-chat {
+    display: block;
+    position: absolute;
+    left: 50%;
+    bottom: calc(min(46vh, 440px) * 0.92);
+    transform: translateX(-50%) rotate(-2deg);
+    font-size: 1.6rem;
+    color: #2b2b27;
+    white-space: nowrap;
+    opacity: var(--chat, 0);
+  }
+  .contact.is-scrub .c-center {
+    position: absolute;
+    left: 50%;
+    top: calc(var(--nav-h) + 5vh);
+    width: min(44vw, 640px);
+    transform: translateX(-50%);
+  }
+  .contact.is-scrub .c-cta {
+    opacity: var(--cta, 1);
+    clip-path: inset(0 0 calc((1 - var(--cta, 1)) * 100%) 0);
+    transform: translateY(calc((1 - var(--cta, 1)) * 12px));
+  }
+  .contact.is-scrub.is-form .c-cta { opacity: 0; visibility: hidden; position: absolute; transition: opacity 300ms; }
+  .contact.is-scrub.is-form .c-form-inner { padding-top: 0; }
+  .contact.is-scrub.is-form .c-form { background: rgba(255, 255, 255, 0.94); }
+</style>
+
+<script>
+  import { addScene, range } from '../scripts/motion';
+
+  const MEDIA = '(min-width: 1024px) and (min-height: 760px)';
+  const section = document.querySelector<HTMLElement>('[data-contact]');
+  const cta = section?.querySelector<HTMLElement>('[data-cta]');
+  const formWrap = section?.querySelector<HTMLElement>('[data-form-wrap]');
+  const figures = Array.from(section?.querySelectorAll<HTMLElement>('[data-figure]') ?? []);
+  let scrub = false;
+
+  if (section && cta && formWrap) {
+    addScene({
+      el: section,
+      media: MEDIA,
+      measure(active) {
+        scrub = active;
+        section.classList.toggle('is-scrub', active);
+      },
+      progress: (rect, vh) => -rect.top / Math.max(1, rect.height - vh),
+      render(p) {
+        // 0–.35 talking to each other, .35–.8 turning, .82–.97 the conversation opens
+        const turn = range(p, 0.35, 0.8);
+        const frame = turn < 0.34 ? 'side' : turn < 0.72 ? 'quarter' : 'front';
+        figures.forEach((fig) => {
+          const dir = Number(fig.dataset.dir);
+          fig.dataset.frame = frame;
+          fig.style.setProperty('--ry', `${(dir * (1 - turn) * 22).toFixed(2)}deg`);
+        });
+        section.style.setProperty('--chat', String(1 - range(p, 0.22, 0.36)));
+        const c = range(p, 0.82, 0.97);
+        section.style.setProperty('--cta', String(c));
+        if (scrub) cta.toggleAttribute('inert', c < 0.5 && !section.classList.contains('is-form'));
+        else cta.removeAttribute('inert');
+      },
+    });
+
+    const openForm = (event: Event) => {
+      event.preventDefault();
+      section.classList.add('is-form');
+      if (scrub) cta.setAttribute('inert', '');
+      const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+      if (scrub) {
+        const end = section.getBoundingClientRect().top + window.scrollY + section.offsetHeight - window.innerHeight;
+        window.scrollTo({ top: end, behavior });
+      } else {
+        const top = section.getBoundingClientRect().top + window.scrollY + (cta.offsetTop || 0) - 80;
+        window.scrollTo({ top, behavior });
+      }
+      window.setTimeout(() => formWrap.querySelector<HTMLInputElement>('input')?.focus({ preventScroll: true }), behavior === 'smooth' ? 700 : 0);
+      history.replaceState(null, '', '#anfrage');
+    };
+
+    document.querySelectorAll('[data-open-form]').forEach((el) => el.addEventListener('click', openForm));
+    if (location.hash === '#anfrage') section.classList.add('is-form');
+  }
+</script>

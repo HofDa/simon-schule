@@ -1,0 +1,31 @@
+---
+import { closingTestimonial as t } from '../data/projects';
+const pending = !t.author;
+---
+
+<section class="closing flex min-h-[64vh] items-center border-t border-line py-28" aria-label="Kundenstimme">
+  <div class="shell">
+    <figure class="m-0 lg:ml-[calc(100%/12)] lg:max-w-[calc(100%/12*9)]">
+      <svg class="mb-10 h-7 w-9" viewBox="0 0 36 28" aria-hidden="true"><path d="M0 28V16C0 7 5 1.5 14 0l1.5 3.5C10 5 7.5 8.5 7.5 13H14v15H0Zm21 0V16c0-9 5-14.5 14-16l1 3.5c-5.5 1.5-8 5-8 9.5H35v15H21Z" fill="var(--color-ginster)" /></svg>
+      <blockquote class="m-0">
+        <p class={`text-[clamp(2rem,4.4vw,4rem)] font-medium leading-[1.08] tracking-[-0.04em] ${pending ? 'text-[#86837a]' : ''}`}>
+          {t.quote}
+        </p>
+      </blockquote>
+      <figcaption class="mt-10 flex flex-wrap gap-x-3 gap-y-1 text-[0.95rem]">
+        {pending ? (
+          <>
+            <span class="open-fact">Name · Funktion · Schule / Gemeinde</span>
+            <span class="text-muted">– Abschluss-Testimonial folgt nach Freigabe</span>
+          </>
+        ) : (
+          <>
+            <span class="font-semibold">{t.author}</span>
+            {t.role && <span class="text-muted">{t.role}</span>}
+            {t.organisation && <span class="text-muted">{t.organisation}</span>}
+          </>
+        )}
+      </figcaption>
+    </figure>
+  </div>
+</section>
