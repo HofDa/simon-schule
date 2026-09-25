@@ -1,5 +1,5 @@
 /**
- * Central contact and navigation facts.
+ * Central contact facts (language-neutral; interface copy lives in src/i18n/ui.ts).
  * `null` means the fact is not confirmed yet: components render it as an
  * open, visibly marked field instead of inventing a value.
  */
@@ -34,25 +34,10 @@ export const people: Person[] = [
 
 export const fullName = (p: Person) => [p.firstName, p.lastName].filter(Boolean).join(' ');
 
-export const nav = [
-  { label: 'Projekte', href: '#projekte' },
-  { label: 'Leistungen', href: '#leistungen' },
-  { label: 'Über uns', href: '#menschen' },
-  { label: 'VS Möbel', href: '#vs-moebel' },
-  { label: 'Kontakt', href: '#kontakt' },
-];
-
+/** VS has no Italian website (vs.de/it/ is an error page), so the Italian site links to the English one. */
 export const vs = {
-  catalogUrl: 'https://www.vs.de/de/',
+  catalogUrl: { de: 'https://www.vs.de/de/', it: 'https://www.vs.de/en/' },
 };
-
-export const projectPhases = [
-  'Erste Idee',
-  'Planung läuft',
-  'Konkrete Ausstattung',
-  'Ausschreibung',
-  'Umbau / Erweiterung',
-];
 
 /** Temporary photos (Wikimedia Commons). Replace with real project photography. */
 export const photoCredits = [

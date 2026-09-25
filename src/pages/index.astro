@@ -1,33 +1,5 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Navbar from '../components/shared/Navbar.astro';
-import Footer from '../components/shared/Footer.astro';
-import WhiteboardHero from '../components/WhiteboardHero.astro';
-import ServicesStory from '../components/ServicesStory.astro';
-import ProjectTransition from '../components/ProjectTransition.astro';
-import Projects from '../components/Projects.astro';
-import People from '../components/People.astro';
-import VSProducts from '../components/VSProducts.astro';
-import ClosingTestimonial from '../components/ClosingTestimonial.astro';
-import ContactScene from '../components/ContactScene.astro';
-
-const title = 'Trias Schule | Lernräume für Schulen und Kindergärten in Südtirol';
-const description =
-  'Trias Schule berät, plant, liefert und montiert die Einrichtung von Schulen und Kindergärten in Südtirol. Exklusivvertretung von VS Möbel.';
+import Home from '../components/Home.astro';
 ---
 
-<Layout title={title} description={description}>
-  <Navbar />
-  <main id="inhalt">
-    <WhiteboardHero />
-    <ServicesStory />
-    <ProjectTransition>
-      <Projects />
-    </ProjectTransition>
-    <People />
-    <VSProducts />
-    <ClosingTestimonial />
-    <ContactScene />
-  </main>
-  <Footer />
-</Layout>
+<Home />

@@ -1,0 +1,30 @@
+---
+/** The homepage, shared by the German (/) and Italian (/it/) routes. */
+import Layout from '../layouts/Layout.astro';
+import Navbar from './shared/Navbar.astro';
+import Footer from './shared/Footer.astro';
+import WhiteboardHero from './WhiteboardHero.astro';
+import ServicesStory from './ServicesStory.astro';
+import ProjectTransition from './ProjectTransition.astro';
+import Projects from './Projects.astro';
+import People from './People.astro';
+import VSProducts from './VSProducts.astro';
+import ClosingTestimonial from './ClosingTestimonial.astro';
+import ContactScene from './ContactScene.astro';
+---
+
+<Layout>
+  <Navbar />
+  <main id="inhalt">
+    <WhiteboardHero />
+    <ServicesStory />
+    <ProjectTransition>
+      <Projects />
+    </ProjectTransition>
+    <People />
+    <VSProducts />
+    <ClosingTestimonial />
+    <ContactScene />
+  </main>
+  <Footer />
+</Layout>

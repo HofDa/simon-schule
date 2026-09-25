@@ -1,12 +1,15 @@
 ---
-import { projects } from '../data/projects';
+import { getProjects } from '../data/projects';
+import { getLang, useTranslations } from '../i18n/ui';
 import ProjectPhoto from './ProjectPhoto.astro';
 
-const [a, b, c] = projects;
+const lang = getLang(Astro.currentLocale);
+const t = useTranslations(lang);
+const [a, b, c] = getProjects(lang);
 
 // The headline is written letter by letter. Delays are computed here so the
 // pacing is slightly uneven (like a hand) but identical on every load.
-const headline = 'Lernräume für Südtirol.';
+const headline = t.hero.headline;
 const PER_LETTER = 0.068;
 const WORD_GAP = 0.2;
 let clock = 0;
@@ -30,24 +33,24 @@ const writeDuration = (clock - WORD_GAP + 0.15).toFixed(2);
         <!-- sketch layer (desktop) -->
         <svg class="sketch pointer-events-none absolute inset-0 hidden h-full w-full lg:block" viewBox="0 0 1000 600" preserveAspectRatio="none" aria-hidden="true">
           <g class="ink-lines" fill="none" stroke="#20201D" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke">
-            <path class="draw" style="--d: 1.05s" pathLength="1" d="M662 27 C694 22 716 34 728 52" vector-effect="non-scaling-stroke" />
-            <path class="draw" style="--d: 1.2s" pathLength="1" d="M720 45 L728 53 L735 43" vector-effect="non-scaling-stroke" />
-            <path class="draw" style="--d: 1.1s" pathLength="1" d="M566 432 C586 432 600 420 612 404" vector-effect="non-scaling-stroke" />
-            <path class="draw" style="--d: 1.25s" pathLength="1" d="M602 406 L612 403 L613 414" vector-effect="non-scaling-stroke" />
-            <path class="draw dashed" style="--d: 1.15s" pathLength="1" d="M660 300 C672 316 690 322 706 330" vector-effect="non-scaling-stroke" />
-            <path class="draw" style="--d: 1.3s" pathLength="1" d="M846 64 C866 60 890 62 910 60" vector-effect="non-scaling-stroke" />
+            <path class="draw" style="--d: 1.05s" pathLength="1" d="M560 50 C585 46 598 64 602 98" vector-effect="non-scaling-stroke" />
+            <path class="draw" style="--d: 1.2s" pathLength="1" d="M595 92 L602 100 L609 92" vector-effect="non-scaling-stroke" />
+            <path class="draw" style="--d: 1.1s" pathLength="1" d="M648 386 C656 392 660 404 662 416" vector-effect="non-scaling-stroke" />
+            <path class="draw" style="--d: 1.25s" pathLength="1" d="M655 410 L662 418 L668 409" vector-effect="non-scaling-stroke" />
+            <path class="draw dashed" style="--d: 1.15s" pathLength="1" d="M562 390 C562 402 560 414 558 428" vector-effect="non-scaling-stroke" />
+            <path class="draw" style="--d: 1.3s" pathLength="1" d="M830 224 C850 220 880 222 902 220" vector-effect="non-scaling-stroke" />
           </g>
           <!-- floor-plan sketch -->
           <g class="plan" fill="none" stroke="#20201D" stroke-linecap="round" vector-effect="non-scaling-stroke">
-            <path class="draw" style="--d: 0.95s" pathLength="1" stroke-width="2" d="M866 372 H972 V452 H866 Z" vector-effect="non-scaling-stroke" />
-            <path class="draw" style="--d: 1.1s" pathLength="1" stroke-width="1.2" d="M882 386 h18 v10 h-18 Z M912 386 h18 v10 h-18 Z M942 386 h18 v10 h-18 Z M882 418 h26 v14 h-26 Z M926 418 h34 v14 h-34 Z" vector-effect="non-scaling-stroke" />
-            <path class="draw" style="--d: 1.25s" pathLength="1" stroke-width="1.2" d="M866 466 H972 M866 461 V471 M972 461 V471" vector-effect="non-scaling-stroke" />
+            <path class="draw" style="--d: 0.95s" pathLength="1" stroke-width="2" d="M510 432 H610 V516 H510 Z" vector-effect="non-scaling-stroke" />
+            <path class="draw" style="--d: 1.1s" pathLength="1" stroke-width="1.2" d="M524 446 h18 v10 h-18 Z M552 446 h18 v10 h-18 Z M580 446 h18 v10 h-18 Z M524 480 h26 v14 h-26 Z M566 480 h32 v14 h-32 Z" vector-effect="non-scaling-stroke" />
+            <path class="draw" style="--d: 1.25s" pathLength="1" stroke-width="1.2" d="M510 532 H610 M510 527 V537 M610 527 V537" vector-effect="non-scaling-stroke" />
           </g>
         </svg>
 
         <div class="relative grid h-full lg:block">
           <!-- copy -->
-          <div class="hero-copy relative z-10 pt-10 pb-8 lg:absolute lg:left-0 lg:top-0 lg:w-[44%] lg:pt-[clamp(40px,8vh,88px)]">
+          <div class="hero-copy relative z-10 pt-10 pb-8 lg:absolute lg:left-0 lg:top-0 lg:w-[38.2%] lg:pt-[calc(var(--board-h)*0.146)]">
             <h1 id="hero-title" class="hero-title">
               <span class="sr-only">{headline}</span>
               <span class="handwriting" aria-hidden="true">
@@ -66,26 +69,26 @@ const writeDuration = (clock - WORD_GAP + 0.15).toFixed(2);
               </span>
             </h1>
             <p class="rise mt-7 max-w-[38ch] text-[1.05rem] leading-[1.6] text-muted sm:text-[1.12rem]" style="--d: 0s">
-              Wir planen und richten Schulen und Kindergärten in Südtirol ein, mit Möbeln von VS. Sie haben dabei von Anfang an feste Ansprechpartner.
+              {t.hero.sub}
             </p>
             <div class="rise mt-9 flex flex-wrap items-center gap-x-7 gap-y-4" style="--d: 0.15s">
               <a href="#projekte" class="btn btn-ink">
-                Projekte entdecken
+                {t.hero.primary}
                 <svg class="btn-arrow h-3.5 w-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M8 2v11M4 9l4 4 4-4" /></svg>
               </a>
-              <a href="#anfrage" class="link-line text-[0.95rem] font-semibold" data-open-form>Projekt besprechen</a>
+              <a href="#anfrage" class="link-line text-[0.95rem] font-semibold" data-open-form>{t.hero.secondary}</a>
             </div>
           </div>
 
           <!-- pinned photos -->
           <div class="pins relative mb-[calc(var(--chair-peek)+20px)] h-[min(78vw,520px)] lg:absolute lg:inset-0 lg:m-0 lg:h-auto">
-            <ProjectPhoto project={a} class="pin-a" sizes="(min-width: 1024px) 31vw, 62vw" priority />
-            <ProjectPhoto project={b} class="pin-b" sizes="(min-width: 1024px) 16vw, 48vw" />
-            <ProjectPhoto project={c} class="pin-c hidden lg:block" sizes="22vw" />
+            <ProjectPhoto project={a} class="pin-a" sizes="(min-width: 1024px) 33vw, 62vw" priority />
+            <ProjectPhoto project={b} class="pin-b" sizes="(min-width: 1024px) 13vw, 48vw" />
+            <ProjectPhoto project={c} class="pin-c hidden lg:block" sizes="21vw" />
 
-            <span class="note note-flex marker" style="--d: 0.95s">Flexibilität</span>
-            <span class="note note-akustik marker hidden lg:block" style="--d: 1.1s">Akustik?</span>
-            <span class="note note-gruppe marker hidden lg:block" style="--d: 1.2s">Gruppenarbeit</span>
+            <span class="note note-flex marker" style="--d: 0.95s">{t.hero.notes.flex}</span>
+            <span class="note note-akustik marker hidden lg:block" style="--d: 1.1s">{t.hero.notes.acoustics}</span>
+            <span class="note note-gruppe marker hidden lg:block" style="--d: 1.2s">{t.hero.notes.groups}</span>
             <span class="note note-dim marker hidden lg:block" style="--d: 1.3s">7,20 m</span>
           </div>
         </div>
@@ -114,19 +117,22 @@ const writeDuration = (clock - WORD_GAP + 0.15).toFixed(2);
   }
   .note-flex { left: 52%; top: -2%; transform: rotate(-3deg); }
   @media (min-width: 1024px) {
-    .note-flex { left: 56%; top: 2.2%; }
-    .note-akustik { left: 84.6%; top: 6.4%; transform: rotate(2deg); }
-    .note-gruppe { left: 44.5%; top: 68.5%; transform: rotate(-2deg); }
-    .note-dim { left: 88.6%; top: 78.6%; font-size: 1.25rem; }
+    .note-flex { left: 47%; top: 6%; }
+    .note-akustik { left: 83%; top: 31%; transform: rotate(2deg); }
+    .note-gruppe { right: 35.5%; top: 61.5%; transform: rotate(-2deg); } /* right-anchored: ends at its arrow in any language */
+    .note-dim { left: 53%; top: 90.5%; font-size: 1.25rem; }
   }
 
   /* pins: mobile */
   .pins :global(.pin-a) { left: 0; top: 10%; width: 64%; transform: rotate(-1.5deg); }
   .pins :global(.pin-b) { right: 0; top: 46%; width: 48%; transform: rotate(2deg); }
   @media (min-width: 1024px) {
-    .pins :global(.pin-a) { left: 47%; top: 9%; width: 31%; }
-    .pins :global(.pin-b) { left: auto; right: 3.8%; top: 16%; width: 15.5%; }
-    .pins :global(.pin-c) { left: 61.5%; top: 55%; width: 22%; transform: rotate(1deg); }
+    /* Golden grid (φ ≈ 1.618). The board is close to a golden rectangle.
+       A (33%) is centred on the golden point 61.8% / 38.2%; C = A/φ sits on 76.4% / 76.4%;
+       B = C/φ sits top right. The text column is 38.2% wide, the chair rests on the 38.2% line. */
+    .pins :global(.pin-a) { left: 45.3%; top: 17.7%; width: 33%; transform: rotate(-1.2deg); }
+    .pins :global(.pin-b) { left: 81.9%; right: auto; top: 6.8%; width: 12.6%; transform: rotate(2.5deg); }
+    .pins :global(.pin-c) { left: 66.2%; top: 63.7%; width: 20.4%; transform: rotate(1.2deg); }
   }
 
   /* Attention sequence: wordmark and handwritten claim → subline → projects → annotations → chair (ServicesStory).
@@ -142,7 +148,7 @@ const writeDuration = (clock - WORD_GAP + 0.15).toFixed(2);
   .hero-title {
     font-family: var(--font-marker);
     font-weight: 700;
-    font-size: clamp(3.6rem, min(8.6vw, 13vh), 7.6rem);
+    font-size: clamp(3.4rem, min(6.4vw, 11vh), 6.8rem);
     line-height: 0.86;
     letter-spacing: 0;
     color: var(--color-ink);

@@ -1,20 +1,17 @@
 ---
 import '../styles/global.css';
-import { asset } from '../lib/paths';
+import { asset, homeFor } from '../lib/paths';
+import { getLang, langs, useTranslations } from '../i18n/ui';
 
-interface Props {
-  title: string;
-  description?: string;
-}
-
-const {
-  title,
-  description = 'Trias Schule plant und richtet Lernräume für Schulen und Kindergärten in Südtirol ein, mit festen Ansprechpartnern und Möbeln von VS.',
-} = Astro.props;
+const lang = getLang(Astro.currentLocale);
+const t = useTranslations(lang);
+const { title, description } = t.meta;
+const site = Astro.site;
+const absolute = (path: string) => (site ? new URL(path, site).href : path);
 ---
 
 <!doctype html>
-<html lang="de">
+<html lang={t.htmlLang}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -22,7 +19,9 @@ const {
     <meta name="theme-color" content="#ffffff" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:locale" content="de_IT" />
+    <meta property="og:locale" content={t.ogLocale} />
+    {langs.map((l) => <link rel="alternate" hreflang={l} href={absolute(homeFor(l))} />)}
+    <link rel="alternate" hreflang="x-default" href={absolute(homeFor('de'))} />
     <link rel="icon" type="image/svg+xml" href={asset('favicon.svg')} />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
@@ -35,7 +34,7 @@ const {
     />
   </head>
   <body>
-    <a href="#inhalt" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[200] focus:bg-paper focus:px-4 focus:py-2">Zum Inhalt springen</a>
+    <a href="#inhalt" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[200] focus:bg-paper focus:px-4 focus:py-2">{t.skip}</a>
     <slot />
   </body>
 </html>

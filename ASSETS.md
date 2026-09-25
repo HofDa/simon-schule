@@ -12,12 +12,17 @@ Alles hier ist auf der Seite sichtbar als Platzhalter markiert (gestrichelt unte
 - [ ] Formular-Dienst (optional): `inquiry.endpoint` setzen (Formspree/Web3Forms), sonst öffnet das Formular eine vorbereitete E-Mail
 - [ ] Finaler Web-Farbwert für VS Ginstergelb (RAL 1032) – aktuell `#E2A300` in `src/styles/global.css`
 
+## Italienische Version (`/it/`)
+- [ ] Italienische Texte von einer Muttersprachlerin / einem Muttersprachler prüfen lassen: Oberfläche in `src/i18n/ui.ts`, Projekte in `src/data/projects.ts`
+- [ ] VS hat keine italienische Website (vs.de/it/ ist eine Fehlerseite); die italienische Seite verlinkt deshalb auf vs.de/en/. Bei Bedarf in `src/data/site.ts` (`vs.catalogUrl.it`) ändern
+- [ ] Echte Projekttexte und Zitate jeweils auf Deutsch und Italienisch liefern
+
 ## Projekte (`src/data/projects.ts`)
 Pro Projekt: Name, Ort, Gebäudetyp, Leistungsumfang, Beschreibung, optional Jahr / Architektur / Auftraggeber, dazu ein freigegebenes Zitat (Name, Funktion, Schule/Gemeinde). Danach `placeholder: false` setzen.
 - [ ] Projekt 1 (Schule)
 - [ ] Projekt 2 (Kindergarten)
 - [ ] Projekt 3 (Lernlandschaft, vollbreites Foto)
-- [ ] Abschluss-Testimonial (`closingTestimonial`)
+- [ ] Abschluss-Testimonial (`closingSource`)
 
 ## Fotos
 Projektfotos liegen als `public/images/projects/<name>-900.webp` und `-1800.webp` (Querformat, Architekturfotografie). Die Whiteboard-Bilder im Hero sind dieselben Projekte.

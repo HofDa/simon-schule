@@ -3,16 +3,19 @@
  * Schematic ginstergelb VS school chair (cantilever shell with grip slot).
  * Stand-in until a cut-out product photo (vs-pantoswing-ginstergelb.webp) exists.
  */
+import { getLang, useTranslations } from '../../i18n/ui';
+
 interface Props {
   id: string;
   class?: string;
   shadow?: boolean;
 }
 const { id, class: className = '', shadow = true } = Astro.props;
+const title = useTranslations(getLang(Astro.currentLocale)).chair.detailed;
 ---
 
 <svg class={className} viewBox="0 0 400 720" role="img" aria-labelledby={`${id}-t`}>
-  <title id={`${id}-t`}>Ginstergelber Schulstuhl von VS (schematische Darstellung)</title>
+  <title id={`${id}-t`}>{title}</title>
   <defs>
     <linearGradient id={`${id}-face`} x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#EDB21C" />

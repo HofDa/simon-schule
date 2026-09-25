@@ -1,8 +1,12 @@
 ---
-import { projects } from '../data/projects';
+import { getProjects } from '../data/projects';
 import { asset } from '../lib/paths';
+import { getLang, useTranslations } from '../i18n/ui';
 import ProjectTestimonial from './ProjectTestimonial.astro';
 
+const lang = getLang(Astro.currentLocale);
+const t = useTranslations(lang).projects;
+const projects = getProjects(lang);
 const layouts = ['left', 'right', 'full'] as const;
 const src = (file: string, w: number) => asset(`images/projects/${file}-${w}.webp`);
 ---
@@ -29,15 +33,15 @@ const src = (file: string, w: number) => asset(`images/projects/${file}-${w}.web
             </div>
 
             <div class="p-info" data-info>
-              {project.placeholder && <p class="tag-placeholder mb-5">Beispielprojekt · Platzhalter</p>}
+              {project.placeholder && <p class="tag-placeholder mb-5">{t.placeholder}</p>}
               <h3 id={`p-${project.id}`} class="p-title">{project.title}</h3>
               <dl class="p-meta">
-                <div><dt>Ort</dt><dd>{project.location ?? <span class="open-fact">folgt</span>}</dd></div>
-                <div><dt>Gebäude</dt><dd>{project.type}</dd></div>
-                <div><dt>Leistungen</dt><dd>{project.services.join(' · ')}</dd></div>
-                {project.year && <div><dt>Jahr</dt><dd>{project.year}</dd></div>}
-                {project.architect && <div><dt>Architektur</dt><dd>{project.architect}</dd></div>}
-                {project.client && <div><dt>Auftraggeber</dt><dd>{project.client}</dd></div>}
+                <div><dt>{t.meta.location}</dt><dd>{project.location ?? <span class="open-fact">{t.pending}</span>}</dd></div>
+                <div><dt>{t.meta.type}</dt><dd>{project.type}</dd></div>
+                <div><dt>{t.meta.services}</dt><dd>{project.services.join(' · ')}</dd></div>
+                {project.year && <div><dt>{t.meta.year}</dt><dd>{project.year}</dd></div>}
+                {project.architect && <div><dt>{t.meta.architect}</dt><dd>{project.architect}</dd></div>}
+                {project.client && <div><dt>{t.meta.client}</dt><dd>{project.client}</dd></div>}
               </dl>
               <p class="p-desc">{project.description}</p>
               {detail && layout !== 'full' && (

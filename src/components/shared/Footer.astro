@@ -1,5 +1,10 @@
 ---
-import { contact, nav, photoCredits, vs } from '../../data/site';
+import { contact, photoCredits, vs } from '../../data/site';
+import { getLang, useTranslations } from '../../i18n/ui';
+
+const lang = getLang(Astro.currentLocale);
+const t = useTranslations(lang);
+const f = t.footer;
 const year = new Date().getFullYear();
 ---
 
@@ -11,43 +16,43 @@ const year = new Date().getFullYear();
           <span class="font-bold">Trias</span><span class="text-muted">Schule</span>
         </p>
         <p class="mt-5 max-w-[34ch] leading-relaxed text-muted">
-          Einrichtung für Schulen und Kindergärten in Südtirol. Exklusivvertretung von VS Möbel.
+          {f.claim}
         </p>
       </div>
 
       <div class="md:col-span-3">
-        <h2 class="mb-4 text-[0.92rem] font-semibold tracking-normal">Kontakt</h2>
+        <h2 class="mb-4 text-[0.92rem] font-semibold tracking-normal">{f.contact}</h2>
         <ul class="space-y-2 text-muted">
           <li><a class="link-line text-ink" href={`mailto:${contact.email}`}>{contact.email}</a></li>
-          <li>{contact.phone ? <a href={`tel:${contact.phone.replace(/\s/g, '')}`}>{contact.phone}</a> : <span class="open-fact">Telefon folgt</span>}</li>
-          <li>{contact.address ?? <span class="open-fact">Adresse folgt</span>}</li>
+          <li>{contact.phone ? <a href={`tel:${contact.phone.replace(/\s/g, '')}`}>{contact.phone}</a> : <span class="open-fact">{f.phonePending}</span>}</li>
+          <li>{contact.address ?? <span class="open-fact">{f.addressPending}</span>}</li>
         </ul>
       </div>
 
       <div class="md:col-span-2">
-        <h2 class="mb-4 text-[0.92rem] font-semibold tracking-normal">Seite</h2>
+        <h2 class="mb-4 text-[0.92rem] font-semibold tracking-normal">{f.page}</h2>
         <ul class="space-y-2 text-muted">
-          {nav.map((item) => <li><a class="transition-colors hover:text-ink" href={item.href}>{item.label}</a></li>)}
+          {t.nav.items.map((item) => <li><a class="transition-colors hover:text-ink" href={item.href}>{item.label}</a></li>)}
         </ul>
       </div>
 
       <div class="md:col-span-2">
-        <h2 class="mb-4 text-[0.92rem] font-semibold tracking-normal">Rechtliches</h2>
+        <h2 class="mb-4 text-[0.92rem] font-semibold tracking-normal">{f.legal}</h2>
         <ul class="space-y-2 text-muted">
-          <li><a class="transition-colors hover:text-ink" href="#impressum">Impressum</a></li>
-          <li><a class="transition-colors hover:text-ink" href="#datenschutz">Datenschutz</a></li>
+          <li><a class="transition-colors hover:text-ink" href="#impressum">{f.imprint}</a></li>
+          <li><a class="transition-colors hover:text-ink" href="#datenschutz">{f.privacy}</a></li>
         </ul>
       </div>
     </div>
 
     <div class="flex flex-col gap-4 pt-8 text-[0.82rem] text-muted md:flex-row md:items-start md:justify-between">
-      <p>© {year} Trias Schule · ein Geschäftsbereich der Trias OHG</p>
+      <p>© {year} Trias Schule · {f.company}</p>
       <p>
-        <a class="link-line" href={vs.catalogUrl} target="_blank" rel="noopener">Partner von VS Möbel</a>
+        <a class="link-line" href={vs.catalogUrl[lang]} target="_blank" rel="noopener">{f.partner}</a>
       </p>
     </div>
     <p class="mt-6 max-w-[90ch] text-[0.75rem] leading-relaxed text-muted/90">
-      Platzhalterfotos von Wikimedia Commons:
+      {f.credits}
       {photoCredits.map((c, i) => (
         <>
           <a class="underline underline-offset-2 hover:text-ink" href={c.url} target="_blank" rel="noopener">{c.author}</a> ({c.license}){i < photoCredits.length - 1 ? ', ' : '.'}

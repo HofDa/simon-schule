@@ -16,6 +16,11 @@ const site =
 export default defineConfig({
   site,
   base,
+  i18n: {
+    defaultLocale: 'de',
+    locales: ['de', 'it'],
+    routing: { prefixDefaultLocale: false },
+  },
   vite: {
     plugins: [tailwindcss()]
   }

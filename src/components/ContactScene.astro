@@ -1,8 +1,10 @@
 ---
 import { contact, fullName, people } from '../data/site';
+import { getLang, useTranslations } from '../i18n/ui';
 import SeatedPerson from './art/SeatedPerson.astro';
 import ContactForm from './ContactForm.astro';
 
+const t = useTranslations(getLang(Astro.currentLocale)).contact;
 const [simon, rene] = people;
 ---
 
@@ -12,14 +14,14 @@ const [simon, rene] = people;
       <div class="c-people" aria-hidden="false">
         <figure class="c-person c-a m-0">
           <div class="c-figure" data-figure data-dir="1">
-            <SeatedPerson id="sit-a" class="block h-full w-auto" label={`${fullName(simon)} auf einem ginstergelben VS-Hocker (Platzhalterzeichnung)`} />
+            <SeatedPerson id="sit-a" class="block h-full w-auto" label={t.seated(fullName(simon))} />
           </div>
           <figcaption class="c-name">{fullName(simon)}</figcaption>
         </figure>
-        <p class="c-chat marker" aria-hidden="true" data-chat>… und die Gruppentische ans Fenster?</p>
+        <p class="c-chat marker" aria-hidden="true" data-chat>{t.chat}</p>
         <figure class="c-person c-b m-0">
           <div class="c-figure" data-figure data-dir="-1">
-            <SeatedPerson id="sit-b" mirror class="block h-full w-auto" label={`${fullName(rene)} auf einem ginstergelben VS-Hocker (Platzhalterzeichnung)`} />
+            <SeatedPerson id="sit-b" mirror class="block h-full w-auto" label={t.seated(fullName(rene))} />
           </div>
           <figcaption class="c-name">{fullName(rene)}</figcaption>
         </figure>
@@ -27,17 +29,17 @@ const [simon, rene] = people;
 
       <div class="c-center">
         <div class="c-cta" data-cta>
-          <h2 id="contact-title" class="c-title">Sprechen wir über Ihren nächsten Lernraum.</h2>
-          <p class="c-lead">Schreiben Sie uns kurz, worum es geht. Simon oder Rene melden sich bei Ihnen.</p>
+          <h2 id="contact-title" class="c-title">{t.title}</h2>
+          <p class="c-lead">{t.lead}</p>
           <div class="c-actions">
             <a href="#anfrage" class="btn btn-ginster" data-open-form aria-controls="anfrage">
-              Projekt anfragen
+              {t.cta}
               <svg class="btn-arrow h-3.5 w-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" /></svg>
             </a>
             {contact.phone ? (
-              <a class="link-line text-[0.95rem] font-semibold" href={`tel:${contact.phone.replace(/\s/g, '')}`}>Direkt anrufen</a>
+              <a class="link-line text-[0.95rem] font-semibold" href={`tel:${contact.phone.replace(/\s/g, '')}`}>{t.call}</a>
             ) : (
-              <a class="link-line text-[0.95rem] font-semibold" href={`mailto:${contact.email}`}>E-Mail an {contact.email}</a>
+              <a class="link-line text-[0.95rem] font-semibold" href={`mailto:${contact.email}`}>{t.mail(contact.email)}</a>
             )}
           </div>
         </div>
@@ -133,6 +135,9 @@ const [simon, rene] = people;
   }
   .contact.is-scrub.is-form .c-cta { opacity: 0; visibility: hidden; position: absolute; transition: opacity 300ms; }
   .contact.is-scrub.is-form .c-form-inner { padding-top: 0; }
+  /* make room for the form: the two step aside */
+  .contact.is-scrub .c-people { transition: padding 700ms var(--ease-draw); }
+  .contact.is-scrub.is-form .c-people { padding-inline: 0; }
   .contact.is-scrub.is-form .c-form { background: rgba(255, 255, 255, 0.94); }
 </style>
 

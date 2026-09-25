@@ -1,15 +1,20 @@
 ---
-import { nav } from '../../data/site';
+import { homeFor } from '../../lib/paths';
+import { getLang, langs, useTranslations } from '../../i18n/ui';
+
+const lang = getLang(Astro.currentLocale);
+const t = useTranslations(lang);
+const nav = t.nav.items;
 ---
 
 <header class="site-nav fixed inset-x-0 top-0 z-[100] h-[var(--nav-h)]" data-nav>
   <div class="shell flex h-full items-center justify-between gap-8">
-    <a href="#top" class="wordmark flex items-baseline gap-[0.4em] text-[0.95rem] uppercase tracking-[0.14em]" aria-label="Trias Schule, zum Seitenanfang">
+    <a href="#top" class="wordmark flex items-baseline gap-[0.4em] text-[0.95rem] uppercase tracking-[0.14em]" aria-label={t.nav.home}>
       <span class="font-bold">Trias</span>
       <span class="font-normal text-muted">Schule</span>
     </a>
 
-    <nav class="hidden items-center gap-9 lg:flex" aria-label="Hauptnavigation">
+    <nav class="hidden items-center gap-9 lg:flex" aria-label={t.nav.main}>
       {nav.map((item) => (
         <a class="nav-link relative py-2 text-[0.92rem] font-medium text-muted transition-colors duration-200 hover:text-ink" href={item.href} data-nav-link>
           {item.label}
@@ -17,10 +22,22 @@ import { nav } from '../../data/site';
       ))}
     </nav>
 
-    <div class="flex items-center gap-3">
+    <div class="flex items-center gap-3 sm:gap-5">
+      <nav class="lang-switch flex items-center text-[0.82rem] font-semibold uppercase tracking-[0.08em]" aria-label={t.nav.switchLabel}>
+        {langs.map((l, i) => (
+          <>
+            {i > 0 && <span class="px-1.5 text-line" aria-hidden="true">/</span>}
+            {l === lang ? (
+              <span class="text-ink" aria-current="true">{l}</span>
+            ) : (
+              <a class="text-muted transition-colors hover:text-ink" href={homeFor(l)} hreflang={l} lang={l} title={useTranslations(l).langName}>{l}</a>
+            )}
+          </>
+        ))}
+      </nav>
       <a href="#anfrage" class="btn btn-ink hidden !min-h-[40px] !px-4 text-[0.88rem] sm:inline-flex" data-open-form>
         <span class="h-1.5 w-1.5 rounded-full bg-ginster" aria-hidden="true"></span>
-        Projekt anfragen
+        {t.nav.cta}
       </a>
       <button
         type="button"
@@ -28,15 +45,17 @@ import { nav } from '../../data/site';
         aria-expanded="false"
         aria-controls="mobile-menu"
         data-menu-toggle
+        data-label-open={t.nav.menu}
+        data-label-close={t.nav.close}
       >
         <span class="menu-icon relative block h-3 w-5" aria-hidden="true"><span></span><span></span></span>
-        <span data-menu-label>Menü</span>
+        <span data-menu-label>{t.nav.menu}</span>
       </button>
     </div>
   </div>
 
   <div id="mobile-menu" class="mobile-menu fixed inset-x-0 bottom-0 top-[var(--nav-h)] bg-paper lg:hidden" hidden>
-    <nav class="shell flex h-full flex-col pt-10 pb-10" aria-label="Mobile Navigation">
+    <nav class="shell flex h-full flex-col pt-10 pb-10" aria-label={t.nav.mobile}>
       <ul class="flex flex-col border-t border-line">
         {nav.map((item) => (
           <li class="border-b border-line">
@@ -47,7 +66,7 @@ import { nav } from '../../data/site';
           </li>
         ))}
       </ul>
-      <a href="#anfrage" class="btn btn-ginster mt-auto justify-center" data-menu-link data-open-form>Projekt anfragen</a>
+      <a href="#anfrage" class="btn btn-ginster mt-auto justify-center" data-menu-link data-open-form>{t.nav.cta}</a>
     </nav>
   </div>
 </header>
@@ -123,7 +142,7 @@ import { nav } from '../../data/site';
     menu.hidden = !open;
     header.classList.toggle('is-open', open);
     document.body.style.overflow = open ? 'hidden' : '';
-    if (label) label.textContent = open ? 'Schließen' : 'Menü';
+    if (label) label.textContent = (open ? toggle.dataset.labelClose : toggle.dataset.labelOpen) ?? '';
   };
 
   toggle?.addEventListener('click', () => setMenu(toggle.getAttribute('aria-expanded') !== 'true'));

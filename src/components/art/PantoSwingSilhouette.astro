@@ -6,6 +6,8 @@
  * vertically at the bottom edge of the viewBox (centred on x = 5 and x = 395,
  * 10 units wide) so the Leistungen column can continue them as lines.
  */
+import { getLang, useTranslations } from '../../i18n/ui';
+
 interface Props {
   class?: string;
   /** Draw the legs down to the floor (standalone chair, e.g. the mobile hero). */
@@ -13,9 +15,10 @@ interface Props {
 }
 const { class: className = '', fullLegs = false } = Astro.props;
 const bottom = fullLegs ? 540 : 330;
+const label = useTranslations(getLang(Astro.currentLocale)).chair.label;
 ---
 
-<svg class={className} viewBox={`0 0 400 ${bottom}`} role="img" aria-label="Ginstergelber PantoSwing-Schulstuhl von VS, Vorderansicht">
+<svg class={className} viewBox={`0 0 400 ${bottom}`} role="img" aria-label={label}>
   <g fill="none" stroke="#E2A300" stroke-width="10" stroke-linecap="butt">
     <path d={`M60 300 C24 300 5 308 5 330 V${bottom}`} />
     <path d={`M340 300 C376 300 395 308 395 330 V${bottom}`} />

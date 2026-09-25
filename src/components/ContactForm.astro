@@ -1,5 +1,9 @@
 ---
-import { inquiry, projectPhases } from '../data/site';
+import { inquiry } from '../data/site';
+import { getLang, useTranslations } from '../i18n/ui';
+
+const t = useTranslations(getLang(Astro.currentLocale)).form;
+const f = t.fields;
 ---
 
 <form
@@ -12,57 +16,59 @@ import { inquiry, projectPhases } from '../data/site';
   data-endpoint={inquiry.endpoint ?? ''}
   data-mailto={inquiry.mailto}
   aria-labelledby="inquiry-title"
+  data-org-key={f.org.key}
+  data-messages={JSON.stringify(t.status)}
 >
   <div class="flex items-baseline justify-between gap-6">
-    <h3 id="inquiry-title" class="text-[1.6rem] tracking-[-0.03em]">Ihr Projekt</h3>
-    <p class="text-[0.82rem] text-muted">* Pflichtfeld</p>
+    <h3 id="inquiry-title" class="text-[1.6rem] tracking-[-0.03em]">{t.title}</h3>
+    <p class="text-[0.82rem] text-muted">{t.required}</p>
   </div>
 
   <div class="fields mt-6">
     <div class="field">
-      <label for="f-name">Name *</label>
-      <input id="f-name" name="Name" type="text" autocomplete="name" required aria-describedby="f-name-err" />
-      <p class="err" id="f-name-err" data-msg="Bitte geben Sie Ihren Namen an."></p>
+      <label for="f-name">{f.name.label} *</label>
+      <input id="f-name" name={f.name.key} type="text" autocomplete="name" required aria-describedby="f-name-err" />
+      <p class="err" id="f-name-err" data-msg={f.name.error}></p>
     </div>
     <div class="field">
-      <label for="f-org">Schule, Kindergarten oder Gemeinde *</label>
-      <input id="f-org" name="Organisation" type="text" autocomplete="organization" required aria-describedby="f-org-err" />
-      <p class="err" id="f-org-err" data-msg="Für wen planen wir? Bitte Einrichtung oder Gemeinde angeben."></p>
+      <label for="f-org">{f.org.label} *</label>
+      <input id="f-org" name={f.org.key} type="text" autocomplete="organization" required aria-describedby="f-org-err" />
+      <p class="err" id="f-org-err" data-msg={f.org.error}></p>
     </div>
     <div class="field">
-      <label for="f-mail">E-Mail *</label>
-      <input id="f-mail" name="E-Mail" type="email" autocomplete="email" required aria-describedby="f-mail-err" />
-      <p class="err" id="f-mail-err" data-msg="Bitte eine gültige E-Mail-Adresse angeben, z. B. name@schule.it."></p>
+      <label for="f-mail">{f.mail.label} *</label>
+      <input id="f-mail" name={f.mail.key} type="email" autocomplete="email" required aria-describedby="f-mail-err" />
+      <p class="err" id="f-mail-err" data-msg={f.mail.error}></p>
     </div>
     <div class="field">
-      <label for="f-tel">Telefon <span class="text-muted">(optional)</span></label>
-      <input id="f-tel" name="Telefon" type="tel" autocomplete="tel" />
+      <label for="f-tel">{f.tel.label} <span class="text-muted">{t.optional}</span></label>
+      <input id="f-tel" name={f.tel.key} type="tel" autocomplete="tel" />
     </div>
     <div class="field">
-      <label for="f-ort">Projektort</label>
-      <input id="f-ort" name="Projektort" type="text" autocomplete="address-level2" placeholder="z. B. Gemeinde oder Gebäude" />
+      <label for="f-ort">{f.place.label}</label>
+      <input id="f-ort" name={f.place.key} type="text" autocomplete="address-level2" placeholder={f.place.placeholder} />
     </div>
     <fieldset class="field field-wide phases">
-      <legend>Projektphase</legend>
+      <legend>{f.phase.label}</legend>
       <div class="chips">
-        {projectPhases.map((phase, i) => (
+        {t.phases.map((phase) => (
           <label class="chip">
-            <input type="radio" name="Projektphase" value={phase} class="sr-only" />
+            <input type="radio" name={f.phase.key} value={phase} class="sr-only" />
             <span>{phase}</span>
           </label>
         ))}
       </div>
     </fieldset>
     <div class="field field-wide">
-      <label for="f-msg">Nachricht *</label>
-      <textarea id="f-msg" name="Nachricht" rows="3" required aria-describedby="f-msg-err" placeholder="Um welchen Raum geht es, und was soll er künftig können?"></textarea>
-      <p class="err" id="f-msg-err" data-msg="Bitte beschreiben Sie Ihr Projekt in ein, zwei Sätzen."></p>
+      <label for="f-msg">{f.msg.label} *</label>
+      <textarea id="f-msg" name={f.msg.key} rows="3" required aria-describedby="f-msg-err" placeholder={f.msg.placeholder}></textarea>
+      <p class="err" id="f-msg-err" data-msg={f.msg.error}></p>
     </div>
   </div>
 
   <div class="mt-7 flex flex-wrap items-center gap-x-6 gap-y-3">
     <button type="submit" class="btn btn-ginster">
-      Anfrage senden
+      {t.submit}
       <svg class="btn-arrow h-3.5 w-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" /></svg>
     </button>
     <p class="status text-[0.9rem] text-muted" role="status" aria-live="polite" data-status></p>
@@ -130,6 +136,9 @@ import { inquiry, projectPhases } from '../data/site';
   const status = form?.querySelector<HTMLElement>('[data-status]');
 
   if (form && status) {
+    // texts in the page's language, rendered by Astro into data-messages
+    const msg = JSON.parse(form.dataset.messages ?? '{}') as Record<string, string>;
+    const withEmail = (text: string) => text.replace('{email}', form.dataset.mailto ?? '');
     const fields = Array.from(form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('input[required], textarea[required]'));
 
     const showError = (field: HTMLInputElement | HTMLTextAreaElement) => {
@@ -151,36 +160,36 @@ import { inquiry, projectPhases } from '../data/site';
       if (invalid.length) {
         invalid[0].focus();
         status.classList.remove('is-ok');
-        status.textContent = 'Bitte prüfen Sie die markierten Felder.';
+        status.textContent = msg.invalid;
         return;
       }
 
       const data = new FormData(form);
       const endpoint = form.dataset.endpoint;
       if (endpoint) {
-        status.textContent = 'Anfrage wird gesendet …';
+        status.textContent = msg.sending;
         try {
           const res = await fetch(endpoint, { method: 'POST', body: data, headers: { Accept: 'application/json' } });
           if (!res.ok) throw new Error(String(res.status));
           form.reset();
           status.classList.add('is-ok');
-          status.textContent = 'Danke, Ihre Anfrage ist angekommen. Wir melden uns bei Ihnen.';
+          status.textContent = msg.sent;
         } catch {
           status.classList.remove('is-ok');
-          status.textContent = `Senden hat nicht geklappt. Bitte schreiben Sie direkt an ${form.dataset.mailto}.`;
+          status.textContent = withEmail(msg.failed);
         }
         return;
       }
 
-      const org = String(data.get('Organisation') ?? '');
+      const org = String(data.get(form.dataset.orgKey ?? '') ?? '');
       const lines: string[] = [];
       for (const [key, value] of data.entries()) {
         if (String(value).trim()) lines.push(`${key}: ${value}`);
       }
-      const href = `mailto:${form.dataset.mailto}?subject=${encodeURIComponent(`Projektanfrage: ${org}`)}&body=${encodeURIComponent(lines.join('\n'))}`;
+      const href = `mailto:${form.dataset.mailto}?subject=${encodeURIComponent(`${msg.subject}: ${org}`)}&body=${encodeURIComponent(lines.join('\n'))}`;
       window.location.href = href;
       status.classList.add('is-ok');
-      status.textContent = `Ihr E-Mail-Programm öffnet eine vorbereitete Nachricht an ${form.dataset.mailto}. Bitte dort absenden.`;
+      status.textContent = withEmail(msg.mailto);
     });
   }
 </script>

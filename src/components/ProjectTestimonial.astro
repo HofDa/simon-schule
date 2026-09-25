@@ -1,5 +1,6 @@
 ---
 import type { Testimonial } from '../data/projects';
+import { getLang, useTranslations } from '../i18n/ui';
 
 /** A client's words as an editorial interruption inside the project flow. */
 interface Props {
@@ -8,6 +9,7 @@ interface Props {
 }
 const { testimonial, project } = Astro.props;
 const pending = !testimonial.author;
+const t = useTranslations(getLang(Astro.currentLocale)).quotes;
 ---
 
 <figure class="p-quote m-0" data-quote>
@@ -17,8 +19,8 @@ const pending = !testimonial.author;
   <figcaption class="mt-8 flex flex-wrap gap-x-3 gap-y-1 text-[0.92rem]">
     {pending ? (
       <>
-        <span class="open-fact">Name · Funktion · Schule / Gemeinde</span>
-        <span class="text-muted">Zitat folgt nach Freigabe ({project})</span>
+        <span class="open-fact">{t.pendingAuthor}</span>
+        <span class="text-muted">{t.pendingProject(project)}</span>
       </>
     ) : (
       <>

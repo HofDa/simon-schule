@@ -1,13 +1,10 @@
 ---
 import { contact, fullName, people } from '../data/site';
+import { getLang, useTranslations } from '../i18n/ui';
 import StandingFigure from './art/StandingFigure.astro';
 
-const questions = [
-  'Wie viele Kinder nutzen den Raum?',
-  'Wie flexibel muss er sein?',
-  'Welche Möbel bleiben bestehen?',
-  'Was ändert sich im Laufe des Tages?',
-];
+const t = useTranslations(getLang(Astro.currentLocale)).people;
+const questions = t.questions;
 ---
 
 <section id="menschen" class="people relative bg-paper py-28 lg:py-40" aria-labelledby="people-title" data-people>
@@ -16,10 +13,10 @@ const questions = [
   <div class="shell">
     <div class="max-w-[60rem]">
       <h2 id="people-title" class="text-[clamp(2.4rem,5vw,4.75rem)] leading-[0.98] tracking-[-0.045em]">
-        Zwei Ansprechpartner für Ihr ganzes Projekt.
+        {t.title}
       </h2>
       <p class="mt-7 max-w-[52ch] text-[1.08rem] leading-[1.65] text-muted">
-        Simon und Rene planen Ihr Projekt, koordinieren Lieferung und Montage und sind auch danach für Sie da.
+        {t.intro}
       </p>
     </div>
 
@@ -27,16 +24,16 @@ const questions = [
       {people.map((person, i) => (
         <article class={`person person-${i === 0 ? 'a' : 'b'}`} data-person>
           <div class="portrait">
-            <StandingFigure class="figure" label={`Platzhalter für das Portrait von ${fullName(person)}`} />
-            <span class="tag-placeholder absolute left-4 top-4">Portrait folgt</span>
+            <StandingFigure class="figure" label={t.portraitLabel(fullName(person))} />
+            <span class="tag-placeholder absolute left-4 top-4">{t.portraitPending}</span>
           </div>
           <div class="mt-6">
             <h3 class="text-[1.6rem] tracking-[-0.03em]">
-              {person.firstName} {person.lastName ?? <span class="open-fact text-[0.8em] font-normal tracking-normal">Nachname folgt</span>}
+              {person.firstName} {person.lastName ?? <span class="open-fact text-[0.8em] font-normal tracking-normal">{t.lastNamePending}</span>}
             </h3>
-            <p class="mt-1.5 text-muted">{person.role ?? <span class="open-fact">Rolle / Zuständigkeit folgt</span>}</p>
+            <p class="mt-1.5 text-muted">{person.role ?? <span class="open-fact">{t.rolePending}</span>}</p>
             <ul class="mt-5 space-y-1.5 text-[0.95rem]">
-              <li>{person.phone ? <a class="link-line" href={`tel:${person.phone.replace(/\s/g, '')}`}>{person.phone}</a> : <span class="open-fact">Telefon folgt</span>}</li>
+              <li>{person.phone ? <a class="link-line" href={`tel:${person.phone.replace(/\s/g, '')}`}>{person.phone}</a> : <span class="open-fact">{t.phonePending}</span>}</li>
               <li>
                 {person.email ? (
                   <a class="link-line" href={`mailto:${person.email}`}>{person.email}</a>
@@ -49,7 +46,7 @@ const questions = [
         </article>
       ))}
 
-      <div class="notes" aria-label="Fragen aus einem Planungsgespräch">
+      <div class="notes" aria-label={t.questionsLabel}>
         <span class="notes-line" aria-hidden="true"></span>
         <ul>
           {questions.map((q, i) => (

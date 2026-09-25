@@ -1,4 +1,7 @@
 ---
+import { getLang, useTranslations } from '../i18n/ui';
+
+const t = useTranslations(getLang(Astro.currentLocale)).projects;
 /**
  * The ruler-drawn route and the projects, as one pinned stage (desktop):
  * the line comes down from the chair's leg and turns along the bottom of the
@@ -23,12 +26,12 @@
 
         <div class="t-title-wrap absolute inset-x-0">
           <div class="shell">
-            <h2 id="projects-title" class="t-title" data-title>Unsere Projekte</h2>
+            <h2 id="projects-title" class="t-title" data-title>{t.title}</h2>
           </div>
         </div>
         <div class="t-sub-wrap absolute inset-x-0">
           <div class="shell">
-            <p class="t-sub">Schulen und Kindergärten in Südtirol, die wir geplant und eingerichtet haben.</p>
+            <p class="t-sub">{t.sub}</p>
           </div>
         </div>
       </div>
