@@ -56,9 +56,9 @@ const nav = t.nav.items;
 
   <div id="mobile-menu" class="mobile-menu fixed inset-x-0 bottom-0 top-[var(--nav-h)] bg-paper lg:hidden" hidden>
     <nav class="shell flex h-full flex-col pt-10 pb-10" aria-label={t.nav.mobile}>
-      <ul class="flex flex-col border-t border-line">
+      <ul class="flex flex-col">
         {nav.map((item) => (
-          <li class="border-b border-line">
+          <li>
             <a href={item.href} class="flex items-center justify-between py-5 text-[1.75rem] font-semibold tracking-[-0.03em]" data-menu-link>
               {item.label}
               <svg class="h-4 w-4 text-muted" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" /></svg>
@@ -73,14 +73,13 @@ const nav = t.nav.items;
 
 <style>
   .site-nav {
-    transition: background-color 300ms var(--ease-draw), box-shadow 300ms var(--ease-draw);
+    transition: background-color 300ms var(--ease-draw);
   }
   .site-nav.is-scrolled,
   .site-nav.is-open {
     background: rgba(255, 255, 255, 0.88);
     -webkit-backdrop-filter: blur(12px) saturate(1.1);
     backdrop-filter: blur(12px) saturate(1.1);
-    box-shadow: 0 1px 0 rgba(32, 32, 29, 0.06);
   }
   .site-nav.is-open { background: var(--color-paper); }
 

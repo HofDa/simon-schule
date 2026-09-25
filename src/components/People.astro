@@ -47,7 +47,6 @@ const questions = t.questions;
       ))}
 
       <div class="notes" aria-label={t.questionsLabel}>
-        <span class="notes-line" aria-hidden="true"></span>
         <ul>
           {questions.map((q, i) => (
             <li class="note marker" style={`--i: ${i}`} data-note>{q}</li>
@@ -111,14 +110,12 @@ const questions = t.questions;
   }
   .note:nth-child(odd) { transform: rotate(-1.2deg); }
   .note:nth-child(even) { transform: rotate(0.8deg); padding-left: 1.2em; }
-  .notes-line { display: none; }
 
   @media (min-width: 1024px) {
     .people-grid { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(24px, 2.6vw, 44px); align-items: start; }
     .person-a { grid-column: 1 / 5; grid-row: 1; }
     .person-b { grid-column: 9 / 13; grid-row: 1; margin-top: 140px; }
     .notes { grid-column: 5 / 9; grid-row: 1; padding: 80px 0 0 clamp(20px, 3vw, 48px); align-self: stretch; }
-    .notes-line { display: block; position: absolute; left: 0; top: 0; bottom: 0; width: 1px; background: var(--color-line); }
     .notes ul { gap: 40px; }
   }
 
