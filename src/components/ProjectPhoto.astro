@@ -9,9 +9,8 @@ interface Props {
   class?: string;
   sizes: string;
   priority?: boolean;
-  magnet?: 'tl' | 'tc' | 'tr';
 }
-const { project, class: className = '', sizes, priority = false, magnet = 'tc' } = Astro.props;
+const { project, class: className = '', sizes, priority = false } = Astro.props;
 const img = project.images[0];
 const src = (w: number) => asset(`images/projects/${img.file}-${w}.webp`);
 ---
@@ -30,7 +29,7 @@ const src = (w: number) => asset(`images/projects/${img.file}-${w}.webp`);
       decoding="async"
     />
   </div>
-  <Magnet position={magnet} />
+  <Magnet />
   <figcaption class="marker mt-2 text-[clamp(1.1rem,1.4vw,1.45rem)] text-ink/80">{project.boardLabel}</figcaption>
 </figure>
 

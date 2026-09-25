@@ -74,7 +74,7 @@ const services = [
 <style>
   .services {
     --col-w: clamp(250px, 21vw, 330px);
-    --peek: clamp(120px, 22vh, 220px);
+    --peek: calc(var(--col-w) * 0.44); /* top of the shell down to the waist shows in the hero */
     pointer-events: none;
   }
   .steps-cell, .intro-cell, .detail-cell { pointer-events: auto; }
@@ -149,13 +149,13 @@ const services = [
     .services { margin-top: calc(-1 * var(--peek)); }
     .services-grid {
       grid-template-columns: var(--col-w) minmax(0, 1fr);
-      grid-template-rows: auto auto;
+      grid-template-rows: auto auto 1fr; /* row 1 is only the chair, so the seat edge meets the list */
       padding-block: 0 110px;
     }
     .chair-cell { width: var(--col-w); grid-column: 1; grid-row: 1; }
-    .steps-cell { grid-column: 1; grid-row: 2; }
-    .intro-cell { grid-column: 2; grid-row: 1; align-self: end; order: 0; margin-bottom: 0; padding-bottom: 36px; }
-    .detail-cell { grid-column: 2; grid-row: 2; align-self: start; padding-top: 14px; }
+    .steps-cell { grid-column: 1; grid-row: 2 / 4; }
+    .intro-cell { grid-column: 2; grid-row: 2; align-self: start; order: 0; margin-bottom: 0; padding-top: 6px; }
+    .detail-cell { grid-column: 2; grid-row: 3; align-self: start; padding-top: 28px; }
     .steps { margin-top: 0; padding: 4px 22px 0; }
     .step:first-child { border-top: 0; }
     .step { padding: 16px 0 18px; }
