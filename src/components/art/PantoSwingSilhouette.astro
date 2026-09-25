@@ -8,14 +8,17 @@
  */
 interface Props {
   class?: string;
+  /** Draw the legs down to the floor (standalone chair, e.g. the mobile hero). */
+  fullLegs?: boolean;
 }
-const { class: className = '' } = Astro.props;
+const { class: className = '', fullLegs = false } = Astro.props;
+const bottom = fullLegs ? 540 : 330;
 ---
 
-<svg class={className} viewBox="0 0 400 330" role="img" aria-label="Ginstergelber PantoSwing-Schulstuhl von VS, Vorderansicht">
+<svg class={className} viewBox={`0 0 400 ${bottom}`} role="img" aria-label="Ginstergelber PantoSwing-Schulstuhl von VS, Vorderansicht">
   <g fill="none" stroke="#E2A300" stroke-width="10" stroke-linecap="butt">
-    <path d="M60 300 C24 300 5 308 5 330" />
-    <path d="M340 300 C376 300 395 308 395 330" />
+    <path d={`M60 300 C24 300 5 308 5 330 V${bottom}`} />
+    <path d={`M340 300 C376 300 395 308 395 330 V${bottom}`} />
   </g>
   <path
     fill="#E2A300"

@@ -2,11 +2,11 @@
 import PantoSwingSilhouette from './art/PantoSwingSilhouette.astro';
 
 const services = [
-  { title: 'Beraten', text: 'Wir hören zu und verstehen, wie ein Raum tatsächlich genutzt wird – von allen, die darin lernen und arbeiten.' },
-  { title: 'Planen', text: 'Möblierung, Raumorganisation und Nutzung werden gemeinsam gedacht, nicht nacheinander.' },
-  { title: 'Ausstatten', text: 'Wir kombinieren passende Systeme und Möbel von VS mit den Anforderungen des Projekts.' },
-  { title: 'Umsetzen', text: 'Von Bestellung und Koordination bis zur Montage: ein Ablauf, ein Ansprechpartner.' },
-  { title: 'Begleiten', text: 'Direkte Ansprechpartner in Südtirol – auch nach Projektabschluss.' },
+  { title: 'Beraten', text: 'Wir schauen uns den Raum an und sprechen mit den Menschen, die darin lernen und arbeiten.' },
+  { title: 'Planen', text: 'Wir legen Möblierung, Raumaufteilung und Nutzung gemeinsam mit Ihnen fest.' },
+  { title: 'Ausstatten', text: 'Wir wählen die Möbel und Systeme von VS aus, die zu Ihrem Projekt passen.' },
+  { title: 'Umsetzen', text: 'Wir kümmern uns um Bestellung, Lieferung und Montage.' },
+  { title: 'Begleiten', text: 'Auch nach der Übergabe erreichen Sie uns direkt, hier in Südtirol.' },
 ];
 
 // Hand-drawn marker arrows as bullets: each one a little different, like drawn one after another.
@@ -54,10 +54,10 @@ const arrows = [
 
         <div class="intro-cell" data-intro>
           <h2 id="services-title" class="text-[clamp(2.2rem,4.2vw,4rem)] leading-[1] tracking-[-0.04em]">
-            Vom ersten Gespräch bis lange nach der Montage.
+            So läuft ein Projekt mit uns.
           </h2>
           <p class="mt-6 max-w-[44ch] text-[1.05rem] leading-[1.65] text-muted">
-            Ein Lernraum entsteht nicht im Katalog. Er entsteht im Gespräch mit den Menschen, die ihn jeden Tag nutzen – und wird dann Schritt für Schritt präzise umgesetzt.
+            Am Anfang steht ein Gespräch vor Ort: Wer nutzt den Raum, wofür und zu welchen Zeiten? Daraus entsteht der Plan. Danach liefern und montieren wir.
           </p>
         </div>
 
@@ -85,7 +85,7 @@ const arrows = [
 
 <style>
   .services {
-    --col-w: clamp(250px, 21vw, 330px);
+    --col-w: var(--chair-w);
     --peek: calc(var(--col-w) * 0.44); /* top of the shell down to the waist shows in the hero */
     pointer-events: none;
   }
@@ -97,13 +97,12 @@ const arrows = [
     padding-block: 72px 96px;
   }
 
-  .chair-cell { width: 150px; }
+  .chair-cell { display: none; } /* on mobile the chair stands in the hero */
   .intro-cell { order: -1; margin-bottom: 48px; }
   .detail { display: none; }
   .steps { list-style: none; margin: 32px 0 0; padding: 0; }
   .chair { display: block; }
-  .step { padding: 22px 0 24px; border-top: 1px solid var(--color-line); }
-  .step:last-child { border-bottom: 1px solid var(--color-line); }
+  .step { padding: 22px 0 24px; }
   .step-head { display: flex; align-items: center; gap: 14px; }
   .step-arrow {
     flex: none;
@@ -176,15 +175,15 @@ const arrows = [
     .services { margin-top: calc(-1 * var(--peek)); }
     .services-grid {
       grid-template-columns: var(--col-w) minmax(0, 1fr);
-      grid-template-rows: auto auto 1fr; /* row 1 is only the chair, so the seat edge meets the list */
+      grid-template-rows: auto auto;
       padding-block: 0 110px;
     }
-    .chair-cell { width: var(--col-w); grid-column: 1; grid-row: 1; }
-    .steps-cell { grid-column: 1; grid-row: 2 / 4; }
-    .intro-cell { grid-column: 2; grid-row: 2; align-self: start; order: 0; margin-bottom: 0; padding-top: 6px; }
-    .detail-cell { grid-column: 2; grid-row: 3; align-self: start; padding-top: 28px; }
+    /* the chair sits on the list; its legs end where the list ends */
+    .chair-cell { display: block; width: var(--col-w); grid-column: 1; grid-row: 1; align-self: end; }
+    .steps-cell { grid-column: 1; grid-row: 2; align-self: start; }
+    .intro-cell { grid-column: 2; grid-row: 1; align-self: end; order: 0; margin-bottom: 0; padding-bottom: 12px; }
+    .detail-cell { grid-column: 2; grid-row: 2; align-self: start; padding-top: 18px; }
     .steps { margin-top: 0; padding: 4px 30px 0; }
-    .step:first-child { border-top: 0; }
     .step { padding: 16px 0 18px; }
     .step-text { margin-left: 44px; font-size: 0.92rem; }
     .step-head { gap: 12px; }
@@ -195,7 +194,7 @@ const arrows = [
       left: 0;
       top: 0;
       bottom: 0;
-      width: calc(var(--col-w) * 0.025); /* same as the tube in PantoSwingSilhouette (10 of 400 units) */
+      width: var(--leg-w); /* same as the tube in PantoSwingSilhouette */
       background: var(--color-ginster);
       transform-origin: top;
       transform: scaleY(var(--axis, 1));

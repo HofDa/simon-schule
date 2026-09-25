@@ -56,7 +56,7 @@ import { inquiry, projectPhases } from '../data/site';
     <div class="field field-wide">
       <label for="f-msg">Nachricht *</label>
       <textarea id="f-msg" name="Nachricht" rows="3" required aria-describedby="f-msg-err" placeholder="Um welchen Raum geht es, und was soll er künftig können?"></textarea>
-      <p class="err" id="f-msg-err" data-msg="Ein, zwei Sätze zum Projekt helfen uns, gut vorbereitet zurückzurufen."></p>
+      <p class="err" id="f-msg-err" data-msg="Bitte beschreiben Sie Ihr Projekt in ein, zwei Sätzen."></p>
     </div>
   </div>
 
@@ -164,7 +164,7 @@ import { inquiry, projectPhases } from '../data/site';
           if (!res.ok) throw new Error(String(res.status));
           form.reset();
           status.classList.add('is-ok');
-          status.textContent = 'Danke. Ihre Anfrage ist angekommen – wir melden uns persönlich.';
+          status.textContent = 'Danke, Ihre Anfrage ist angekommen. Wir melden uns bei Ihnen.';
         } catch {
           status.classList.remove('is-ok');
           status.textContent = `Senden hat nicht geklappt. Bitte schreiben Sie direkt an ${form.dataset.mailto}.`;
@@ -177,7 +177,7 @@ import { inquiry, projectPhases } from '../data/site';
       for (const [key, value] of data.entries()) {
         if (String(value).trim()) lines.push(`${key}: ${value}`);
       }
-      const href = `mailto:${form.dataset.mailto}?subject=${encodeURIComponent(`Projektanfrage – ${org}`)}&body=${encodeURIComponent(lines.join('\n'))}`;
+      const href = `mailto:${form.dataset.mailto}?subject=${encodeURIComponent(`Projektanfrage: ${org}`)}&body=${encodeURIComponent(lines.join('\n'))}`;
       window.location.href = href;
       status.classList.add('is-ok');
       status.textContent = `Ihr E-Mail-Programm öffnet eine vorbereitete Nachricht an ${form.dataset.mailto}. Bitte dort absenden.`;

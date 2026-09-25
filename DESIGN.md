@@ -100,7 +100,7 @@ components:
 
 ## Overview
 
-The site reads as one continuous architectural drawing. It opens on a physical whiteboard with pinned photos and marker notes. A flat ginstergelb PantoSwing (front view: shell with round grip hole, seat, two tubular legs without crossbar) spins in last at the bottom of the hero; below it, the seat's front edge carries the services list and its two legs continue as ginstergelb lines down the column, with the list between them; the steps are marked with hand-drawn marker arrows. The chair's width is the column width. A single 1.5px ink line, drawn by scrolling, then crosses the page, lays down the title "Unsere Projekte" and turns 90° into a lane that runs down the side of the projects. It ends as a dimension line above the full-width project. The interface itself stays white and quiet; colour comes from photographs, the chair, the stools and a few ginstergelb points.
+The site reads as one continuous architectural drawing. It opens on a physical whiteboard with pinned photos and marker notes. A flat ginstergelb PantoSwing (front view: shell with round grip hole, seat, two tubular legs without crossbar) spins in last at the bottom of the hero; below it, the seat's front edge carries the services list and its two legs continue as ginstergelb lines down the column and end with the list, which sits between them; the steps are marked with hand-drawn marker arrows. The chair's width is the column width. A single 1.5px ink line, drawn by scrolling, then crosses the page, lays down the title "Unsere Projekte" and turns 90° into a lane that runs down the side of the projects. It ends as a dimension line above the full-width project. The interface itself stays white and quiet; colour comes from photographs, the chair, the stools and a few ginstergelb points.
 
 Key characteristics: generous white space, hairline structure instead of containers, technical-drawing vocabulary (end ticks, right-angle marks, axis lines), handwriting only as annotation, and motion scrubbed by scroll rather than played on a timer.
 
@@ -136,7 +136,7 @@ Archivo (a grotesque) carries every UI and editorial role. Caveat is the whitebo
 
 ## Layout
 
-A 12-column editorial grid inside `.shell` (max 1520px, gutter `clamp(20px, 4vw, 64px)`). The services column width is `clamp(250px, 21vw, 330px)`, which is the chair's width. On desktop the projects live inside the pinned U-frame of the drawn line (a masked window above the title). Projects alternate: image left (8 columns) + info (4), info (4) + image right (8), then a full-width 21:9 photo with three info columns below. Section rhythm is 112–160px vertical padding with more space above headings than below. Mobile stacks everything with no pinned sequences.
+A 12-column editorial grid inside `.shell` (max 1520px, gutter `clamp(20px, 4vw, 64px)`). The services column width is `clamp(250px, 21vw, 330px)`, which is the chair's width. On desktop the projects form a horizontal row above the drawn line on a pinned stage (image + details side by side per project, quotes in between). Projects alternate: image left (8 columns) + info (4), info (4) + image right (8), then a full-width 21:9 photo with three info columns below. Section rhythm is 112–160px vertical padding with more space above headings than below. Mobile stacks everything with no pinned sequences.
 
 ## Elevation & Depth
 
@@ -161,7 +161,7 @@ Underline-only fields. The underline turns ink on focus and ginstergelb on keybo
 Wordmark "TRIAS SCHULE" (bold / regular, tracked 0.14em), five links with a ginstergelb dot marking the current section, and a small ink "Projekt anfragen" button. On mobile, a full-height white sheet with large links.
 
 ### Signature: Drawn Line
-A 4px ginstergelb SVG route, `stroke-dashoffset` scrubbed by scroll, with ink nodes (start point and moving head). It comes down from the chair's left leg, runs along the bottom of the pinned stage revealing "Unsere Projekte", and turns 90° up at the right edge (ink right-angle mark in the inner corner). While it climbs, the projects travel downward through the frame it draws, so scrolling on feels like moving up the plan. Mobile and reduced motion show the U-shaped line with the title and the projects stacked below.
+A 4px ginstergelb SVG route, `stroke-dashoffset` scrubbed by scroll, with ink nodes (start point and moving head). It comes down from the chair's left leg, runs along the bottom of the pinned stage revealing "Unsere Projekte". The pen tip then stays at ~62% of the screen width while the whole plan sheet (line, title and the row of projects and quotes) slides left beneath it, so the line keeps drawing to the right under each project. At the end of the row it turns 90° up (ink right-angle mark in the inner corner). Mobile and reduced motion show the U-shaped line with the title and the projects stacked below.
 
 ### Signature: Whiteboard
 A frame, a surface with a noise texture and a faint sheen, prints held by magnets (rotated ±1–2°), marker notes and arrows drawn on load, and a marker tray.

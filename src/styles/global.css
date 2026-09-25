@@ -20,6 +20,10 @@
 :root {
   --gutter: clamp(20px, 4vw, 64px);
   --nav-h: 72px;
+  /* the PantoSwing's width on desktop and the thickness of its tubes (10 of 400 units);
+     the drawn route uses the same thickness as the legs it continues */
+  --chair-w: clamp(250px, 21vw, 330px);
+  --leg-w: calc(var(--chair-w) * 0.025);
   color-scheme: light;
 }
 

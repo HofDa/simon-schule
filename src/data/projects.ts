@@ -38,7 +38,7 @@ export interface Project {
 }
 
 const pendingQuote: Testimonial = {
-  quote: 'Hier steht ein freigegebenes Zitat aus diesem Projekt – in den Worten der Schulleitung, der Pädagoginnen oder der Gemeinde.',
+  quote: 'Platzhalter: Hier kommt ein freigegebenes Zitat aus diesem Projekt hin, zum Beispiel von der Schulleitung oder der Gemeinde.',
   author: null,
   role: null,
   organisation: null,
@@ -52,7 +52,7 @@ export const projects: Project[] = [
     type: 'Schule',
     services: ['Beratung', 'Planung', 'Ausstattung', 'Montage'],
     description:
-      'Bewegliche Stühle und Tische, die sich ohne Aufwand von Frontalunterricht zu Gruppenarbeit umstellen lassen. Stauraum entlang der Wände hält die Mitte des Raums frei.',
+      'Bewegliche Stühle und Tische, die sich schnell von Frontalunterricht auf Gruppenarbeit umstellen lassen. Der Stauraum steht an den Wänden, die Mitte des Raums bleibt frei.',
     images: [
       { file: 'classroom-blue-chairs', alt: 'Klassenzimmer mit blauen Schalenstühlen, die auf hellen Holztischen hochgestellt sind' },
     ],
@@ -67,7 +67,7 @@ export const projects: Project[] = [
     type: 'Kindergarten',
     services: ['Raumkonzept', 'Ausstattung', 'Montage'],
     description:
-      'Rückzugsorte und Spielbereiche auf Kinderhöhe, eingebaut in einen hellen Gruppenraum. Weiche Zonen zum Ausruhen, klare Wege zum Spielen.',
+      'Eine Höhle zum Zurückziehen, eine Spielküche und Sitzkissen auf Kinderhöhe, eingebaut in einen hellen Gruppenraum.',
     images: [
       { file: 'kindergarten-cave', alt: 'Kindergartenraum mit eingebauter Höhle, Sitzkissen und Holzregalen' },
       { file: 'kindergarten-kitchen', alt: 'Spielküche aus Holz in einem hellen Kindergartenraum' },
@@ -83,7 +83,7 @@ export const projects: Project[] = [
     type: 'Lernlandschaft',
     services: ['Beratung', 'Planung', 'Ausstattung'],
     description:
-      'Ein Raum, viele Nutzungen: Tischinseln für Gruppen, ruhige Zonen für Einzelarbeit und Wege, die Bewegung zulassen.',
+      'Tischinseln für Gruppenarbeit, ruhige Plätze für Einzelarbeit und genug Platz, um sich zwischen beiden zu bewegen.',
     images: [
       { file: 'learning-commons', alt: 'Offene Lernlandschaft mit Tischgruppen, Stühlen und Stellwänden' },
     ],
@@ -94,7 +94,7 @@ export const projects: Project[] = [
 ];
 
 export const closingTestimonial: Testimonial = {
-  quote: 'Hier steht das stärkste freigegebene Zitat: nicht über Möbel, sondern darüber, wie die Zusammenarbeit mit Trias Schule erlebt wurde.',
+  quote: 'Platzhalter: Hier kommt ein freigegebenes Zitat darüber hin, wie die Zusammenarbeit mit Trias Schule gelaufen ist.',
   author: null,
   role: null,
   organisation: null,

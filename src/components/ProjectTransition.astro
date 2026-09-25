@@ -1,38 +1,39 @@
 ---
 /**
  * The ruler-drawn route and the projects, as one pinned stage (desktop):
- * the line comes down from the chair's leg, runs along the bottom of the
- * screen revealing "Unsere Projekte", then climbs the right edge. While it
- * climbs, the projects (passed in as the slot) travel down through the frame
- * the line draws, so scrolling on feels like moving up the plan.
- * Mobile and reduced motion: the U-shaped line with the title, projects below.
+ * the line comes down from the chair's leg and turns along the bottom of the
+ * screen, revealing "Unsere Projekte". Then the whole plan sheet (line, title
+ * and the projects passed in as the slot) slides to the left under a fixed pen
+ * tip, so the line keeps drawing to the right beneath each project. At the end
+ * of the row it turns 90° up.
+ * Mobile and reduced motion: a U-shaped line with the title, projects stacked below.
  */
 ---
 
 <section id="projekte" class="transition relative" aria-labelledby="projects-title" data-transition>
   <div class="t-stage relative" data-stage>
-    <div class="t-head relative" data-head>
-      <svg class="t-svg absolute inset-0 h-full w-full" data-svg aria-hidden="true">
-        <path class="t-path" data-path d="" />
-        <path class="t-corner" data-corner d="" />
-        <circle class="t-node" data-start r="5.5" cx="-20" cy="-20" />
-        <circle class="t-head-dot" data-head-dot r="6" cx="-20" cy="-20" />
-      </svg>
+    <div class="t-sheet" data-sheet>
+      <div class="t-head relative" data-head>
+        <svg class="t-svg absolute inset-0 h-full w-full" data-svg aria-hidden="true">
+          <path class="t-path" data-path d="" />
+          <path class="t-corner" data-corner d="" />
+          <circle class="t-node" data-start r="5.5" cx="-20" cy="-20" />
+          <circle class="t-head-dot" data-head-dot r="6" cx="-20" cy="-20" />
+        </svg>
 
-      <div class="t-title-wrap absolute inset-x-0">
-        <div class="shell">
-          <h2 id="projects-title" class="t-title" data-title>Unsere Projekte</h2>
+        <div class="t-title-wrap absolute inset-x-0">
+          <div class="shell">
+            <h2 id="projects-title" class="t-title" data-title>Unsere Projekte</h2>
+          </div>
+        </div>
+        <div class="t-sub-wrap absolute inset-x-0">
+          <div class="shell">
+            <p class="t-sub">Schulen und Kindergärten in Südtirol, die wir geplant und eingerichtet haben.</p>
+          </div>
         </div>
       </div>
-      <div class="t-sub-wrap absolute inset-x-0">
-        <div class="shell">
-          <p class="t-sub">Schulen und Kindergärten in Südtirol – geplant, eingerichtet und begleitet von Trias Schule.</p>
-        </div>
-      </div>
-    </div>
 
-    <div class="t-window" data-window>
-      <div class="t-track" data-track>
+      <div class="t-row" data-row>
         <slot />
       </div>
     </div>
@@ -49,7 +50,7 @@
   .t-path {
     fill: none;
     stroke: var(--color-ginster);
-    stroke-width: 4;
+    stroke-width: var(--leg-w, 4px); /* same thickness as the chair legs */
     stroke-linecap: butt;
     stroke-linejoin: miter;
   }
@@ -75,32 +76,56 @@
     transform: translateY(calc((1 - var(--sub, 1)) * 6px));
   }
 
-  /* pinned desktop stage */
+  /* pinned desktop stage: a wide sheet that slides left */
   .transition.is-scrub .t-stage { position: sticky; top: 0; height: 100vh; overflow: hidden; }
-  .transition.is-scrub .t-head { position: absolute; inset: 0; height: auto; z-index: 2; pointer-events: none; }
-  .transition.is-scrub .t-head .t-title-wrap,
-  .transition.is-scrub .t-head .t-sub-wrap { pointer-events: auto; }
-  .transition.is-scrub .t-window {
+  .transition.is-scrub .t-sheet {
     position: absolute;
-    top: var(--win-top, 88px);
-    bottom: var(--win-bottom, 300px);
-    left: var(--win-left, 80px);
-    right: var(--win-right, 80px);
-    overflow: hidden;
-    -webkit-mask-image: linear-gradient(transparent, #000 28px, #000 calc(100% - 28px), transparent);
-    mask-image: linear-gradient(transparent, #000 28px, #000 calc(100% - 28px), transparent);
-  }
-  .transition.is-scrub .t-track {
-    position: absolute;
-    inset: 0 0 auto 0;
-    transform: translateY(var(--ty, 0px));
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: var(--sheet-w, 300vw);
+    transform: translateX(var(--tx, 0px));
     will-change: transform;
   }
-  /* first project enters first from the top, so the list runs bottom-up */
-  .transition.is-scrub .t-track :global(.projects) { padding: 0; }
-  .transition.is-scrub .t-track :global(.projects-inner) { flex-direction: column-reverse; gap: 120px; padding: 0; }
-  .transition.is-scrub .t-track :global(.p-media img) { aspect-ratio: 16 / 10; }
-  .transition.is-scrub .t-track :global(.project--full .p-media img) { aspect-ratio: 21 / 9; }
+  .transition.is-scrub .t-head { position: absolute; inset: 0; height: auto; pointer-events: none; }
+  .transition.is-scrub .t-title-wrap,
+  .transition.is-scrub .t-sub-wrap { right: auto; width: 100vw; }
+  .transition.is-scrub .t-row {
+    position: absolute;
+    top: var(--row-top, 104px);
+    height: var(--row-h, 600px);
+    left: var(--row-left, 900px);
+  }
+
+  /* the projects as a horizontal row above the line */
+  .transition.is-scrub .t-row :global(.projects) { padding: 0; height: 100%; width: max-content; max-width: none; }
+  .transition.is-scrub .t-row :global(.projects-inner) {
+    flex-direction: row;
+    align-items: stretch;
+    gap: 120px;
+    height: 100%;
+    padding: 0;
+  }
+  .transition.is-scrub .t-row :global(.project) {
+    flex: none;
+    width: min(1080px, 74vw);
+    height: 100%;
+    align-items: end;
+  }
+  .transition.is-scrub .t-row :global(.project--full) { width: min(1280px, 84vw); }
+  .transition.is-scrub .t-row :global(.p-media) { height: 100%; }
+  .transition.is-scrub .t-row :global(.p-media img) { height: 100%; aspect-ratio: auto; }
+  .transition.is-scrub .t-row :global(.project--left .p-media) { grid-column: 1 / 8; }
+  .transition.is-scrub .t-row :global(.project--left .p-info) { grid-column: 8 / 13; }
+  .transition.is-scrub .t-row :global(.project--right .p-info) { grid-column: 1 / 6; }
+  .transition.is-scrub .t-row :global(.project--right .p-media) { grid-column: 6 / 13; }
+  .transition.is-scrub .t-row :global(.project--full .p-media) { grid-column: 1 / 9; }
+  .transition.is-scrub .t-row :global(.project--full .p-info) { grid-column: 9 / 13; display: block; margin-top: 0; }
+  .transition.is-scrub .t-row :global(.project--full .p-meta) { margin-top: 28px; }
+  .transition.is-scrub .t-row :global(.project--full .p-desc) { margin-top: 22px; }
+  .transition.is-scrub .t-row :global(.p-info) { align-self: end; padding-top: 0; }
+  .transition.is-scrub .t-row :global(.p-detail) { display: none; }
+  .transition.is-scrub .t-row :global(.p-quote) { flex: none; width: min(520px, 38vw); align-self: center; margin-left: 0; }
 </style>
 
 <script>
@@ -108,7 +133,7 @@
 
   const DESKTOP = '(min-width: 1024px) and (min-height: 640px)';
   const section = document.querySelector<HTMLElement>('[data-transition]');
-  const stage = section?.querySelector<HTMLElement>('[data-stage]');
+  const sheet = section?.querySelector<HTMLElement>('[data-sheet]');
   const headBox = section?.querySelector<HTMLElement>('[data-head]');
   const svg = section?.querySelector<SVGSVGElement>('[data-svg]');
   const path = section?.querySelector<SVGPathElement>('[data-path]');
@@ -116,78 +141,105 @@
   const dot = section?.querySelector<SVGCircleElement>('[data-head-dot]');
   const start = section?.querySelector<SVGCircleElement>('[data-start]');
   const title = section?.querySelector<HTMLElement>('[data-title]');
-  const track = section?.querySelector<HTMLElement>('[data-track]');
+  const row = section?.querySelector<HTMLElement>('[data-row]');
 
-  if (section && stage && headBox && svg && path && corner && dot && start && title && track) {
+  if (section && sheet && headBox && svg && path && corner && dot && start && title && row) {
     let total = 1;
     let x0 = 0;
-    let x1 = 0;
     let ym = 0;
-    let across = 1; // length of the down + across part of the route
+    let bendAt = 1; // path length where the final upward bend starts
     let titleLeft = 0;
     let titleW = 1;
     let pinned = false;
-    // desktop scroll budget (px): approach + draw along the bottom (A), climb with the projects (B), short hold
-    let A = 1;
-    let B = 1;
-    let trackH = 0;
-    let tyEnd = 0;
-    let lead = 0;
+    // desktop scroll budget (px)
+    let lead = 0; // the line starts drawing while the stage scrolls in
+    let A = 1; // draw down and along the bottom up to the pen position
+    let B = 1; // slide the sheet (1:1 with scroll)
+    let C = 1; // finish the line and the upward bend
     let span = 1;
+    let lenA = 0; // path length when the pen reaches its fixed position
+    let travel = 0; // how far the sheet slides
+
+    // half the route's stroke width, so the right-angle mark sits inside the corner
+    const half = () => (parseFloat(getComputedStyle(path).strokeWidth) || 4) / 2;
 
     const measure = (scrub: boolean) => {
       pinned = scrub;
       section.classList.toggle('is-scrub', scrub);
       section.style.height = '';
+      sheet.style.removeProperty('--tx');
 
-      const w = headBox.clientWidth;
-      const h = headBox.clientHeight;
-      svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
-      const pad = parseFloat(getComputedStyle(title.parentElement as HTMLElement).paddingLeft);
       const isDesktop = window.matchMedia('(min-width: 1024px)').matches;
+      const pad = parseFloat(getComputedStyle(title.parentElement as HTMLElement).paddingLeft);
+      const vw = document.documentElement.clientWidth;
       const leg = document.querySelector<HTMLElement>('[data-axis]')?.getBoundingClientRect();
-      const box = headBox.getBoundingClientRect();
+      x0 = isDesktop && leg && leg.width ? leg.left + leg.width / 2 : pad;
 
-      x0 = isDesktop && leg && leg.width ? leg.left + leg.width / 2 - box.left : pad;
-      x1 = w - pad - 2; // full width, so the title is always completely revealed
-      ym = scrub ? Math.round(h - Math.max(96, h * 0.12)) : h - 80;
+      if (!scrub) {
+        // static: U-shaped line across the section, title centred on desktop
+        const w = headBox.clientWidth;
+        const h = headBox.clientHeight;
+        const x1 = w - pad - 2;
+        ym = h - 80;
+        svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+        section.style.setProperty('--ym', `${ym}px`);
+        const tw = title.offsetWidth;
+        const titleX = isDesktop ? Math.max(0, (w - tw) / 2 - pad) : 0;
+        section.style.setProperty('--title-x', `${titleX}px`);
+        titleLeft = pad + titleX;
+        titleW = tw;
+        path.setAttribute('d', `M${x0} 0 V${ym} H${x1} V0`);
+        total = path.getTotalLength();
+        bendAt = ym + (x1 - x0);
+        path.style.strokeDasharray = `${total}`;
+        const c = 16;
+        const o = half();
+        corner.setAttribute('d', `M${x1 - o - c} ${ym - o} V${ym - o - c} H${x1 - o}`);
+        start.setAttribute('cx', String(x0));
+        start.setAttribute('cy', String(ym));
+        return;
+      }
+
+      // pinned: one long sheet; title at its start, projects to the right
+      const vh = window.innerHeight;
+      const navH = 72;
+      ym = Math.round(vh - Math.max(96, vh * 0.12));
       section.style.setProperty('--ym', `${ym}px`);
-
-      const tw = title.offsetWidth;
-      const titleX = isDesktop ? Math.max(0, (w - tw) / 2 - pad) : 0;
+      const titleX = x0 + 40 - pad;
       section.style.setProperty('--title-x', `${titleX}px`);
-      titleLeft = pad + titleX;
-      titleW = tw;
+      titleW = title.offsetWidth;
+      titleLeft = title.getBoundingClientRect().left - sheet.getBoundingClientRect().left;
 
-      // down from the leg, along the bottom, up the right edge
-      path.setAttribute('d', `M${x0} 0 V${ym} H${x1} V0`);
+      const rowTop = navH + 32;
+      const rowLeft = Math.round(titleLeft + titleW + 120);
+      section.style.setProperty('--row-top', `${rowTop}px`);
+      section.style.setProperty('--row-h', `${ym - 44 - rowTop}px`);
+      section.style.setProperty('--row-left', `${rowLeft}px`);
+      const rowW = row.scrollWidth;
+      const endX = rowLeft + rowW + 60; // the line ends just past the last project
+      const sheetW = Math.max(vw, endX + pad + 40);
+      section.style.setProperty('--sheet-w', `${sheetW}px`);
+
+      svg.setAttribute('viewBox', `0 0 ${sheetW} ${vh}`);
+      const rise = Math.round((ym - rowTop) * 0.45);
+      path.setAttribute('d', `M${x0} 0 V${ym} H${endX} V${ym - rise}`);
       total = path.getTotalLength();
-      across = ym + (x1 - x0);
+      bendAt = ym + (endX - x0);
       path.style.strokeDasharray = `${total}`;
       const c = 16;
-      const o = 2; // half the route's stroke width
-      corner.setAttribute('d', `M${x1 - o - c} ${ym - o} V${ym - o - c} H${x1 - o}`);
+      const o = half();
+      corner.setAttribute('d', `M${endX - o - c} ${ym - o} V${ym - o - c} H${endX - o}`);
       start.setAttribute('cx', String(x0));
       start.setAttribute('cy', String(ym));
 
-      if (!scrub) return;
-      // the window the projects travel through: inside the frame, above the title
-      const vh = window.innerHeight;
-      const navH = 72;
-      const titleTop = ym - 14 - title.offsetHeight;
-      section.style.setProperty('--win-top', `${navH + 16}px`);
-      section.style.setProperty('--win-bottom', `${h - titleTop + 28}px`);
-      section.style.setProperty('--win-left', `${x0 + 40}px`);
-      section.style.setProperty('--win-right', `${w - x1 + 40}px`);
-      trackH = track.offsetHeight;
-      // travel ends when the last project (drawn at the top of the reversed list) sits fully in the window
-      const winH = titleTop - 28 - (navH + 16);
-      const lastItem = track.querySelector<HTMLElement>('.projects-inner')?.lastElementChild as HTMLElement | null;
-      tyEnd = Math.min(0, winH - (lastItem?.offsetHeight ?? 0));
-      lead = vh * 0.55; // the line starts drawing while the stage scrolls in
-      A = lead + vh * 0.9;
-      B = trackH + tyEnd;
-      span = A + B + vh * 0.15;
+      const penX = vw * 0.62; // where the pen tip stays while the sheet slides
+      travel = Math.max(0, sheetW - vw);
+      lenA = ym + (penX - x0);
+      lead = vh * 0.55;
+      A = lead + vh * 0.6;
+      B = travel;
+      C = vh * 0.35;
+      span = A + B + C + vh * 0.1;
       section.style.height = `${vh + span - lead}px`;
     };
 
@@ -198,10 +250,10 @@
       dot.setAttribute('cy', String(pt.y));
       dot.style.opacity = len > 1 && len < total - 1 ? '1' : '0';
       start.style.opacity = len >= ym ? '1' : '0';
-      corner.style.opacity = len >= across + 18 ? '1' : '0';
-      const headX = len <= ym ? x0 : Math.min(x1, x0 + (len - ym));
+      corner.style.opacity = len >= bendAt + 18 ? '1' : '0';
+      const headX = len <= ym ? x0 : x0 + (len - ym);
       section.style.setProperty('--reveal', String(len > ym ? clamp((headX - titleLeft) / titleW) : 0));
-      section.style.setProperty('--sub', String(range(headX, titleLeft + titleW * 0.6, x1)));
+      section.style.setProperty('--sub', String(range(headX, titleLeft + titleW * 0.6, titleLeft + titleW + 200)));
     };
 
     addScene({
@@ -217,11 +269,19 @@
           return;
         }
         const s = p * span;
-        const a = clamp(s / A);
-        const b = clamp((s - A) / B);
-        draw(a < 1 ? a * across : across + b * ym);
-        // projects come down from above while the line climbs
-        track.style.setProperty('--ty', `${(-trackH + b * (trackH + tyEnd)).toFixed(1)}px`);
+        let len: number;
+        let tx = 0;
+        if (s < A) {
+          len = (s / A) * lenA;
+        } else if (s < A + B) {
+          tx = s - A;
+          len = lenA + tx; // the pen stays put while the sheet moves under it
+        } else {
+          tx = travel;
+          len = lenA + travel + clamp((s - A - B) / C) * (total - lenA - travel);
+        }
+        sheet.style.setProperty('--tx', `${(-tx).toFixed(1)}px`);
+        draw(Math.min(total, len));
       },
     });
 
