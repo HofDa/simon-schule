@@ -65,6 +65,17 @@ import { nav } from '../../data/site';
   }
   .site-nav.is-open { background: var(--color-paper); }
 
+  /* The wordmark arrives together with the hero claim. */
+  @media (prefers-reduced-motion: no-preference) {
+    :global(html.js) .wordmark {
+      animation: wordmark-in 800ms var(--ease-draw) 0.8s both;
+    }
+  }
+  @keyframes wordmark-in {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: none; }
+  }
+
   .nav-link::after {
     content: '';
     position: absolute;

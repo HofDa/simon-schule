@@ -158,7 +158,6 @@ const services = [
       grid-template-columns: var(--col-w) minmax(0, 1fr);
       grid-template-rows: auto auto;
       padding-block: 0 110px;
-      padding-left: clamp(40px, 4vw, 64px);
     }
     .chair-cell { width: var(--col-w); grid-column: 1; grid-row: 1; }
     .steps-cell { grid-column: 1; grid-row: 2; }
@@ -208,6 +207,17 @@ const services = [
   .services .step-underline { stroke-dashoffset: calc(1 - var(--u, 0)); transition: opacity 300ms var(--ease-draw); }
   .services .step.is-done .step-underline { opacity: 0; }
   .services .step.is-active .step-n { color: var(--color-ink); }
+
+  /* On load the chair is the first thing on the white page (see WhiteboardHero timing). */
+  @media (prefers-reduced-motion: no-preference) {
+    :global(html.js) .chair-cell {
+      animation: chair-in 1000ms var(--ease-draw) 0.1s both;
+    }
+  }
+  @keyframes chair-in {
+    from { opacity: 0; transform: translateY(28px); }
+    to { opacity: 1; transform: none; }
+  }
 
   /* mobile / reduced: simple reveal */
   @media (prefers-reduced-motion: no-preference) {
