@@ -5,7 +5,7 @@
  * screen, revealing "Unsere Projekte". Then the whole plan sheet (line, title
  * and the projects passed in as the slot) slides to the left under a fixed pen
  * tip, so the line keeps drawing to the right beneath each project. At the end
- * of the row it turns 90° up.
+ * of the row it turns 90° down, towards the next section.
  * Mobile and reduced motion: a U-shaped line with the title, projects stacked below.
  */
 ---
@@ -173,7 +173,7 @@
       const pad = parseFloat(getComputedStyle(title.parentElement as HTMLElement).paddingLeft);
       const vw = document.documentElement.clientWidth;
       const leg = document.querySelector<HTMLElement>('[data-axis]')?.getBoundingClientRect();
-      x0 = isDesktop && leg && leg.width ? leg.left + leg.width / 2 : pad;
+      x0 = leg && leg.width ? leg.left + leg.width / 2 : pad;
 
       if (!scrub) {
         // static: U-shaped line across the section, title centred on desktop
@@ -188,13 +188,13 @@
         section.style.setProperty('--title-x', `${titleX}px`);
         titleLeft = pad + titleX;
         titleW = tw;
-        path.setAttribute('d', `M${x0} 0 V${ym} H${x1} V0`);
+        path.setAttribute('d', `M${x0} 0 V${ym} H${x1} V${h}`);
         total = path.getTotalLength();
         bendAt = ym + (x1 - x0);
         path.style.strokeDasharray = `${total}`;
         const c = 16;
         const o = half();
-        corner.setAttribute('d', `M${x1 - o - c} ${ym - o} V${ym - o - c} H${x1 - o}`);
+        corner.setAttribute('d', `M${x1 - o - c} ${ym + o} V${ym + o + c} H${x1 - o}`);
         start.setAttribute('cx', String(x0));
         start.setAttribute('cy', String(ym));
         return;
@@ -221,14 +221,14 @@
       section.style.setProperty('--sheet-w', `${sheetW}px`);
 
       svg.setAttribute('viewBox', `0 0 ${sheetW} ${vh}`);
-      const rise = Math.round((ym - rowTop) * 0.45);
-      path.setAttribute('d', `M${x0} 0 V${ym} H${endX} V${ym - rise}`);
+      // after the last project the line turns down and leaves the stage towards the next section
+      path.setAttribute('d', `M${x0} 0 V${ym} H${endX} V${vh}`);
       total = path.getTotalLength();
       bendAt = ym + (endX - x0);
       path.style.strokeDasharray = `${total}`;
       const c = 16;
       const o = half();
-      corner.setAttribute('d', `M${endX - o - c} ${ym - o} V${ym - o - c} H${endX - o}`);
+      corner.setAttribute('d', `M${endX - o - c} ${ym + o} V${ym + o + c} H${endX - o}`);
       start.setAttribute('cx', String(x0));
       start.setAttribute('cy', String(ym));
 

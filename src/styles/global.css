@@ -22,9 +22,15 @@
   --nav-h: 72px;
   /* the PantoSwing's width on desktop and the thickness of its tubes (10 of 400 units);
      the drawn route uses the same thickness as the legs it continues */
-  --chair-w: clamp(250px, 21vw, 330px);
+  --chair-w: min(72vw, 300px);
+  /* how much of the chair shows at the bottom of the hero (mobile: just the upper shell) */
+  --chair-peek: calc(var(--chair-w) * 0.34);
   --leg-w: calc(var(--chair-w) * 0.025);
   color-scheme: light;
+}
+
+@media (min-width: 1024px) {
+  :root { --chair-w: clamp(250px, 21vw, 330px); --chair-peek: calc(var(--chair-w) * 0.44); }
 }
 
 @layer base {
