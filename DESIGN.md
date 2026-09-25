@@ -101,7 +101,7 @@ components:
 
 ## Overview
 
-The site reads as one continuous architectural drawing. It opens on a physical whiteboard with pinned photos and marker notes. A ginstergelb VS chair stands in front of the board, and its width sets the width of the services column. A single 1.5px ink line, drawn by scrolling, then crosses the page, lays down the title "Unsere Projekte" and turns 90° into a lane that runs down the side of the projects. It ends as a dimension line above the full-width project. The interface itself stays white and quiet; colour comes from photographs, the chair, the stools and a few ginstergelb points.
+The site reads as one continuous architectural drawing. It opens on a physical whiteboard with pinned photos and marker notes. An abstract, flat ginstergelb PantoSwing silhouette (backrest with grip slot) rises from the bottom of the hero; below it, the seat's front edge carries the services list and its corners continue as two ink lines (the legs) that frame the column. The chair's width is the column width. A single 1.5px ink line, drawn by scrolling, then crosses the page, lays down the title "Unsere Projekte" and turns 90° into a lane that runs down the side of the projects. It ends as a dimension line above the full-width project. The interface itself stays white and quiet; colour comes from photographs, the chair, the stools and a few ginstergelb points.
 
 Key characteristics: generous white space, hairline structure instead of containers, technical-drawing vocabulary (end ticks, right-angle marks, axis lines), handwriting only as annotation, and motion scrubbed by scroll rather than played on a timer.
 

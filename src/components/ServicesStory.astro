@@ -1,5 +1,5 @@
 ---
-import VSChair from './art/VSChair.astro';
+import PantoSwingSilhouette from './art/PantoSwingSilhouette.astro';
 
 const services = [
   { title: 'Beraten', text: 'Wir hören zu und verstehen, wie ein Raum tatsächlich genutzt wird – von allen, die darin lernen und arbeiten.' },
@@ -14,15 +14,14 @@ const services = [
   <div class="services-stick" data-stick>
     <div class="shell">
       <div class="services-grid">
-        <div class="chair-cell" aria-hidden="false">
-          <VSChair id="story-chair" class="chair block w-full" />
-          <svg class="dim" viewBox="0 0 100 12" preserveAspectRatio="none" aria-hidden="true">
-            <path d="M0 6 H100 M0.5 1 V11 M99.5 1 V11" vector-effect="non-scaling-stroke" />
-          </svg>
+        <div class="chair-cell">
+          <PantoSwingSilhouette class="chair block w-full" />
         </div>
 
+        <!-- the seat's front corners continue as the two plan lines (legs) framing the column -->
         <div class="steps-cell relative">
           <span class="axis" data-axis aria-hidden="true"></span>
+          <span class="axis axis-r" aria-hidden="true"></span>
           <ol class="steps" data-steps>
             {services.map((s, i) => (
               <li class="step" data-step>
@@ -41,14 +40,17 @@ const services = [
           </ol>
         </div>
 
-        <div class="intro-cell">
+        <div class="intro-cell" data-intro>
           <h2 id="services-title" class="text-[clamp(2.2rem,4.2vw,4rem)] leading-[1] tracking-[-0.04em]">
             Vom ersten Gespräch bis lange nach der Montage.
           </h2>
           <p class="mt-6 max-w-[44ch] text-[1.05rem] leading-[1.65] text-muted">
             Ein Lernraum entsteht nicht im Katalog. Er entsteht im Gespräch mit den Menschen, die ihn jeden Tag nutzen – und wird dann Schritt für Schritt präzise umgesetzt.
           </p>
-          <div class="progress mt-10 hidden lg:block" aria-hidden="true">
+        </div>
+
+        <div class="detail-cell">
+          <div class="progress hidden lg:block" aria-hidden="true">
             <div class="progress-track">
               {services.map(() => <span class="progress-tick"></span>)}
               <span class="progress-node" data-node></span>
@@ -75,7 +77,7 @@ const services = [
     --peek: clamp(120px, 22vh, 220px);
     pointer-events: none;
   }
-  .steps-cell, .intro-cell { pointer-events: auto; }
+  .steps-cell, .intro-cell, .detail-cell { pointer-events: auto; }
 
   .services-grid {
     display: grid;
@@ -86,17 +88,8 @@ const services = [
   .chair-cell { width: 150px; }
   .intro-cell { order: -1; margin-bottom: 48px; }
   .detail { display: none; }
-  .dim {
-    display: block;
-    width: 100%;
-    height: 12px;
-    margin-top: 10px;
-    fill: none;
-    stroke: var(--color-muted);
-    stroke-width: 1;
-  }
-
-  .steps { list-style: none; margin: 40px 0 0; padding: 0; }
+  .steps { list-style: none; margin: 32px 0 0; padding: 0; }
+  .chair { display: block; }
   .step { padding: 22px 0 24px; border-top: 1px solid var(--color-line); }
   .step:last-child { border-bottom: 1px solid var(--color-line); }
   .step-head { display: flex; align-items: baseline; gap: 14px; }
@@ -161,8 +154,10 @@ const services = [
     }
     .chair-cell { width: var(--col-w); grid-column: 1; grid-row: 1; }
     .steps-cell { grid-column: 1; grid-row: 2; }
-    .intro-cell { grid-column: 2; grid-row: 1 / 3; align-self: end; order: 0; margin-bottom: 0; padding-bottom: 8px; }
-    .steps { margin-top: 36px; }
+    .intro-cell { grid-column: 2; grid-row: 1; align-self: end; order: 0; margin-bottom: 0; padding-bottom: 36px; }
+    .detail-cell { grid-column: 2; grid-row: 2; align-self: start; padding-top: 14px; }
+    .steps { margin-top: 0; padding: 4px 22px 0; }
+    .step:first-child { border-top: 0; }
     .step { padding: 16px 0 18px; }
     .step-text { margin-left: 0; font-size: 0.92rem; }
     .step-head { gap: 12px; }
@@ -171,14 +166,14 @@ const services = [
       display: block;
       position: absolute;
       left: 0;
-      top: 36px;
+      top: 0;
       bottom: 0;
       width: 1.5px;
-      margin-left: calc(-1 * clamp(40px, 4vw, 64px) / 2);
       background: var(--color-ink);
       transform-origin: top;
       transform: scaleY(var(--axis, 1));
     }
+    .axis-r { left: auto; right: 0; }
   }
 
   /* scrubbed desktop sequence (class set by the scene when it is active) */
@@ -196,7 +191,9 @@ const services = [
     clip-path: inset(50%);
     white-space: nowrap;
   }
-  .services.is-scrub .detail { display: grid; margin-top: 44px; min-height: 9.5rem; }
+  .services.is-scrub .detail { display: grid; margin-top: 32px; min-height: 8.5rem; }
+  /* the heading only appears once the chair has left the hero */
+  .services.is-scrub .intro-cell { opacity: var(--intro, 1); transform: translateY(calc((1 - var(--intro, 1)) * 16px)); }
   .detail-item {
     grid-area: 1 / 1;
     opacity: var(--o, 0);
@@ -243,6 +240,9 @@ const services = [
     const n = steps.length;
     let stickTop = 0;
     let stickH = 0;
+    let startTop = 0;
+    let total = 1;
+    let pre = 0;
     let lastActive = -1;
 
     revealOnce(steps);
@@ -259,9 +259,16 @@ const services = [
         stickTop = Math.min(navH + 8, vh - stickH - 24);
         section.style.setProperty('--stick-h', `${stickH}px`);
         section.style.setProperty('--stick-top', `${stickTop}px`);
+        // where the section sits on load (overlapping the hero) → where it sticks → where it releases
+        startTop = vh + parseFloat(getComputedStyle(section).marginTop);
+        pre = Math.max(1, startTop - stickTop);
+        total = pre + Math.max(1, section.offsetHeight - stickH);
       },
-      progress: (rect) => (stickTop - rect.top) / Math.max(1, rect.height - stickH),
-      render(p) {
+      progress: (rect) => (startTop - rect.top) / total,
+      render(pAll) {
+        const f = pre / total;
+        section.style.setProperty('--intro', String(range(pAll, f * 0.7, f)));
+        const p = range(pAll, f, 1);
         const q = range(p, 0.03, 0.94) * n;
         const active = Math.min(n - 1, Math.floor(q));
         steps.forEach((step, i) => {

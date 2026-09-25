@@ -1,0 +1,32 @@
+---
+/**
+ * Abstract front silhouette of the VS PantoSwing shell: broad backrest with
+ * grip slot, waist, and the seat flaring out to a straight front edge.
+ * The front edge is drawn flush with the bottom of the viewBox so the
+ * Leistungen column can continue it as plan lines.
+ */
+interface Props {
+  class?: string;
+}
+const { class: className = '' } = Astro.props;
+---
+
+<svg class={className} viewBox="0 0 400 444" role="img" aria-label="Silhouette eines ginstergelben PantoSwing-Schulstuhls von VS">
+  <path
+    fill="#E2A300"
+    fill-rule="evenodd"
+    d="M200 16
+       C300 16 368 26 378 64
+       C386 96 380 160 368 214
+       C356 268 336 300 334 332
+       C332 358 352 378 380 394
+       C394 402 400 414 400 428
+       L400 444 L0 444 L0 428
+       C0 414 6 402 20 394
+       C48 378 68 358 66 332
+       C64 300 44 268 32 214
+       C20 160 14 96 22 64
+       C32 26 100 16 200 16 Z
+       M150 64 H250 A15 15 0 0 1 250 94 H150 A15 15 0 0 1 150 64 Z"
+  />
+</svg>
