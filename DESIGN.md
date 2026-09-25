@@ -15,11 +15,11 @@ colors:
   error: "#a4331c"
 typography:
   display:
-    fontFamily: "Archivo, ui-sans-serif, system-ui, sans-serif"
-    fontSize: "clamp(2.9rem, min(7vw, 10.5vh), 6rem)"
-    fontWeight: 600
-    lineHeight: 0.94
-    letterSpacing: "-0.045em"
+    fontFamily: "Caveat, cursive"
+    fontSize: "clamp(3.6rem, min(8.6vw, 13vh), 7.6rem)"
+    fontWeight: 700
+    lineHeight: 0.86
+    letterSpacing: "normal"
   headline:
     fontFamily: "Archivo, ui-sans-serif, system-ui, sans-serif"
     fontSize: "clamp(2.4rem, 5vw, 4.75rem)"
@@ -122,17 +122,18 @@ Key characteristics: generous white space, hairline structure instead of contain
 
 ## Typography
 
-Archivo (a grotesque) carries every UI and editorial role. Caveat is the whiteboard marker, limited to board notes, photo captions, planning questions, the active-step label and the one conversation bubble. It never appears in navigation, buttons or body text.
+Archivo (a grotesque) carries every UI and editorial role. Caveat is the whiteboard marker, used for the hero headline (Caveat 700, written letter by letter on load, with a ginstergelb marker underline under the last word), board notes, photo captions, planning questions, the active-step label and the one conversation bubble. It never appears in navigation, buttons or body text.
 
 ### Hierarchy
-- Display (hero H1) ≤ 6rem, tracking -0.045em, line height 0.94.
+- Hero H1: Caveat 700, `clamp(3.6rem, min(8.6vw, 13vh), 7.6rem)`, line height 0.86, rotated -1.5°.
+- Display (large Archivo headings) ≤ 6rem, tracking -0.045em, line height 0.94.
 - Headline (section H2) ≈ 4.75rem max.
 - Title (step, project, category names) 1.75–2.75rem, weight 600.
 - Quote 1.6–2.6rem, weight 500, hanging opening quote.
 - Body 1.05rem at 1.65, measure ≤ 52ch. Label 0.82rem for meta, field labels and credits.
 
 ### Named Rules
-- **The Annotation Rule.** Handwriting annotates; it never states the offer.
+- **The Annotation Rule.** Handwriting annotates. The only exception is the hero claim, written on the board like the first idea of a plan; the offer itself (subline, buttons) stays in Archivo.
 
 ## Layout
 

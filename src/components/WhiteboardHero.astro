@@ -3,9 +3,26 @@ import { projects } from '../data/projects';
 import ProjectPhoto from './ProjectPhoto.astro';
 
 const [a, b, c] = projects;
+
+// The headline is written letter by letter. Delays are computed here so the
+// pacing is slightly uneven (like a hand) but identical on every load.
+const headline = 'Lernräume für Südtirol.';
+const PER_LETTER = 0.068;
+const WORD_GAP = 0.2;
+let clock = 0;
+const words = headline.split(' ').map((word, wi) => {
+  const letters = [...word].map((char, ci) => {
+    const delay = clock;
+    clock += PER_LETTER + (((wi * 7 + ci * 13) % 5) - 2) * 0.012;
+    return { char, delay: delay.toFixed(3) };
+  });
+  clock += WORD_GAP;
+  return letters;
+});
+const writeDuration = (clock - WORD_GAP + 0.15).toFixed(2);
 ---
 
-<section id="top" class="hero relative pt-[calc(var(--nav-h)+8px)]" aria-labelledby="hero-title">
+<section id="top" class="hero relative pt-[calc(var(--nav-h)+8px)]" aria-labelledby="hero-title" style={`--write: ${writeDuration}s`}>
   <div class="shell">
     <div class="board relative">
       <div class="board-surface relative h-full">
@@ -30,13 +47,27 @@ const [a, b, c] = projects;
         <div class="relative grid h-full lg:block">
           <!-- copy -->
           <div class="hero-copy relative z-10 pt-10 pb-8 lg:absolute lg:left-0 lg:top-0 lg:w-[44%] lg:pt-[clamp(40px,8vh,88px)]">
-            <h1 id="hero-title" class="hero-title rise text-[clamp(2.9rem,min(7vw,10.5vh),6rem)] leading-[0.94] tracking-[-0.045em]">
-              Lernräume für Südtirol.
+            <h1 id="hero-title" class="hero-title">
+              <span class="sr-only">{headline}</span>
+              <span class="handwriting" aria-hidden="true">
+                {words.map((letters, wi) => (
+                  <>
+                    <span class={`word${wi === words.length - 1 ? ' word-last' : ''}`}>
+                      {letters.map((l) => <span class="ch" style={`--cd: ${l.delay}s`}>{l.char}</span>)}
+                      {wi === words.length - 1 && (
+                        <svg class="hand-underline" viewBox="0 0 300 16" preserveAspectRatio="none">
+                          <path pathLength="1" d="M4 10 C60 5 130 12 190 8 S270 6 296 9" />
+                        </svg>
+                      )}
+                    </span>{' '}
+                  </>
+                ))}
+              </span>
             </h1>
-            <p class="rise mt-7 max-w-[38ch] text-[1.05rem] leading-[1.6] text-muted sm:text-[1.12rem]" style="--d: 0.12s">
+            <p class="rise mt-7 max-w-[38ch] text-[1.05rem] leading-[1.6] text-muted sm:text-[1.12rem]" style="--d: 0s">
               Trias Schule plant und realisiert Lernräume für Schulen und Kindergärten – persönlich begleitet und mit Einrichtungslösungen von VS Möbel.
             </p>
-            <div class="rise mt-9 flex flex-wrap items-center gap-x-7 gap-y-4" style="--d: 0.22s">
+            <div class="rise mt-9 flex flex-wrap items-center gap-x-7 gap-y-4" style="--d: 0.15s">
               <a href="#projekte" class="btn btn-ink">
                 Projekte entdecken
                 <svg class="btn-arrow h-3.5 w-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M8 2v11M4 9l4 4 4-4" /></svg>
@@ -97,17 +128,52 @@ const [a, b, c] = projects;
     .pins :global(.pin-c) { left: 61.5%; top: 55%; width: 22%; transform: rotate(1deg); }
   }
 
-  /* Attention sequence: chair (in ServicesStory) → wordmark and claim → projects → annotations */
+  /* Attention sequence: chair (in ServicesStory) → wordmark and handwritten claim → subline → projects → annotations */
   .hero {
     --t-claim: 0.85s;
-    --t-images: 1.9s;
-    --t-notes: 1.65s; /* added to each note's own --d (0.95–1.3s) */
+    --t-after: calc(var(--t-claim) + var(--write)); /* --write is set from the headline length */
+    --t-images: calc(var(--t-after) + 0.35s);
+    --t-notes: calc(var(--t-images) - 0.2s); /* added to each note's own --d (0.95–1.3s) */
+  }
+
+  .hero-title {
+    font-family: var(--font-marker);
+    font-weight: 700;
+    font-size: clamp(3.6rem, min(8.6vw, 13vh), 7.6rem);
+    line-height: 0.86;
+    letter-spacing: 0;
+    color: var(--color-ink);
+  }
+  .handwriting { display: block; transform: rotate(-1.5deg); transform-origin: 0 100%; }
+  .word { display: inline-block; white-space: nowrap; position: relative; }
+  .ch { display: inline-block; }
+  .hand-underline {
+    position: absolute;
+    left: -2%;
+    bottom: -0.02em;
+    width: 100%;
+    height: 0.16em;
+    overflow: visible;
+    fill: none;
+    stroke: var(--color-ginster);
+    stroke-width: 7;
+    stroke-linecap: round;
+    vector-effect: non-scaling-stroke;
   }
 
   @media (prefers-reduced-motion: no-preference) {
     :global(html.js) .rise {
       animation: hero-rise 800ms var(--ease-draw) both;
-      animation-delay: calc(var(--d, 0s) + var(--t-claim));
+      animation-delay: calc(var(--d, 0s) + var(--t-after));
+    }
+    /* each letter is wiped in left to right, like a marker stroke */
+    :global(html.js) .ch {
+      animation: write-letter 150ms linear both;
+      animation-delay: calc(var(--t-claim) + var(--cd));
+    }
+    :global(html.js) .hand-underline path {
+      animation: underline 650ms var(--ease-draw) both;
+      animation-delay: calc(var(--t-after) - 0.05s);
     }
     .pins :global(.pin-a) { --pin-d: var(--t-images); }
     .pins :global(.pin-b) { --pin-d: calc(var(--t-images) + 0.15s); }
@@ -139,6 +205,15 @@ const [a, b, c] = projects;
     }
   }
 
+  @keyframes write-letter {
+    from { clip-path: inset(-1em 100% -1em -1em); }
+    to { clip-path: inset(-1em -1em -1em -1em); }
+  }
+  @keyframes underline {
+    from { stroke-dasharray: 1; stroke-dashoffset: 1; opacity: 0; }
+    2% { opacity: 1; }
+    to { stroke-dasharray: 1; stroke-dashoffset: 0; opacity: 1; }
+  }
   @keyframes hero-rise {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: none; }
