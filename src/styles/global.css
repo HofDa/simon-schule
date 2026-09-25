@@ -20,7 +20,6 @@
 :root {
   --gutter: clamp(20px, 4vw, 64px);
   --nav-h: 72px;
-  --lane: 56px;
   color-scheme: light;
 }
 

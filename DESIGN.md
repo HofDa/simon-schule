@@ -63,7 +63,6 @@ rounded:
   full: "9999px"
 spacing:
   gutter: "clamp(20px, 4vw, 64px)"
-  lane: "56px"
   nav: "72px"
   section: "clamp(112px, 12vw, 160px)"
 components:
@@ -137,7 +136,7 @@ Archivo (a grotesque) carries every UI and editorial role. Caveat is the whitebo
 
 ## Layout
 
-A 12-column editorial grid inside `.shell` (max 1520px, gutter `clamp(20px, 4vw, 64px)`). The services column width is `clamp(250px, 21vw, 330px)`, which is the chair's width. On desktop the project area reserves a right-hand **lane** (56px) for the drawn line. Projects alternate: image left (8 columns) + info (4), info (4) + image right (8), then a full-width 21:9 photo with three info columns below. Section rhythm is 112–160px vertical padding with more space above headings than below. Mobile stacks everything with no pinned sequences.
+A 12-column editorial grid inside `.shell` (max 1520px, gutter `clamp(20px, 4vw, 64px)`). The services column width is `clamp(250px, 21vw, 330px)`, which is the chair's width. On desktop the projects live inside the pinned U-frame of the drawn line (a masked window above the title). Projects alternate: image left (8 columns) + info (4), info (4) + image right (8), then a full-width 21:9 photo with three info columns below. Section rhythm is 112–160px vertical padding with more space above headings than below. Mobile stacks everything with no pinned sequences.
 
 ## Elevation & Depth
 
@@ -162,7 +161,7 @@ Underline-only fields. The underline turns ink on focus and ginstergelb on keybo
 Wordmark "TRIAS SCHULE" (bold / regular, tracked 0.14em), five links with a ginstergelb dot marking the current section, and a small ink "Projekt anfragen" button. On mobile, a full-height white sheet with large links.
 
 ### Signature: Drawn Line
-A 4px ginstergelb SVG route, `stroke-dashoffset` scrubbed by scroll, with ink nodes (start point and moving head). It comes down from the chair's single leg, crosses the page to reveal "Unsere Projekte", and turns 90° up at the right edge (ink right-angle mark in the inner corner). The project lane is a second route with its own start node, ending as a dimension line above the full-width project.
+A 4px ginstergelb SVG route, `stroke-dashoffset` scrubbed by scroll, with ink nodes (start point and moving head). It comes down from the chair's single leg, runs along the bottom of the pinned stage revealing "Unsere Projekte", and turns 90° up at the right edge (ink right-angle mark in the inner corner). While it climbs, the projects travel downward through the frame it draws, so scrolling on feels like moving up the plan. Mobile and reduced motion show the U-shaped line with the title and the projects stacked below.
 
 ### Signature: Whiteboard
 A frame, a surface with a noise texture and a faint sheen, prints held by magnets (rotated ±1–2°), marker notes and arrows drawn on load, and a marker tray.

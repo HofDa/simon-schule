@@ -22,7 +22,8 @@ const words = headline.split(' ').map((word, wi) => {
 const writeDuration = (clock - WORD_GAP + 0.15).toFixed(2);
 ---
 
-<section id="top" class="hero relative pt-[calc(var(--nav-h)+8px)]" aria-labelledby="hero-title" style={`--write: ${writeDuration}s`}>
+<Fragment set:html={`<style>:root{--hero-write:${writeDuration}s}</style>`} />
+<section id="top" class="hero relative pt-[calc(var(--nav-h)+8px)]" aria-labelledby="hero-title">
   <div class="shell">
     <div class="board relative">
       <div class="board-surface relative h-full">
@@ -128,12 +129,14 @@ const writeDuration = (clock - WORD_GAP + 0.15).toFixed(2);
     .pins :global(.pin-c) { left: 61.5%; top: 55%; width: 22%; transform: rotate(1deg); }
   }
 
-  /* Attention sequence: chair (in ServicesStory) → wordmark and handwritten claim → subline → projects → annotations */
-  .hero {
+  /* Attention sequence: wordmark and handwritten claim → subline → projects → annotations → chair (ServicesStory).
+     Defined on :root so the chair in the next section shares the timeline. */
+  :global(:root) {
     --t-claim: 0.85s;
-    --t-after: calc(var(--t-claim) + var(--write)); /* --write is set from the headline length */
+    --t-after: calc(var(--t-claim) + var(--hero-write, 2s)); /* --hero-write comes from the headline length */
     --t-images: calc(var(--t-after) + 0.35s);
     --t-notes: calc(var(--t-images) - 0.2s); /* added to each note's own --d (0.95–1.3s) */
+    --t-chair: calc(var(--t-notes) + 1.5s); /* after the last note (--d 1.3s) has started drawing */
   }
 
   .hero-title {

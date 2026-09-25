@@ -9,13 +9,6 @@ const src = (file: string, w: number) => asset(`images/projects/${file}-${w}.web
 
 <div class="projects shell relative pb-24 lg:pb-36" data-projects>
   <div class="projects-inner relative" data-projects-inner>
-    <svg class="p-line pointer-events-none absolute inset-0 hidden h-full w-full lg:block" data-pline aria-hidden="true">
-      <path class="p-path" data-ppath d="" />
-      <path class="p-ticks" data-pticks d="" />
-      <circle class="p-start" data-pstart r="5.5" cx="-20" cy="-20" />
-      <circle class="p-head" data-phead r="6" cx="-20" cy="-20" />
-    </svg>
-
     {projects.map((project, i) => {
       const layout = layouts[i % layouts.length];
       const [main, detail] = project.images;
@@ -90,12 +83,8 @@ const src = (file: string, w: number) => asset(`images/projects/${file}-${w}.web
   .p-desc { margin-top: 22px; max-width: 46ch; color: var(--color-muted); line-height: 1.65; }
   .p-detail { display: block; width: 62%; margin-top: 36px; aspect-ratio: 4 / 3; object-fit: cover; }
 
-  .p-path { fill: none; stroke: var(--color-ginster); stroke-width: 4; stroke-linecap: butt; stroke-linejoin: miter; }
-  .p-ticks { fill: none; stroke: var(--color-ginster); stroke-width: 3; opacity: var(--ticks, 1); transition: opacity 300ms var(--ease-draw); }
-  .p-head, .p-start { fill: var(--color-ink); }
-
   @media (min-width: 1024px) {
-    .projects-inner { gap: clamp(120px, 14vh, 180px); padding-right: var(--lane); padding-top: 40px; }
+    .projects-inner { gap: clamp(120px, 14vh, 180px); padding-top: 40px; }
     .project { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(24px, 2.6vw, 44px); align-items: start; }
     .project--left .p-media { grid-column: 1 / 9; }
     .project--left .p-info { grid-column: 9 / 13; margin-top: 0; padding-top: 12px; }
@@ -117,15 +106,17 @@ const src = (file: string, w: number) => asset(`images/projects/${file}-${w}.web
 </style>
 
 <script>
-  import { addScene, clamp, range, viewProgress } from '../scripts/motion';
+  import { addScene, range, viewProgress } from '../scripts/motion';
 
-  // Image reveals: a mask opens upwards, the photo settles inside it.
+  // Image reveals where the projects scroll normally (mobile, short screens).
+  // On the pinned desktop stage (ProjectTransition) the projects arrive by moving, so they render fully.
   document.querySelectorAll<HTMLElement>('[data-project]').forEach((article) => {
     const media = article.querySelector<HTMLElement>('[data-media]');
     const info = article.querySelector<HTMLElement>('[data-info]');
     if (!media || !info) return;
     addScene({
       el: media,
+      media: '(max-width: 1023px), (max-height: 639px)',
       progress: viewProgress(1, 0.3),
       render(p) {
         media.style.setProperty('--r', String(1 - p));
@@ -133,111 +124,4 @@ const src = (file: string, w: number) => asset(`images/projects/${file}-${w}.web
       },
     });
   });
-
-  // The plan line continues down the lane, steps aside for right-hand images
-  // and ends as a dimension line above the full-width project.
-  const inner = document.querySelector<HTMLElement>('[data-projects-inner]');
-  const svg = inner?.querySelector<SVGSVGElement>('[data-pline]');
-  const path = inner?.querySelector<SVGPathElement>('[data-ppath]');
-  const ticks = inner?.querySelector<SVGPathElement>('[data-pticks]');
-  const head = inner?.querySelector<SVGCircleElement>('[data-phead]');
-  const startNode = inner?.querySelector<SVGCircleElement>('[data-pstart]');
-
-  type Seg = { kind: 'v' | 'h'; y0: number; y1: number; len: number; cost: number };
-
-  if (inner && svg && path && ticks && head) {
-    let segs: Seg[] = [];
-    let total = 1;
-    const H_COST = 140;
-
-    addScene({
-      el: inner,
-      media: '(min-width: 1024px)',
-      measure(active) {
-        const box = inner.getBoundingClientRect();
-        const w = box.width;
-        const h = inner.scrollHeight;
-        svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
-        const lane = parseFloat(getComputedStyle(inner).paddingRight) || 56;
-        const xR = w - lane / 2;
-        let x = xR;
-        let y = 0;
-        let d = `M${xR} 0`;
-        segs = [];
-        const v = (to: number) => {
-          segs.push({ kind: 'v', y0: y, y1: to, len: Math.abs(to - y), cost: Math.abs(to - y) });
-          y = to;
-          d += ` V${to}`;
-        };
-        const hz = (to: number, cost = H_COST) => {
-          segs.push({ kind: 'h', y0: y, y1: y, len: Math.abs(to - x), cost });
-          x = to;
-          d += ` H${to}`;
-        };
-
-        let tail = '';
-        for (const article of inner.querySelectorAll<HTMLElement>('[data-project]')) {
-          const r = article.getBoundingClientRect();
-          const top = r.top - box.top;
-          const bottom = r.bottom - box.top;
-          const media = article.querySelector<HTMLElement>('[data-media]')!.getBoundingClientRect();
-          const layout = article.dataset.layout;
-          if (layout === 'right') {
-            const gap = parseFloat(getComputedStyle(article).columnGap) || 32;
-            const xG = media.left - box.left - gap / 2;
-            v(top - 48);
-            hz(xG);
-            v(bottom + 48);
-            hz(xR);
-          } else if (layout === 'full') {
-            const yDim = media.top - box.top - 28;
-            const xL = media.left - box.left;
-            v(yDim);
-            hz(xL, 320);
-            tail = `M${xL} ${yDim - 10} V${yDim + 10}`;
-          }
-        }
-        if (!tail) v(h);
-
-        path.setAttribute('d', d);
-        ticks.setAttribute('d', tail);
-        // the route starts fresh in the project lane (the transition line turned upwards)
-        startNode?.setAttribute('cx', String(xR));
-        startNode?.setAttribute('cy', '6'); // inside the svg box, which clips at its edges
-        total = path.getTotalLength();
-        path.style.strokeDasharray = `${total}`;
-        if (!active) path.style.strokeDashoffset = '0';
-      },
-      progress(rect, vh) {
-        // Encode the head's y (in container px) as a 0..1 value for the engine.
-        const t = vh * 0.62 - rect.top;
-        return clamp(t / Math.max(1, rect.height));
-      },
-      render(p) {
-        const t = p * inner.getBoundingClientRect().height;
-        let len = 0;
-        let offset = 0;
-        let done = true;
-        for (const s of segs) {
-          const frac = s.kind === 'v' ? clamp((t - offset - s.y0) / Math.max(1, s.y1 - s.y0)) : clamp((t - offset - s.y0) / s.cost);
-          len += s.len * frac;
-          if (s.kind === 'h') offset += s.cost;
-          if (frac < 1) {
-            done = false;
-            break;
-          }
-        }
-        if (p >= 1) {
-          len = total;
-          done = true;
-        }
-        path.style.strokeDashoffset = String(total - len);
-        const pt = path.getPointAtLength(len);
-        head.setAttribute('cx', String(pt.x));
-        head.setAttribute('cy', String(pt.y));
-        head.style.opacity = done || len <= 0 ? '0' : '1';
-        inner.style.setProperty('--ticks', done ? '1' : '0');
-      },
-    });
-  }
 </script>

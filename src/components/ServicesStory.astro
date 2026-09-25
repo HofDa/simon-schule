@@ -230,15 +230,18 @@ const arrows = [
   .services .step.is-done .step-underline { opacity: 0; }
   .services .step.is-active .step-arrow { stroke: var(--color-ginster-deep); }
 
-  /* On load the chair is the first thing on the white page (see WhiteboardHero timing). */
-  @media (prefers-reduced-motion: no-preference) {
+  /* The chair arrives last in the hero sequence (see --t-chair in WhiteboardHero):
+     it slides in from the left while spinning on its own axis and comes to rest facing forward. */
+  @media (prefers-reduced-motion: no-preference) and (min-width: 1024px) {
     :global(html.js) .chair-cell {
-      animation: chair-in 1000ms var(--ease-draw) 0.1s both;
+      animation: chair-in 1700ms cubic-bezier(0.22, 0.8, 0.26, 1) both;
+      animation-delay: var(--t-chair, 4.5s);
     }
   }
   @keyframes chair-in {
-    from { opacity: 0; transform: translateY(28px); }
-    to { opacity: 1; transform: none; }
+    from { opacity: 0; transform: perspective(1100px) translateX(calc(-100% - 60px)) rotateY(-900deg); }
+    8% { opacity: 1; }
+    to { opacity: 1; transform: perspective(1100px) translateX(0) rotateY(0deg); }
   }
 
   /* mobile / reduced: simple reveal */
