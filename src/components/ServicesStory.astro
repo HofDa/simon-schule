@@ -8,6 +8,15 @@ const services = [
   { title: 'Umsetzen', text: 'Von Bestellung und Koordination bis zur Montage: ein Ablauf, ein Ansprechpartner.' },
   { title: 'Begleiten', text: 'Direkte Ansprechpartner in Südtirol – auch nach Projektabschluss.' },
 ];
+
+// Hand-drawn marker arrows as bullets: each one a little different, like drawn one after another.
+const arrows = [
+  { line: 'M3 13 C10 11 17 12 27 9', head: 'M21 4 L28 9 L21 14', rot: -4 },
+  { line: 'M2 10 C9 12 18 11 27 11', head: 'M21 6 L28 11 L22 16', rot: 3 },
+  { line: 'M3 12 C11 8 19 10 27 10', head: 'M20 5 L27 10 L21 15', rot: -1 },
+  { line: 'M2 11 C10 10 17 13 27 12', head: 'M22 7 L28 12 L21 16', rot: 4 },
+  { line: 'M3 13 C12 12 18 9 27 9', head: 'M21 4 L27 9 L20 13', rot: -2 },
+];
 ---
 
 <section id="leistungen" class="services relative z-20" aria-labelledby="services-title" data-services>
@@ -18,15 +27,17 @@ const services = [
           <PantoSwingSilhouette class="chair block w-full" />
         </div>
 
-        <!-- the seat's front corners continue as the two plan lines (legs) framing the column -->
+        <!-- the seat's left front corner continues as the chair's single leg, drawn down the column -->
         <div class="steps-cell relative">
           <span class="axis" data-axis aria-hidden="true"></span>
-          <span class="axis axis-r" aria-hidden="true"></span>
           <ol class="steps" data-steps>
             {services.map((s, i) => (
               <li class="step" data-step>
                 <div class="step-head">
-                  <span class="step-n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+                  <svg class="step-arrow" viewBox="0 0 30 20" style={`--rot: ${arrows[i % arrows.length].rot}deg`} aria-hidden="true">
+                    <path class="arrow-line" pathLength="1" d={arrows[i % arrows.length].line} />
+                    <path class="arrow-head" pathLength="1" d={arrows[i % arrows.length].head} />
+                  </svg>
                   <h3 class="step-title">
                     <span class="step-title-text">{s.title}</span>
                     <svg class="step-underline" viewBox="0 0 200 12" preserveAspectRatio="none" aria-hidden="true">
@@ -92,8 +103,23 @@ const services = [
   .chair { display: block; }
   .step { padding: 22px 0 24px; border-top: 1px solid var(--color-line); }
   .step:last-child { border-bottom: 1px solid var(--color-line); }
-  .step-head { display: flex; align-items: baseline; gap: 14px; }
-  .step-n { font-size: 0.78rem; font-variant-numeric: tabular-nums; color: var(--color-muted); min-width: 1.6em; }
+  .step-head { display: flex; align-items: center; gap: 14px; }
+  .step-arrow {
+    flex: none;
+    width: 30px;
+    height: 20px;
+    margin-top: 0.1em;
+    overflow: visible;
+    transform: rotate(var(--rot, 0deg));
+    fill: none;
+    stroke: var(--color-ink);
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  /* drawn with the step while pinned; fully drawn otherwise */
+  .arrow-line { stroke-dasharray: 1; stroke-dashoffset: calc(1 - var(--al, 1)); }
+  .arrow-head { stroke-dasharray: 1; stroke-dashoffset: calc(1 - var(--ah, 1)); }
   .step-title {
     position: relative;
     display: inline-block;
@@ -116,7 +142,7 @@ const services = [
     stroke-dashoffset: 1;
   }
   .step-text {
-    margin: 12px 0 0 calc(1.6em * 0.78 + 14px);
+    margin: 12px 0 0 44px;
     font-size: 0.97rem;
     line-height: 1.55;
     color: var(--color-muted);
@@ -159,7 +185,7 @@ const services = [
     .steps { margin-top: 0; padding: 4px 22px 0; }
     .step:first-child { border-top: 0; }
     .step { padding: 16px 0 18px; }
-    .step-text { margin-left: 0; font-size: 0.92rem; }
+    .step-text { margin-left: 44px; font-size: 0.92rem; }
     .step-head { gap: 12px; }
 
     .axis {
@@ -168,12 +194,11 @@ const services = [
       left: 0;
       top: 0;
       bottom: 0;
-      width: 1.5px;
-      background: var(--color-ink);
+      width: 4px;
+      background: var(--color-ginster);
       transform-origin: top;
       transform: scaleY(var(--axis, 1));
     }
-    .axis-r { left: auto; right: 0; }
   }
 
   /* scrubbed desktop sequence (class set by the scene when it is active) */
@@ -203,7 +228,7 @@ const services = [
   .detail-text { margin-top: 12px; max-width: 34ch; font-size: clamp(1.25rem, 1.6vw, 1.55rem); line-height: 1.35; letter-spacing: -0.015em; }
   .services .step-underline { stroke-dashoffset: calc(1 - var(--u, 0)); transition: opacity 300ms var(--ease-draw); }
   .services .step.is-done .step-underline { opacity: 0; }
-  .services .step.is-active .step-n { color: var(--color-ink); }
+  .services .step.is-active .step-arrow { stroke: var(--color-ginster-deep); }
 
   /* On load the chair is the first thing on the white page (see WhiteboardHero timing). */
   @media (prefers-reduced-motion: no-preference) {
@@ -273,7 +298,9 @@ const services = [
         const active = Math.min(n - 1, Math.floor(q));
         steps.forEach((step, i) => {
           const t = clamp(q - i);
-          step.style.setProperty('--t', String(easeOut(range(t, 0, 0.55))));
+          step.style.setProperty('--al', String(range(t, 0, 0.18)));
+          step.style.setProperty('--ah', String(range(t, 0.14, 0.26)));
+          step.style.setProperty('--t', String(easeOut(range(t, 0.2, 0.7))));
           step.style.setProperty('--o', String(range(t, 0.3, 0.75)));
           step.style.setProperty('--u', String(easeOut(range(t, 0.25, 0.85))));
           step.classList.toggle('is-active', i === active && t > 0);

@@ -12,7 +12,8 @@ const src = (file: string, w: number) => asset(`images/projects/${file}-${w}.web
     <svg class="p-line pointer-events-none absolute inset-0 hidden h-full w-full lg:block" data-pline aria-hidden="true">
       <path class="p-path" data-ppath d="" />
       <path class="p-ticks" data-pticks d="" />
-      <circle class="p-head" data-phead r="4.5" cx="-20" cy="-20" />
+      <circle class="p-start" data-pstart r="5.5" cx="-20" cy="-20" />
+      <circle class="p-head" data-phead r="6" cx="-20" cy="-20" />
     </svg>
 
     {projects.map((project, i) => {
@@ -89,9 +90,9 @@ const src = (file: string, w: number) => asset(`images/projects/${file}-${w}.web
   .p-desc { margin-top: 22px; max-width: 46ch; color: var(--color-muted); line-height: 1.65; }
   .p-detail { display: block; width: 62%; margin-top: 36px; aspect-ratio: 4 / 3; object-fit: cover; }
 
-  .p-path { fill: none; stroke: var(--color-ink); stroke-width: 1.5; stroke-linecap: square; }
-  .p-ticks { fill: none; stroke: var(--color-ink); stroke-width: 1; opacity: var(--ticks, 1); transition: opacity 300ms var(--ease-draw); }
-  .p-head { fill: var(--color-ginster); }
+  .p-path { fill: none; stroke: var(--color-ginster); stroke-width: 4; stroke-linecap: butt; stroke-linejoin: miter; }
+  .p-ticks { fill: none; stroke: var(--color-ginster); stroke-width: 3; opacity: var(--ticks, 1); transition: opacity 300ms var(--ease-draw); }
+  .p-head, .p-start { fill: var(--color-ink); }
 
   @media (min-width: 1024px) {
     .projects-inner { gap: clamp(120px, 14vh, 180px); padding-right: var(--lane); padding-top: 40px; }
@@ -140,6 +141,7 @@ const src = (file: string, w: number) => asset(`images/projects/${file}-${w}.web
   const path = inner?.querySelector<SVGPathElement>('[data-ppath]');
   const ticks = inner?.querySelector<SVGPathElement>('[data-pticks]');
   const head = inner?.querySelector<SVGCircleElement>('[data-phead]');
+  const startNode = inner?.querySelector<SVGCircleElement>('[data-pstart]');
 
   type Seg = { kind: 'v' | 'h'; y0: number; y1: number; len: number; cost: number };
 
@@ -192,13 +194,16 @@ const src = (file: string, w: number) => asset(`images/projects/${file}-${w}.web
             const xL = media.left - box.left;
             v(yDim);
             hz(xL, 320);
-            tail = `M${xR} ${yDim - 6} V${yDim + 6} M${xL} ${yDim - 6} V${yDim + 6}`;
+            tail = `M${xL} ${yDim - 10} V${yDim + 10}`;
           }
         }
         if (!tail) v(h);
 
         path.setAttribute('d', d);
         ticks.setAttribute('d', tail);
+        // the route starts fresh in the project lane (the transition line turned upwards)
+        startNode?.setAttribute('cx', String(xR));
+        startNode?.setAttribute('cy', '6'); // inside the svg box, which clips at its edges
         total = path.getTotalLength();
         path.style.strokeDasharray = `${total}`;
         if (!active) path.style.strokeDashoffset = '0';

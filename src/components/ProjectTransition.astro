@@ -10,8 +10,8 @@
     <svg class="t-svg absolute inset-0 h-full w-full" data-svg aria-hidden="true">
       <path class="t-path" data-path d="" />
       <path class="t-corner" data-corner d="" />
-      <circle class="t-node" data-start r="4.5" cx="-20" cy="-20" />
-      <circle class="t-head" data-head r="4.5" cx="-20" cy="-20" />
+      <circle class="t-node" data-start r="5.5" cx="-20" cy="-20" />
+      <circle class="t-head" data-head r="6" cx="-20" cy="-20" />
     </svg>
 
     <div class="t-title-wrap absolute inset-x-0" data-title-wrap>
@@ -29,15 +29,17 @@
 
 <style>
   .t-stage { height: 460px; }
-  .t-path, .t-corner {
+  /* the drawn route: bold, in the signal colour; ink only for its nodes and the right-angle mark */
+  .t-path {
     fill: none;
-    stroke: var(--color-ink);
-    stroke-width: 1.5;
-    stroke-linecap: square;
+    stroke: var(--color-ginster);
+    stroke-width: 4;
+    stroke-linecap: butt;
+    stroke-linejoin: miter;
   }
-  .t-corner { stroke-width: 1; }
+  .t-corner { fill: none; stroke: var(--color-ink); stroke-width: 1.5; }
   .t-node { fill: var(--color-ink); }
-  .t-head { fill: var(--color-ginster); }
+  .t-head { fill: var(--color-ink); }
 
   .t-title-wrap { bottom: calc(100% - var(--ym, 50%) + 14px); }
   .t-sub-wrap { top: calc(var(--ym, 50%) + 20px); }
@@ -110,12 +112,14 @@
       titleLeft = pad + titleX;
       titleW = tw;
 
-      path.setAttribute('d', `M${x0} 0 V${ym} H${x1} V${h}`);
+      path.setAttribute('d', `M${x0} 0 V${ym} H${x1} V0`);
       total = path.getTotalLength();
       cornerAt = ym + (x1 - x0);
       path.style.strokeDasharray = `${total}`;
-      const c = 14;
-      corner.setAttribute('d', `M${x1 - c} ${ym} V${ym + c} H${x1}`);
+      // right-angle mark in the inner corner of the upward bend
+      const c = 16;
+      const o = 2; // half the route's stroke width
+      corner.setAttribute('d', `M${x1 - o - c} ${ym - o} V${ym - o - c} H${x1 - o}`);
       start.setAttribute('cx', String(x0));
       start.setAttribute('cy', String(ym));
     };
