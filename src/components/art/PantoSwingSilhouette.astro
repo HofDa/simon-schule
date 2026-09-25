@@ -1,9 +1,10 @@
 ---
 /**
- * Abstract front silhouette of the VS PantoSwing shell: broad, almost flat top
- * with the round grip hole, a narrow waist and the seat flaring out to a straight front edge.
- * The front edge is drawn flush with the bottom of the viewBox so the
- * Leistungen column can continue it as plan lines.
+ * Flat front view of the VS PantoSwing in ginstergelb: wide shell with the
+ * round grip hole, narrow waist, seat with a curved front edge, and the two
+ * tubular legs bending out from under the seat (no crossbar). The legs end
+ * vertically at the bottom edge of the viewBox (centred on x = 5 and x = 395,
+ * 10 units wide) so the Leistungen column can continue them as lines.
  */
 interface Props {
   class?: string;
@@ -11,23 +12,29 @@ interface Props {
 const { class: className = '' } = Astro.props;
 ---
 
-<svg class={className} viewBox="0 0 400 260" role="img" aria-label="Silhouette eines ginstergelben PantoSwing-Schulstuhls von VS">
+<svg class={className} viewBox="0 0 400 330" role="img" aria-label="Ginstergelber PantoSwing-Schulstuhl von VS, Vorderansicht">
+  <g fill="none" stroke="#E2A300" stroke-width="10" stroke-linecap="butt">
+    <path d="M60 300 C24 300 5 308 5 330" />
+    <path d="M340 300 C376 300 395 308 395 330" />
+  </g>
   <path
     fill="#E2A300"
     fill-rule="evenodd"
-    d="M60 16
-       C140 22 260 22 340 16
-       C356 15 366 22 366 36
-       L364 100
-       C362 140 332 160 302 176
-       C274 190 264 206 270 222
-       C278 238 330 244 400 248
-       L400 260 L0 260 L0 248
-       C70 244 122 238 130 222
-       C136 206 126 190 98 176
-       C68 160 38 140 36 100
-       L34 36
-       C34 22 44 15 60 16 Z
-       M222 84 A22 22 0 1 0 178 84 A22 22 0 1 0 222 84 Z"
+    d="M200 12
+       C260 12 330 8 368 14
+       C380 16 382 30 380 44
+       C378 90 368 140 320 180
+       C300 196 296 212 304 232
+       C316 258 350 272 376 280
+       C386 284 386 296 376 300
+       C330 310 270 314 200 314
+       C130 314 70 310 24 300
+       C14 296 14 284 24 280
+       C50 272 84 258 96 232
+       C104 212 100 196 80 180
+       C32 140 22 90 20 44
+       C18 30 20 16 32 14
+       C70 8 140 12 200 12 Z
+       M228 72 A28 28 0 1 0 172 72 A28 28 0 1 0 228 72 Z"
   />
 </svg>

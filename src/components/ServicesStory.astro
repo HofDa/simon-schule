@@ -27,9 +27,10 @@ const arrows = [
           <PantoSwingSilhouette class="chair block w-full" />
         </div>
 
-        <!-- the seat's left front corner continues as the chair's single leg, drawn down the column -->
+        <!-- the chair's two legs continue down the column; the list sits between them -->
         <div class="steps-cell relative">
           <span class="axis" data-axis aria-hidden="true"></span>
+          <span class="axis axis-r" aria-hidden="true"></span>
           <ol class="steps" data-steps>
             {services.map((s, i) => (
               <li class="step" data-step>
@@ -182,7 +183,7 @@ const arrows = [
     .steps-cell { grid-column: 1; grid-row: 2 / 4; }
     .intro-cell { grid-column: 2; grid-row: 2; align-self: start; order: 0; margin-bottom: 0; padding-top: 6px; }
     .detail-cell { grid-column: 2; grid-row: 3; align-self: start; padding-top: 28px; }
-    .steps { margin-top: 0; padding: 4px 22px 0; }
+    .steps { margin-top: 0; padding: 4px 30px 0; }
     .step:first-child { border-top: 0; }
     .step { padding: 16px 0 18px; }
     .step-text { margin-left: 44px; font-size: 0.92rem; }
@@ -194,16 +195,19 @@ const arrows = [
       left: 0;
       top: 0;
       bottom: 0;
-      width: 4px;
+      width: calc(var(--col-w) * 0.025); /* same as the tube in PantoSwingSilhouette (10 of 400 units) */
       background: var(--color-ginster);
       transform-origin: top;
       transform: scaleY(var(--axis, 1));
     }
+    .axis-r { left: auto; right: 0; }
   }
 
   /* scrubbed desktop sequence (class set by the scene when it is active) */
   .services.is-scrub { height: calc(var(--stick-h, 100vh) + 170vh); }
   .services.is-scrub .services-stick { position: sticky; top: var(--stick-top, 0px); }
+  /* keep the pinned block short enough that the whole chair stays below the navbar */
+  .services.is-scrub .services-grid { padding-bottom: 24px; }
   .services.is-scrub .step-title-text {
     clip-path: inset(-12% calc((1 - var(--t, 1)) * 100%) -12% 0);
   }
@@ -234,7 +238,7 @@ const arrows = [
      it slides in from the left while spinning on its own axis and comes to rest facing forward. */
   @media (prefers-reduced-motion: no-preference) and (min-width: 1024px) {
     :global(html.js) .chair-cell {
-      animation: chair-in 1700ms cubic-bezier(0.22, 0.8, 0.26, 1) both;
+      animation: chair-in 2200ms cubic-bezier(0.22, 0.8, 0.26, 1) both;
       animation-delay: var(--t-chair, 4.5s);
     }
   }
