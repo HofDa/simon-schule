@@ -116,8 +116,10 @@ const t = useTranslations(getLang(Astro.currentLocale)).projects;
     align-items: end;
   }
   .transition.is-scrub .t-row :global(.project--full) { width: min(1280px, 84vw); }
-  .transition.is-scrub .t-row :global(.p-media) { height: 100%; }
-  .transition.is-scrub .t-row :global(.p-media img) { height: 100%; aspect-ratio: auto; }
+  /* everything rests on the drawn line like objects on a shelf; images are golden rectangles */
+  .transition.is-scrub .t-row :global(.p-media) { align-self: end; }
+  .transition.is-scrub .t-row :global(.p-media img) { aspect-ratio: 1.618 / 1; }
+  .transition.is-scrub .t-row :global(.project--full .p-media img) { aspect-ratio: 1.618 / 1; }
   .transition.is-scrub .t-row :global(.project--left .p-media) { grid-column: 1 / 8; }
   .transition.is-scrub .t-row :global(.project--left .p-info) { grid-column: 8 / 13; }
   .transition.is-scrub .t-row :global(.project--right .p-info) { grid-column: 1 / 6; }
@@ -128,7 +130,7 @@ const t = useTranslations(getLang(Astro.currentLocale)).projects;
   .transition.is-scrub .t-row :global(.project--full .p-desc) { margin-top: 22px; }
   .transition.is-scrub .t-row :global(.p-info) { align-self: end; padding-top: 0; }
   .transition.is-scrub .t-row :global(.p-detail) { display: none; }
-  .transition.is-scrub .t-row :global(.p-quote) { flex: none; width: min(520px, 38vw); align-self: center; margin-left: 0; }
+  .transition.is-scrub .t-row :global(.p-quote) { flex: none; width: min(520px, 38vw); align-self: end; margin-left: 0; }
 </style>
 
 <script>

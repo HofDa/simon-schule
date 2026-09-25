@@ -15,6 +15,11 @@
   --font-marker: "Caveat", "Segoe Print", cursive;
 
   --ease-draw: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* golden type scale: body × φ per step */
+  --text-phi-1: 1.7rem;
+  --text-phi-2: 2.75rem;
+  --text-phi-3: 4.45rem;
 }
 
 :root {

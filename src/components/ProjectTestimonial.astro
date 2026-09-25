@@ -33,7 +33,7 @@ const t = useTranslations(getLang(Astro.currentLocale)).quotes;
 </figure>
 
 <style>
-  .p-quote { max-width: 30ch; font-size: clamp(1.6rem, 2.9vw, 2.6rem); }
+  .p-quote { max-width: 30ch; font-size: clamp(1.6rem, 2.9vw, var(--text-phi-2)); }
   .p-quote blockquote { margin: 0; }
   .p-quote p {
     font-weight: 500;

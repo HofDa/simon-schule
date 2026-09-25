@@ -78,7 +78,7 @@ const [simon, rene] = people;
   .c-person { position: relative; }
   .c-chat { display: none; }
 
-  .c-title { font-size: clamp(2.4rem, 5vw, 4.5rem); line-height: 0.98; letter-spacing: -0.045em; }
+  .c-title { font-size: clamp(2.4rem, 5vw, var(--text-phi-3)); line-height: 0.98; letter-spacing: -0.045em; }
   .c-lead { margin-top: 20px; max-width: 42ch; color: var(--color-muted); font-size: 1.05rem; }
   .c-actions { margin-top: 32px; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 28px; }
 
@@ -104,9 +104,9 @@ const [simon, rene] = people;
     position: absolute;
     left: var(--gutter);
     right: var(--gutter);
-    bottom: 12vh;
+    bottom: 23.6vh; /* floor on the golden line (76.4% from the top) */
     max-width: none;
-    padding-inline: 12%;
+    padding-inline: 3%;
     border-bottom: 1px solid var(--color-ink);
   }
   .contact.is-scrub .c-figure { height: min(46vh, 440px); }
@@ -125,7 +125,7 @@ const [simon, rene] = people;
     position: absolute;
     left: 50%;
     top: calc(var(--nav-h) + 5vh);
-    width: min(44vw, 640px);
+    width: min(40vw, 580px);
     transform: translateX(-50%);
   }
   .contact.is-scrub .c-cta {

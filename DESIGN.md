@@ -124,6 +124,8 @@ Key characteristics: generous white space, hairline structure instead of contain
 Archivo (a grotesque) carries every UI and editorial role. Caveat is the whiteboard marker, used for the hero headline (Caveat 700, written letter by letter on load, with a ginstergelb marker underline under the last word), board notes, photo captions, planning questions, the active-step label and the one conversation bubble. It never appears in navigation, buttons or body text.
 
 ### Hierarchy
+Sizes follow a golden type scale: body 1.05rem, then ×φ per step: 1.7rem (`--text-phi-1`, focal body text such as the active step), 2.75rem (`--text-phi-2`, project titles and quotes), 4.45rem (`--text-phi-3`, every section heading).
+
 - Hero H1: Caveat 700, `clamp(3.6rem, min(8.6vw, 13vh), 7.6rem)`, line height 0.86, rotated -1.5°.
 - Display (large Archivo headings) ≤ 6rem, tracking -0.045em, line height 0.94.
 - Headline (section H2) ≈ 4.75rem max.
@@ -136,11 +138,11 @@ Archivo (a grotesque) carries every UI and editorial role. Caveat is the whitebo
 
 ## Layout
 
-A 12-column editorial grid inside `.shell` (max 1520px, gutter `clamp(20px, 4vw, 64px)`). The services column width is `clamp(250px, 21vw, 330px)`, which is the chair's width. On desktop the chair and its column sit on the golden section: the chair's centre is at 1/φ² (38.2%) of the content width. The hero follows the same golden grid: the text column is 38.2% wide and starts at 14.6% (0.382²) of the board height; the three pinned photos form a Fibonacci sequence (33%, 33/φ, 33/φ² of the width), the largest centred on the golden point 61.8% / 38.2%, the next on 76.4% / 76.4%. On desktop the projects form a horizontal row above the drawn line on a pinned stage (image + details side by side per project, quotes in between). Projects alternate: image left (8 columns) + info (4), info (4) + image right (8), then a full-width 21:9 photo with three info columns below. Section rhythm is 112–160px vertical padding with more space above headings than below. Mobile stacks everything with no pinned sequences.
+A 12-column editorial grid inside `.shell` (max 1520px, gutter `clamp(20px, 4vw, 64px)`). The services column width is `clamp(250px, 21vw, 330px)`, which is the chair's width. The chair and its column share the left edge of the content column with the hero headline. The hero follows the same golden grid: the text column is 38.2% wide and starts at 14.6% (0.382²) of the board height, the chair rests below it on the same left edge; the three pinned photos form a Fibonacci sequence (33%, 33/φ, 33/φ² of the width), the largest centred on the golden point 61.8% / 38.2%, the next on 76.4% / 76.4%. On desktop the projects form a horizontal row above the drawn line on a pinned stage (image + details side by side per project, quotes in between). Projects alternate: image left (8 columns) + info (4), info (4) + image right (8), then a full-width 21:9 photo with three info columns below. Section rhythm is 112–160px vertical padding with more space above headings than below. Mobile stacks everything with no pinned sequences.
 
 ## Elevation & Depth
 
-Almost flat. Depth appears only on physical objects: the whiteboard frame (inset hairline + soft drop shadow), pinned photo prints (`0 12px 22px -12px`), magnets (small offset shadow), and blurred contact shadows under the chair and stools. UI elements carry no shadow. The nav gains a 1px shadow and `rgba(255,255,255,.88)` + 12px blur only once the page is scrolled.
+Composition: in the pinned projects row everything rests on the drawn line (images as 1.618:1 golden rectangles, details and quotes bottom-aligned). In the contact scene the floor sits on the golden line (76.4% from the top). Almost flat. Depth appears only on physical objects: the whiteboard frame (inset hairline + soft drop shadow), pinned photo prints (`0 12px 22px -12px`), magnets (small offset shadow), and blurred contact shadows under the chair and stools. UI elements carry no shadow. The nav gains a 1px shadow and `rgba(255,255,255,.88)` + 12px blur only once the page is scrolled.
 
 ## Shapes
 
