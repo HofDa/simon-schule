@@ -101,7 +101,8 @@ const arrows = [
   .services-grid {
     display: grid;
     gap: 0 clamp(48px, 9vw, 160px);
-    padding-block: 0 96px;
+    --grid-pb: 96px;
+    padding-block: 0 var(--grid-pb);
   }
 
   .chair-cell { width: var(--col-w); transition-delay: var(--t-chair, 4.5s); /* read by the mobile spin script */ }
@@ -109,6 +110,7 @@ const arrows = [
   .intro-cell { display: none; } /* mobile shows the heading between the legs (.steps-intro) */
   .detail { display: none; }
   .steps-intro { padding: 30px 22px 6px; }
+  .detail-cell { padding-left: 22px; } /* the left leg runs past it on phones */
   .steps { list-style: none; margin: 0; padding: 0 22px 8px; }
   .chair { display: block; }
   .step { padding: 22px 0 24px; }
@@ -168,6 +170,8 @@ const arrows = [
     transform-origin: top;
     transform: scaleY(var(--axis, 1));
   }
+  /* the left leg continues as the drawn route: it runs on to the bottom edge of the section */
+  .axis:not(.axis-r) { bottom: calc(-1 * var(--leg-extra, var(--grid-pb, 0px))); }
   .axis-r { left: auto; right: 0; }
 
   .progress-track {
@@ -194,13 +198,17 @@ const arrows = [
     .services-grid {
       grid-template-columns: var(--col-w) minmax(0, 1fr);
       grid-template-rows: auto auto;
-      padding-block: 0 110px;
+      --grid-pb: 110px;
+      padding-block: 0 var(--grid-pb);
+      /* golden section: the chair's centre sits at 1/φ² (38.2%) of the content width */
+      padding-left: calc(38.2% - var(--col-w) / 2);
+      gap: 0 clamp(48px, 6vw, 110px);
     }
     /* the chair sits on the list; its legs end where the list ends */
     .chair-cell { grid-column: 1; grid-row: 1; align-self: end; }
     .steps-cell { grid-column: 1; grid-row: 2; align-self: start; }
     .intro-cell { display: block; grid-column: 2; grid-row: 1; align-self: end; padding-bottom: 12px; }
-    .detail-cell { grid-column: 2; grid-row: 2; align-self: start; padding-top: 18px; }
+    .detail-cell { grid-column: 2; grid-row: 2; align-self: start; padding-top: 18px; padding-left: 0; }
     .steps { margin-top: 0; padding: 4px 30px 0; }
     .step { padding: 16px 0 18px; }
     .step-text { margin-left: 44px; font-size: 0.92rem; }
@@ -211,7 +219,7 @@ const arrows = [
   .services.is-scrub { height: calc(var(--stick-h, 100vh) + 170vh); }
   .services.is-scrub .services-stick { position: sticky; top: var(--stick-top, 0px); }
   /* keep the pinned block short enough that the whole chair stays below the navbar */
-  .services.is-scrub .services-grid { padding-bottom: 24px; }
+  .services.is-scrub .services-grid { --grid-pb: 24px; padding-bottom: var(--grid-pb); }
   .services.is-scrub .step-title-text {
     clip-path: inset(-12% calc((1 - var(--t, 1)) * 100%) -12% 0);
   }
@@ -306,8 +314,16 @@ const arrows = [
 
     revealOnce(steps);
 
-    // Mobile: the legs grow down the list as it scrolls through the viewport.
+    // The left leg is the start of the drawn route, so it always reaches the bottom edge of the
+    // section (while pinned, the block sits above the section's end; on phones the step text sits below the list).
     const stepsCell = section.querySelector<HTMLElement>('.steps-cell');
+    const reachSectionEnd = () => {
+      if (!stepsCell) return;
+      const gap = section.getBoundingClientRect().bottom - stepsCell.getBoundingClientRect().bottom;
+      section.style.setProperty('--leg-extra', `${Math.max(0, gap).toFixed(1)}px`);
+    };
+
+    // Mobile: the legs grow down the list as it scrolls through the viewport.
     if (stepsCell) {
       addScene({
         el: stepsCell,
@@ -315,6 +331,7 @@ const arrows = [
         progress: viewProgress(1.15, 0.35), // start as soon as the column enters
         render: (p) => {
           if (!section.classList.contains('is-scrub')) section.style.setProperty('--axis', String(p));
+          reachSectionEnd();
         },
       });
     }
@@ -382,6 +399,7 @@ const arrows = [
         });
         // legs grow from the first scroll on, and are complete early in the step sequence
         section.style.setProperty('--axis', String(range(pAll, 0.02, f + (1 - f) * 0.3)));
+        reachSectionEnd();
         node?.style.setProperty('--node', String(clamp((q - 0.5) / (n - 1))));
         if (active !== lastActive && now) {
           now.textContent = String(active + 1);

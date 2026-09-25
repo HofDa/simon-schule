@@ -129,7 +129,7 @@
 </style>
 
 <script>
-  import { addScene, clamp, range, viewProgress } from '../scripts/motion';
+  import { addScene, clamp, range } from '../scripts/motion';
 
   const DESKTOP = '(min-width: 1024px) and (min-height: 640px)';
   const section = document.querySelector<HTMLElement>('[data-transition]');
@@ -235,7 +235,7 @@
       const penX = vw * 0.62; // where the pen tip stays while the sheet slides
       travel = Math.max(0, sheetW - vw);
       lenA = ym + (penX - x0);
-      lead = vh * 0.55;
+      lead = vh; // drawing starts the moment the stage enters at the bottom of the screen
       A = lead + vh * 0.6;
       B = travel;
       C = vh * 0.35;
@@ -262,7 +262,7 @@
       measure: (active) => {
         if (active || window.matchMedia(DESKTOP).matches) measure(active);
       },
-      progress: (rect, vh) => (vh * 0.55 - rect.top) / span,
+      progress: (rect, vh) => (vh - rect.top) / span,
       render: (p) => {
         if (!pinned) {
           if (window.matchMedia(DESKTOP).matches) draw(total);
@@ -272,7 +272,8 @@
         let len: number;
         let tx = 0;
         if (s < A) {
-          len = (s / A) * lenA;
+          // down segment 1:1 with the scroll (its tip stays at the screen's bottom edge), then across
+          len = s <= ym ? s : ym + ((s - ym) / (A - ym)) * (lenA - ym);
         } else if (s < A + B) {
           tx = s - A;
           len = lenA + tx; // the pen stays put while the sheet moves under it
@@ -291,7 +292,8 @@
       measure: (active) => {
         if (active || !window.matchMedia(DESKTOP).matches) measure(false);
       },
-      progress: viewProgress(0.95, 0.15),
+      // runs slightly ahead of the scroll, so the line is drawn wherever it is on screen
+      progress: (rect, vh) => ((vh - rect.top) * 1.6) / Math.max(1, total),
       render: (p) => {
         if (!window.matchMedia(DESKTOP).matches) draw(total * p);
       },

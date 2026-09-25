@@ -136,7 +136,7 @@ Archivo (a grotesque) carries every UI and editorial role. Caveat is the whitebo
 
 ## Layout
 
-A 12-column editorial grid inside `.shell` (max 1520px, gutter `clamp(20px, 4vw, 64px)`). The services column width is `clamp(250px, 21vw, 330px)`, which is the chair's width. On desktop the projects form a horizontal row above the drawn line on a pinned stage (image + details side by side per project, quotes in between). Projects alternate: image left (8 columns) + info (4), info (4) + image right (8), then a full-width 21:9 photo with three info columns below. Section rhythm is 112–160px vertical padding with more space above headings than below. Mobile stacks everything with no pinned sequences.
+A 12-column editorial grid inside `.shell` (max 1520px, gutter `clamp(20px, 4vw, 64px)`). The services column width is `clamp(250px, 21vw, 330px)`, which is the chair's width. On desktop the chair and its column sit on the golden section: the chair's centre is at 1/φ² (38.2%) of the content width. On desktop the projects form a horizontal row above the drawn line on a pinned stage (image + details side by side per project, quotes in between). Projects alternate: image left (8 columns) + info (4), info (4) + image right (8), then a full-width 21:9 photo with three info columns below. Section rhythm is 112–160px vertical padding with more space above headings than below. Mobile stacks everything with no pinned sequences.
 
 ## Elevation & Depth
 
