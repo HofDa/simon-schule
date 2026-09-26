@@ -3,12 +3,12 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [ main ]
+  pull_request:
+    branches: [ main ]
   workflow_dispatch:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 jobs:
   build:
@@ -20,26 +20,39 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version-file: .nvmrc
           cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Set base path
-        run: echo "BASE_PATH=/${GITHUB_REPOSITORY#*/}" >> "$GITHUB_ENV"
+      - name: Configure public domain
+        run: |
+          echo "SITE_URL=https://trias-schule.it" >> "$GITHUB_ENV"
+          echo "BASE_PATH=/" >> "$GITHUB_ENV"
+
+      - name: Check Astro diagnostics
+        run: npm run check
 
       - name: Build Astro
+        env:
+          PUBLIC_INQUIRY_ENDPOINT: ${{ vars.PUBLIC_INQUIRY_ENDPOINT }}
         run: npm run build
 
       - name: Upload artifact
+        if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist
 
   deploy:
     needs: build
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

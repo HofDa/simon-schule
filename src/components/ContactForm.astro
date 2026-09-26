@@ -10,9 +10,9 @@ const f = t.fields;
 
 <form
   class="inquiry"
-  action={`mailto:${inquiry.mailto}`}
+  action={inquiry.endpoint ?? `mailto:${inquiry.mailto}`}
   method="post"
-  enctype="text/plain"
+  enctype={inquiry.endpoint ? undefined : 'text/plain'}
   novalidate
   data-inquiry
   data-endpoint={inquiry.endpoint ?? ''}
@@ -74,10 +74,11 @@ const f = t.fields;
       <svg class="btn-arrow h-3.5 w-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" /></svg>
     </button>
     <p class="status text-meta text-muted" role="status" aria-live="polite" data-status></p>
+    <a class="mail-fallback link-line text-meta font-semibold" data-mail-fallback hidden>{t.emailAction}</a>
     <button type="button" class="copy link-line text-meta font-semibold" data-copy hidden>{t.copy}</button>
   </div>
   <p class="mt-5 text-label text-muted">
-    {t.privacy} <a class="link-line" href={legalFor(lang, 'privacy')}>{t.privacyLink}</a>
+    {inquiry.endpoint ? t.privacyHosted : t.privacy} <a class="link-line" href={legalFor(lang, 'privacy')}>{t.privacyLink}</a>
   </p>
 </form>
 
@@ -138,11 +139,13 @@ const f = t.fields;
   }
   .chip input:focus-visible + span { outline: 2px solid var(--color-ink); outline-offset: 2px; }
   .status.is-ok { color: var(--color-ink); }
+  .inquiry button:disabled { cursor: wait; opacity: 0.65; }
 </style>
 
 <script>
   const form = document.querySelector<HTMLFormElement>('[data-inquiry]');
   const status = form?.querySelector<HTMLElement>('[data-status]');
+  const mailFallback = form?.querySelector<HTMLAnchorElement>('[data-mail-fallback]');
   const copy = form?.querySelector<HTMLButtonElement>('[data-copy]');
   let composed = '';
 
@@ -167,6 +170,7 @@ const f = t.fields;
 
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
+      if (form.getAttribute('aria-busy') === 'true') return;
       const invalid = fields.filter((f) => !showError(f));
       if (invalid.length) {
         invalid[0].focus();
@@ -176,35 +180,68 @@ const f = t.fields;
       }
 
       const data = new FormData(form);
+      const org = String(data.get(form.dataset.orgKey ?? '') ?? '');
+      const subject = `${msg.subject}: ${org}`;
+      const lines: string[] = [];
+      for (const [key, value] of data.entries()) {
+        if (String(value).trim()) lines.push(`${key}: ${value}`);
+      }
+      composed = `${subject}\n\n${lines.join('\n')}`;
+      const mailto = `mailto:${form.dataset.mailto}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines.join('\n'))}`;
+
       const endpoint = form.dataset.endpoint;
       if (endpoint) {
+        if (mailFallback) {
+          mailFallback.href = mailto;
+          mailFallback.hidden = true;
+        }
+        if (copy) copy.hidden = true;
         status.textContent = msg.sending;
+        form.setAttribute('aria-busy', 'true');
+        const controls = Array.from(
+          form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement | HTMLButtonElement>('input, textarea, button'),
+        );
+        controls.forEach((control) => { control.disabled = true; });
+        const emailField = form.querySelector<HTMLInputElement>('#f-mail');
+        if (emailField) data.set('_replyto', emailField.value);
+        data.set('_subject', subject);
+        const controller = new AbortController();
+        const timeout = window.setTimeout(() => controller.abort(), 15_000);
         try {
-          const res = await fetch(endpoint, { method: 'POST', body: data, headers: { Accept: 'application/json' } });
+          const res = await fetch(endpoint, {
+            method: 'POST',
+            body: data,
+            headers: { Accept: 'application/json' },
+            signal: controller.signal,
+          });
           if (!res.ok) throw new Error(String(res.status));
           form.reset();
+          if (mailFallback) mailFallback.hidden = true;
+          if (copy) copy.hidden = true;
           status.classList.add('is-ok');
           status.textContent = msg.sent;
         } catch {
           status.classList.remove('is-ok');
           status.textContent = withEmail(msg.failed);
+          if (mailFallback) mailFallback.hidden = false;
+          if (copy) copy.hidden = false;
+        } finally {
+          window.clearTimeout(timeout);
+          form.removeAttribute('aria-busy');
+          controls.forEach((control) => { control.disabled = false; });
         }
         return;
       }
 
-      const org = String(data.get(form.dataset.orgKey ?? '') ?? '');
-      const lines: string[] = [];
-      for (const [key, value] of data.entries()) {
-        if (String(value).trim()) lines.push(`${key}: ${value}`);
+      if (mailFallback) {
+        mailFallback.href = mailto;
+        mailFallback.hidden = false;
       }
-      const subject = `${msg.subject}: ${org}`;
-      const href = `mailto:${form.dataset.mailto}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines.join('\n'))}`;
-      window.location.href = href;
+      if (copy) copy.hidden = false;
+      window.location.href = mailto;
       // Whether a mail program opened cannot be known here: say so, and offer the text to copy.
-      composed = `${subject}\n\n${lines.join('\n')}`;
       status.classList.remove('is-ok');
       status.textContent = withEmail(msg.mailto);
-      if (copy) copy.hidden = false;
     });
 
     copy?.addEventListener('click', async () => {

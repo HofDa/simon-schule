@@ -15,7 +15,7 @@ import type { Lang } from '../i18n/ui';
 type T = Record<Lang, string>;
 
 export interface ProjectImage {
-  /** Base name in public/images/projects/, without the -900/-1800.webp suffix. */
+  /** Base name in public/images/projects/, without a responsive size suffix. */
   file: string;
   alt: string;
 }

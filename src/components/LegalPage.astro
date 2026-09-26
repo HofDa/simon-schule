@@ -17,7 +17,7 @@ const doc = legal[lang][page];
 const alternates = { de: legalFor('de', page), it: legalFor('it', page) };
 ---
 
-<Layout title={`${doc.title} | Trias Schule`} description={doc.description} alternates={alternates}>
+<Layout title={`${doc.title} | Trias Schule`} description={doc.description} alternates={alternates} canonical={legalFor(lang, page)}>
   <Navbar alternates={alternates} />
   <main id="inhalt" class="legal shell">
     <a class="back link-line text-meta font-semibold" href={homeFor(lang)}>

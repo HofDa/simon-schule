@@ -27,7 +27,7 @@ const de = {
   nav: {
     items: [
       { label: 'Leistungen', href: '#leistungen' },
-      { label: 'Projekte', href: '#projekte' },
+      { label: 'Beispiele', href: '#projekte' },
       { label: 'Über uns', href: '#menschen' },
       { label: 'VS Möbel', href: '#vs-moebel' },
       { label: 'Kontakt', href: '#kontakt' },
@@ -43,8 +43,8 @@ const de = {
   },
   hero: {
     headline: 'Lernräume für Südtirol.',
-    sub: 'Wir planen und richten Schulen und Kindergärten in Südtirol ein, mit Möbeln von VS. Sie haben dabei von Anfang an feste Ansprechpartner.',
-    primary: 'Projekte entdecken',
+    sub: 'Trias Schule ist der Geschäftsbereich der Trias OHG für die Einrichtung von Schulen und Kindergärten in Südtirol. Wir begleiten Ihr Projekt von der Beratung bis zur Montage mit Möbeln von VS.',
+    primary: 'Beispiele ansehen',
     secondary: 'Projekt besprechen',
     notes: { flex: 'Flexibilität', acoustics: 'Akustik?', groups: 'Gruppenarbeit' },
   },
@@ -59,7 +59,7 @@ const de = {
       'Am Anfang steht ein Gespräch vor Ort: Wer nutzt den Raum, wofür und zu welchen Zeiten? Daraus entsteht der Plan. Danach liefern und montieren wir.',
     step: 'Schritt',
     of: 'von',
-    plan: { zones: ['Gruppentische', 'Ruhe', 'Sitzkreis'], later: 'und später?' },
+    plan: { title: 'Grundriss', zones: ['Gruppentische', 'Ruhe', 'Sitzkreis'], later: 'und später?' },
     items: [
       { title: 'Beraten', text: 'Wir schauen uns den Raum an und sprechen mit den Menschen, die darin lernen und arbeiten.' },
       { title: 'Planen', text: 'Wir legen Möblierung, Raumaufteilung und Nutzung gemeinsam mit Ihnen fest.' },
@@ -69,8 +69,8 @@ const de = {
     ],
   },
   projects: {
-    title: 'Unsere Projekte',
-    sub: 'Schulen und Kindergärten in Südtirol, die wir geplant und eingerichtet haben.',
+    title: 'Raumbeispiele',
+    sub: 'Mögliche Raumlösungen für Schulen und Kindergärten in Südtirol. Die Fotos sind Platzhalter, keine Referenzprojekte von Trias Schule.',
     placeholder: 'Beispielprojekt · Platzhalter',
     meta: { location: 'Ort', type: 'Gebäude', services: 'Leistungen', year: 'Jahr', architect: 'Architektur', client: 'Auftraggeber' },
   },
@@ -152,7 +152,9 @@ const de = {
       subject: 'Projektanfrage',
     },
     copy: 'Anfrage kopieren',
+    emailAction: 'E-Mail öffnen',
     privacy: 'Wir verwenden Ihre Angaben nur, um Ihre Anfrage zu beantworten.',
+    privacyHosted: 'Zur Übermittlung nutzen wir Formspree.',
     privacyLink: 'Datenschutz',
   },
   legal: { back: 'Zur Startseite', pending: 'folgt' },
@@ -189,7 +191,7 @@ const it: UI = {
   nav: {
     items: [
       { label: 'Servizi', href: '#leistungen' },
-      { label: 'Progetti', href: '#projekte' },
+      { label: 'Esempi', href: '#projekte' },
       { label: 'Chi siamo', href: '#menschen' },
       { label: 'Mobili VS', href: '#vs-moebel' },
       { label: 'Contatti', href: '#kontakt' },
@@ -205,8 +207,8 @@ const it: UI = {
   },
   hero: {
     headline: 'Spazi per imparare in Alto Adige.',
-    sub: 'Progettiamo e arrediamo scuole e scuole dell’infanzia in Alto Adige, con i mobili di VS. Fin dall’inizio avete referenti fissi.',
-    primary: 'Scopri i progetti',
+    sub: 'Trias Schule è la divisione di Trias OHG per l’arredo di scuole e scuole dell’infanzia in Alto Adige. Seguiamo il progetto dalla consulenza alla consegna e al montaggio, con i mobili di VS.',
+    primary: 'Vedi gli esempi',
     secondary: 'Parliamo del progetto',
     notes: { flex: 'Flessibilità', acoustics: 'Acustica?', groups: 'Lavoro di gruppo' },
   },
@@ -221,7 +223,7 @@ const it: UI = {
       'Tutto inizia con un incontro sul posto: chi usa lo spazio, per cosa e in quali orari? Da lì nasce il progetto. Poi consegniamo e montiamo.',
     step: 'Passo',
     of: 'di',
-    plan: { zones: ['Tavoli di gruppo', 'Quiete', 'Cerchio'], later: 'e più avanti?' },
+    plan: { title: 'Pianta', zones: ['Tavoli di gruppo', 'Quiete', 'Cerchio'], later: 'e più avanti?' },
     items: [
       { title: 'Consigliare', text: 'Visitiamo gli spazi e parliamo con chi ci studia e ci lavora.' },
       { title: 'Progettare', text: 'Definiamo insieme a voi arredi, disposizione e utilizzo degli spazi.' },
@@ -231,8 +233,8 @@ const it: UI = {
     ],
   },
   projects: {
-    title: 'I nostri progetti',
-    sub: 'Scuole e scuole dell’infanzia in Alto Adige che abbiamo progettato e arredato.',
+    title: 'Esempi di spazi',
+    sub: 'Possibili soluzioni per scuole e scuole dell’infanzia in Alto Adige. Le foto sono segnaposto, non progetti realizzati da Trias Schule.',
     placeholder: 'Progetto d’esempio · segnaposto',
     meta: { location: 'Luogo', type: 'Edificio', services: 'Servizi', year: 'Anno', architect: 'Architettura', client: 'Committente' },
   },
@@ -313,7 +315,9 @@ const it: UI = {
       subject: 'Richiesta progetto',
     },
     copy: 'Copia la richiesta',
+    emailAction: 'Apri e-mail',
     privacy: 'Usiamo i vostri dati solo per rispondere alla vostra richiesta.',
+    privacyHosted: 'Per l’invio utilizziamo Formspree.',
     privacyLink: 'Privacy',
   },
   legal: { back: 'Torna alla home', pending: 'in arrivo' },

@@ -4,10 +4,10 @@
  * `value: null` is a fact Trias has not confirmed yet: it renders as an open marker, never
  * as an invented value. The privacy notice is a draft (see `draft`) and describes the site
  * as it is built today: no cookies or tracking, self-hosted fonts, hosting on GitHub Pages,
- * and an inquiry form that composes an e-mail (mailto). If the form moves to a form service
- * (src/data/site.ts: inquiry.endpoint) or the hosting changes, update the matching section.
+ * and an inquiry form that either composes an e-mail (mailto) or, when configured,
+ * submits through Formspree.
  */
-import { contact, photoCredits } from '../data/site';
+import { contact, inquiry, photoCredits } from '../data/site';
 import type { Lang } from './ui';
 
 export interface LegalRow {
@@ -86,9 +86,12 @@ const de: Record<'imprint' | 'privacy', LegalDoc> = {
         title: 'Anfrageformular',
         paragraphs: [
           'Wenn Sie das Anfrageformular nutzen, verarbeiten wir die Angaben, die Sie eintragen: Name, Schule, Kindergarten oder Gemeinde, E-Mail, auf Wunsch Telefon, Projektort, Projektphase und Ihre Nachricht.',
-          `Das Formular sendet nichts an diese Website. Es bereitet eine E-Mail an ${contact.email} vor, die Sie in Ihrem eigenen E-Mail-Programm absenden.`,
-          'Wir verwenden die Angaben nur, um Ihre Anfrage zu beantworten und ein mögliches Projekt vorzubereiten (Art. 6 Abs. 1 lit. b DSGVO). Wir geben sie nicht an Dritte weiter und löschen sie, sobald sie dafür nicht mehr gebraucht werden und keine gesetzliche Aufbewahrungspflicht besteht.',
+          inquiry.endpoint
+            ? 'Beim Absenden werden die Angaben an Formspree, Inc. gesendet, um sie an Trias zu übermitteln und im Formspree-Postfach bereitzustellen. Formspree kann außerdem technische Verbindungsdaten wie IP-Adresse, Browsertyp, Zeitpunkt und verweisende Website verarbeiten. Laut Datenschutzerklärung kann Formspree Daten in den USA und weiteren Ländern verarbeiten.'
+            : `Das Formular sendet nichts an diese Website. Es bereitet eine E-Mail an ${contact.email} vor, die Sie in Ihrem eigenen E-Mail-Programm absenden.`,
+          'Trias verwendet die Angaben, um Ihre Anfrage zu beantworten und ein mögliches Projekt vorzubereiten (Art. 6 Abs. 1 lit. b DSGVO), und löscht sie, sobald sie dafür nicht mehr gebraucht werden und keine gesetzliche Aufbewahrungspflicht besteht.',
         ],
+        links: inquiry.endpoint ? [{ label: 'Datenschutzerklärung von Formspree', href: inquiry.privacyUrl! }] : undefined,
       },
       {
         title: 'Hosting',
@@ -169,9 +172,12 @@ const it: Record<'imprint' | 'privacy', LegalDoc> = {
         title: 'Modulo di richiesta',
         paragraphs: [
           'Se utilizzate il modulo di richiesta, trattiamo i dati che inserite: nome, scuola, scuola dell’infanzia o Comune, e-mail, facoltativamente telefono, luogo e fase del progetto e il vostro messaggio.',
-          `Il modulo non invia nulla a questo sito: prepara un’e-mail a ${contact.email} che inviate dal vostro programma di posta.`,
-          'Usiamo i dati solo per rispondere alla vostra richiesta e preparare un eventuale progetto (art. 6, par. 1, lett. b GDPR). Non li cediamo a terzi e li cancelliamo quando non servono più, salvo obblighi di conservazione previsti dalla legge.',
+          inquiry.endpoint
+            ? 'Quando inviate il modulo, i dati vengono trasmessi a Formspree, Inc. per inoltrare la richiesta a Trias e renderla disponibile nella casella Formspree. Formspree può trattare anche dati tecnici di connessione, come indirizzo IP, browser, orario e sito di provenienza. Secondo la sua informativa, i dati possono essere trattati negli Stati Uniti e in altri Paesi.'
+            : `Il modulo non invia nulla a questo sito: prepara un’e-mail a ${contact.email} che inviate dal vostro programma di posta.`,
+          'Trias usa i dati per rispondere alla richiesta e preparare un eventuale progetto (art. 6, par. 1, lett. b GDPR) e li cancella quando non servono più, salvo obblighi di conservazione previsti dalla legge.',
         ],
+        links: inquiry.endpoint ? [{ label: 'Informativa privacy di Formspree', href: inquiry.privacyUrl! }] : undefined,
       },
       {
         title: 'Hosting',

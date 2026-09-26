@@ -13,13 +13,14 @@ interface Props {
 const { project, class: className = '', sizes, priority = false } = Astro.props;
 const img = project.images[0];
 const src = (w: number) => asset(`images/projects/${img.file}-${w}.webp`);
+const widths = [320, 480, 640, 720, 900, 960, 1800];
 ---
 
 <figure class={`pin absolute m-0 ${className}`}>
   <div class="pin-print">
     <img
       src={src(900)}
-      srcset={`${src(900)} 900w, ${src(1800)} 1800w`}
+      srcset={widths.map((width) => `${src(width)} ${width}w`).join(', ')}
       sizes={sizes}
       alt={img.alt}
       width="900"

@@ -9,7 +9,7 @@ Alles hier ist auf der Seite sichtbar als Platzhalter markiert (gestrichelt unte
 - [ ] Simon Brugger: Rolle/Zuständigkeit, Telefon, E-Mail (`people[0]`)
 - [ ] VS-Deep-Links pro Produktkategorie (derzeit alle auf `vs.catalogUrl`)
 - [ ] Impressum- und Datenschutz-Seiten (Footer verlinkt `#impressum` / `#datenschutz`)
-- [ ] Formular-Dienst (optional): `inquiry.endpoint` setzen (Formspree/Web3Forms), sonst öffnet das Formular eine vorbereitete E-Mail
+- [ ] Formspree-Formular für `beratung@trias.it` anlegen, Empfängeradresse bestätigen und die Formular-URL als GitHub-Actions-Variable `PUBLIC_INQUIRY_ENDPOINT` setzen (lokal: `.env`). Ohne URL bleibt der vorbereitete E-Mail-Fallback aktiv. Danach Datenschutzhinweis rechtlich prüfen.
 - [ ] Finaler Web-Farbwert für VS Ginstergelb (RAL 1032) – aktuell `#E2A300` in `src/styles/global.css`
 
 ## Italienische Version (`/it/`)
@@ -26,7 +26,7 @@ Zitate erscheinen erst, wenn sie eingetragen sind: `testimonial` pro Projekt, da
 - [ ] Abschluss-Testimonial (`closingSource`)
 
 ## Fotos
-Projektfotos liegen als `public/images/projects/<name>-900.webp` und `-1800.webp` (Querformat, Architekturfotografie). Die Whiteboard-Bilder im Hero sind dieselben Projekte.
+Projektfotos liegen als WebP-Varianten mit 320, 480, 640, 720, 900, 960 und 1800 Pixel Breite unter `public/images/projects/`. `srcset` wählt je nach Darstellungsgröße die passende Datei. Die Whiteboard-Bilder im Hero sind dieselben Projekte. Das Vorschaubild für geteilte Links ist `public/images/social-preview.jpg` (1200 × 630) und basiert auf dem Lernlandschaft-Foto.
 
 Aktuelle **temporäre** Fotos von Wikimedia Commons (Namensnennung im Footer, bitte ersetzen):
 

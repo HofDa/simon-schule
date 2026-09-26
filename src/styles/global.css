@@ -67,6 +67,7 @@
   --text-title: clamp(1.75rem, 2.6vw, 2.75rem); /* names, project titles, categories */
   --text-route-title: clamp(2.75rem, 7vw, 6rem); /* "Unsere Projekte", written by the route */
   --text-marker: clamp(1.35rem, 1.8vw, 1.9rem); /* handwritten annotations (Caveat) */
+  --text-service-title: clamp(2rem, 3vw, 3.2rem); /* editorial titles in the services route */
 
   /* golden type scale: body × φ per step */
   --text-phi-1: 1.7rem;

@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import { asset, homeFor } from '../lib/paths';
 import { getLang, langs, useTranslations, type Lang } from '../i18n/ui';
+import { contact } from '../data/site';
 import archivoUrl from '../assets/fonts/archivo-latin-var.woff2?url';
 
 interface Props {
@@ -9,6 +10,10 @@ interface Props {
   description?: string;
   /** This page in each language (default: the home pages). */
   alternates?: Record<Lang, string>;
+  /** Canonical route path (defaults to the localized homepage). */
+  canonical?: string;
+  /** Add site identity structured data to the home pages. */
+  homepage?: boolean;
 }
 
 const lang = getLang(Astro.currentLocale);
@@ -17,6 +22,50 @@ const { title = t.meta.title, description = t.meta.description } = Astro.props;
 const alternates = Astro.props.alternates ?? { de: homeFor('de'), it: homeFor('it') };
 const site = Astro.site;
 const absolute = (path: string) => (site ? new URL(path, site).href : path);
+const canonicalPath = Astro.props.canonical ?? homeFor(lang);
+const canonical = site ? absolute(canonicalPath) : undefined;
+const socialImage = site ? absolute(asset('images/social-preview.jpg')) : undefined;
+const socialImageAlt = lang === 'it'
+  ? 'Spazio di apprendimento aperto con tavoli, sedie e aree di lavoro'
+  : 'Offene Lernlandschaft mit Tischgruppen und verschiedenen Arbeitsbereichen';
+const organizationUrl = absolute(homeFor('de'));
+const structuredData = Astro.props.homepage && site
+  ? JSON.stringify({
+      '@context': 'https://schema.org',
+      '@graph': [
+        {
+          '@type': 'Organization',
+          '@id': `${organizationUrl}#organization`,
+          name: 'Trias Schule',
+          legalName: 'Trias OHG',
+          url: organizationUrl,
+          email: contact.email,
+        },
+        {
+          '@type': 'WebSite',
+          '@id': `${organizationUrl}#website`,
+          url: organizationUrl,
+          name: 'Trias Schule',
+          publisher: { '@id': `${organizationUrl}#organization` },
+          inLanguage: ['de-IT', 'it-IT'],
+        },
+        {
+          '@type': 'Service',
+          '@id': `${absolute(canonicalPath)}#school-furnishing`,
+          name: lang === 'it'
+            ? 'Arredi per scuole e scuole dell’infanzia'
+            : 'Einrichtung von Schulen und Kindergärten',
+          description: t.hero.sub,
+          serviceType: t.services.items.map(({ title }) => title),
+          areaServed: {
+            '@type': 'AdministrativeArea',
+            name: lang === 'it' ? 'Alto Adige' : 'Südtirol',
+          },
+          provider: { '@id': `${organizationUrl}#organization` },
+        },
+      ],
+    }).replace(/</g, '\\u003c')
+  : undefined;
 ---
 
 <!doctype html>
@@ -29,11 +78,27 @@ const absolute = (path: string) => (site ? new URL(path, site).href : path);
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:locale" content={t.ogLocale} />
+    <meta property="og:locale:alternate" content={lang === 'de' ? 'it_IT' : 'de_IT'} />
+    <meta property="og:site_name" content="Trias Schule" />
+    <meta property="og:type" content="website" />
+    {canonical && <link rel="canonical" href={canonical} />}
+    {canonical && <meta property="og:url" content={canonical} />}
+    {socialImage && <meta property="og:image" content={socialImage} />}
+    {socialImage && <meta property="og:image:width" content="1200" />}
+    {socialImage && <meta property="og:image:height" content="630" />}
+    {socialImage && <meta property="og:image:type" content="image/jpeg" />}
+    {socialImage && <meta property="og:image:alt" content={socialImageAlt} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    {socialImage && <meta name="twitter:image" content={socialImage} />}
+    {socialImage && <meta name="twitter:image:alt" content={socialImageAlt} />}
     {langs.map((l) => <link rel="alternate" hreflang={l} href={absolute(alternates[l])} />)}
     <link rel="alternate" hreflang="x-default" href={absolute(alternates.de)} />
     <link rel="icon" type="image/svg+xml" href={asset('favicon.svg')} />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
+    {structuredData && <script type="application/ld+json" set:html={structuredData}></script>}
     <script is:inline>document.documentElement.classList.add('js');</script>
     <link rel="preload" href={archivoUrl} as="font" type="font/woff2" crossorigin />
   </head>

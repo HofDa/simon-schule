@@ -21,11 +21,29 @@ export const contact = {
 };
 
 /**
- * Where the inquiry form sends to. With `endpoint: null` the form composes a
- * pre-filled e-mail (mailto). Set a Formspree/Web3Forms URL to POST instead.
+ * Public form delivery settings. Configure these at build time for the hosted
+ * provider; the endpoint is necessarily visible to browsers. Without an
+ * endpoint the form keeps its pre-filled e-mail fallback.
  */
+const inquiryEndpoint = import.meta.env.PUBLIC_INQUIRY_ENDPOINT?.trim() || null;
+const inquiryPrivacyUrl = inquiryEndpoint ? 'https://formspree.io/legal/privacy-policy/' : null;
+
+if (inquiryEndpoint) {
+  try {
+    const endpointUrl = new URL(inquiryEndpoint);
+    if (
+      endpointUrl.protocol !== 'https:' ||
+      endpointUrl.hostname !== 'formspree.io' ||
+      !/^\/f\/[^/]+\/?$/.test(endpointUrl.pathname)
+    ) throw new Error();
+  } catch {
+    throw new Error('PUBLIC_INQUIRY_ENDPOINT must be a Formspree form URL, e.g. https://formspree.io/f/xxxxxxxx.');
+  }
+}
+
 export const inquiry = {
-  endpoint: null as string | null,
+  endpoint: inquiryEndpoint,
+  privacyUrl: inquiryPrivacyUrl,
   mailto: contact.email,
 };
 

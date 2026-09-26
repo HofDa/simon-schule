@@ -9,6 +9,7 @@ const t = useTranslations(lang).projects;
 const projects = getProjects(lang);
 const layouts = ['left', 'right', 'full'] as const;
 const src = (file: string, w: number) => asset(`images/projects/${file}-${w}.webp`);
+const widths = [320, 480, 640, 720, 900, 960, 1800];
 ---
 
 <div class="projects shell relative pb-24 lg:pb-36" data-projects>
@@ -16,14 +17,18 @@ const src = (file: string, w: number) => asset(`images/projects/${file}-${w}.web
     {projects.map((project, i) => {
       const layout = layouts[i % layouts.length];
       const [main, detail] = project.images;
+      const mainSizes = layout === 'full'
+        ? '(min-width: 1520px) 1392px, (min-width: 768px) 92vw, calc(100vw - 40px)'
+        : '(min-width: 1520px) 912px, (min-width: 1024px) 61vw, (min-width: 768px) calc(46vw - 16px), calc(100vw - 40px)';
+      const detailSizes = '(min-width: 1520px) 270px, (min-width: 1024px) 18vw, (min-width: 768px) 28vw, 62vw';
       return (
         <>
           <article class={`project project--${layout}`} data-project data-layout={layout} aria-labelledby={`p-${project.id}`}>
             <div class="p-media" data-media>
               <img
                 src={src(main.file, 900)}
-                srcset={`${src(main.file, 900)} 900w, ${src(main.file, 1800)} 1800w`}
-                sizes={layout === 'full' ? '(min-width: 1024px) 92vw, 100vw' : '(min-width: 1024px) 60vw, 100vw'}
+                srcset={widths.map((width) => `${src(main.file, width)} ${width}w`).join(', ')}
+                sizes={mainSizes}
                 alt={main.alt}
                 width="1800"
                 height="1200"
@@ -48,6 +53,8 @@ const src = (file: string, w: number) => asset(`images/projects/${file}-${w}.web
                 <img
                   class="p-detail"
                   src={src(detail.file, 900)}
+                  srcset={widths.map((width) => `${src(detail.file, width)} ${width}w`).join(', ')}
+                  sizes={detailSizes}
                   alt={detail.alt}
                   width="900"
                   height="675"

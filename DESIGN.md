@@ -137,7 +137,7 @@ components:
 
 **Creative North Star: "A planning surface that becomes a building"**
 
-The site reads as one continuous architectural drawing. It opens on white paper: pinned photo prints held by ginstergelb magnets, marker notes and a small floor-plan sketch, with the claim written across it by hand like the first idea of a plan. A flat ginstergelb PantoSwing (front view) turns in last at the bottom of the hero; its legs run on as lines down the services column, and the left one becomes the route that carries the projects and the two people and finally lands on the VS section. Everything drawn is a technical line drawing: ink strokes, flat ginstergelb only on the object, no gradients. The interface itself stays white and quiet; colour comes from photographs, the chairs, the stools and a few ginstergelb points.
+The site reads as one continuous architectural drawing. It opens on white paper: pinned photo prints held by ginstergelb magnets, marker notes and a small floor-plan sketch, with the claim written across it by hand like the first idea of a plan. A flat ginstergelb PantoSwing (front view) turns in last at the bottom of the hero; its left leg becomes one quiet route beside the services list, then meets the route that carries the projects and the two people and finally lands on the VS section. Everything drawn is a technical line drawing: ink strokes, flat ginstergelb only on the object, no gradients. The interface itself stays white and quiet; colour comes from photographs, the chairs, the stools and a few ginstergelb points.
 
 **Key Characteristics:**
 - Generous white space; hairline structure instead of containers.
@@ -175,31 +175,31 @@ Fonts are self-hosted Latin subsets (woff2, OFL); Archivo is preloaded. No third
 **Character:** A plain architectural grotesque carries every UI and editorial role; a marker hand annotates the plan.
 
 ### Hierarchy
-Every role is a token in `global.css` (`--text-label|meta|body|lead`, `--text-headline|title|route-title|marker`, `--text-phi-1|2|3`); components use the token, never a literal size. The one exception is lettering inside SVG drawings (plan labels, the chair's "Sitzhöhe"), sized in drawing units so it scales with its drawing. Reading sizes are four steps (label, meta, body, lead). Titles follow a golden scale from body: 1.7rem (`phi-1`, focal text such as the active step, form title, menu links), 2.75rem (`phi-2`, project titles and quotes at most), 4.45rem (`phi-3`, the cap of every section heading).
+Every role is a token in `global.css` (`--text-label|meta|body|lead`, `--text-headline|title|route-title|marker|service-title`, `--text-phi-1|2|3`); components use the token, never a literal size. The one exception is lettering inside SVG drawings (plan labels, the chair's "Sitzhöhe"), sized in drawing units so it scales with its drawing. Reading sizes are four steps (label, meta, body, lead). Titles follow a golden scale from body: 1.7rem (`phi-1`, focal text such as form titles and menu links), 2.75rem (`phi-2`, project titles and quotes at most), 4.45rem (`phi-3`, the cap of every section heading). Service step titles use the larger, fluid `service-title` role; their small phase numbers stay at label size.
 
 - **Display (hero claim):** Kalam 700, line height 1, rotated −1.5°, written letter by letter (each letter wiped in over 120ms) with a ginstergelb hand-drawn underline under the last word. The visible letters are hidden from assistive technology; screen readers get the claim as one piece of text.
 - **Headline:** section H2, weight 600, capped at `phi-3`.
 - **Route title:** "Unsere Projekte", the one heading the drawn route writes; the largest Archivo size on the page.
-- **Title:** person, project and category names, 600. Step names between the chair legs sit on `phi-1`, capped by `clamp(lead, 1.95vw, phi-1)` while pinned so the longest (Italian "Accompagnare") fits.
+- **Title:** person, project and category names, 600. Service phase names use `service-title` (Archivo 600, `clamp(2rem, 3vw, 3.2rem)`) and remain fully visible while scrolling.
 - **Quote:** 500, hanging opening quote.
 - **Lead / Body:** intros and subline at lead; running text at body, measure ≤ 52ch.
 - **Meta / Label:** buttons, nav, lists and details at meta; field labels, captions and credits at label.
 
 ### Named Rules
-**The Annotation Rule.** Handwriting annotates: board notes, photo captions, planning questions, plan labels, the active-step label, the chat line. Caveat never carries navigation, buttons, body text or anything a visitor must read to act. The hero claim is the one exception, written in Kalam, a calmer hand than the Caveat notes; the offer beside it (subline, buttons) stays in Archivo.
+**The Annotation Rule.** Handwriting annotates: board notes, photo captions, planning questions and plan labels. Caveat never carries navigation, buttons, body text or anything a visitor must read to act. The hero claim is the one exception, written in Kalam, a calmer hand than the Caveat notes; the offer beside it (subline, buttons) stays in Archivo.
 
 ## Layout
 
 A 12-column grid inside a shell (max 1520px, gutter token), column gap `clamp(24px, 2.6vw, 44px)`. The chair column (`chair-w`) is the PantoSwing's width and shares the left edge with the hero claim.
 
 - **Hero:** a board of `clamp(600px, 100svh − nav − 30px, 1000px)`. The text column is 38.2% wide and starts 14.6% down. On desktop the prints and sketch live in a frame `min(100%, board height × 1.66)` anchored right, so they keep golden proportions on wide, short screens; the largest print is centred on the golden point.
-- **Services:** desktop grid `chair column · 4fr · 5fr` (chair and steps · heading, ruler and active step · floor plan). Without the scrubbed scene (reduced motion, short screens, no script) the heading moves beside the list.
+- **Services:** a normal-flow planning route. The chair sits at the top-left and its left leg continues as one line beside the five editorial steps; the technical floor plan occupies the right column and stays sticky on desktop while the step list scrolls normally. The plan grows one SVG layer per active step. Mobile and shorter tablet views stack the steps and completed plan; no text is hidden or pinned.
 - **Projects:** a pinned stage holding only the projects, as flex rows resting on the route: image sized by height `min(row height, 64vw / 1.618)` at 1.618:1, the full-width project at 66vw, info `min(22rem, 26vw)`, 80px between projects. Static layout alternates image 8 + info 4, then a 21:9 full-width image with three info columns.
 - **People:** a section of its own in the downward scroll after the stage (the route lands at its top): names and contact left, planning questions right.
 - **Phases:** five phases along a ruler, five columns on desktop, vertical on tablets and phones (five Italian phase names do not fit across below desktop width).
 - **Contact:** pinned scene of 160vh with headline and CTA visible from the start; the opened form pushes the figures aside by ±3vw.
 - **Legal pages:** section title in columns 1–4, text from column 5, hairline divider above each section.
-- **Tablet (768–1023px):** two columns rather than the phone layout scaled up. Services: the chair column with heading beside the chair and ruler, active step and floor plan stacked beside the steps (the plan steps aside when the pinned block leaves too little room). Projects two-up, the full-width one across both columns. People: persons left, questions right. VS: drawing beside the categories. Phases: vertical ruler, name and hint side by side.
+- **Tablet (768–1023px):** two columns rather than the phone layout scaled up. Services: steps left and a non-sticky plan right when there is enough height; otherwise both stack. Projects two-up, the full-width one across both columns. People: persons left, questions right. VS: drawing beside the categories. Phases: vertical ruler, name and hint side by side.
 - **Rhythm:** sections 112px vertical padding, 144–160px on desktop. Phones stack everything.
 - **Touch:** every target is 44px on coarse pointers (text links through an invisible extension, footer rows, chips, header CTA).
 
@@ -243,8 +243,8 @@ A ginstergelb SVG route as thick as the chair legs (`--leg-w`), `stroke-dashoffs
 White paper, prints held by magnets, marker notes and arrows, and a floor-plan sketch with a "7,20 m" dimension. Preparation takes about a second: the claim is written letter by letter (~0.85s in any language) from 0.1s, subline and buttons rise at 0.12s, prints pin from 0.35s with magnets 0.3s later, notes draw from ~0.75s, and the chair arrives at 0.9s in one 900ms turn from off-left. The wordmark does not animate.
 
 ### Signature: Drawings
-- **Services chair:** flat PantoSwing front silhouette whose legs become the route; the right leg stands on a 14×3px ink glide.
-- **Services plan (desktop):** a room plan that builds one layer per step: walls, door and dimension; dashed zones with marker labels; tables with ginstergelb chair and stool dots; tables filled ink, cabinets, zones stepping back to 40%; a marker note "und später?" with an arrow. Complete without motion.
+- **Services chair:** flat PantoSwing front silhouette; its left leg continues as the single ginstergelb route beside the list.
+- **Services plan:** a room plan that builds one layer per step: walls, door, windows and dimensions; dashed zones with marker labels; tables with ginstergelb chair and stool dots; tables filled ink, cabinets, zones stepping back as the room is completed; a marker note "und später?" with a small arrow. Complete without motion.
 - **VS chair:** the PantoSwing in side elevation: flat ginster shell with a ginster-light face, tube frame as outlined ink (paper core over a wider ink stroke), pivot circle, dashed swing arc, hatched floor, "Sitzhöhe" dimension.
 - **Contact figures:** contour figures (paper core over ink), heads as ink rings, far limbs in surface; Hokki stools flat ginster with a ginster-light seat; one shared hatched floor line that stays level while the figures turn to the visitor.
 

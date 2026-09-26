@@ -5,131 +5,98 @@ import { getLang, useTranslations } from '../i18n/ui';
 const t = useTranslations(getLang(Astro.currentLocale)).services;
 const services = t.items;
 
-// Hand-drawn marker arrows as bullets: each one a little different, like drawn one after another.
-const arrows = [
-  { line: 'M3 13 C10 11 17 12 27 9', head: 'M21 4 L28 9 L21 14', rot: -4 },
-  { line: 'M2 10 C9 12 18 11 27 11', head: 'M21 6 L28 11 L22 16', rot: 3 },
-  { line: 'M3 12 C11 8 19 10 27 10', head: 'M20 5 L27 10 L21 15', rot: -1 },
-  { line: 'M2 11 C10 10 17 13 27 12', head: 'M22 7 L28 12 L21 16', rot: 4 },
-  { line: 'M3 13 C12 12 18 9 27 9', head: 'M21 4 L27 9 L20 13', rot: -2 },
-];
-
-// The floor plan that develops with the steps (desktop): one layer per step.
-// Room 480 × 290 units; tables in the group zone, chairs and stools as ginstergelb points.
+// Four table groups develop into the final learning-space plan.
 const tables = [
   [92, 96],
   [196, 96],
   [92, 212],
   [196, 212],
 ];
-const chairs = tables.flatMap(([x, y], ti) =>
+const chairs = tables.flatMap(([x, y], tableIndex) =>
   [
     [x + 16, y - 11],
     [x + 48, y - 11],
-    [x + 16, y + 51],
-    [x + 48, y + 51],
-  ].map(([cx, cy], ci) => ({ cx, cy, k: ((ti * 4 + ci) / 15) * 2 })),
+  ].map(([cx, cy], chairIndex) => ({
+    cx,
+    cy,
+    k: ((tableIndex * 2 + chairIndex) / 7) * 2,
+  })),
 );
-const stools = Array.from({ length: 7 }, (_, i) => {
-  const a = (i / 7) * Math.PI * 2 - Math.PI / 2;
-  return { cx: +(430 + Math.cos(a) * 36).toFixed(1), cy: +(240 + Math.sin(a) * 36).toFixed(1), k: (i / 6) * 2 };
+const stools = Array.from({ length: 5 }, (_, i) => {
+  const angle = (i / 5) * Math.PI * 2 - Math.PI / 2;
+  return {
+    cx: +(430 + Math.cos(angle) * 36).toFixed(1),
+    cy: +(240 + Math.sin(angle) * 36).toFixed(1),
+    k: (i / 4) * 2,
+  };
 });
 ---
 
 <section id="leistungen" class="services relative z-20" aria-labelledby="services-title" data-services>
-  <div class="services-stick" data-stick>
-    <div class="shell">
-      <div class="services-grid">
-        <div class="chair-cell">
-          <PantoSwingSilhouette class="chair block w-full" />
-        </div>
+  <div class="shell">
+    <div class="services-grid">
+      <span class="service-route" data-axis aria-hidden="true"></span>
 
-        <!-- the chair's two legs continue down the column; the list sits between them -->
-        <div class="steps-cell relative">
-          <span class="axis" data-axis aria-hidden="true"></span>
-          <span class="axis axis-r" aria-hidden="true"></span>
-          <div class="steps-intro lg:hidden">
-            <h2 class="text-title leading-[1.02] tracking-[-0.04em]">{t.title}</h2>
-            <p class="mt-4 text-meta leading-[1.6] text-muted">
-              {t.intro}
-            </p>
-          </div>
-          <ol class="steps" data-steps>
-            {services.map((s, i) => (
-              <li class="step" data-step>
-                <div class="step-head">
-                  <svg class="step-arrow" viewBox="0 0 30 20" style={`--rot: ${arrows[i % arrows.length].rot}deg`} aria-hidden="true">
-                    <path class="arrow-line" pathLength="1" d={arrows[i % arrows.length].line} />
-                    <path class="arrow-head" pathLength="1" d={arrows[i % arrows.length].head} />
-                  </svg>
-                  <h3 class="step-title">
-                    <span class="step-title-text">{s.title}</span>
-                    <svg class="step-underline" viewBox="0 0 200 12" preserveAspectRatio="none" aria-hidden="true">
-                      <path pathLength="1" d="M2 8 C40 4 90 10 130 6 S186 5 198 7" />
-                    </svg>
-                  </h3>
-                </div>
-                <p class="step-text">{s.text}</p>
-              </li>
-            ))}
-          </ol>
-        </div>
+      <div class="chair-cell">
+        <PantoSwingSilhouette class="chair block w-full" />
+      </div>
 
-        <div class="intro-cell" data-intro>
-          <h2 id="services-title" class="max-w-[13ch] text-headline leading-[0.98] tracking-[-0.045em]">
-            {t.title}
-          </h2>
-          <p class="mt-6 max-w-[44ch] text-body leading-[1.65] text-muted">
-            {t.intro}
-          </p>
-        </div>
+      <header class="services-heading">
+        <h2 id="services-title">{t.title}</h2>
+        <p>{t.intro}</p>
+      </header>
 
-        <div class="detail-cell">
-          <div class="progress hidden md:block" aria-hidden="true">
-            <div class="progress-track">
-              {services.map(() => <span class="progress-tick"></span>)}
-              <span class="progress-node" data-node></span>
+      <ol class="steps" data-steps>
+        {services.map((service, index) => (
+          <li
+            class={`step${index === 0 ? ' is-active' : ''}`}
+            data-step
+            aria-current={index === 0 ? 'step' : undefined}
+          >
+            <div class="step-heading">
+              <span class="step-node" aria-hidden="true"></span>
+              <span class="step-number">{String(index + 1).padStart(2, '0')}</span>
+              <h3 class="step-title">{service.title}</h3>
             </div>
-            <p class="mt-3 text-label text-muted">{t.step} <span data-now>1</span> {t.of} {services.length}</p>
-          </div>
-          <div class="detail" aria-hidden="true">
-            {services.map((s, i) => (
-              <div class="detail-item" data-detail>
-                <p class="detail-title">{s.title}</p>
-                <p class="detail-text">{s.text}</p>
-              </div>
-            ))}
-          </div>
-        </div>
+            <p class="step-text">{service.text}</p>
+          </li>
+        ))}
+      </ol>
 
-        <!-- the plan develops with the steps: room, zones, furniture, built, after-care -->
-        <div class="plan-cell" aria-hidden="true">
-          <svg class="plan" viewBox="0 0 560 400" preserveAspectRatio="xMinYMin meet" data-plan>
+      <figure class="plan-cell" aria-hidden="true">
+        <div class="plan-sticky">
+          <figcaption class="plan-caption">{t.plan.title}</figcaption>
+          <svg class="plan" viewBox="0 0 560 400" role="presentation" data-plan>
             <g class="pl-layer" data-layer>
-              <path class="pl-draw pl-wall" pathLength="1" d="M130 330 H520 V40 H450 M370 40 H320 M240 40 H190 M110 40 H40 V330 H70" />
-              <path class="pl-draw pl-thin" pathLength="1" d="M110 36 H190 M110 44 H190 M240 36 H320 M240 44 H320 M370 36 H450 M370 44 H450" />
+              <path class="pl-draw pl-wall" pathLength="1" d="M130 330 H520 V40 H450 M370 40 H320 M240 40 H190 M110 40 H40 V270 M40 330 H70" />
+              <path class="pl-draw pl-thin pl-window" pathLength="1" d="M110 36 H190 M110 44 H190 M240 36 H320 M240 44 H320 M370 36 H450 M370 44 H450" />
               <path class="pl-draw pl-thin" pathLength="1" d="M70 330 V270 A60 60 0 0 1 130 330" />
               <path class="pl-draw pl-thin" pathLength="1" d="M40 360 H520 M40 353 V367 M520 353 V367" />
+              <path class="pl-draw pl-thin" pathLength="1" d="M24 40 V330 M17 40 H31 M17 330 H31" />
               <text class="pl-fade pl-note" x="280" y="390" text-anchor="middle">7,20 m</text>
             </g>
+
             <g class="pl-layer" data-layer>
-              <rect class="pl-zone" x="64" y="64" width="236" height="242" rx="4" />
-              <rect class="pl-zone" x="326" y="64" width="170" height="106" rx="4" />
-              <rect class="pl-zone" x="326" y="192" width="170" height="114" rx="4" />
+              <rect class="pl-zone" x="64" y="64" width="236" height="242" />
+              <rect class="pl-zone" x="326" y="64" width="170" height="106" />
+              <rect class="pl-zone" x="326" y="192" width="170" height="114" />
               <text class="pl-fade pl-label" x="292" y="298" text-anchor="end">{t.plan.zones[0]}</text>
               <text class="pl-fade pl-label" x="336" y="160">{t.plan.zones[1]}</text>
               <text class="pl-fade pl-label" x="336" y="298">{t.plan.zones[2]}</text>
             </g>
+
             <g class="pl-layer" data-layer>
               {tables.map(([x, y]) => <path class="pl-draw pl-thin" pathLength="1" d={`M${x} ${y} h64 v40 h-64 Z`} />)}
               <path class="pl-draw pl-thin" pathLength="1" d="M346 92 Q346 84 354 84 H468 Q476 84 476 92 V118 H346 Z M389 84 V118 M432 84 V118" />
-              {chairs.map((c) => <circle class="pl-pop" cx={c.cx} cy={c.cy} r="6" style={`--k: ${c.k.toFixed(2)}`} />)}
-              {stools.map((s) => <circle class="pl-pop" cx={s.cx} cy={s.cy} r="7" style={`--k: ${s.k.toFixed(2)}`} />)}
+              {chairs.map((chair) => <circle class="pl-pop" cx={chair.cx} cy={chair.cy} r="4" style={`--k: ${chair.k.toFixed(2)}`} />)}
+              {stools.map((stool) => <circle class="pl-pop" cx={stool.cx} cy={stool.cy} r="5" style={`--k: ${stool.k.toFixed(2)}`} />)}
             </g>
+
             <g class="pl-layer" data-layer>
               {tables.map(([x, y]) => <rect class="pl-fade pl-solid" x={x} y={y} width="64" height="40" />)}
-              <path class="pl-draw pl-thin" pathLength="1" d="M46 150 H58 V290 H46 Z M46 178 H58 M46 206 H58 M46 234 H58 M46 262 H58" />
+              <path class="pl-draw pl-cabinet" pathLength="1" d="M46 150 H58 V290 H46 Z M46 178 H58 M46 206 H58 M46 234 H58 M46 262 H58" />
             </g>
+
             <g class="pl-layer" data-layer>
               <text class="pl-fade pl-note" x="300" y="22">{t.plan.later}</text>
               <path class="pl-draw pl-marker" pathLength="1" d="M404 16 C446 10 470 26 468 64" />
@@ -137,440 +104,322 @@ const stools = Array.from({ length: 7 }, (_, i) => {
             </g>
           </svg>
         </div>
-      </div>
+      </figure>
     </div>
   </div>
 </section>
 
 <style>
   .services {
-    --col-w: var(--chair-w);
-    --peek: var(--chair-peek); /* the upper part of the chair shows at the bottom of the hero */
-    margin-top: calc(-1 * var(--peek));
-    pointer-events: none;
+    --chair-w: clamp(180px, 17vw, 240px);
+    --chair-peek: calc(var(--chair-w) * 0.44);
+    --leg-w: calc(var(--chair-w) * 0.025);
+    --route-indent: calc(var(--leg-w) + 32px);
+    --route-center: calc(var(--chair-w) * 0.0125);
+    --services-space: clamp(112px, 11vw, 160px);
+    margin-top: calc(-1 * var(--chair-peek));
+    padding-bottom: var(--services-space);
   }
-  .steps-cell, .intro-cell, .detail-cell { pointer-events: auto; }
 
   .services-grid {
-    display: grid;
-    gap: 0 clamp(48px, 9vw, 160px);
-    --grid-pb: 96px;
-    padding-block: 0 var(--grid-pb);
-  }
-
-  .chair-cell { width: var(--col-w); transition-delay: var(--t-chair, 0.9s); /* read by the mobile spin script */ }
-  .steps-cell { width: var(--col-w); }
-  .intro-cell { display: none; } /* mobile shows the heading between the legs (.steps-intro) */
-  .detail { display: none; }
-  .steps-intro { padding: 30px 22px 6px; }
-  .detail-cell { padding-left: 22px; } /* the left leg runs past it on phones */
-  .steps { list-style: none; margin: 0; padding: 0 22px 8px; }
-  .chair { display: block; }
-  .step { padding: 22px 0 24px; }
-  .step-head { display: flex; align-items: center; gap: 14px; }
-  .step-arrow {
-    flex: none;
-    width: 30px;
-    height: 20px;
-    margin-top: 0.1em;
-    overflow: visible;
-    transform: rotate(var(--rot, 0deg));
-    fill: none;
-    stroke: var(--color-ink);
-    stroke-width: 2.4;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-  }
-  /* drawn with the step while pinned; fully drawn otherwise */
-  .arrow-line { stroke-dasharray: 1; stroke-dashoffset: calc(1 - var(--al, 1)); }
-  .arrow-head { stroke-dasharray: 1; stroke-dashoffset: calc(1 - var(--ah, 1)); }
-  .step-title {
     position: relative;
-    display: inline-block;
-    font-size: var(--text-phi-1);
-    letter-spacing: -0.035em;
-    line-height: 1.05;
-  }
-  .step-underline {
-    position: absolute;
-    left: -2%;
-    bottom: -9px;
-    width: 104%;
-    height: 12px;
-    overflow: visible;
-    fill: none;
-    stroke: var(--color-ginster);
-    stroke-width: 3.5;
-    stroke-linecap: round;
-    stroke-dasharray: 1;
-    stroke-dashoffset: 1;
-  }
-  .step-text {
-    margin: 10px 0 0;
-    font-size: var(--text-meta);
-    line-height: 1.55;
-    color: var(--color-muted);
-    max-width: 40ch;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
   }
 
-  .axis {
+  .service-route {
     position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: var(--leg-w); /* same as the tube in PantoSwingSilhouette */
+    z-index: 0;
+    top: calc(var(--chair-w) * 0.75);
+    bottom: calc(-1 * var(--services-space));
+    left: calc(var(--route-center) - var(--leg-w) / 2);
+    width: var(--leg-w);
     background: var(--color-ginster);
-    transform-origin: top;
-    transform: scaleY(var(--axis, 1));
-  }
-  /* the left leg continues as the drawn route: it runs on to the bottom edge of the section */
-  .axis:not(.axis-r) { bottom: calc(-1 * var(--leg-extra, var(--grid-pb, 0px))); }
-  .axis-r { left: auto; right: 0; }
-  /* the right leg stands on the floor with an ink glide (the left one runs on as the route) */
-  .axis-r::after {
-    content: '';
-    position: absolute;
-    left: 50%;
-    bottom: 0;
-    width: 14px;
-    height: 3px;
-    background: var(--color-ink);
-    transform: translateX(-50%);
-    opacity: clamp(0, calc((var(--axis, 1) - 0.97) * 40), 1);
+    pointer-events: none;
   }
 
-  .progress-track {
+  .chair-cell,
+  .services-heading,
+  .steps,
+  .plan-cell {
+    position: relative;
+    z-index: 1;
+    min-width: 0;
+  }
+
+  .chair-cell {
+    grid-row: 1;
+    width: var(--chair-w);
+  }
+
+  .chair { display: block; }
+
+  .services-heading {
+    grid-row: 2;
+    max-width: 40rem;
+    padding: clamp(36px, 5vw, 56px) 0 0 var(--route-indent);
+  }
+
+  .services-heading h2 {
+    max-width: 15ch;
+    font-size: var(--text-headline);
+    line-height: 0.98;
+    letter-spacing: -0.045em;
+  }
+
+  .services-heading p {
+    max-width: 40ch;
+    margin: 24px 0 0;
+    color: var(--color-muted);
+    font-size: var(--text-lead);
+    line-height: 1.55;
+  }
+
+  .steps {
+    grid-row: 3;
+    margin: clamp(40px, 5vw, 64px) 0 0;
+    padding: 0 0 0 var(--route-indent);
+    list-style: none;
+  }
+
+  .step {
+    position: relative;
+    padding: 26px 0 30px;
+    border-top: 1px solid var(--color-line);
+  }
+
+  .step:last-child { border-bottom: 1px solid var(--color-line); }
+
+  .step-heading {
     position: relative;
     display: flex;
-    justify-content: space-between;
-    width: min(100%, 360px);
-    height: 11px;
-    border-bottom: 1px solid var(--color-ink);
-  }
-  .progress-tick { width: 1px; height: 11px; background: var(--color-ink); }
-  .progress-node {
-    position: absolute;
-    bottom: -5px;
-    width: 9px;
-    height: 9px;
-    margin-left: -4px;
-    border-radius: 50%;
-    background: var(--color-ginster);
-    left: calc(var(--node, 1) * 100%);
+    align-items: baseline;
+    gap: clamp(14px, 1.6vw, 24px);
   }
 
-  /* the plan: technical strokes in ink, furniture points in ginstergelb */
-  .plan-cell { display: none; }
+  .step-node {
+    position: absolute;
+    top: 50%;
+    left: calc(-1 * var(--route-indent) + var(--route-center));
+    width: 9px;
+    height: 9px;
+    border: 1px solid var(--color-line);
+    border-radius: 50%;
+    background: var(--color-paper);
+    transform: translate(-50%, -50%);
+    transition: background-color 220ms var(--ease-draw), border-color 220ms var(--ease-draw);
+  }
+
+  .step-number {
+    flex: none;
+    width: 2.5ch;
+    color: var(--color-muted);
+    font-size: var(--text-label);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.08em;
+  }
+
+  .step-title {
+    min-width: 0;
+    color: var(--color-muted);
+    font-size: var(--text-service-title);
+    font-weight: 600;
+    line-height: 1.04;
+    letter-spacing: -0.04em;
+    transition: color 220ms var(--ease-draw);
+  }
+
+  .step-text {
+    max-width: 40ch;
+    margin: 12px 0 0 calc(2.5ch + clamp(14px, 1.6vw, 24px));
+    color: var(--color-muted);
+    font-size: var(--text-lead);
+    line-height: 1.55;
+  }
+
+  .step.is-active .step-node {
+    border-color: var(--color-ginster);
+    background: var(--color-ginster);
+  }
+
+  .step.is-active .step-title { color: var(--color-ink); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .step-node,
+    .step-title { transition: none; }
+  }
+
+  .plan-cell {
+    grid-row: 4;
+    margin: 52px 0 0 var(--route-indent);
+  }
+
+  .plan-sticky { min-width: 0; }
+
+  .plan-caption {
+    margin: 0 0 20px;
+    color: var(--color-muted);
+    font-size: var(--text-label);
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    line-height: 1.4;
+    text-transform: uppercase;
+  }
+
   .plan {
     display: block;
     width: 100%;
     height: auto;
-    max-height: var(--plan-max, 440px);
     overflow: visible;
     fill: none;
     stroke: var(--color-ink);
     stroke-linecap: round;
     stroke-linejoin: round;
   }
+
   .plan :global(*) { vector-effect: non-scaling-stroke; }
-  .pl-wall { stroke-width: 3; stroke-linecap: square; }
-  .pl-thin { stroke-width: 1.3; }
-  .pl-marker { stroke-width: 2.2; }
-  /* each layer's --p (0–1) comes from its step; without the scene every layer is complete */
+  .pl-wall { stroke-width: 2.5; stroke-linecap: square; }
+  .pl-thin { stroke-width: 1.2; }
+  .pl-window { stroke: var(--color-muted); }
+  .pl-cabinet { stroke-width: 1.5; }
+  .pl-marker { stroke-width: 1.8; }
+
   .pl-draw {
     stroke-dasharray: 1;
     stroke-dashoffset: calc(1 - var(--p, 1));
-    opacity: var(--on, 1); /* dash rounding on non-scaling strokes would otherwise leave fragments */
+    opacity: var(--on, 1);
   }
+
   .pl-fade { opacity: var(--p, 1); }
   .pl-zone {
-    stroke-width: 1.2;
-    stroke-dasharray: 5 5;
-    /* the planning zones step back once the room is built */
-    opacity: calc(var(--p, 1) * (1 - 0.6 * var(--built, 1)));
+    stroke: var(--color-muted);
+    stroke-width: 1;
+    stroke-dasharray: 4 5;
+    opacity: calc(var(--p, 1) * (1 - 0.58 * var(--built, 0)));
   }
+
   .pl-solid { fill: var(--color-ink); stroke: none; }
   .pl-pop {
     --e: clamp(0, calc(var(--p, 1) * 3 - var(--k, 0)), 1);
     fill: var(--color-ginster);
     stroke: none;
     opacity: var(--e);
-    transform: scale(calc(0.4 + 0.6 * var(--e)));
+    transform: scale(calc(0.45 + 0.55 * var(--e)));
     transform-box: fill-box;
     transform-origin: center;
   }
-  .pl-note, .pl-label {
+
+  .pl-note,
+  .pl-label {
     font-family: var(--font-marker);
     font-weight: 600;
     fill: var(--color-ink);
     stroke: none;
   }
-  /* drawing units (viewBox), not CSS text: the labels scale with the plan (the one exception to the type tokens) */
-  .pl-note { font-size: 27px; }
-  .pl-label { font-size: 23px; fill: var(--color-muted); }
 
-  /* tablet: two columns. The heading moves out from between the legs to beside the chair;
-     ruler, active step and the plan stack beside the list, and the legs run the full height */
-  @media (min-width: 768px) and (max-width: 1023px) {
-    .services-grid { grid-template-columns: var(--col-w) minmax(0, 1fr); column-gap: clamp(32px, 5vw, 56px); }
-    .chair-cell { grid-column: 1; grid-row: 1; align-self: end; }
-    .steps-cell { grid-column: 1; grid-row: 2 / span 2; align-self: stretch; }
-    .steps-intro { display: none; }
-    .steps { padding: 4px 22px 8px; }
-    .intro-cell { display: block; grid-column: 2; grid-row: 1; align-self: end; padding-bottom: 12px; }
-    .detail-cell { grid-column: 2; grid-row: 2; align-self: start; padding: 18px 0 0; }
-    .plan-cell { display: block; grid-column: 2; grid-row: 3; padding-top: 28px; }
+  .pl-note { font-size: 25px; }
+  .pl-label { font-size: 21px; fill: var(--color-muted); }
+
+  @media (min-width: 768px) and (max-width: 1023px) and (min-height: 960px) {
+    .services-grid { grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr); column-gap: clamp(32px, 5vw, 64px); }
+    .chair-cell { grid-column: 1; grid-row: 1; }
+    .services-heading { grid-column: 1; grid-row: 2; }
+    .steps { grid-column: 1; grid-row: 3; }
+    .plan-cell { grid-column: 2; grid-row: 2 / span 2; align-self: stretch; margin: 32px 0 0; }
   }
 
   @media (min-width: 1024px) {
+    .services {
+      --chair-w: clamp(180px, 17vw, 240px);
+      --chair-peek: calc(var(--chair-w) * 0.44);
+      --leg-w: calc(var(--chair-w) * 0.025);
+      --route-indent: calc(var(--leg-w) + 36px);
+      --services-space: clamp(128px, 11vw, 160px);
+    }
+
     .services-grid {
-      /* chair column · heading, then ruler and active step · the plan */
-      grid-template-columns: var(--col-w) minmax(0, 4fr) minmax(0, 5fr);
-      grid-template-rows: auto auto;
-      --grid-pb: 110px;
-      padding-block: 0 var(--grid-pb);
-      /* the chair comes to rest on the same left edge as the hero headline: the shell's outer edge
-         (x = 18 of 400 in PantoSwingSilhouette) lines up with it, the legs flare slightly beyond */
-      margin-left: calc(var(--col-w) * -0.045);
-      gap: 0 clamp(48px, 6vw, 110px);
+      grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+      column-gap: clamp(48px, 7vw, 112px);
     }
-    /* the chair sits on the list; its legs end where the list ends */
-    .chair-cell { grid-column: 1; grid-row: 1; align-self: end; }
-    .steps-cell { grid-column: 1; grid-row: 2; align-self: start; }
-    .intro-cell { display: block; grid-column: 2 / 4; grid-row: 1; align-self: end; padding-bottom: 12px; }
-    .detail-cell { grid-column: 2; grid-row: 2; align-self: start; padding-top: 18px; padding-left: 0; }
-    .plan-cell { display: block; grid-column: 3; grid-row: 2; align-self: start; padding-top: 18px; }
-    /* static (no script): beside the chair the heading would sit on the hero's lower edge,
-       so it moves beside the list; the step ruler has nothing to follow */
-    :global(html:not(.js)) .intro-cell { grid-column: 2; grid-row: 2; align-self: start; padding: 18px 0 0; }
-    :global(html:not(.js)) .detail-cell { display: none; }
-    .steps { margin-top: 0; padding: 4px 30px 0; }
-    .step { padding: 16px 0 18px; }
-    .step-text { margin-left: 44px; font-size: var(--text-meta); }
-    .step-head { gap: 12px; }
-  }
-  /* static with script too: reduced motion and short screens (see the scene's media query) */
-  @media (min-width: 1024px) and (prefers-reduced-motion: reduce), (min-width: 1024px) and (max-height: 639px) {
-    .intro-cell { grid-column: 2; grid-row: 2; align-self: start; padding: 18px 0 0; }
-    .detail-cell { display: none; }
+    .chair-cell { grid-column: 1; grid-row: 1; }
+    .services-heading { grid-column: 1; grid-row: 2; }
+    .steps { grid-column: 1; grid-row: 3; }
+    .services-heading { padding-top: clamp(38px, 4vw, 60px); }
+    .steps { margin-top: clamp(44px, 5vw, 72px); }
+    .step { padding: 30px 0 34px; }
+    .step-text { margin-top: 14px; }
+    .plan-cell { grid-column: 2; grid-row: 2 / span 2; align-self: stretch; margin: 0; padding-top: clamp(22px, 3vw, 40px); }
+    .plan-sticky { position: sticky; top: calc(var(--nav-h) + 32px); }
+    .plan-caption { margin-bottom: 24px; }
+    .plan { max-height: min(72vh, calc(100svh - var(--nav-h) - 96px)); }
   }
 
-  /* scrubbed desktop sequence (class set by the scene when it is active) */
-  .services.is-scrub { height: calc(var(--stick-h, 100vh) + 170vh); }
-  .services.is-scrub .services-stick { position: sticky; top: var(--stick-top, 0px); }
-  /* keep the pinned block short enough that the whole chair stays below the navbar */
-  .services.is-scrub .services-grid { --grid-pb: 24px; padding-bottom: var(--grid-pb); }
-  .services.is-scrub .step-title-text {
-    clip-path: inset(-12% calc((1 - var(--t, 1)) * 100%) -12% 0);
-  }
-  .services.is-scrub .step { padding: 13px 0 15px; }
-  /* long titles (e.g. Italian “Accompagnare”) must fit between the legs */
-  .services.is-scrub .step-title { font-size: clamp(var(--text-lead), 1.95vw, var(--text-phi-1)); }
-  .services.is-scrub .step-text {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-  }
-  .services.is-scrub .detail { display: grid; margin-top: 36px; min-height: 9.5rem; }
-  @media (max-width: 1023px) {
-    /* pinned on phones: keep the heading, hide the intro text visually, show the active step's text under the list */
-    .services.is-scrub .steps-intro { padding-top: 22px; }
-    .services.is-scrub .steps-intro p {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      overflow: hidden;
-      clip-path: inset(50%);
-      white-space: nowrap;
+  @media (max-width: 767px), (min-width: 768px) and (max-width: 1023px) and (max-height: 959px) {
+    .services {
+      --chair-w: clamp(180px, 56vw, 240px);
+      --chair-peek: calc(var(--chair-w) * 0.34);
+      --leg-w: calc(var(--chair-w) * 0.025);
+      --route-indent: calc(var(--leg-w) + 28px);
+      --services-space: 112px;
     }
-    .services.is-scrub .detail { margin-top: 18px; min-height: 7rem; }
-    .services.is-scrub .detail-text { font-size: var(--text-lead); }
-    .services.is-scrub .step { padding: 10px 0 12px; }
-    .services.is-scrub .step-title { font-size: var(--text-phi-1); }
-  }
-  /* the heading only appears once the chair has left the hero */
-  .services.is-scrub .intro-cell,
-  .services.is-scrub .detail-cell { opacity: var(--intro, 1); transform: translateY(calc((1 - var(--intro, 1)) * 16px)); }
-  .detail-item {
-    grid-area: 1 / 1;
-    opacity: var(--o, 0);
-    transform: translateY(calc((1 - var(--o, 0)) * 10px));
-  }
-  .detail-title { font-family: var(--font-marker); font-weight: 600; font-size: var(--text-marker); line-height: 1; color: var(--color-ink); }
-  .detail-text { margin-top: 14px; max-width: 24ch; font-size: clamp(1.35rem, 2vw, var(--text-phi-1)); line-height: 1.3; letter-spacing: -0.02em; }
-  .services .step-underline { stroke-dashoffset: calc(1 - var(--u, 0)); transition: opacity 300ms var(--ease-draw); }
-  .services .step.is-done .step-underline { opacity: 0; }
-  .services .step.is-active .step-arrow { stroke: var(--color-ginster-deep); }
 
-  /* The chair arrives last in the hero sequence (see --t-chair in WhiteboardHero):
-     it slides in from the left with one turn on its own axis and comes to rest facing forward. */
-  @media (prefers-reduced-motion: no-preference) and (min-width: 1024px) {
-    :global(html.js) .chair-cell {
-      animation: chair-in 900ms cubic-bezier(0.22, 0.8, 0.26, 1) both;
-      animation-delay: var(--t-chair, 0.9s);
-    }
-  }
-  @media (prefers-reduced-motion: no-preference) and (max-width: 1023px) {
-    :global(html.js) .chair-cell { opacity: 0; }
-    :global(html.js) .chair-cell.is-spinning {
-      animation: chair-in 900ms cubic-bezier(0.22, 0.8, 0.26, 1) both;
-    }
-  }
-  @keyframes chair-in {
-    from { opacity: 0; transform: perspective(1100px) translateX(calc(-100% - 60px)) rotateY(-360deg); }
-    15% { opacity: 1; }
-    to { opacity: 1; transform: perspective(1100px) translateX(0) rotateY(0deg); }
-  }
-
-  /* mobile / reduced: simple reveal */
-  @media (prefers-reduced-motion: no-preference) {
-    :global(html.js) .services:not(.is-scrub) .step {
-      opacity: 0;
-      transform: translateY(12px);
-      transition: opacity 600ms var(--ease-draw), transform 600ms var(--ease-draw);
-    }
-    :global(html.js) .services:not(.is-scrub) .step.is-in { opacity: 1; transform: none; }
+    .services-heading { padding-top: 34px; }
+    .steps { margin-top: 42px; }
+    .step { padding: 23px 0 27px; }
+    .step-heading { gap: 14px; }
+    .step-node { width: 8px; height: 8px; }
+    .step-text { margin-top: 10px; margin-left: calc(2.5ch + 14px); }
+    .plan-cell { margin-top: 44px; }
+    .plan-caption { margin-bottom: 16px; }
   }
 </style>
 
 <script>
-  import { addScene, clamp, easeOut, range, revealOnce, viewProgress } from '../scripts/motion';
+  import { addScene, clamp, easeOut } from '../scripts/motion';
 
   const section = document.querySelector<HTMLElement>('[data-services]');
-  const stick = section?.querySelector<HTMLElement>('[data-stick]');
-  if (section && stick) {
-    const steps = Array.from(section.querySelectorAll<HTMLElement>('[data-step]'));
-    const now = section.querySelector<HTMLElement>('[data-now]');
-    const node = section.querySelector<HTMLElement>('[data-node]');
-    const details = Array.from(section.querySelectorAll<HTMLElement>('[data-detail]'));
-    const plan = section.querySelector<SVGSVGElement>('[data-plan]');
-    const layers = Array.from(section.querySelectorAll<SVGGElement>('[data-layer]'));
-    const n = steps.length;
-    let stickTop = 0;
-    let stickH = 0;
-    let startTop = 0;
-    let total = 1;
-    let pre = 0;
-    let clear = 0; // scroll after sticking until the hero's lower edge has passed behind the navbar
-    let lastActive = -1;
+  const stepsList = section?.querySelector<HTMLOListElement>('[data-steps]');
+  const steps = Array.from(section?.querySelectorAll<HTMLElement>('[data-step]') ?? []);
+  const layers = Array.from(section?.querySelectorAll<SVGGElement>('[data-layer]') ?? []);
+  const plan = section?.querySelector<SVGSVGElement>('[data-plan]');
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-    revealOnce(steps);
-
-    // The left leg is the start of the drawn route, so it always reaches the bottom edge of the
-    // section (while pinned, the block sits above the section's end; on phones the step text sits below the list).
-    const stepsCell = section.querySelector<HTMLElement>('.steps-cell');
-    const reachSectionEnd = () => {
-      if (!stepsCell) return;
-      const gap = section.getBoundingClientRect().bottom - stepsCell.getBoundingClientRect().bottom;
-      section.style.setProperty('--leg-extra', `${Math.max(0, gap).toFixed(1)}px`);
-    };
-
-    // Mobile: the legs grow down the list as it scrolls through the viewport.
-    if (stepsCell) {
-      addScene({
-        el: stepsCell,
-        media: '(max-width: 1023px), (max-height: 639px)',
-        progress: viewProgress(1.15, 0.35), // start as soon as the column enters
-        render: (p) => {
-          if (!section.classList.contains('is-scrub')) section.style.setProperty('--axis', String(p));
-          reachSectionEnd();
-        },
-      });
-    }
-
-    // Mobile: the chair may sit below the fold, so it spins in once it is in view,
-    // at its turn in the hero sequence (--t-chair) unless the visitor has already scrolled on.
-    const chairCell = section.querySelector<HTMLElement>('.chair-cell');
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (chairCell && !reduced && window.matchMedia('(max-width: 1023px)').matches && 'IntersectionObserver' in window) {
-      const turnAt = parseFloat(getComputedStyle(chairCell).transitionDelay) * 1000 || 900;
-      const io = new IntersectionObserver(
-        (entries) => {
-          if (!entries.some((e) => e.isIntersecting)) return;
-          io.disconnect();
-          // still watching the hero: wait for the chair's turn; already scrolling on: spin in right away
-          const wait = window.scrollY > 40 ? 0 : Math.max(0, turnAt - performance.now());
-          window.setTimeout(() => chairCell.classList.add('is-spinning'), wait);
-        },
-        { threshold: 0.3 },
-      );
-      io.observe(chairCell);
-    } else {
-      chairCell?.classList.add('is-spinning');
-    }
-
+  if (section && stepsList && steps.length && layers.length) {
     addScene({
-      el: section,
-      // desktop, and phones/tablets that are tall enough (landscape phones stay static)
-      media: '(min-width: 1024px) and (min-height: 640px), (max-width: 1023px) and (min-height: 600px)',
-      measure(active) {
-        section.classList.toggle('is-scrub', active);
-        if (!active) return;
-        const vh = window.innerHeight;
-        const navH = 72;
-        // the plan may grow below the list, but never so far that the pinned block pushes the chair under the navbar
-        const chairH = section.querySelector<HTMLElement>('.chair-cell')?.offsetHeight ?? 0;
-        if (window.matchMedia('(min-width: 768px) and (max-width: 1023px)').matches) {
-          // tablet: the plan sits below the active step, so it gets what the pinned block leaves over
-          plan?.style.setProperty('--plan-max', '0px');
-          const withoutPlan = stick.offsetHeight;
-          const room = Math.round(vh - (navH + 8) - withoutPlan - 24 - 28);
-          plan?.style.setProperty('--plan-max', `${room >= 160 ? room : 0}px`); // too little room: no plan rather than a stamp
-        } else {
-          plan?.style.setProperty('--plan-max', `${Math.max(180, Math.round(vh - (navH + 8) - chairH - 18 - 48))}px`);
+      el: stepsList,
+      progress: (rect, vh) => (vh * 0.54 - rect.top) / Math.max(1, rect.height),
+      render() {
+        const activationLine = window.innerHeight * 0.54;
+        let active = 0;
+        for (let i = 0; i < steps.length; i += 1) {
+          if (steps[i].getBoundingClientRect().top <= activationLine) active = i;
         }
-        stickH = stick.offsetHeight;
-        stickTop = Math.min(navH + 8, vh - stickH - 24);
-        section.style.setProperty('--stick-h', `${stickH}px`);
-        section.style.setProperty('--stick-top', `${stickTop}px`);
-        // where the section sits on load (overlapping the hero) → where it sticks → where it releases
-        startTop = section.getBoundingClientRect().top + window.scrollY; // document position (the hero height differs per device)
-        pre = Math.max(1, startTop - stickTop);
-        total = pre + Math.max(1, section.offsetHeight - stickH);
-        // the section overlaps the hero by the chair's peek; the hero's lower edge (photo, floor-plan sketch)
-        // sits beside the heading until it has scrolled that far past the moment the block sticks
-        clear = Math.abs(parseFloat(getComputedStyle(section).marginTop)) || 0;
-      },
-      progress: (rect) => (startTop - rect.top) / total,
-      render(pAll) {
-        const f = pre / total;
-        section.style.setProperty('--intro', String(range(pAll, (pre + clear * 0.5) / total, (pre + clear) / total)));
-        const p = range(pAll, f, 1);
-        const q = range(p, 0.03, 0.94) * n;
-        const active = Math.min(n - 1, Math.floor(q));
+
+        const activeRect = steps[active].getBoundingClientRect();
+        const activeProgress = clamp((activationLine - activeRect.top) / Math.max(1, activeRect.height));
+
         steps.forEach((step, i) => {
-          const t = clamp(q - i);
-          step.style.setProperty('--al', String(range(t, 0, 0.18)));
-          step.style.setProperty('--ah', String(range(t, 0.14, 0.26)));
-          step.style.setProperty('--t', String(easeOut(range(t, 0.2, 0.7))));
-          step.style.setProperty('--o', String(range(t, 0.3, 0.75)));
-          step.style.setProperty('--u', String(easeOut(range(t, 0.25, 0.85))));
-          step.classList.toggle('is-active', i === active && t > 0);
-          step.classList.toggle('is-done', i < active);
+          const isActive = i === active;
+          step.classList.toggle('is-active', isActive);
+          if (isActive) step.setAttribute('aria-current', 'step');
+          else step.removeAttribute('aria-current');
         });
-        details.forEach((d, i) => {
-          const t = clamp(q - i);
-          const out = i < n - 1 ? 1 - range(q - i, 0.85, 1) : 1;
-          d.style.setProperty('--o', String(Math.min(range(t, 0.3, 0.7), out)));
-        });
-        // the plan adds one layer per step and keeps the earlier ones
-        layers.forEach((layer, i) => {
-          const lp = easeOut(range(clamp(q - i), 0.12, 0.8));
-          layer.style.setProperty('--p', lp.toFixed(3));
-          layer.style.setProperty('--on', lp > 0.001 ? '1' : '0');
-          if (i === 3) plan?.style.setProperty('--built', lp.toFixed(3));
-        });
-        // legs grow from the first scroll on, and are complete early in the step sequence
-        section.style.setProperty('--axis', String(range(pAll, 0.02, f + (1 - f) * 0.3)));
-        reachSectionEnd();
-        node?.style.setProperty('--node', String(clamp((q - 0.5) / (n - 1))));
-        if (active !== lastActive && now) {
-          now.textContent = String(active + 1);
-          lastActive = active;
+
+        if (reducedMotion.matches) {
+          layers.forEach((layer) => layer.style.setProperty('--p', '1'));
+          plan?.style.setProperty('--built', '1');
+          return;
         }
+
+        layers.forEach((layer, i) => {
+          const phase = i < active ? 1 : i === active ? activeProgress : 0;
+          const progress = i === 0 ? 0.18 + phase * 0.82 : phase;
+          const eased = easeOut(progress);
+          layer.style.setProperty('--p', eased.toFixed(3));
+          layer.style.setProperty('--on', progress > 0.001 ? '1' : '0');
+          if (i === 3) plan?.style.setProperty('--built', eased.toFixed(3));
+        });
       },
     });
   }

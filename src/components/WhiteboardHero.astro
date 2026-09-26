@@ -11,12 +11,12 @@ const [a, b, c] = getProjects(lang);
 // line takes about WRITE seconds in any language. Delays are computed here so the pacing is
 // slightly uneven (like a hand) but identical on every load.
 const headline = t.hero.headline;
-const WRITE = 0.85;
-const LETTER = 0.12; // each letter's own wipe
-const WORD_GAP = 0.07;
+const WRITE = 0.48;
+const LETTER = 0.08; // each letter's own wipe
+const WORD_GAP = 0.035;
 const parts = headline.split(' ');
 const letterCount = parts.join('').length;
-const PER_LETTER = Math.min(0.05, Math.max(0.022, (WRITE - LETTER - (parts.length - 1) * WORD_GAP) / letterCount));
+const PER_LETTER = Math.max(0.006, (WRITE - LETTER - (parts.length - 1) * WORD_GAP) / letterCount);
 let clock = 0;
 const words = parts.map((word, wi) => {
   const letters = [...word].map((char, ci) => {
@@ -87,9 +87,9 @@ const writeDuration = (clock - WORD_GAP + LETTER).toFixed(2);
 
           <!-- pinned photos -->
           <div class="pins relative mb-[calc(var(--chair-peek)+20px)] h-[min(78vw,520px)] lg:absolute lg:inset-0 lg:m-0 lg:h-auto">
-            <ProjectPhoto project={a} class="pin-a" sizes="(min-width: 1024px) 33vw, 62vw" priority />
-            <ProjectPhoto project={b} class="pin-b" sizes="(min-width: 1024px) 13vw, 48vw" />
-            <ProjectPhoto project={c} class="pin-c hidden lg:block" sizes="21vw" />
+            <ProjectPhoto project={a} class="pin-a" sizes="(min-width: 1520px) 460px, (min-width: 1024px) 33vw, 62vw" priority />
+            <ProjectPhoto project={b} class="pin-b" sizes="(min-width: 1520px) 176px, (min-width: 1024px) 13vw, 48vw" />
+            <ProjectPhoto project={c} class="pin-c hidden lg:block" sizes="(min-width: 1520px) 284px, 21vw" />
 
             <span class="note note-flex marker" style="--d: 0.95s">{t.hero.notes.flex}</span>
             <span class="note note-akustik marker hidden lg:block" style="--d: 1.1s">{t.hero.notes.acoustics}</span>
@@ -153,9 +153,9 @@ const writeDuration = (clock - WORD_GAP + LETTER).toFixed(2);
   :global(:root) {
     --t-claim: 0.1s;
     --t-after: calc(var(--t-claim) + var(--hero-write, 0.85s)); /* end of the writing: the underline */
-    --t-offer: 0.12s; /* subline and buttons, readable within ~0.3s */
-    --t-images: 0.35s;
-    --t-notes: -0.2s; /* added to each note's own --d (0.95–1.3s): annotations draw from 0.75s */
+    --t-offer: 0.04s; /* subline and buttons, readable within ~0.3s */
+    --t-images: 0s;
+    --t-notes: -0.3s; /* added to each note's own --d (0.95–1.3s): annotations draw from 0.65s */
     --t-chair: 0.9s;
   }
 
@@ -186,28 +186,28 @@ const writeDuration = (clock - WORD_GAP + LETTER).toFixed(2);
 
   @media (prefers-reduced-motion: no-preference) {
     :global(html.js) .rise {
-      animation: hero-rise 600ms var(--ease-draw) both;
+      animation: hero-rise 320ms var(--ease-draw) both;
       animation-delay: calc(var(--d, 0s) + var(--t-offer));
     }
     /* each letter is wiped in left to right, like a marker stroke */
     :global(html.js) .ch {
-      animation: write-letter 120ms linear both;
+      animation: write-letter 80ms linear both;
       animation-delay: calc(var(--t-claim) + var(--cd));
     }
     :global(html.js) .hand-underline path {
-      animation: underline 650ms var(--ease-draw) both;
+      animation: underline 400ms var(--ease-draw) both;
       animation-delay: calc(var(--t-after) - 0.05s);
     }
     .pins :global(.pin-a) { --pin-d: var(--t-images); }
-    .pins :global(.pin-b) { --pin-d: calc(var(--t-images) + 0.1s); }
-    .pins :global(.pin-c) { --pin-d: calc(var(--t-images) + 0.2s); }
+    .pins :global(.pin-b) { --pin-d: calc(var(--t-images) + 0.04s); }
+    .pins :global(.pin-c) { --pin-d: calc(var(--t-images) + 0.08s); }
     :global(html.js) .pins :global(.pin) {
-      animation: pin-in 600ms var(--ease-draw) both;
+      animation: pin-in 240ms var(--ease-draw) both;
       animation-delay: var(--pin-d, 0.35s);
     }
     :global(html.js) .pins :global(.magnet) {
-      animation: magnet-in 320ms var(--ease-draw) both;
-      animation-delay: calc(var(--pin-d, 0.35s) + 0.3s);
+      animation: magnet-in 220ms var(--ease-draw) both;
+      animation-delay: calc(var(--pin-d, 0s) + 0.18s);
     }
     :global(html.js) .note {
       animation: note-in 500ms var(--ease-draw) both;

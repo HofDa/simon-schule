@@ -55,7 +55,7 @@ const t = useTranslations(getLang(Astro.currentLocale)).projects;
   .t-path {
     fill: none;
     stroke: var(--color-ginster);
-    stroke-width: var(--leg-w, 4px); /* same thickness as the chair legs */
+    stroke-width: var(--route-width, var(--leg-w, 4px)); /* continue the services route at its measured width */
     stroke-linecap: butt;
     stroke-linejoin: miter;
   }
@@ -196,6 +196,8 @@ const t = useTranslations(getLang(Astro.currentLocale)).projects;
       const vw = document.documentElement.clientWidth;
       const leg = document.querySelector<HTMLElement>('[data-axis]')?.getBoundingClientRect();
       x0 = leg && leg.width ? leg.left + leg.width / 2 : pad;
+      if (leg?.width) section.style.setProperty('--route-width', `${leg.width}px`);
+      else section.style.removeProperty('--route-width');
 
       if (!scrub) {
         // static: U-shaped line across the section, title centred on desktop
