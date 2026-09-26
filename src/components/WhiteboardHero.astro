@@ -1,28 +1,44 @@
 ---
 import { getProjects } from '../data/projects';
 import { getLang, useTranslations } from '../i18n/ui';
+import { letter } from '../lib/lettering';
 import ProjectPhoto from './ProjectPhoto.astro';
 
 const lang = getLang(Astro.currentLocale);
 const t = useTranslations(lang);
 const [a, b, c] = getProjects(lang);
 
-// The headline is written letter by letter. Delays are computed here so the
-// pacing is slightly uneven (like a hand) but identical on every load.
+// The claim is hand-lettered: each word is drawn as pen strokes (src/lib/lettering.ts) at one
+// constant pen speed with short lifts between strokes, so the whole line takes about WRITE
+// seconds in any language and stays one quick marker gesture.
 const headline = t.hero.headline;
-const PER_LETTER = 0.068;
-const WORD_GAP = 0.2;
+const lettering = letter(headline);
+const SCALE = 1.1; // the single-line font sits small in its em box
+const PAD = 60; // font units around each word, so round stroke ends are not clipped
+const top = lettering.top - PAD;
+const height = lettering.bottom - lettering.top + 2 * PAD;
+const em = (units: number) => `${((units / 1000) * SCALE).toFixed(3)}em`;
+const WRITE = 0.85;
+const LIFT = 0.012;
+const WORD_LIFT = 0.05;
+const strokeCount = lettering.words.reduce((n, w) => n + w.strokes.length, 0);
+const penLength = lettering.words.reduce((n, w) => n + w.strokes.reduce((m, s) => m + s.length, 0), 0);
+const speed = penLength / (WRITE - LIFT * (strokeCount - 1) - WORD_LIFT * (lettering.words.length - 1));
 let clock = 0;
-const words = headline.split(' ').map((word, wi) => {
-  const letters = [...word].map((char, ci) => {
-    const delay = clock;
-    clock += PER_LETTER + (((wi * 7 + ci * 13) % 5) - 2) * 0.012;
-    return { char, delay: delay.toFixed(3) };
+const words = lettering.words.map((word) => {
+  const strokes = word.strokes.map((stroke) => {
+    const dur = Math.max(0.02, stroke.length / speed);
+    const out = { d: stroke.d, delay: clock.toFixed(3), dur: dur.toFixed(3) };
+    clock += dur + LIFT;
+    return out;
   });
-  clock += WORD_GAP;
-  return letters;
+  clock += WORD_LIFT - LIFT;
+  return { width: word.width, strokes };
 });
-const writeDuration = (clock - WORD_GAP + 0.15).toFixed(2);
+const writeDuration = (clock - WORD_LIFT).toFixed(2);
+const LINE = 1.06; // baseline to baseline, in em: each word's box is trimmed to this height
+// the last line's descenders hang below the trimmed box; keep them clear of the subline
+const DESCENDERS = `calc(${em(height)} - ${LINE}em - ${em(PAD)})`;
 ---
 
 <Fragment set:html={`<style>:root{--hero-write:${writeDuration}s}</style>`} />
@@ -53,11 +69,17 @@ const writeDuration = (clock - WORD_GAP + 0.15).toFixed(2);
           <div class="hero-copy relative z-10 pt-10 pb-8 lg:absolute lg:left-0 lg:top-0 lg:w-[38.2%] lg:pt-[calc(var(--board-h)*0.146)]">
             <h1 id="hero-title" class="hero-title">
               <span class="sr-only">{headline}</span>
-              <span class="handwriting" aria-hidden="true">
-                {words.map((letters, wi) => (
+              <span class="handwriting" aria-hidden="true" style={`--base: ${em(lettering.baseline - top)}; padding-bottom: ${DESCENDERS}`}>
+                {words.map((word, wi) => (
                   <>
                     <span class={`word${wi === words.length - 1 ? ' word-last' : ''}`}>
-                      {letters.map((l) => <span class="ch" style={`--cd: ${l.delay}s`}>{l.char}</span>)}
+                      <svg
+                        class="lettering"
+                        viewBox={`${-PAD} ${top} ${word.width + 2 * PAD} ${height}`}
+                        style={`width: ${em(word.width + 2 * PAD)}; height: ${em(height)}; margin-bottom: calc(${LINE}em - ${em(height)})`}
+                      >
+                        {word.strokes.map((s) => <path d={s.d} pathLength="1" style={`--sd: ${s.delay}s; --sdur: ${s.dur}s`} />)}
+                      </svg>
                       {wi === words.length - 1 && (
                         <svg class="hand-underline" viewBox="0 0 300 16" preserveAspectRatio="none">
                           <path pathLength="1" d="M4 10 C60 5 130 12 190 8 S270 6 296 9" />
@@ -68,15 +90,15 @@ const writeDuration = (clock - WORD_GAP + 0.15).toFixed(2);
                 ))}
               </span>
             </h1>
-            <p class="rise mt-7 max-w-[38ch] text-[1.05rem] leading-[1.6] text-muted sm:text-[1.12rem]" style="--d: 0s">
+            <p class="rise mt-7 max-w-[38ch] text-body leading-[1.6] text-muted sm:text-lead" style="--d: 0s">
               {t.hero.sub}
             </p>
-            <div class="rise mt-9 flex flex-wrap items-center gap-x-7 gap-y-4" style="--d: 0.15s">
+            <div class="rise mt-9 flex flex-wrap items-center gap-x-7 gap-y-4" style="--d: 0.08s">
               <a href="#projekte" class="btn btn-ink">
                 {t.hero.primary}
                 <svg class="btn-arrow h-3.5 w-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M8 2v11M4 9l4 4 4-4" /></svg>
               </a>
-              <a href="#anfrage" class="link-line text-[0.95rem] font-semibold" data-open-form>{t.hero.secondary}</a>
+              <a href="#anfrage" class="link-line text-meta font-semibold" data-open-form>{t.hero.secondary}</a>
             </div>
           </div>
 
@@ -103,7 +125,14 @@ const writeDuration = (clock - WORD_GAP + 0.15).toFixed(2);
     --board-h: clamp(600px, calc(100svh - var(--nav-h) - 30px), 1000px);
   }
   @media (min-width: 1024px) {
-    .board { height: var(--board-h); }
+    .board {
+      height: var(--board-h);
+      /* the prints and their sketch are composed for a board of about golden proportions: on wide,
+         short screens they keep that shape, anchored right, instead of stretching into each other */
+      --frame-w: min(100%, calc(var(--board-h) * 1.66));
+    }
+    .sketch,
+    .pins { left: auto; right: 0; width: var(--frame-w); }
   }
 
   .dashed { stroke-dasharray: 0.02 0.025; }
@@ -112,7 +141,7 @@ const writeDuration = (clock - WORD_GAP + 0.15).toFixed(2);
     position: absolute;
     z-index: 3;
     color: #2b2b27;
-    font-size: clamp(1.35rem, 1.8vw, 1.9rem);
+    font-size: var(--text-marker);
     white-space: nowrap;
   }
   .note-flex { left: 52%; top: -2%; transform: rotate(-3deg); }
@@ -120,7 +149,7 @@ const writeDuration = (clock - WORD_GAP + 0.15).toFixed(2);
     .note-flex { left: 47%; top: 6%; }
     .note-akustik { left: 83%; top: 31%; transform: rotate(2deg); }
     .note-gruppe { right: 35.5%; top: 61.5%; transform: rotate(-2deg); } /* right-anchored: ends at its arrow in any language */
-    .note-dim { left: 53%; top: 90.5%; font-size: 1.25rem; }
+    .note-dim { left: 53%; top: 90.5%; font-size: var(--text-lead); }
   }
 
   /* pins: mobile */
@@ -135,14 +164,16 @@ const writeDuration = (clock - WORD_GAP + 0.15).toFixed(2);
     .pins :global(.pin-c) { left: 66.2%; top: 63.7%; width: 20.4%; transform: rotate(1.2deg); }
   }
 
-  /* Attention sequence: wordmark and handwritten claim → subline → projects → annotations → chair (ServicesStory).
+  /* Board preparation, about a second in all: the claim is written while the offer is already readable
+     and the prints are pinned up; the annotations follow, the chair (ServicesStory) comes last.
      Defined on :root so the chair in the next section shares the timeline. */
   :global(:root) {
-    --t-claim: 0.85s;
-    --t-after: calc(var(--t-claim) + var(--hero-write, 2s)); /* --hero-write comes from the headline length */
-    --t-images: calc(var(--t-after) + 0.35s);
-    --t-notes: calc(var(--t-images) - 0.2s); /* added to each note's own --d (0.95–1.3s) */
-    --t-chair: calc(var(--t-notes) + 1.5s); /* after the last note (--d 1.3s) has started drawing */
+    --t-claim: 0.1s;
+    --t-after: calc(var(--t-claim) + var(--hero-write, 0.85s)); /* end of the writing: the underline */
+    --t-offer: 0.12s; /* subline and buttons, readable within ~0.3s */
+    --t-images: 0.35s;
+    --t-notes: -0.2s; /* added to each note's own --d (0.95–1.3s): annotations draw from 0.75s */
+    --t-chair: 0.9s;
   }
 
   .hero-title {
@@ -155,11 +186,21 @@ const writeDuration = (clock - WORD_GAP + 0.15).toFixed(2);
   }
   .handwriting { display: block; transform: rotate(-1.5deg); transform-origin: 0 100%; }
   .word { display: inline-block; white-space: nowrap; position: relative; }
-  .ch { display: inline-block; }
+  /* one word = pen strokes of a single-line marker hand (see src/lib/lettering.ts) */
+  .lettering {
+    display: inline-block;
+    vertical-align: top;
+    overflow: visible;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 58;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
   .hand-underline {
     position: absolute;
     left: -2%;
-    bottom: -0.02em;
+    top: calc(var(--base) + 0.03em);
     width: 100%;
     height: 0.16em;
     overflow: visible;
@@ -172,51 +213,54 @@ const writeDuration = (clock - WORD_GAP + 0.15).toFixed(2);
 
   @media (prefers-reduced-motion: no-preference) {
     :global(html.js) .rise {
-      animation: hero-rise 800ms var(--ease-draw) both;
-      animation-delay: calc(var(--d, 0s) + var(--t-after));
+      animation: hero-rise 600ms var(--ease-draw) both;
+      animation-delay: calc(var(--d, 0s) + var(--t-offer));
     }
-    /* each letter is wiped in left to right, like a marker stroke */
-    :global(html.js) .ch {
-      animation: write-letter 150ms linear both;
-      animation-delay: calc(var(--t-claim) + var(--cd));
+    /* the claim is written stroke by stroke, in the pen's own order and at its own pace */
+    :global(html.js) .lettering path {
+      stroke-dasharray: 1;
+      animation: pen var(--sdur) cubic-bezier(0.3, 0, 0.7, 1) both;
+      animation-delay: calc(var(--t-claim) + var(--sd));
     }
     :global(html.js) .hand-underline path {
       animation: underline 650ms var(--ease-draw) both;
       animation-delay: calc(var(--t-after) - 0.05s);
     }
     .pins :global(.pin-a) { --pin-d: var(--t-images); }
-    .pins :global(.pin-b) { --pin-d: calc(var(--t-images) + 0.15s); }
-    .pins :global(.pin-c) { --pin-d: calc(var(--t-images) + 0.3s); }
+    .pins :global(.pin-b) { --pin-d: calc(var(--t-images) + 0.1s); }
+    .pins :global(.pin-c) { --pin-d: calc(var(--t-images) + 0.2s); }
     :global(html.js) .pins :global(.pin) {
-      animation: pin-in 700ms var(--ease-draw) both;
+      animation: pin-in 600ms var(--ease-draw) both;
       animation-delay: var(--pin-d, 0.35s);
     }
     :global(html.js) .pins :global(.magnet) {
-      animation: magnet-in 380ms var(--ease-draw) both;
-      animation-delay: calc(var(--pin-d, 0.35s) + 0.42s);
+      animation: magnet-in 320ms var(--ease-draw) both;
+      animation-delay: calc(var(--pin-d, 0.35s) + 0.3s);
     }
     :global(html.js) .note {
-      animation: note-in 700ms var(--ease-draw) both;
+      animation: note-in 500ms var(--ease-draw) both;
       animation-delay: calc(var(--d, 1s) + var(--t-notes));
     }
     :global(html.js) .draw {
       stroke-dasharray: 1;
       stroke-dashoffset: 1;
-      animation: draw 700ms var(--ease-draw) both;
+      animation: draw 500ms var(--ease-draw) both;
       animation-delay: calc(var(--d, 1s) + var(--t-notes));
     }
     :global(html.js) .draw.dashed {
       stroke-dasharray: 0.02 0.025;
       stroke-dashoffset: 0;
-      animation: fade 600ms ease forwards;
+      animation: fade 400ms ease forwards;
       animation-delay: calc(var(--d, 1s) + var(--t-notes));
       opacity: 0;
     }
   }
 
-  @keyframes write-letter {
-    from { clip-path: inset(-1em 100% -1em -1em); }
-    to { clip-path: inset(-1em -1em -1em -1em); }
+  /* hidden until its turn: a zero-length dash would otherwise show as a dot under the round cap */
+  @keyframes pen {
+    from { stroke-dashoffset: 1; opacity: 0; }
+    1% { opacity: 1; }
+    to { stroke-dashoffset: 0; opacity: 1; }
   }
   @keyframes underline {
     from { stroke-dasharray: 1; stroke-dashoffset: 1; opacity: 0; }

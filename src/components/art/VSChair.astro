@@ -1,6 +1,8 @@
 ---
 /**
- * Schematic ginstergelb VS school chair (cantilever shell with grip slot).
+ * The ginstergelb VS PantoSwing as a side elevation, in the page's drawing
+ * vocabulary: flat ginstergelb shell, the tube frame as outlined ink lines,
+ * the pivot, a dashed swing arc, a hatched floor and a dimension line.
  * Stand-in until a cut-out product photo (vs-pantoswing-ginstergelb.webp) exists.
  */
 import { getLang, useTranslations } from '../../i18n/ui';
@@ -8,95 +10,70 @@ import { getLang, useTranslations } from '../../i18n/ui';
 interface Props {
   id: string;
   class?: string;
-  shadow?: boolean;
 }
-const { id, class: className = '', shadow = true } = Astro.props;
-const title = useTranslations(getLang(Astro.currentLocale)).chair.detailed;
+const { id, class: className = '' } = Astro.props;
+const t = useTranslations(getLang(Astro.currentLocale)).chair;
+// four-leg frame seen from the side: rear leg, seat rail, front leg
+const frame = 'M138 516 L172 336 L292 326 L316 516';
+const hatch = Array.from({ length: 18 }, (_, i) => `M${44 + i * 20} 522 l-12 13`).join(' ');
 ---
 
-<svg class={className} viewBox="0 0 400 720" role="img" aria-labelledby={`${id}-t`}>
-  <title id={`${id}-t`}>{title}</title>
-  <defs>
-    <linearGradient id={`${id}-face`} x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#EDB21C" />
-      <stop offset="0.55" stop-color="#E2A300" />
-      <stop offset="1" stop-color="#D49800" />
-    </linearGradient>
-    <radialGradient id={`${id}-hollow`} cx="0.5" cy="0.62" r="0.55">
-      <stop offset="0" stop-color="#C98F00" stop-opacity="0.45" />
-      <stop offset="1" stop-color="#C98F00" stop-opacity="0" />
-    </radialGradient>
-    <linearGradient id={`${id}-seat`} x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#D59A00" />
-      <stop offset="1" stop-color="#F0B82A" />
-    </linearGradient>
-    <linearGradient id={`${id}-tube`} x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0" stop-color="#6F6E69" />
-      <stop offset="0.45" stop-color="#C9C8C2" />
-      <stop offset="1" stop-color="#7C7B76" />
-    </linearGradient>
-    <linearGradient id={`${id}-side`} x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0" stop-color="#FFE39A" stop-opacity="0.45" />
-      <stop offset="0.22" stop-color="#FFE39A" stop-opacity="0" />
-      <stop offset="0.7" stop-color="#8A6000" stop-opacity="0" />
-      <stop offset="1" stop-color="#8A6000" stop-opacity="0.28" />
-    </linearGradient>
-    <filter id={`${id}-blur`} x="-20%" y="-200%" width="140%" height="500%">
-      <feGaussianBlur stdDeviation="7" />
-    </filter>
-  </defs>
+<svg class={className} viewBox="0 0 420 560" role="img" aria-labelledby={`${id}-t`}>
+  <title id={`${id}-t`}>{t.detailed}</title>
 
-  {shadow && (
-    <g class="chair-shadow">
-      <ellipse cx="200" cy="700" rx="175" ry="13" fill="#20201D" opacity="0.14" filter={`url(#${id}-blur)`} />
-      <ellipse cx="200" cy="699" rx="120" ry="5" fill="#20201D" opacity="0.12" filter={`url(#${id}-blur)`} />
-    </g>
-  )}
-
-  <!-- cantilever frame, rear runners first -->
-  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M128 648 L150 626" stroke="#8B8A85" stroke-width="9" />
-    <path d="M272 648 L250 626" stroke="#8B8A85" stroke-width="9" />
-    <path d="M150 626 L250 626" stroke="#7B7A75" stroke-width="8" />
-    <path d="M120 500 L280 500" stroke="#6F6E69" stroke-width="10" />
-    <path d="M104 494 C92 560 84 630 80 684 L128 648" stroke={`url(#${id}-tube)`} stroke-width="12" />
-    <path d="M296 494 C308 560 316 630 320 684 L272 648" stroke={`url(#${id}-tube)`} stroke-width="12" />
-    <path d="M100 520 C92 580 86 640 83 680" stroke="#EDEDEA" stroke-width="2" opacity="0.7" />
-    <path d="M300 520 C308 580 314 640 317 680" stroke="#EDEDEA" stroke-width="2" opacity="0.5" />
-    <!-- floor glides -->
-    <path d="M74 686 L88 686" stroke="#20201D" stroke-width="7" />
-    <path d="M312 686 L326 686" stroke="#20201D" stroke-width="7" />
+  <!-- floor, cut and hatched -->
+  <g class="ln">
+    <path d="M24 522 H396" />
+    <path class="hatch" d={hatch} />
   </g>
 
-  <!-- shell thickness (edge) -->
+  <!-- frame: tubes drawn as two ink edges (a wide ink stroke under a paper-coloured one) -->
+  <path d={frame} class="tube-edge" />
+  <path d={frame} class="tube-core" />
+  <path class="glide" d="M129 519 H147 M307 519 H325" />
+
+  <!-- the shell: one flat piece, seat rolling over the front edge -->
   <path
-    d="M64 86 C64 44 104 26 200 26 C296 26 336 44 336 86 L336 206 C332 268 308 314 294 362 C322 384 346 410 350 444 C354 472 330 494 284 498 L116 498 C70 494 46 472 50 444 C54 410 78 384 108 362 C92 314 68 268 64 206 Z"
-    fill="#B88400"
+    class="shell"
+    d="M128 56 C136 120 148 192 152 240 C155 280 162 302 186 310 C232 316 290 304 318 300 C336 298 346 310 342 328
+       L326 330 C326 320 320 318 312 318 C284 322 232 334 182 332 C146 328 132 304 128 264
+       C122 200 110 128 102 64 C100 48 126 40 128 56 Z"
+  />
+  <!-- the inner face of the shell, a shade lighter -->
+  <path
+    class="shell-face"
+    d="M128 56 C136 120 148 192 152 240 C155 280 162 302 186 310 C232 316 290 304 318 300 C336 298 346 310 342 328
+       L335 329 C336 316 330 308 318 308 C290 312 232 323 185 318 C157 311 146 286 143 242 C139 192 128 122 120 60
+       C119 52 126 50 128 56 Z"
   />
 
-  <!-- backrest face with grip slot -->
-  <path
-    fill-rule="evenodd"
-    fill={`url(#${id}-face)`}
-    d="M60 80 C60 40 100 20 200 20 C300 20 340 40 340 80 L334 200 C330 262 306 310 292 356 L108 356 C94 310 70 262 66 200 Z
-       M170 64 L230 64 A14 14 0 0 1 230 92 L170 92 A14 14 0 0 1 170 64 Z"
-  />
-  <path d="M60 80 C60 40 100 20 200 20 C300 20 340 40 340 80 L334 200 C330 262 306 310 292 356 L108 356 C94 310 70 262 66 200 Z" fill={`url(#${id}-hollow)`} />
-  <path d="M60 80 C60 40 100 20 200 20 C300 20 340 40 340 80 L334 200 C330 262 306 310 292 356 L108 356 C94 310 70 262 66 200 Z" fill={`url(#${id}-side)`} />
-  <!-- inner edge of grip slot -->
-  <path d="M170 92 L230 92 A14 14 0 0 0 243 84" fill="none" stroke="#B88400" stroke-width="3" stroke-linecap="round" />
-  <!-- top rim highlight -->
-  <path d="M84 52 C112 34 160 28 200 28 C240 28 288 34 316 52" fill="none" stroke="#F6CC55" stroke-width="3" stroke-linecap="round" opacity="0.8" />
+  <!-- the swing: pivot and its arc -->
+  <circle class="pivot" cx="232" cy="331" r="6" />
+  <g class="ln thin">
+    <path class="dash" d="M77.8 52.9 A318 318 0 0 1 149.7 23.8" />
+    <path d="M140 21.6 L149.7 23.8 L142.4 30.6 M87.8 52.7 L77.8 52.9 L83.2 44.5" />
+  </g>
 
-  <!-- seat -->
-  <path
-    fill={`url(#${id}-seat)`}
-    d="M108 352 C80 376 58 406 54 436 C52 458 70 472 112 476 L288 476 C330 472 348 458 346 436 C342 406 320 376 292 352 Z"
-  />
-  <!-- front roll -->
-  <path
-    fill="#C88F00"
-    d="M54 436 C50 468 78 492 120 494 L280 494 C322 492 350 468 346 436 C348 460 330 474 288 478 L112 478 C70 474 52 460 54 436 Z"
-  />
-  <path d="M112 477 L288 477" stroke="#F6CC55" stroke-width="2" opacity="0.6" />
+  <!-- seat height -->
+  <g class="ln thin">
+    <path class="dash" d="M344 302 H382" />
+    <path d="M374 302 V522 M368 308 L380 296 M368 528 L380 516" />
+  </g>
+  <text class="label" x="0" y="0" transform="translate(396 412) rotate(-90)" text-anchor="middle">{t.seatHeight}</text>
 </svg>
+
+<style>
+  svg { overflow: visible; }
+  .ln { fill: none; stroke: var(--color-ink); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+  .thin { stroke-width: 1.2; }
+  .hatch { stroke-width: 1; }
+  .dash { stroke-dasharray: 5 5; }
+  .tube-edge { fill: none; stroke: var(--color-ink); stroke-width: 11; stroke-linejoin: round; }
+  .tube-core { fill: none; stroke: var(--color-paper); stroke-width: 8; stroke-linejoin: round; }
+  .glide { fill: none; stroke: var(--color-ink); stroke-width: 5; stroke-linecap: round; }
+  .shell { fill: var(--color-ginster); }
+  .shell-face { fill: var(--color-ginster-light); }
+  .pivot { fill: var(--color-paper); stroke: var(--color-ink); stroke-width: 1.6; }
+  /* drawing units (viewBox): the label scales with the drawing, outside the type tokens */
+  .label { font-family: var(--font-marker); font-weight: 600; font-size: 24px; fill: var(--color-ink); }
+</style>

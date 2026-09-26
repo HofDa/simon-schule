@@ -1,0 +1,142 @@
+---
+import { getLang, useTranslations } from '../i18n/ui';
+
+/**
+ * "Where are you right now?": the five project phases as a ruler. Each phase opens
+ * the inquiry form with that phase already chosen (see ContactScene: data-phase).
+ */
+const ui = useTranslations(getLang(Astro.currentLocale));
+const t = ui.phases;
+const phases = ui.form.phases.map((name, i) => ({ name, hint: t.hints[i] }));
+---
+
+<section class="phases py-28 lg:py-36" aria-labelledby="phases-title" data-phases>
+  <div class="shell">
+    <h2 id="phases-title" class="max-w-[16ch] text-headline leading-[0.98] tracking-[-0.045em]">
+      {t.title}
+    </h2>
+    <p class="mt-6 max-w-[44ch] text-body leading-[1.65] text-muted">{t.lead}</p>
+
+    <div class="ruler mt-14 lg:mt-20">
+      <span class="rule" aria-hidden="true"></span>
+      <ol class="phase-list">
+        {phases.map((p, i) => (
+          <li class="phase-item" style={`--i: ${i}`}>
+            <a class="phase" href="#anfrage" data-open-form data-phase={p.name}>
+              <span class="tick" aria-hidden="true"></span>
+              <span class="phase-name">
+                {p.name}
+                <svg class="phase-arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" /></svg>
+              </span>
+              <span class="phase-hint">{p.hint}</span>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </div>
+</section>
+
+<style>
+  .ruler { position: relative; }
+  /* the ruler is drawn as the section arrives (--draw); without the scene it is complete */
+  .rule {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--color-ink);
+    transform-origin: top;
+    transform: scaleY(var(--draw, 1));
+  }
+  .phase-list { list-style: none; margin: 0; padding: 0; display: grid; }
+  .phase-item { opacity: clamp(0, calc(var(--draw, 1) * 5 - var(--i)), 1); }
+
+  .phase {
+    position: relative;
+    display: grid;
+    gap: 8px;
+    padding: 18px 0 22px 28px;
+  }
+  .tick {
+    position: absolute;
+    left: 0;
+    top: 30px;
+    width: 12px;
+    height: 1px;
+    background: var(--color-ink);
+  }
+  /* the chosen point on the ruler: a ginstergelb node, like the step progress */
+  .tick::after {
+    content: '';
+    position: absolute;
+    left: -5px;
+    top: -4px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--color-ginster);
+    transform: scale(0);
+    transition: transform 250ms var(--ease-draw);
+  }
+  .phase:hover .tick::after,
+  .phase:focus-visible .tick::after { transform: scale(1); }
+
+  .phase-name {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.5em;
+    font-size: var(--text-phi-1);
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+  }
+  .phase-arrow {
+    flex: none;
+    width: 0.55em;
+    height: 0.55em;
+    opacity: 0;
+    transform: translateX(-4px);
+    transition: opacity 200ms var(--ease-draw), transform 200ms var(--ease-draw);
+  }
+  .phase:hover .phase-arrow,
+  .phase:focus-visible .phase-arrow { opacity: 1; transform: none; }
+  .phase-hint { max-width: 30ch; font-size: var(--text-meta); line-height: 1.5; color: var(--color-muted); }
+
+  @media (min-width: 1024px) {
+    /* horizontal: the rule runs along the top, one tick per phase */
+    .rule { top: 0; right: 0; bottom: auto; width: auto; height: 1px; transform-origin: left; transform: scaleX(var(--draw, 1)); }
+    /* the closing end tick, once the rule has reached it */
+    .ruler::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 1px;
+      height: 12px;
+      background: var(--color-ink);
+      opacity: clamp(0, calc((var(--draw, 1) - 0.96) * 25), 1);
+    }
+    .phase-list { grid-template-columns: repeat(5, minmax(0, 1fr)); column-gap: clamp(20px, 2vw, 36px); }
+    .phase { padding: 30px 0 8px; gap: 12px; }
+    .tick { top: 0; width: 1px; height: 12px; }
+    .tick::after { left: -4px; top: -5px; }
+    .phase-hint { max-width: 24ch; }
+    .phase-name { font-size: clamp(var(--text-lead), 1.9vw, var(--text-phi-1)); }
+  }
+</style>
+
+<script>
+  import { addScene, viewProgress } from '../scripts/motion';
+
+  const section = document.querySelector<HTMLElement>('[data-phases]');
+  const ruler = section?.querySelector<HTMLElement>('.ruler');
+  if (section && ruler) {
+    addScene({
+      el: ruler,
+      progress: viewProgress(0.95, 0.45),
+      render: (p) => section.style.setProperty('--draw', p.toFixed(3)),
+    });
+  }
+</script>

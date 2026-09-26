@@ -5,7 +5,9 @@
  *
  * All current entries are placeholders (`placeholder: true`): the photos are
  * temporary Wikimedia Commons images and no project facts are confirmed.
- * Optional fields (`year`, `architect`, `client`) render only when set.
+ * Optional fields (`location`, `year`, `architect`, `client`) render only when set.
+ * A testimonial stays `null` until the quote and its author are approved; it then
+ * appears after its project. Nothing stands in for a missing quote.
  */
 import type { Lang } from '../i18n/ui';
 
@@ -20,7 +22,7 @@ export interface ProjectImage {
 
 export interface Testimonial {
   quote: string;
-  author: string | null;
+  author: string;
   role: string | null;
   organisation: string | null;
 }
@@ -44,7 +46,7 @@ export interface Project {
 
 interface TestimonialSource {
   quote: T;
-  author: string | null;
+  author: string;
   role: T | null;
   organisation: string | null;
 }
@@ -73,16 +75,6 @@ const service = {
   concept: { de: 'Raumkonzept', it: 'Concetto spaziale' },
 } satisfies Record<string, T>;
 
-const pendingQuote: TestimonialSource = {
-  quote: {
-    de: 'Platzhalter: Hier kommt ein freigegebenes Zitat aus diesem Projekt hin, zum Beispiel von der Schulleitung oder der Gemeinde.',
-    it: 'Segnaposto: qui andrà una citazione approvata da questo progetto, per esempio della dirigenza scolastica o del Comune.',
-  },
-  author: null,
-  role: null,
-  organisation: null,
-};
-
 const sources: ProjectSource[] = [
   {
     id: 'schule-klassenraeume',
@@ -104,7 +96,7 @@ const sources: ProjectSource[] = [
       },
     ],
     boardLabel: { de: 'Klassenraum', it: 'Aula' },
-    testimonial: pendingQuote,
+    testimonial: null,
     placeholder: true,
   },
   {
@@ -134,7 +126,7 @@ const sources: ProjectSource[] = [
       },
     ],
     boardLabel: { de: 'Kindergarten', it: 'Infanzia' },
-    testimonial: pendingQuote,
+    testimonial: null,
     placeholder: true,
   },
   {
@@ -162,15 +154,8 @@ const sources: ProjectSource[] = [
   },
 ];
 
-const closingSource: TestimonialSource = {
-  quote: {
-    de: 'Platzhalter: Hier kommt ein freigegebenes Zitat darüber hin, wie die Zusammenarbeit mit Trias Schule gelaufen ist.',
-    it: 'Segnaposto: qui andrà una citazione approvata su come è andata la collaborazione con Trias Schule.',
-  },
-  author: null,
-  role: null,
-  organisation: null,
-};
+/** The one strong quote before the contact scene: about working with Trias Schule, once approved. */
+const closingSource: TestimonialSource | null = null;
 
 const localiseTestimonial = (t: TestimonialSource, lang: Lang): Testimonial => ({
   quote: t.quote[lang],
@@ -196,4 +181,5 @@ export const getProjects = (lang: Lang): Project[] =>
     placeholder: p.placeholder,
   }));
 
-export const getClosingTestimonial = (lang: Lang): Testimonial => localiseTestimonial(closingSource, lang);
+export const getClosingTestimonial = (lang: Lang): Testimonial | null =>
+  closingSource ? localiseTestimonial(closingSource, lang) : null;

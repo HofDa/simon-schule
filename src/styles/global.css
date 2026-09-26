@@ -1,20 +1,63 @@
 @import "tailwindcss";
 
+/* Fonts are served from this site (no request to Google). Variable, Latin subset: German and Italian.
+   Licences: src/assets/fonts/OFL.txt */
+@font-face {
+  font-family: "Archivo";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("../assets/fonts/archivo-latin-var.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Caveat";
+  font-style: normal;
+  font-weight: 500 700;
+  font-display: swap;
+  src: url("../assets/fonts/caveat-latin-var.woff2") format("woff2");
+}
+/* Arial scaled to Archivo's width and vertical metrics, so the swap does not move the layout */
+@font-face {
+  font-family: "Archivo Fallback";
+  src: local("Arial"), local("Liberation Sans"), local("Helvetica");
+  size-adjust: 105.5%;
+  ascent-override: 83.2%;
+  descent-override: 19.9%;
+  line-gap-override: 0%;
+}
+
 @theme {
   --color-paper: #ffffff;
   --color-warm: #f6f5f0;
   --color-surface: #f2f1ec;
   --color-ink: #20201d;
+  --color-ink-deep: #000000; /* ink button hover */
   --color-muted: #6e6c65;
   --color-line: #dddad1;
   --color-ginster: #e2a300;
   --color-ginster-deep: #b88400;
   --color-ginster-light: #f1c23b;
 
-  --font-sans: "Archivo", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Archivo", "Archivo Fallback", ui-sans-serif, system-ui, sans-serif;
   --font-marker: "Caveat", "Segoe Print", cursive;
 
   --ease-draw: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* reading scale: four steps for everything below the headings (labels and meta, body, lead) */
+  --text-label: 0.82rem;
+  --text-label--line-height: 1.4;
+  --text-meta: 0.92rem;
+  --text-meta--line-height: 1.5;
+  --text-body: 1.05rem;
+  --text-body--line-height: 1.65;
+  --text-lead: 1.2rem;
+  --text-lead--line-height: 1.55;
+
+  /* heading and annotation roles, fluid between the golden steps */
+  --text-headline: clamp(2.4rem, 5vw, 4.45rem); /* section headings */
+  --text-title: clamp(1.75rem, 2.6vw, 2.75rem); /* names, project titles, categories */
+  --text-route-title: clamp(2.75rem, 7vw, 6rem); /* "Unsere Projekte", written by the route */
+  --text-marker: clamp(1.35rem, 1.8vw, 1.9rem); /* handwritten annotations (Caveat) */
 
   /* golden type scale: body × φ per step */
   --text-phi-1: 1.7rem;
@@ -50,7 +93,7 @@
     background: var(--color-paper);
     color: var(--color-ink);
     font-family: var(--font-sans);
-    font-size: 1rem;
+    font-size: var(--text-body);
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
@@ -95,29 +138,25 @@
     line-height: 1;
   }
 
-  /* Facts that are not confirmed yet: visibly marked, never invented. */
-  .open-fact {
-    text-decoration: underline dashed var(--color-ginster-deep);
-    text-decoration-thickness: 1px;
-    text-underline-offset: 4px;
-    color: var(--color-muted);
-  }
-
+  /* Facts that are not confirmed yet: marked quietly (a hollow point, never an underline that reads as a link),
+     never invented. */
+  .open-fact,
   .tag-placeholder {
     display: inline-flex;
     align-items: center;
     gap: 0.5em;
-    font-size: 0.75rem;
-    letter-spacing: 0.02em;
     color: var(--color-muted);
   }
+  .open-fact::before,
   .tag-placeholder::before {
     content: "";
+    flex: none;
     width: 6px;
     height: 6px;
     border-radius: 50%;
     border: 1px solid var(--color-ginster-deep);
   }
+  .tag-placeholder { font-size: var(--text-label); letter-spacing: 0.02em; }
 
   .btn {
     display: inline-flex;
@@ -126,13 +165,13 @@
     min-height: 48px;
     padding: 0 1.4rem;
     border-radius: 2px;
-    font-size: 0.95rem;
+    font-size: var(--text-meta);
     font-weight: 600;
     letter-spacing: -0.005em;
     transition: background-color 200ms var(--ease-draw), color 200ms var(--ease-draw), transform 200ms var(--ease-draw);
   }
   .btn-ink { background: var(--color-ink); color: var(--color-paper); }
-  .btn-ink:hover { background: #000; }
+  .btn-ink:hover { background: var(--color-ink-deep); }
   .btn-ginster { background: var(--color-ginster); color: var(--color-ink); }
   .btn-ginster:hover { background: var(--color-ginster-light); }
   .btn .btn-arrow { transition: transform 200ms var(--ease-draw); }
@@ -147,6 +186,12 @@
     transition: background-size 250ms var(--ease-draw);
   }
   .link-line:hover { background-size: 0 1px; background-position: 100% 100%; }
+
+  /* touch: text links get a 44px hit area through an invisible extension, the layout stays as it is */
+  @media (pointer: coarse) {
+    .link-line { position: relative; }
+    .link-line::after { content: ""; position: absolute; inset: -12px -6px; }
+  }
 }
 
 /* Motion is opt-in: static, fully visible content is the default. */

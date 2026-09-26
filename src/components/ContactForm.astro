@@ -1,8 +1,10 @@
 ---
 import { inquiry } from '../data/site';
 import { getLang, useTranslations } from '../i18n/ui';
+import { legalFor } from '../lib/paths';
 
-const t = useTranslations(getLang(Astro.currentLocale)).form;
+const lang = getLang(Astro.currentLocale);
+const t = useTranslations(lang).form;
 const f = t.fields;
 ---
 
@@ -20,8 +22,8 @@ const f = t.fields;
   data-messages={JSON.stringify(t.status)}
 >
   <div class="flex items-baseline justify-between gap-6">
-    <h3 id="inquiry-title" class="text-[1.6rem] tracking-[-0.03em]">{t.title}</h3>
-    <p class="text-[0.82rem] text-muted">{t.required}</p>
+    <h3 id="inquiry-title" class="text-phi-1 tracking-[-0.03em]">{t.title}</h3>
+    <p class="text-label text-muted">{t.required}</p>
   </div>
 
   <div class="fields mt-6">
@@ -71,8 +73,12 @@ const f = t.fields;
       {t.submit}
       <svg class="btn-arrow h-3.5 w-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" /></svg>
     </button>
-    <p class="status text-[0.9rem] text-muted" role="status" aria-live="polite" data-status></p>
+    <p class="status text-meta text-muted" role="status" aria-live="polite" data-status></p>
+    <button type="button" class="copy link-line text-meta font-semibold" data-copy hidden>{t.copy}</button>
   </div>
+  <p class="mt-5 text-label text-muted">
+    {t.privacy} <a class="link-line" href={legalFor(lang, 'privacy')}>{t.privacyLink}</a>
+  </p>
 </form>
 
 <style>
@@ -82,7 +88,7 @@ const f = t.fields;
     .field-wide { grid-column: 1 / -1; }
   }
   .field { display: flex; flex-direction: column; min-width: 0; border: 0; margin: 0; padding: 0; }
-  .field label, .field legend { font-size: 0.82rem; font-weight: 500; margin-bottom: 4px; padding: 0; }
+  .field label, .field legend { font-size: var(--text-label); font-weight: 500; margin-bottom: 4px; padding: 0; }
   .field input,
   .field textarea {
     width: 100%;
@@ -92,7 +98,7 @@ const f = t.fields;
     background: transparent;
     padding: 8px 0 9px;
     font: inherit;
-    font-size: 1rem;
+    font-size: var(--text-body);
     color: var(--color-ink);
     transition: border-color 200ms var(--ease-draw), box-shadow 200ms var(--ease-draw);
   }
@@ -101,7 +107,7 @@ const f = t.fields;
   .field input:focus, .field textarea:focus { outline: none; border-color: var(--color-ink); box-shadow: 0 1px 0 0 var(--color-ink); }
   .field input:focus-visible, .field textarea:focus-visible { box-shadow: 0 2px 0 0 var(--color-ginster); }
   .field [aria-invalid='true'] { border-color: #a4331c; box-shadow: 0 1px 0 0 #a4331c; }
-  .err { margin: 6px 0 0; font-size: 0.82rem; color: #a4331c; min-height: 0; }
+  .err { margin: 6px 0 0; font-size: var(--text-label); color: #a4331c; min-height: 0; }
   .err:empty { display: none; }
 
   .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
@@ -113,11 +119,14 @@ const f = t.fields;
     padding: 0 12px;
     border: 1px solid #c9c6bc;
     border-radius: 2px;
-    font-size: 0.88rem;
+    font-size: var(--text-meta);
     cursor: pointer;
     transition: background-color 180ms var(--ease-draw), border-color 180ms var(--ease-draw), color 180ms var(--ease-draw);
   }
   .chip:hover span { border-color: var(--color-ink); }
+  @media (pointer: coarse) {
+    .chip span { min-height: 44px; }
+  }
   .chip input:checked + span { background: var(--color-ink); border-color: var(--color-ink); color: #fff; }
   .chip input:checked + span::before {
     content: '';
@@ -134,6 +143,8 @@ const f = t.fields;
 <script>
   const form = document.querySelector<HTMLFormElement>('[data-inquiry]');
   const status = form?.querySelector<HTMLElement>('[data-status]');
+  const copy = form?.querySelector<HTMLButtonElement>('[data-copy]');
+  let composed = '';
 
   if (form && status) {
     // texts in the page's language, rendered by Astro into data-messages
@@ -186,10 +197,24 @@ const f = t.fields;
       for (const [key, value] of data.entries()) {
         if (String(value).trim()) lines.push(`${key}: ${value}`);
       }
-      const href = `mailto:${form.dataset.mailto}?subject=${encodeURIComponent(`${msg.subject}: ${org}`)}&body=${encodeURIComponent(lines.join('\n'))}`;
+      const subject = `${msg.subject}: ${org}`;
+      const href = `mailto:${form.dataset.mailto}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines.join('\n'))}`;
       window.location.href = href;
-      status.classList.add('is-ok');
+      // Whether a mail program opened cannot be known here: say so, and offer the text to copy.
+      composed = `${subject}\n\n${lines.join('\n')}`;
+      status.classList.remove('is-ok');
       status.textContent = withEmail(msg.mailto);
+      if (copy) copy.hidden = false;
+    });
+
+    copy?.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(composed);
+        status.classList.add('is-ok');
+        status.textContent = withEmail(msg.copied);
+      } catch {
+        status.textContent = withEmail(msg.copyFailed);
+      }
     });
   }
 </script>

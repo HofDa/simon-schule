@@ -10,6 +10,8 @@ export interface Person {
   role: string | null;
   phone: string | null;
   email: string | null;
+  /** Portrait in public/images/team/ (base name, 4:5 .webp); nothing stands in for it until it exists. */
+  photo: string | null;
 }
 
 export const contact = {
@@ -28,8 +30,8 @@ export const inquiry = {
 };
 
 export const people: Person[] = [
-  { firstName: 'Simon', lastName: 'Brugger', role: null, phone: null, email: null },
-  { firstName: 'Rene', lastName: null, role: null, phone: null, email: null },
+  { firstName: 'Simon', lastName: 'Brugger', role: null, phone: null, email: null, photo: null },
+  { firstName: 'Rene', lastName: null, role: null, phone: null, email: null, photo: null },
 ];
 
 export const fullName = (p: Person) => [p.firstName, p.lastName].filter(Boolean).join(' ');

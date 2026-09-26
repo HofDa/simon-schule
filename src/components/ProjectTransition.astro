@@ -7,8 +7,8 @@ const t = useTranslations(getLang(Astro.currentLocale)).projects;
  * the line comes down from the chair's leg and turns along the bottom of the
  * screen, revealing "Unsere Projekte". Then the whole plan sheet (line, title
  * and the projects passed in as the slot) slides to the left under a fixed pen
- * tip, so the line keeps drawing to the right beneath each project. At the end
- * of the row it turns 90° down, towards the next section.
+ * tip, so the line keeps drawing to the right beneath each project and then the
+ * two contact people. At the end of the row it turns 90° down, towards the next section.
  * Mobile and reduced motion: a U-shaped line with the title, projects stacked below.
  */
 ---
@@ -64,7 +64,7 @@ const t = useTranslations(getLang(Astro.currentLocale)).projects;
   .t-sub-wrap { top: calc(var(--ym, 300px) + 20px); }
   .t-title {
     display: inline-block;
-    font-size: clamp(2.8rem, 7vw, 6rem);
+    font-size: var(--text-route-title);
     line-height: 0.95;
     letter-spacing: -0.045em;
     clip-path: inset(-10% calc((1 - var(--reveal, 1)) * 100%) -20% 0);
@@ -73,7 +73,7 @@ const t = useTranslations(getLang(Astro.currentLocale)).projects;
   .t-sub {
     max-width: 44ch;
     color: var(--color-muted);
-    font-size: 1.02rem;
+    font-size: var(--text-body);
     margin-left: var(--title-x, 0px);
     opacity: var(--sub, 1);
     transform: translateY(calc((1 - var(--sub, 1)) * 6px));
@@ -109,27 +109,56 @@ const t = useTranslations(getLang(Astro.currentLocale)).projects;
     height: 100%;
     padding: 0;
   }
+  /* everything rests on the drawn line like objects on a shelf; images are golden rectangles,
+     sized by the height of the stage (nav to line) so the rooms appear at full scale */
+  .transition.is-scrub .t-row {
+    --img-h: min(var(--row-h, 600px), calc(60vw / 1.618));
+    --img-h-full: min(var(--row-h, 600px), calc(66vw / 1.618));
+  }
   .transition.is-scrub .t-row :global(.project) {
     flex: none;
-    width: min(1080px, 74vw);
+    display: flex;
+    align-items: flex-end;
+    gap: clamp(28px, 2.6vw, 44px);
     height: 100%;
-    align-items: end;
   }
-  .transition.is-scrub .t-row :global(.project--full) { width: min(1280px, 84vw); }
-  /* everything rests on the drawn line like objects on a shelf; images are golden rectangles */
-  .transition.is-scrub .t-row :global(.p-media) { align-self: end; }
-  .transition.is-scrub .t-row :global(.p-media img) { aspect-ratio: 1.618 / 1; }
-  .transition.is-scrub .t-row :global(.project--full .p-media img) { aspect-ratio: 1.618 / 1; }
-  .transition.is-scrub .t-row :global(.project--left .p-media) { grid-column: 1 / 8; }
-  .transition.is-scrub .t-row :global(.project--left .p-info) { grid-column: 8 / 13; }
-  .transition.is-scrub .t-row :global(.project--right .p-info) { grid-column: 1 / 6; }
-  .transition.is-scrub .t-row :global(.project--right .p-media) { grid-column: 6 / 13; }
-  .transition.is-scrub .t-row :global(.project--full .p-media) { grid-column: 1 / 9; }
-  .transition.is-scrub .t-row :global(.project--full .p-info) { grid-column: 9 / 13; display: block; margin-top: 0; }
+  .transition.is-scrub .t-row :global(.project--right) { flex-direction: row-reverse; }
+  .transition.is-scrub .t-row :global(.p-media) { flex: none; height: var(--img-h); aspect-ratio: 1.618 / 1; }
+  .transition.is-scrub .t-row :global(.project--full .p-media) { height: var(--img-h-full); }
+  .transition.is-scrub .t-row :global(.p-media img) { width: 100%; height: 100%; aspect-ratio: auto; }
+  .transition.is-scrub .t-row :global(.p-info) { flex: none; width: min(22rem, 26vw); margin-top: 0; padding-top: 0; }
+  .transition.is-scrub .t-row :global(.project--full .p-info) { display: block; }
   .transition.is-scrub .t-row :global(.project--full .p-meta) { margin-top: 28px; }
   .transition.is-scrub .t-row :global(.project--full .p-desc) { margin-top: 22px; }
-  .transition.is-scrub .t-row :global(.p-info) { align-self: end; padding-top: 0; }
   .transition.is-scrub .t-row :global(.p-detail) { display: none; }
+  /* the row: projects, then the people as the last stop, all resting on the line */
+  .transition.is-scrub .t-row { display: flex; align-items: stretch; gap: 180px; }
+  .transition.is-scrub .t-row :global(.people) { flex: none; height: 100%; padding: 0; background: transparent; }
+  /* the last stop has to fit one screen (minus the line's turn), or the heading is cut off at the end */
+  .transition.is-scrub .t-row :global(.people > .shell) {
+    display: flex;
+    align-items: flex-end;
+    gap: min(56px, 4vw);
+    height: 100%;
+    width: max-content;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+  .transition.is-scrub .t-row :global(.people-intro) { flex: none; width: min(26rem, 26vw); padding-bottom: 8px; }
+  .transition.is-scrub .t-row :global(.people h2) { font-size: var(--text-title); }
+  /* heading · the two names stacked · the planning questions */
+  .transition.is-scrub .t-row :global(.people-grid) {
+    display: flex;
+    align-items: flex-end;
+    gap: min(56px, 4vw);
+    margin-top: 0;
+  }
+  .transition.is-scrub .t-row :global(.persons) { flex: none; width: min(20rem, 24vw); padding-bottom: 8px; }
+  .transition.is-scrub .t-row :global(.persons-list) { grid-template-columns: 1fr; row-gap: 28px; }
+  .transition.is-scrub .t-row :global(.notes) { flex: none; width: min(240px, 17vw); padding-bottom: 12px; }
+  .transition.is-scrub .t-row :global(.notes ul) { gap: 26px; }
+
   .transition.is-scrub .t-row :global(.p-quote) { flex: none; width: min(520px, 38vw); align-self: end; margin-left: 0; }
 </style>
 
@@ -289,6 +318,22 @@ const t = useTranslations(getLang(Astro.currentLocale)).projects;
         sheet.style.setProperty('--tx', `${(-tx).toFixed(1)}px`);
         draw(Math.min(total, len));
       },
+    });
+
+    // Links to anchors inside the sliding sheet (e.g. #menschen): scroll to where the sheet shows them.
+    document.addEventListener('click', (event) => {
+      if (!pinned) return;
+      const link = (event.target as Element | null)?.closest<HTMLAnchorElement>('a[href^="#"]');
+      const id = link?.getAttribute('href')?.slice(1);
+      const target = id ? document.getElementById(id) : null;
+      if (!target || target === section || !sheet.contains(target)) return;
+      event.preventDefault();
+      const pad = parseFloat(getComputedStyle(title.parentElement as HTMLElement).paddingLeft);
+      const x = target.getBoundingClientRect().left - sheet.getBoundingClientRect().left;
+      const s = A + clamp((x - pad) / Math.max(1, travel)) * travel;
+      const docTop = section.getBoundingClientRect().top + window.scrollY;
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      window.scrollTo({ top: docTop - window.innerHeight + s, behavior: reduced ? 'auto' : 'smooth' });
     });
 
     addScene({

@@ -1,34 +1,21 @@
 ---
 import type { Testimonial } from '../data/projects';
-import { getLang, useTranslations } from '../i18n/ui';
 
-/** A client's words as an editorial interruption inside the project flow. */
+/** A client's words as an editorial interruption inside the project flow (approved quotes only). */
 interface Props {
   testimonial: Testimonial;
-  project: string;
 }
-const { testimonial, project } = Astro.props;
-const pending = !testimonial.author;
-const t = useTranslations(getLang(Astro.currentLocale)).quotes;
+const { testimonial } = Astro.props;
 ---
 
 <figure class="p-quote m-0" data-quote>
-  <blockquote class={pending ? 'is-pending' : ''}>
+  <blockquote>
     <p>„{testimonial.quote}“</p>
   </blockquote>
-  <figcaption class="mt-8 flex flex-wrap gap-x-3 gap-y-1 text-[0.92rem]">
-    {pending ? (
-      <>
-        <span class="open-fact">{t.pendingAuthor}</span>
-        <span class="text-muted">{t.pendingProject(project)}</span>
-      </>
-    ) : (
-      <>
-        <span class="font-semibold">{testimonial.author}</span>
-        {testimonial.role && <span class="text-muted">{testimonial.role}</span>}
-        {testimonial.organisation && <span class="text-muted">{testimonial.organisation}</span>}
-      </>
-    )}
+  <figcaption class="mt-8 flex flex-wrap gap-x-3 gap-y-1 text-meta">
+    <span class="font-semibold">{testimonial.author}</span>
+    {testimonial.role && <span class="text-muted">{testimonial.role}</span>}
+    {testimonial.organisation && <span class="text-muted">{testimonial.organisation}</span>}
   </figcaption>
 </figure>
 
@@ -41,8 +28,7 @@ const t = useTranslations(getLang(Astro.currentLocale)).quotes;
     letter-spacing: -0.03em;
     text-indent: -0.42em;
   }
-  .p-quote .is-pending p { color: #86837a; }
-  .p-quote figcaption { font-size: 0.92rem; letter-spacing: 0; }
+  .p-quote figcaption { font-size: var(--text-meta); letter-spacing: 0; }
   @media (min-width: 1024px) {
     .p-quote { margin-left: calc(100% / 12 * 2); }
   }

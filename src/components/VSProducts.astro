@@ -5,16 +5,20 @@ import VSChair from './art/VSChair.astro';
 
 const lang = getLang(Astro.currentLocale);
 const t = useTranslations(lang).vs;
-const categories = t.categories;
+// a category links out only once it has its own deep link into the VS catalogue (open fact);
+// until then the one catalogue button below is the way out
+const categories: { name: string; text: string; url?: string }[] = t.categories;
 const catalogUrl = vs.catalogUrl[lang];
 ---
 
-<section id="vs-moebel" class="vs py-28 lg:py-40" aria-labelledby="vs-title" data-vs>
+<section id="vs-moebel" class="vs relative py-28 lg:py-40" aria-labelledby="vs-title" data-vs>
+  <!-- the drawn route comes down from the projects stage above and ends here -->
+  <span class="vs-route" aria-hidden="true"></span>
   <div class="shell">
     <div class="vs-grid">
       <div class="vs-head">
-        <h2 id="vs-title" class="text-[clamp(2.4rem,5vw,var(--text-phi-3))] leading-[0.98] tracking-[-0.045em]">{t.title}</h2>
-        <p class="mt-7 max-w-[48ch] text-[1.08rem] leading-[1.65] text-muted">
+        <h2 id="vs-title" class="text-headline leading-[0.98] tracking-[-0.045em]">{t.title}</h2>
+        <p class="mt-7 max-w-[48ch] text-body leading-[1.65] text-muted">
           {t.intro}
         </p>
       </div>
@@ -24,7 +28,7 @@ const catalogUrl = vs.catalogUrl[lang];
           <div class="vs-chair" data-vs-chair>
             <VSChair id="vs-chair" class="block w-full" />
           </div>
-          <p class="mt-4 text-[0.82rem] text-muted">{t.caption}</p>
+          <p class="mt-4 text-label text-muted">{t.caption}</p>
         </div>
       </div>
 
@@ -32,15 +36,25 @@ const catalogUrl = vs.catalogUrl[lang];
         <ul>
           {categories.map((c) => (
             <li data-cat>
-              <a class="cat group" href={catalogUrl} target="_blank" rel="noopener">
-                <span class="cat-dot" aria-hidden="true"></span>
-                <span class="min-w-0">
-                  <span class="block text-[clamp(1.6rem,2.6vw,2.4rem)] font-semibold leading-[1.05] tracking-[-0.035em]">{c.name}</span>
-                  <span class="mt-2 block text-[0.95rem] text-muted">{c.text}</span>
-                </span>
-                <svg class="cat-arrow" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 14L14 6M7 6h7v7" /></svg>
-                <span class="sr-only">{t.newTab}</span>
-              </a>
+              {c.url ? (
+                <a class="cat group" href={c.url} target="_blank" rel="noopener">
+                  <span class="cat-dot" aria-hidden="true"></span>
+                  <span class="min-w-0">
+                    <span class="cat-name">{c.name}</span>
+                    <span class="cat-text">{c.text}</span>
+                  </span>
+                  <svg class="cat-arrow" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 14L14 6M7 6h7v7" /></svg>
+                  <span class="sr-only">{t.newTab}</span>
+                </a>
+              ) : (
+                <div class="cat">
+                  <span class="cat-dot" aria-hidden="true"></span>
+                  <span class="min-w-0">
+                    <span class="cat-name">{c.name}</span>
+                    <span class="cat-text">{c.text}</span>
+                  </span>
+                </div>
+              )}
             </li>
           ))}
         </ul>
@@ -50,7 +64,7 @@ const catalogUrl = vs.catalogUrl[lang];
             {t.all}
             <svg class="btn-arrow h-3.5 w-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" /></svg>
           </a>
-          <p class="text-[0.92rem] font-medium">{t.exclusive}</p>
+          <p class="text-meta font-medium">{t.exclusive}</p>
         </div>
       </div>
     </div>
@@ -58,6 +72,31 @@ const catalogUrl = vs.catalogUrl[lang];
 </section>
 
 <style>
+  .vs-route { display: none; }
+  /* only when the projects stage above is pinned: continue its line at the same x (see ProjectTransition: endX) */
+  :global(.transition.is-scrub) ~ .vs .vs-route {
+    display: block;
+    position: absolute;
+    top: 0;
+    right: calc(var(--gutter) + 40px - var(--leg-w) / 2);
+    width: var(--leg-w);
+    height: clamp(72px, 10vw, 128px);
+    background: var(--color-ginster);
+    transform-origin: top;
+    transform: scaleY(var(--route, 1));
+  }
+  :global(.transition.is-scrub) ~ .vs .vs-route::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -6px;
+    width: 12px;
+    height: 12px;
+    margin-left: -6px;
+    border-radius: 50%;
+    background: var(--color-ink);
+    opacity: var(--route-end, 1);
+  }
   .vs-grid { display: grid; gap: 56px; }
   .vs-chair { width: min(62vw, 300px); transform: translateX(var(--shift, 0px)); }
 
@@ -77,8 +116,10 @@ const catalogUrl = vs.catalogUrl[lang];
     transition: background-color 250ms var(--ease-draw), border-color 250ms var(--ease-draw);
   }
   .cat-arrow { width: 22px; height: 22px; margin-top: 0.35em; transition: transform 250ms var(--ease-draw); }
-  .cat:hover .cat-arrow { transform: translate(3px, -3px); }
-  .cat:hover .cat-dot, [data-cat].is-current .cat-dot { background: var(--color-ginster); border-color: var(--color-ginster); }
+  .cat-name { display: block; font-size: var(--text-title); font-weight: 600; line-height: 1.05; letter-spacing: -0.035em; }
+  .cat-text { display: block; margin-top: 8px; font-size: var(--text-meta); color: var(--color-muted); }
+  a.cat:hover .cat-arrow { transform: translate(3px, -3px); }
+  a.cat:hover .cat-dot, [data-cat].is-current .cat-dot { background: var(--color-ginster); border-color: var(--color-ginster); }
 
   @media (min-width: 1024px) {
     .vs-grid { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(24px, 2.6vw, 44px); row-gap: 88px; }
@@ -91,9 +132,21 @@ const catalogUrl = vs.catalogUrl[lang];
 </style>
 
 <script>
-  import { addScene, viewProgress } from '../scripts/motion';
+  import { addScene, range, viewProgress } from '../scripts/motion';
 
   const section = document.querySelector<HTMLElement>('[data-vs]');
+
+  // the line coming down from the projects stage finishes drawing as the section arrives
+  if (section) {
+    addScene({
+      el: section,
+      progress: viewProgress(1, 0.55),
+      render: (p) => {
+        section.style.setProperty('--route', String(range(p, 0, 0.8)));
+        section.style.setProperty('--route-end', p >= 0.8 ? '1' : '0');
+      },
+    });
+  }
   const chair = section?.querySelector<HTMLElement>('[data-vs-chair]');
   if (section && chair) {
     addScene({

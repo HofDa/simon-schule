@@ -19,6 +19,7 @@ Alles hier ist auf der Seite sichtbar als Platzhalter markiert (gestrichelt unte
 
 ## Projekte (`src/data/projects.ts`)
 Pro Projekt: Name, Ort, Gebäudetyp, Leistungsumfang, Beschreibung, optional Jahr / Architektur / Auftraggeber, dazu ein freigegebenes Zitat (Name, Funktion, Schule/Gemeinde). Danach `placeholder: false` setzen.
+Zitate erscheinen erst, wenn sie eingetragen sind: `testimonial` pro Projekt, das Abschlusszitat in `closingSource`. Bis dahin steht dort nichts (auch kein Platzhalter); ein fehlender Ort wird ebenfalls ausgelassen.
 - [ ] Projekt 1 (Schule)
 - [ ] Projekt 2 (Kindergarten)
 - [ ] Projekt 3 (Lernlandschaft, vollbreites Foto)
@@ -40,5 +41,5 @@ Wenn alle ersetzt sind: `photoCredits` in `site.ts` leeren (die Zeile im Footer 
 
 ## Zeichnungen, die durch Fotos ersetzt werden sollen
 - [ ] **VS-Stuhl ginstergelb** (Hero, Leistungen, VS-Sektion): `src/components/art/VSChair.astro` ist eine schematische Zeichnung. Ideal: freigestelltes PNG/WebP `public/images/products/vs-pantoswing-ginstergelb.webp` (offizielles VS-Material mit Nutzungsrechten), Ansicht leicht von vorn, mit Kontaktschatten.
-- [ ] **Portraits Simon & Rene** (Menschen-Sektion): `public/images/team/simon-portrait.webp`, `rene-portrait.webp`, 4:5, ruhiger Hintergrund, gleiche Lichtstimmung.
+- [ ] **Portraits Simon & Rene** (Menschen-Sektion): `public/images/team/simon-portrait.webp`, `rene-portrait.webp`, 4:5, ruhiger Hintergrund, gleiche Lichtstimmung. Danach in `src/data/site.ts` bei der Person `photo: 'simon-portrait'` eintragen; bis dahin zeigt die Sektion nur Namen.
 - [ ] **Kontakt-Szene**: Simon und Rene auf ginstergelben VS-Hockern (Hokki). Die Szene blendet scrollgebunden durch drei Frames: seitlich zueinander → ¾ → frontal. Dafür je Person drei freigestellte Frames aus identischer Kameraposition: `public/images/team/simon-rene-contact-frame-01..03.webp` (oder je Person einzeln). Die Zeichnung in `src/components/art/SeatedPerson.astro` hat dieselbe Frame-Struktur (`data-pose="side|quarter|front"`), sodass die Fotos 1:1 an ihre Stelle treten.

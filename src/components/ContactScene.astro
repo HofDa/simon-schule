@@ -37,9 +37,9 @@ const [simon, rene] = people;
               <svg class="btn-arrow h-3.5 w-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" /></svg>
             </a>
             {contact.phone ? (
-              <a class="link-line text-[0.95rem] font-semibold" href={`tel:${contact.phone.replace(/\s/g, '')}`}>{t.call}</a>
+              <a class="link-line text-meta font-semibold" href={`tel:${contact.phone.replace(/\s/g, '')}`}>{t.call}</a>
             ) : (
-              <a class="link-line text-[0.95rem] font-semibold" href={`mailto:${contact.email}`}>{t.mail(contact.email)}</a>
+              <a class="link-line text-meta font-semibold" href={`mailto:${contact.email}`}>{t.mail(contact.email)}</a>
             )}
           </div>
         </div>
@@ -65,19 +65,34 @@ const [simon, rene] = people;
     gap: 16px;
   }
   .c-person { display: flex; flex-direction: column; align-items: center; }
-  .c-figure { height: min(58vw, 280px); perspective: 900px; }
+  .contact { --fig-h: min(58vw, 280px); }
+  .c-figure { height: var(--fig-h); perspective: 900px; }
+  /* the floor the two sit on: one hatched ground line across the scene, level while they turn
+     (the stools stand 3% of the figure's height above its lower edge) */
+  .c-people::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: calc(var(--fig-h) * 0.03 - 11px);
+    height: 12px;
+    background:
+      linear-gradient(var(--color-ink), var(--color-ink)) top / 100% 1.5px no-repeat,
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='11'%3E%3Cpath d='M10.5 0.5 L1 10.5' stroke='%2320201d' stroke-width='1' fill='none'/%3E%3C/svg%3E") 0 1.5px repeat-x;
+    pointer-events: none;
+  }
   .c-figure :global(svg) { transform: rotateY(var(--ry, 0deg)); transform-origin: 50% 80%; }
   .c-figure :global(.pose) { opacity: 0; transition: opacity 140ms linear; }
   .c-figure[data-frame='side'] :global([data-pose='side']),
   .c-figure[data-frame='quarter'] :global([data-pose='quarter']),
   .c-figure[data-frame='front'] :global([data-pose='front']),
   .c-figure:not([data-frame]) :global([data-pose='front']) { opacity: 1; }
-  .c-name { position: absolute; bottom: -30px; font-size: 0.85rem; color: var(--color-muted); white-space: nowrap; }
+  .c-name { position: absolute; bottom: -30px; font-size: var(--text-label); color: var(--color-muted); white-space: nowrap; }
   .c-person { position: relative; }
   .c-chat { display: none; }
 
-  .c-title { font-size: clamp(2.4rem, 5vw, var(--text-phi-3)); line-height: 0.98; letter-spacing: -0.045em; }
-  .c-lead { margin-top: 20px; max-width: 42ch; color: var(--color-muted); font-size: 1.05rem; }
+  .c-title { font-size: var(--text-headline); line-height: 0.98; letter-spacing: -0.045em; }
+  .c-lead { margin-top: 20px; max-width: 42ch; color: var(--color-muted); font-size: var(--text-body); }
   .c-actions { margin-top: 32px; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 28px; }
 
   /* The form slides into the free space when requested (always visible without JS). */
@@ -89,13 +104,13 @@ const [simon, rene] = people;
 
   @media (min-width: 1024px) {
     .c-inner { grid-template-columns: 1fr; padding-block: 120px 140px; }
-    .c-figure { height: 300px; }
+    .contact { --fig-h: 300px; }
     .c-people { max-width: 900px; width: 100%; margin-inline: auto; padding-inline: 40px; }
     .c-center { max-width: 760px; margin-inline: auto; width: 100%; text-align: left; }
   }
 
-  /* Scrubbed desktop scene: people turn, then the conversation opens */
-  .contact.is-scrub { height: 260vh; }
+  /* Scrubbed desktop scene: the invitation stands from the start; the two turn from each other to the visitor */
+  .contact.is-scrub { height: 160vh; }
   .contact.is-scrub .c-stage { position: sticky; top: 0; height: 100vh; overflow: hidden; }
   .contact.is-scrub .c-inner { height: 100%; padding: 0; position: relative; display: block; }
   .contact.is-scrub .c-people {
@@ -106,14 +121,14 @@ const [simon, rene] = people;
     max-width: none;
     padding-inline: 3%;
   }
-  .contact.is-scrub .c-figure { height: min(46vh, 440px); }
+  .contact.is-scrub { --fig-h: min(46vh, 440px); }
   .contact.is-scrub .c-chat {
     display: block;
     position: absolute;
     left: 50%;
-    bottom: calc(min(46vh, 440px) * 0.92);
+    bottom: calc(var(--fig-h) * 0.18); /* between the two, below the invitation */
     transform: translateX(-50%) rotate(-2deg);
-    font-size: 1.6rem;
+    font-size: var(--text-marker);
     color: #2b2b27;
     white-space: nowrap;
     opacity: var(--chat, 0);
@@ -125,17 +140,14 @@ const [simon, rene] = people;
     width: min(40vw, 580px);
     transform: translateX(-50%);
   }
-  .contact.is-scrub .c-cta {
-    opacity: var(--cta, 1);
-    clip-path: inset(0 0 calc((1 - var(--cta, 1)) * 100%) 0);
-    transform: translateY(calc((1 - var(--cta, 1)) * 12px));
-  }
   .contact.is-scrub.is-form .c-cta { opacity: 0; visibility: hidden; position: absolute; transition: opacity 300ms; }
   .contact.is-scrub.is-form .c-form-inner { padding-top: 0; }
-  /* make room for the form: the two step aside */
-  .contact.is-scrub .c-people { transition: padding 700ms var(--ease-draw); }
-  .contact.is-scrub.is-form .c-people { padding-inline: 0; }
-  .contact.is-scrub.is-form .c-form { background: rgba(255, 255, 255, 0.94); }
+  /* make room for the form: the two step aside (by the people row's 3% inset) */
+  .contact.is-scrub .c-person { transition: translate 700ms var(--ease-draw); }
+  .contact.is-scrub.is-form .c-a { translate: -3vw 0; }
+  .contact.is-scrub.is-form .c-b { translate: 3vw 0; }
+  /* opaque: the floor line of the scene runs behind the open form */
+  .contact.is-scrub.is-form .c-form { background: var(--color-paper); }
 </style>
 
 <script>
@@ -155,27 +167,32 @@ const [simon, rene] = people;
       measure(active) {
         scrub = active;
         section.classList.toggle('is-scrub', active);
+        // only the pinned scene hides the invitation behind the open form
+        if (!active) cta.removeAttribute('inert');
       },
       progress: (rect, vh) => -rect.top / Math.max(1, rect.height - vh),
       render(p) {
-        // 0–.35 talking to each other, .35–.8 turning, .82–.97 the conversation opens
-        const turn = range(p, 0.35, 0.8);
+        // 0–.3 talking to each other, .3–.85 turning to the visitor; the invitation is readable throughout
+        const turn = range(p, 0.3, 0.85);
         const frame = turn < 0.34 ? 'side' : turn < 0.72 ? 'quarter' : 'front';
         figures.forEach((fig) => {
           const dir = Number(fig.dataset.dir);
           fig.dataset.frame = frame;
           fig.style.setProperty('--ry', `${(dir * (1 - turn) * 22).toFixed(2)}deg`);
         });
-        section.style.setProperty('--chat', String(1 - range(p, 0.22, 0.36)));
-        const c = range(p, 0.82, 0.97);
-        section.style.setProperty('--cta', String(c));
-        if (scrub) cta.toggleAttribute('inert', c < 0.5 && !section.classList.contains('is-form'));
-        else cta.removeAttribute('inert');
+        section.style.setProperty('--chat', String(1 - range(p, 0.28, 0.45)));
       },
     });
 
     const openForm = (event: Event) => {
       event.preventDefault();
+      // a phase chosen elsewhere on the page (ProjectPhases) arrives pre-selected
+      const phase = (event.currentTarget as HTMLElement | null)?.dataset.phase;
+      if (phase) {
+        formWrap.querySelectorAll<HTMLInputElement>('input[type="radio"]').forEach((radio) => {
+          radio.checked = radio.value === phase;
+        });
+      }
       section.classList.add('is-form');
       if (scrub) cta.setAttribute('inert', '');
       const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';

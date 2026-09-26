@@ -1,18 +1,23 @@
 ---
 import { contact, photoCredits, vs } from '../../data/site';
+import { homeFor, isHome, legalFor } from '../../lib/paths';
 import { getLang, useTranslations } from '../../i18n/ui';
 
 const lang = getLang(Astro.currentLocale);
 const t = useTranslations(lang);
 const f = t.footer;
 const year = new Date().getFullYear();
+const home = isHome(Astro.url.pathname, lang) ? '' : homeFor(lang);
+const openContact = [!contact.phone && t.pendingFields.phone, !contact.address && t.pendingFields.address].filter(
+  (f): f is string => Boolean(f),
+);
 ---
 
-<footer class="bg-warm pt-20 pb-10 text-[0.92rem]">
+<footer class="bg-warm pt-20 pb-10 text-meta">
   <div class="shell">
     <div class="grid gap-12 pb-14 md:grid-cols-12">
       <div class="md:col-span-5">
-        <p class="flex items-baseline gap-[0.4em] text-[0.95rem] uppercase tracking-[0.14em]">
+        <p class="flex items-baseline gap-[0.4em] text-meta uppercase tracking-[0.14em]">
           <span class="font-bold">Trias</span><span class="text-muted">Schule</span>
         </p>
         <p class="mt-5 max-w-[34ch] leading-relaxed text-muted">
@@ -21,37 +26,38 @@ const year = new Date().getFullYear();
       </div>
 
       <div class="md:col-span-3">
-        <h2 class="mb-4 text-[0.92rem] font-semibold tracking-normal">{f.contact}</h2>
-        <ul class="space-y-2 text-muted">
+        <h2 class="mb-4 text-meta font-semibold tracking-normal">{f.contact}</h2>
+        <ul class="touch-list space-y-2 text-muted">
           <li><a class="link-line text-ink" href={`mailto:${contact.email}`}>{contact.email}</a></li>
-          <li>{contact.phone ? <a href={`tel:${contact.phone.replace(/\s/g, '')}`}>{contact.phone}</a> : <span class="open-fact">{f.phonePending}</span>}</li>
-          <li>{contact.address ?? <span class="open-fact">{f.addressPending}</span>}</li>
+          {contact.phone && <li><a href={`tel:${contact.phone.replace(/\s/g, '')}`}>{contact.phone}</a></li>}
+          {contact.address && <li>{contact.address}</li>}
+          {openContact.length > 0 && <li class="open-fact">{t.pending(openContact)}</li>}
         </ul>
       </div>
 
       <div class="md:col-span-2">
-        <h2 class="mb-4 text-[0.92rem] font-semibold tracking-normal">{f.page}</h2>
-        <ul class="space-y-2 text-muted">
-          {t.nav.items.map((item) => <li><a class="transition-colors hover:text-ink" href={item.href}>{item.label}</a></li>)}
+        <h2 class="mb-4 text-meta font-semibold tracking-normal">{f.page}</h2>
+        <ul class="touch-list space-y-2 text-muted">
+          {t.nav.items.map((item) => <li><a class="transition-colors hover:text-ink" href={`${home}${item.href}`}>{item.label}</a></li>)}
         </ul>
       </div>
 
       <div class="md:col-span-2">
-        <h2 class="mb-4 text-[0.92rem] font-semibold tracking-normal">{f.legal}</h2>
-        <ul class="space-y-2 text-muted">
-          <li><a class="transition-colors hover:text-ink" href="#impressum">{f.imprint}</a></li>
-          <li><a class="transition-colors hover:text-ink" href="#datenschutz">{f.privacy}</a></li>
+        <h2 class="mb-4 text-meta font-semibold tracking-normal">{f.legal}</h2>
+        <ul class="touch-list space-y-2 text-muted">
+          <li><a class="transition-colors hover:text-ink" href={legalFor(lang, 'imprint')}>{f.imprint}</a></li>
+          <li><a class="transition-colors hover:text-ink" href={legalFor(lang, 'privacy')}>{f.privacy}</a></li>
         </ul>
       </div>
     </div>
 
-    <div class="flex flex-col gap-4 pt-8 text-[0.82rem] text-muted md:flex-row md:items-start md:justify-between">
+    <div class="flex flex-col gap-4 pt-8 text-label text-muted md:flex-row md:items-start md:justify-between">
       <p>© {year} Trias Schule · {f.company}</p>
       <p>
         <a class="link-line" href={vs.catalogUrl[lang]} target="_blank" rel="noopener">{f.partner}</a>
       </p>
     </div>
-    <p class="mt-6 max-w-[90ch] text-[0.75rem] leading-relaxed text-muted/90">
+    <p class="mt-6 max-w-[90ch] text-label leading-relaxed text-muted/90">
       {f.credits}
       {photoCredits.map((c, i) => (
         <>
@@ -61,3 +67,10 @@ const year = new Date().getFullYear();
     </p>
   </div>
 </footer>
+
+<style>
+  /* touch: each entry is a full 44px row */
+  @media (pointer: coarse) {
+    .touch-list > li { display: flex; align-items: center; min-height: 44px; margin-block: 0; }
+  }
+</style>

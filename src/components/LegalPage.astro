@@ -1,0 +1,98 @@
+---
+/** Imprint and privacy notice: a quiet reading page in the site's frame (nav, footer). */
+import Layout from '../layouts/Layout.astro';
+import Navbar from './shared/Navbar.astro';
+import Footer from './shared/Footer.astro';
+import { legal } from '../i18n/legal';
+import { getLang, useTranslations } from '../i18n/ui';
+import { homeFor, legalFor, type LegalPage as Page } from '../lib/paths';
+
+interface Props {
+  page: Page;
+}
+const { page } = Astro.props;
+const lang = getLang(Astro.currentLocale);
+const t = useTranslations(lang);
+const doc = legal[lang][page];
+const alternates = { de: legalFor('de', page), it: legalFor('it', page) };
+---
+
+<Layout title={`${doc.title} | Trias Schule`} description={doc.description} alternates={alternates}>
+  <Navbar alternates={alternates} />
+  <main id="inhalt" class="legal shell">
+    <a class="back link-line text-meta font-semibold" href={homeFor(lang)}>
+      <svg class="h-3.5 w-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M14 8H3M7 4 3 8l4 4" /></svg>
+      {t.legal.back}
+    </a>
+    <h1 class="legal-title">{doc.title}</h1>
+    {doc.draft && <p class="tag-placeholder mt-6">{doc.draft}</p>}
+    {doc.intro && <p class="legal-intro">{doc.intro}</p>}
+
+    {doc.sections.map((section) => (
+      <section class="legal-section">
+        <h2 class="legal-heading">{section.title}</h2>
+        <div class="legal-body">
+          {section.rows && (
+            <dl>
+              {section.rows.map((row) => (
+                <div>
+                  <dt>{row.label}</dt>
+                  <dd>
+                    {row.value === null ? (
+                      <span class="open-fact">{t.legal.pending}</span>
+                    ) : row.href ? (
+                      <a class="link-line" href={row.href}>{row.value}</a>
+                    ) : (
+                      row.value
+                    )}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          )}
+          {section.paragraphs?.map((p) => <p>{p}</p>)}
+          {section.links && (
+            <ul>
+              {section.links.map((l) => (
+                <li><a class="link-line" href={l.href} target="_blank" rel="noopener">{l.label}</a></li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </section>
+    ))}
+
+    {doc.updated && <p class="updated">{doc.updated}</p>}
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .legal { padding-top: calc(var(--nav-h) + clamp(40px, 7vw, 96px)); padding-bottom: clamp(96px, 10vw, 144px); }
+  .back { display: inline-flex; align-items: center; gap: 0.5em; }
+  .legal-title {
+    margin-top: 36px;
+    font-size: var(--text-headline);
+    line-height: 0.98;
+    letter-spacing: -0.045em;
+  }
+  .legal-intro { margin-top: 28px; max-width: 52ch; font-size: var(--text-lead); line-height: 1.55; color: var(--color-muted); }
+
+  .legal-section { display: grid; gap: 14px; margin-top: 56px; padding-top: 28px; border-top: 1px solid var(--color-line); }
+  .legal-heading { font-size: var(--text-phi-1); line-height: 1.1; letter-spacing: -0.03em; }
+  .legal-body { display: grid; gap: 16px; max-width: 65ch; }
+  .legal-body p { line-height: 1.65; }
+  .legal-body dl { margin: 0; display: grid; gap: 8px; }
+  .legal-body dl div { display: grid; grid-template-columns: minmax(7rem, 11rem) 1fr; gap: 16px; }
+  .legal-body dt { color: var(--color-muted); }
+  .legal-body dd { margin: 0; }
+  .legal-body ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font-size: var(--text-meta); }
+  .updated { margin-top: 56px; font-size: var(--text-meta); color: var(--color-muted); }
+
+  @media (min-width: 1024px) {
+    /* title column and text column, like the rest of the page's 12-column grid */
+    .legal-section { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(24px, 2.6vw, 44px); }
+    .legal-heading { grid-column: 1 / 5; }
+    .legal-body { grid-column: 5 / 12; }
+  }
+</style>
