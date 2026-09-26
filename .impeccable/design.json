@@ -4,48 +4,261 @@
   "title": "Design System: Trias Schule",
   "extensions": {
     "colorMeta": {
-      "ink": { "role": "primary", "displayName": "Ink", "tonalRamp": ["#0e0e0c", "#20201d", "#3a3a35", "#55544e", "#75736c", "#9a978f", "#c4c1b8", "#e9e7e1"] },
-      "ginster": { "role": "secondary", "displayName": "Ginstergelb (RAL 1032, working value)", "tonalRamp": ["#4d3700", "#7a5800", "#a07300", "#b88400", "#e2a300", "#f1c23b", "#f7da85", "#fcf0cc"] },
-      "ginster-deep": { "role": "secondary", "displayName": "Ginster Deep", "tonalRamp": ["#4d3700", "#7a5800", "#a07300", "#b88400", "#e2a300", "#f1c23b", "#f7da85", "#fcf0cc"] },
-      "ginster-light": { "role": "secondary", "displayName": "Ginster Light", "tonalRamp": ["#4d3700", "#7a5800", "#a07300", "#b88400", "#e2a300", "#f1c23b", "#f7da85", "#fcf0cc"] },
-      "paper": { "role": "neutral", "displayName": "Paper", "tonalRamp": ["#2b2a27", "#55534d", "#8a877e", "#b9b6ad", "#dddad1", "#f2f1ec", "#f6f5f0", "#ffffff"] },
-      "warm": { "role": "neutral", "displayName": "Warm (footer)", "tonalRamp": ["#2b2a27", "#55534d", "#8a877e", "#b9b6ad", "#dddad1", "#f2f1ec", "#f6f5f0", "#ffffff"] },
-      "surface": { "role": "neutral", "displayName": "Surface", "tonalRamp": ["#2b2a27", "#55534d", "#8a877e", "#b9b6ad", "#dddad1", "#f2f1ec", "#f6f5f0", "#ffffff"] },
-      "line": { "role": "neutral", "displayName": "Hairline", "tonalRamp": ["#2b2a27", "#55534d", "#8a877e", "#b9b6ad", "#dddad1", "#f2f1ec", "#f6f5f0", "#ffffff"] },
-      "muted": { "role": "neutral", "displayName": "Muted Text", "tonalRamp": ["#0e0e0c", "#20201d", "#3a3a35", "#55544e", "#6e6c65", "#9a978f", "#c4c1b8", "#e9e7e1"] },
-      "error": { "role": "error", "displayName": "Error", "tonalRamp": ["#3a1209", "#5e1d0f", "#822816", "#a4331c", "#c65a41", "#dd8a75", "#eebcae", "#f9e6e0"] }
+      "ink": {
+        "role": "primary",
+        "displayName": "Ink",
+        "tonalRamp": [
+          "#0e0e0c",
+          "#20201d",
+          "#3a3a35",
+          "#55544e",
+          "#75736c",
+          "#9a978f",
+          "#c4c1b8",
+          "#e9e7e1"
+        ]
+      },
+      "ginster": {
+        "role": "secondary",
+        "displayName": "Ginstergelb (RAL 1032, working value)",
+        "tonalRamp": [
+          "#4d3700",
+          "#7a5800",
+          "#a07300",
+          "#b88400",
+          "#e2a300",
+          "#f1c23b",
+          "#f7da85",
+          "#fcf0cc"
+        ]
+      },
+      "ginster-deep": {
+        "role": "secondary",
+        "displayName": "Ginster Deep",
+        "tonalRamp": [
+          "#4d3700",
+          "#7a5800",
+          "#a07300",
+          "#b88400",
+          "#e2a300",
+          "#f1c23b",
+          "#f7da85",
+          "#fcf0cc"
+        ]
+      },
+      "ginster-light": {
+        "role": "secondary",
+        "displayName": "Ginster Light",
+        "tonalRamp": [
+          "#4d3700",
+          "#7a5800",
+          "#a07300",
+          "#b88400",
+          "#e2a300",
+          "#f1c23b",
+          "#f7da85",
+          "#fcf0cc"
+        ]
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Paper",
+        "tonalRamp": [
+          "#2b2a27",
+          "#55534d",
+          "#8a877e",
+          "#b9b6ad",
+          "#dddad1",
+          "#f2f1ec",
+          "#f6f5f0",
+          "#ffffff"
+        ]
+      },
+      "warm": {
+        "role": "neutral",
+        "displayName": "Warm (footer)",
+        "tonalRamp": [
+          "#2b2a27",
+          "#55534d",
+          "#8a877e",
+          "#b9b6ad",
+          "#dddad1",
+          "#f2f1ec",
+          "#f6f5f0",
+          "#ffffff"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Surface",
+        "tonalRamp": [
+          "#2b2a27",
+          "#55534d",
+          "#8a877e",
+          "#b9b6ad",
+          "#dddad1",
+          "#f2f1ec",
+          "#f6f5f0",
+          "#ffffff"
+        ]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "tonalRamp": [
+          "#2b2a27",
+          "#55534d",
+          "#8a877e",
+          "#b9b6ad",
+          "#dddad1",
+          "#f2f1ec",
+          "#f6f5f0",
+          "#ffffff"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Muted Text",
+        "tonalRamp": [
+          "#0e0e0c",
+          "#20201d",
+          "#3a3a35",
+          "#55544e",
+          "#6e6c65",
+          "#9a978f",
+          "#c4c1b8",
+          "#e9e7e1"
+        ]
+      },
+      "error": {
+        "role": "error",
+        "displayName": "Error",
+        "tonalRamp": [
+          "#3a1209",
+          "#5e1d0f",
+          "#822816",
+          "#a4331c",
+          "#c65a41",
+          "#dd8a75",
+          "#eebcae",
+          "#f9e6e0"
+        ]
+      }
     },
     "typographyMeta": {
-      "display": { "displayName": "Hero Lettering", "purpose": "Hero claim only: EMS Felix pen strokes as inline SVG, 58-unit round strokes, scale 1.1, line step 1.06em, rotated -1.5deg, ginstergelb hand-underline under the last word." },
-      "headline": { "displayName": "Headline", "purpose": "Section H2, capped at phi-3 (4.45rem)." },
-      "title": { "displayName": "Title", "purpose": "Person, project, category and step names." },
-      "quote": { "displayName": "Quote", "purpose": "Approved testimonials, hanging opening quote." },
-      "phi-1": { "displayName": "Phi 1", "purpose": "Focal text: active step, form title, mobile menu links, legal section titles." },
-      "lead": { "displayName": "Lead", "purpose": "Hero subline and intros." },
-      "body": { "displayName": "Body", "purpose": "Running text, measure up to 52ch." },
-      "meta": { "displayName": "Meta", "purpose": "Buttons, nav, lists, project details." },
-      "label": { "displayName": "Label", "purpose": "Field labels, captions, credits, placeholder tags." },
-      "marker": { "displayName": "Marker", "purpose": "Annotations only: board notes, captions, planning questions, plan labels, active-step label, chat line." }
+      "display": {
+        "displayName": "Hero Claim",
+        "purpose": "Hero claim only: Kalam 700, line height 1, rotated -1.5deg, written letter by letter (~0.85s), ginstergelb hand-drawn underline under the last word."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Section H2, capped at phi-3 (4.45rem)."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Person, project, category and step names."
+      },
+      "quote": {
+        "displayName": "Quote",
+        "purpose": "Approved testimonials, hanging opening quote."
+      },
+      "phi-1": {
+        "displayName": "Phi 1",
+        "purpose": "Focal text: active step, form title, mobile menu links, legal section titles."
+      },
+      "lead": {
+        "displayName": "Lead",
+        "purpose": "Hero subline and intros."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Running text, measure up to 52ch."
+      },
+      "meta": {
+        "displayName": "Meta",
+        "purpose": "Buttons, nav, lists, project details."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Field labels, captions, credits, placeholder tags."
+      },
+      "marker": {
+        "displayName": "Marker",
+        "purpose": "Annotations only: board notes, captions, planning questions, plan labels, active-step label, chat line."
+      }
     },
     "shadows": [
-      { "name": "print", "value": "0 1px 1px rgba(32,32,29,.08), 0 12px 22px -12px rgba(32,32,29,.35)", "purpose": "Photo prints pinned on the hero paper." },
-      { "name": "magnet", "value": "inset 0 -1px 1px rgba(120,80,0,.35), 0 2px 2px rgba(32,32,29,.22), 0 6px 10px -4px rgba(32,32,29,.3)", "purpose": "The 22px ginstergelb magnet." }
+      {
+        "name": "print",
+        "value": "0 1px 1px rgba(32,32,29,.08), 0 12px 22px -12px rgba(32,32,29,.35)",
+        "purpose": "Photo prints pinned on the hero paper."
+      },
+      {
+        "name": "magnet",
+        "value": "inset 0 -1px 1px rgba(120,80,0,.35), 0 2px 2px rgba(32,32,29,.22), 0 6px 10px -4px rgba(32,32,29,.3)",
+        "purpose": "The 22px ginstergelb magnet."
+      }
     ],
     "motion": [
-      { "name": "ease-draw", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "All reveals and state changes." },
-      { "name": "micro", "value": "200ms", "purpose": "Hover and focus feedback (buttons, arrows, fields)." },
-      { "name": "hero-write", "value": "~0.85s from 0.1s", "purpose": "Claim lettered stroke by stroke at constant pen speed, any language." },
-      { "name": "hero-offer", "value": "600ms rise from 0.12s", "purpose": "Subline and buttons." },
-      { "name": "hero-pins", "value": "600ms from 0.35s (+0.1s, +0.2s); magnets 320ms, 0.3s later", "purpose": "Prints and magnets." },
-      { "name": "hero-notes", "value": "500ms, each note's delay (0.95-1.3s) minus 0.2s", "purpose": "Marker notes and sketch strokes." },
-      { "name": "chair-in", "value": "900ms rotateY(-360deg) from off-left, at 0.9s", "purpose": "The PantoSwing's single turn into the hero." },
-      { "name": "scrub", "value": "scroll-linked", "purpose": "Services steps and plan, drawn route, project row, people, phase ruler, contact figures (turn over progress .3-.85)." }
+      {
+        "name": "ease-draw",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "All reveals and state changes."
+      },
+      {
+        "name": "micro",
+        "value": "200ms",
+        "purpose": "Hover and focus feedback (buttons, arrows, fields)."
+      },
+      {
+        "name": "hero-write",
+        "value": "~0.85s from 0.1s",
+        "purpose": "Claim lettered stroke by stroke at constant pen speed, any language."
+      },
+      {
+        "name": "hero-offer",
+        "value": "600ms rise from 0.12s",
+        "purpose": "Subline and buttons."
+      },
+      {
+        "name": "hero-pins",
+        "value": "600ms from 0.35s (+0.1s, +0.2s); magnets 320ms, 0.3s later",
+        "purpose": "Prints and magnets."
+      },
+      {
+        "name": "hero-notes",
+        "value": "500ms, each note's delay (0.95-1.3s) minus 0.2s",
+        "purpose": "Marker notes and sketch strokes."
+      },
+      {
+        "name": "chair-in",
+        "value": "900ms rotateY(-360deg) from off-left, at 0.9s",
+        "purpose": "The PantoSwing's single turn into the hero."
+      },
+      {
+        "name": "scrub",
+        "value": "scroll-linked",
+        "purpose": "Services steps and plan, drawn route, project row, people, phase ruler, contact figures (turn over progress .3-.85)."
+      }
     ],
     "breakpoints": [
-      { "name": "sm", "value": "640px" },
-      { "name": "lg", "value": "1024px" },
-      { "name": "scrub", "value": "(min-width: 1024px) and (min-height: 640px)" },
-      { "name": "coarse", "value": "(pointer: coarse)", "purpose": "44px targets." }
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      },
+      {
+        "name": "scrub",
+        "value": "(min-width: 1024px) and (min-height: 640px)"
+      },
+      {
+        "name": "coarse",
+        "value": "(pointer: coarse)",
+        "purpose": "44px targets."
+      }
     ]
   },
   "components": [
@@ -133,9 +346,21 @@
       "Motion scrubbed by scroll rather than played on a timer; final states without motion."
     ],
     "rules": [
-      { "name": "The Rare Yellow Rule", "body": "Ginstergelb marks objects, points and the one drawn route, never fills a region. At most one ginstergelb button on screen; the conversion CTA owns it.", "section": "colors" },
-      { "name": "The Honest Blank Rule", "body": "Missing content is left out, not staged. Testimonials and the closing quote render only when approved; portraits only when a photo is set; unknown optional facts (such as a project location) are omitted. What remains open collapses into one quiet line per person or footer, marked as an open fact (muted text after a 6px hollow ginster-deep ring, never an underline that reads as a link). Placeholder projects carry \"Beispielprojekt · Platzhalter\" with the same marker. Never fill a gap with invented names, numbers or quotes.", "section": "colors" },
-      { "name": "The Annotation Rule", "body": "Handwriting annotates: board notes, photo captions, planning questions, plan labels, the active-step label, the chat line. Caveat never carries navigation, buttons, body text or anything a visitor must read to act. The hero claim is lettered with a single-line pen, not set in Caveat; the offer beside it (subline, buttons) stays in Archivo.", "section": "typography" }
+      {
+        "name": "The Rare Yellow Rule",
+        "body": "Ginstergelb marks objects, points and the one drawn route, never fills a region. At most one ginstergelb button on screen; the conversion CTA owns it.",
+        "section": "colors"
+      },
+      {
+        "name": "The Honest Blank Rule",
+        "body": "Missing content is left out, not staged. Testimonials and the closing quote render only when approved; portraits only when a photo is set; unknown optional facts (such as a project location) are omitted. What remains open collapses into one quiet line per person or footer, marked as an open fact (muted text after a 6px hollow ginster-deep ring, never an underline that reads as a link). Placeholder projects carry \"Beispielprojekt · Platzhalter\" with the same marker. Never fill a gap with invented names, numbers or quotes.",
+        "section": "colors"
+      },
+      {
+        "name": "The Annotation Rule",
+        "body": "Handwriting annotates: board notes, photo captions, planning questions, plan labels, the active-step label, the chat line. Caveat never carries navigation, buttons, body text or anything a visitor must read to act. The hero claim is lettered with a single-line pen, not set in Caveat; the offer beside it (subline, buttons) stays in Archivo.",
+        "section": "typography"
+      }
     ],
     "dos": [
       "**Do** make motion a function of scroll position so it reverses when scrolling back, and render the final state under `prefers-reduced-motion`.",

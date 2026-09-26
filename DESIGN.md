@@ -15,10 +15,11 @@ colors:
   error: "#a4331c"
 typography:
   display:
-    fontFamily: "EMS Felix (single-line, lettered at build time as SVG pen strokes)"
-    fontSize: "clamp(3.4rem, min(6.4vw, 11vh), 6.8rem)"
-    lineHeight: 1.06
-    letterSpacing: "normal"
+    fontFamily: "Kalam, Caveat, Segoe Print, cursive"
+    fontSize: "clamp(2.9rem, min(5.4vw, 9.4vh), 5.8rem)"
+    fontWeight: 700
+    lineHeight: 1
+    letterSpacing: "-0.005em"
   headline:
     fontFamily: "Archivo, Archivo Fallback, ui-sans-serif, system-ui, sans-serif"
     fontSize: "clamp(2.4rem, 5vw, 4.45rem)"
@@ -136,13 +137,13 @@ components:
 
 **Creative North Star: "A planning surface that becomes a building"**
 
-The site reads as one continuous architectural drawing. It opens on white paper: pinned photo prints held by ginstergelb magnets, marker notes and a small floor-plan sketch, with the claim hand-lettered across it like the first idea of a plan. A flat ginstergelb PantoSwing (front view) turns in last at the bottom of the hero; its legs run on as lines down the services column, and the left one becomes the route that carries the projects and the two people and finally lands on the VS section. Everything drawn is a technical line drawing: ink strokes, flat ginstergelb only on the object, no gradients. The interface itself stays white and quiet; colour comes from photographs, the chairs, the stools and a few ginstergelb points.
+The site reads as one continuous architectural drawing. It opens on white paper: pinned photo prints held by ginstergelb magnets, marker notes and a small floor-plan sketch, with the claim written across it by hand like the first idea of a plan. A flat ginstergelb PantoSwing (front view) turns in last at the bottom of the hero; its legs run on as lines down the services column, and the left one becomes the route that carries the projects and the two people and finally lands on the VS section. Everything drawn is a technical line drawing: ink strokes, flat ginstergelb only on the object, no gradients. The interface itself stays white and quiet; colour comes from photographs, the chairs, the stools and a few ginstergelb points.
 
 **Key Characteristics:**
 - Generous white space; hairline structure instead of containers.
 - Technical-drawing vocabulary: end ticks, right-angle marks, dimension lines, hatched floors, dashed zones.
 - One drawing style: ink contours, flat ginstergelb fills, no gradients, no blurred shadows.
-- Handwriting only as annotation; the claim is lettered, not set.
+- Handwriting only as annotation, and for the one claim in the hero.
 - Motion scrubbed by scroll rather than played on a timer; final states without motion.
 
 ## Colors
@@ -165,7 +166,7 @@ White paper, one ink, one yellow.
 
 ## Typography
 
-**Display:** EMS Felix, a single-line plotter font, lettered at build time into inline SVG pen strokes.
+**Display:** Kalam 700 (self-hosted, one weight), a calm and even hand, for the hero claim only.
 **Body Font:** Archivo variable 400–700 (with "Archivo Fallback": Arial at size-adjust 105.5%, ascent 83.2%, descent 19.9%).
 **Marker Font:** Caveat variable 500–700.
 
@@ -176,7 +177,7 @@ Fonts are self-hosted Latin subsets (woff2, OFL); Archivo is preloaded. No third
 ### Hierarchy
 Every role is a token in `global.css` (`--text-label|meta|body|lead`, `--text-headline|title|route-title|marker`, `--text-phi-1|2|3`); components use the token, never a literal size. The one exception is lettering inside SVG drawings (plan labels, the chair's "Sitzhöhe"), sized in drawing units so it scales with its drawing. Reading sizes are four steps (label, meta, body, lead). Titles follow a golden scale from body: 1.7rem (`phi-1`, focal text such as the active step, form title, menu links), 2.75rem (`phi-2`, project titles and quotes at most), 4.45rem (`phi-3`, the cap of every section heading).
 
-- **Display (hero claim):** each word an SVG of pen strokes (58 font units wide, round caps and joins, current colour), scale 1.1 of the em, line step 1.06em, rotated −1.5°, a ginstergelb hand-underline under the last word. Umlauts are the base letter plus two short strokes. Screen readers get the plain text.
+- **Display (hero claim):** Kalam 700, line height 1, rotated −1.5°, written letter by letter (each letter wiped in over 120ms) with a ginstergelb hand-drawn underline under the last word. The visible letters are hidden from assistive technology; screen readers get the claim as one piece of text.
 - **Headline:** section H2, weight 600, capped at `phi-3`.
 - **Route title:** "Unsere Projekte", the one heading the drawn route writes; the largest Archivo size on the page.
 - **Title:** person, project and category names, 600. Step names between the chair legs sit on `phi-1`, capped by `clamp(lead, 1.95vw, phi-1)` while pinned so the longest (Italian "Accompagnare") fits.
@@ -185,7 +186,7 @@ Every role is a token in `global.css` (`--text-label|meta|body|lead`, `--text-he
 - **Meta / Label:** buttons, nav, lists and details at meta; field labels, captions and credits at label.
 
 ### Named Rules
-**The Annotation Rule.** Handwriting annotates: board notes, photo captions, planning questions, plan labels, the active-step label, the chat line. Caveat never carries navigation, buttons, body text or anything a visitor must read to act. The hero claim is lettered with a single-line pen, not set in Caveat; the offer beside it (subline, buttons) stays in Archivo.
+**The Annotation Rule.** Handwriting annotates: board notes, photo captions, planning questions, plan labels, the active-step label, the chat line. Caveat never carries navigation, buttons, body text or anything a visitor must read to act. The hero claim is the one exception, written in Kalam, a calmer hand than the Caveat notes; the offer beside it (subline, buttons) stays in Archivo.
 
 ## Layout
 
@@ -239,7 +240,7 @@ Wordmark "TRIAS SCHULE" (bold / regular, tracked 0.14em), five links in page ord
 A ginstergelb SVG route as thick as the chair legs (`--leg-w`), `stroke-dashoffset` scrubbed by scroll, with ink nodes (start point and moving head). It comes down from the chair's left leg, runs along the bottom of the pinned stage revealing "Unsere Projekte". The pen tip then stays at ~62% of the screen width while the whole plan sheet (line, title, the row of projects and quotes) slides left beneath it, so the line keeps drawing to the right under each project. Ahead of the pen the whole route is pencilled in as a 1px hairline in the line colour, with a 45° dimension tick at the start of each project and at the end of the row: ticks ahead are pencil grey, ticks the pen has passed are ink, so the line shows how far is left. At the end of the row it turns 90° down (ink right-angle mark in the inner corner) and lands at the top of the people section with an ink dot. Mobile and reduced motion show the U-shaped line with the title and the projects stacked below.
 
 ### Signature: Planning Surface (hero)
-White paper, prints held by magnets, marker notes and arrows, and a floor-plan sketch with a "7,20 m" dimension. Preparation takes about a second: the claim is written stroke by stroke at constant pen speed (~0.85s in any language) from 0.1s, subline and buttons rise at 0.12s, prints pin from 0.35s with magnets 0.3s later, notes draw from ~0.75s, and the chair arrives at 0.9s in one 900ms turn from off-left. The wordmark does not animate.
+White paper, prints held by magnets, marker notes and arrows, and a floor-plan sketch with a "7,20 m" dimension. Preparation takes about a second: the claim is written letter by letter (~0.85s in any language) from 0.1s, subline and buttons rise at 0.12s, prints pin from 0.35s with magnets 0.3s later, notes draw from ~0.75s, and the chair arrives at 0.9s in one 900ms turn from off-left. The wordmark does not animate.
 
 ### Signature: Drawings
 - **Services chair:** flat PantoSwing front silhouette whose legs become the route; the right leg stands on a 14×3px ink glide.

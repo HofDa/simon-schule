@@ -4,7 +4,10 @@ Copyright 2020 The Archivo Project Authors (https://github.com/Omnibus-Type/Arch
 Caveat (caveat-latin-var.woff2)
 Copyright 2014 The Caveat Project Authors (https://github.com/googlefonts/caveat)
 
-Both files are the variable Latin subsets as served by Google Fonts, stored here so the
+Kalam, weight 700 (kalam-700-latin.woff2)
+Copyright (c) 2014 Indian Type Foundry (info@indiantypefoundry.com)
+
+The files are the Latin subsets (Archivo and Caveat variable) as served by Google Fonts, stored here so the
 site loads no fonts from third parties.
 
 This Font Software is licensed under the SIL Open Font License, Version 1.1.

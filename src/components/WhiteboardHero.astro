@@ -1,44 +1,33 @@
 ---
 import { getProjects } from '../data/projects';
 import { getLang, useTranslations } from '../i18n/ui';
-import { letter } from '../lib/lettering';
 import ProjectPhoto from './ProjectPhoto.astro';
 
 const lang = getLang(Astro.currentLocale);
 const t = useTranslations(lang);
 const [a, b, c] = getProjects(lang);
 
-// The claim is hand-lettered: each word is drawn as pen strokes (src/lib/lettering.ts) at one
-// constant pen speed with short lifts between strokes, so the whole line takes about WRITE
-// seconds in any language and stays one quick marker gesture.
+// The claim is written by hand (Kalam), letter by letter, as one quick marker gesture: the whole
+// line takes about WRITE seconds in any language. Delays are computed here so the pacing is
+// slightly uneven (like a hand) but identical on every load.
 const headline = t.hero.headline;
-const lettering = letter(headline);
-const SCALE = 1.1; // the single-line font sits small in its em box
-const PAD = 60; // font units around each word, so round stroke ends are not clipped
-const top = lettering.top - PAD;
-const height = lettering.bottom - lettering.top + 2 * PAD;
-const em = (units: number) => `${((units / 1000) * SCALE).toFixed(3)}em`;
 const WRITE = 0.85;
-const LIFT = 0.012;
-const WORD_LIFT = 0.05;
-const strokeCount = lettering.words.reduce((n, w) => n + w.strokes.length, 0);
-const penLength = lettering.words.reduce((n, w) => n + w.strokes.reduce((m, s) => m + s.length, 0), 0);
-const speed = penLength / (WRITE - LIFT * (strokeCount - 1) - WORD_LIFT * (lettering.words.length - 1));
+const LETTER = 0.12; // each letter's own wipe
+const WORD_GAP = 0.07;
+const parts = headline.split(' ');
+const letterCount = parts.join('').length;
+const PER_LETTER = Math.min(0.05, Math.max(0.022, (WRITE - LETTER - (parts.length - 1) * WORD_GAP) / letterCount));
 let clock = 0;
-const words = lettering.words.map((word) => {
-  const strokes = word.strokes.map((stroke) => {
-    const dur = Math.max(0.02, stroke.length / speed);
-    const out = { d: stroke.d, delay: clock.toFixed(3), dur: dur.toFixed(3) };
-    clock += dur + LIFT;
-    return out;
+const words = parts.map((word, wi) => {
+  const letters = [...word].map((char, ci) => {
+    const delay = clock;
+    clock += PER_LETTER * (1 + (((wi * 7 + ci * 13) % 5) - 2) * 0.18);
+    return { char, delay: delay.toFixed(3) };
   });
-  clock += WORD_LIFT - LIFT;
-  return { width: word.width, strokes };
+  clock += WORD_GAP;
+  return letters;
 });
-const writeDuration = (clock - WORD_LIFT).toFixed(2);
-const LINE = 1.06; // baseline to baseline, in em: each word's box is trimmed to this height
-// the last line's descenders hang below the trimmed box; keep them clear of the subline
-const DESCENDERS = `calc(${em(height)} - ${LINE}em - ${em(PAD)})`;
+const writeDuration = (clock - WORD_GAP + LETTER).toFixed(2);
 ---
 
 <Fragment set:html={`<style>:root{--hero-write:${writeDuration}s}</style>`} />
@@ -69,17 +58,11 @@ const DESCENDERS = `calc(${em(height)} - ${LINE}em - ${em(PAD)})`;
           <div class="hero-copy relative z-10 pt-10 pb-8 lg:absolute lg:left-0 lg:top-0 lg:w-[38.2%] lg:pt-[calc(var(--board-h)*0.146)]">
             <h1 id="hero-title" class="hero-title">
               <span class="sr-only">{headline}</span>
-              <span class="handwriting" aria-hidden="true" style={`--base: ${em(lettering.baseline - top)}; padding-bottom: ${DESCENDERS}`}>
-                {words.map((word, wi) => (
+              <span class="handwriting" aria-hidden="true">
+                {words.map((letters, wi) => (
                   <>
                     <span class={`word${wi === words.length - 1 ? ' word-last' : ''}`}>
-                      <svg
-                        class="lettering"
-                        viewBox={`${-PAD} ${top} ${word.width + 2 * PAD} ${height}`}
-                        style={`width: ${em(word.width + 2 * PAD)}; height: ${em(height)}; margin-bottom: calc(${LINE}em - ${em(height)})`}
-                      >
-                        {word.strokes.map((s) => <path d={s.d} pathLength="1" style={`--sd: ${s.delay}s; --sdur: ${s.dur}s`} />)}
-                      </svg>
+                      {letters.map((l) => <span class="ch" style={`--cd: ${l.delay}s`}>{l.char}</span>)}
                       {wi === words.length - 1 && (
                         <svg class="hand-underline" viewBox="0 0 300 16" preserveAspectRatio="none">
                           <path pathLength="1" d="M4 10 C60 5 130 12 190 8 S270 6 296 9" />
@@ -177,30 +160,20 @@ const DESCENDERS = `calc(${em(height)} - ${LINE}em - ${em(PAD)})`;
   }
 
   .hero-title {
-    font-family: var(--font-marker);
+    font-family: var(--font-hand);
     font-weight: 700;
-    font-size: clamp(3.4rem, min(6.4vw, 11vh), 6.8rem);
-    line-height: 0.86;
-    letter-spacing: 0;
+    font-size: clamp(2.9rem, min(5.4vw, 9.4vh), 5.8rem);
+    line-height: 1;
+    letter-spacing: -0.005em;
     color: var(--color-ink);
   }
   .handwriting { display: block; transform: rotate(-1.5deg); transform-origin: 0 100%; }
   .word { display: inline-block; white-space: nowrap; position: relative; }
-  /* one word = pen strokes of a single-line marker hand (see src/lib/lettering.ts) */
-  .lettering {
-    display: inline-block;
-    vertical-align: top;
-    overflow: visible;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 58;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-  }
+  .ch { display: inline-block; }
   .hand-underline {
     position: absolute;
     left: -2%;
-    top: calc(var(--base) + 0.03em);
+    bottom: 0.02em;
     width: 100%;
     height: 0.16em;
     overflow: visible;
@@ -216,11 +189,10 @@ const DESCENDERS = `calc(${em(height)} - ${LINE}em - ${em(PAD)})`;
       animation: hero-rise 600ms var(--ease-draw) both;
       animation-delay: calc(var(--d, 0s) + var(--t-offer));
     }
-    /* the claim is written stroke by stroke, in the pen's own order and at its own pace */
-    :global(html.js) .lettering path {
-      stroke-dasharray: 1;
-      animation: pen var(--sdur) cubic-bezier(0.3, 0, 0.7, 1) both;
-      animation-delay: calc(var(--t-claim) + var(--sd));
+    /* each letter is wiped in left to right, like a marker stroke */
+    :global(html.js) .ch {
+      animation: write-letter 120ms linear both;
+      animation-delay: calc(var(--t-claim) + var(--cd));
     }
     :global(html.js) .hand-underline path {
       animation: underline 650ms var(--ease-draw) both;
@@ -256,11 +228,9 @@ const DESCENDERS = `calc(${em(height)} - ${LINE}em - ${em(PAD)})`;
     }
   }
 
-  /* hidden until its turn: a zero-length dash would otherwise show as a dot under the round cap */
-  @keyframes pen {
-    from { stroke-dashoffset: 1; opacity: 0; }
-    1% { opacity: 1; }
-    to { stroke-dashoffset: 0; opacity: 1; }
+  @keyframes write-letter {
+    from { clip-path: inset(-0.3em 100% -0.3em -0.2em); }
+    to { clip-path: inset(-0.3em -0.2em -0.3em -0.2em); }
   }
   @keyframes underline {
     from { stroke-dasharray: 1; stroke-dashoffset: 1; opacity: 0; }

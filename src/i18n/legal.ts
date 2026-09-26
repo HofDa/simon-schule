@@ -66,7 +66,7 @@ const de: Record<'imprint' | 'privacy', LegalDoc> = {
       {
         title: 'Schriften',
         paragraphs: [
-          'Archivo und Caveat, SIL Open Font License 1.1. Die Handschrift der Überschrift ist aus EMS Felix gezeichnet (Sheldon B. Michaels und Windell H. Oskay, nach Felipa von Fontstage), SIL Open Font License 1.1.',
+          'Archivo, Caveat und Kalam (Indian Type Foundry), SIL Open Font License 1.1.',
         ],
       },
       {
@@ -149,7 +149,7 @@ const it: Record<'imprint' | 'privacy', LegalDoc> = {
       {
         title: 'Caratteri',
         paragraphs: [
-          'Archivo e Caveat, SIL Open Font License 1.1. La scritta a mano del titolo è disegnata con EMS Felix (Sheldon B. Michaels e Windell H. Oskay, da Felipa di Fontstage), SIL Open Font License 1.1.',
+          'Archivo, Caveat e Kalam (Indian Type Foundry), SIL Open Font License 1.1.',
         ],
       },
       {

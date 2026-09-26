@@ -9,6 +9,14 @@
   font-display: swap;
   src: url("../assets/fonts/archivo-latin-var.woff2") format("woff2");
 }
+/* the hero claim, written on the plan: one weight only */
+@font-face {
+  font-family: "Kalam";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("../assets/fonts/kalam-700-latin.woff2") format("woff2");
+}
 @font-face {
   font-family: "Caveat";
   font-style: normal;
@@ -40,6 +48,7 @@
 
   --font-sans: "Archivo", "Archivo Fallback", ui-sans-serif, system-ui, sans-serif;
   --font-marker: "Caveat", "Segoe Print", cursive;
+  --font-hand: "Kalam", "Caveat", "Segoe Print", cursive; /* the hero claim */
 
   --ease-draw: cubic-bezier(0.16, 1, 0.3, 1);
 
