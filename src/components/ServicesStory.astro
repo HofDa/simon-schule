@@ -85,7 +85,7 @@ const stools = Array.from({ length: 7 }, (_, i) => {
         </div>
 
         <div class="detail-cell">
-          <div class="progress hidden lg:block" aria-hidden="true">
+          <div class="progress hidden md:block" aria-hidden="true">
             <div class="progress-track">
               {services.map(() => <span class="progress-tick"></span>)}
               <span class="progress-node" data-node></span>
@@ -309,6 +309,19 @@ const stools = Array.from({ length: 7 }, (_, i) => {
   .pl-note { font-size: 27px; }
   .pl-label { font-size: 23px; fill: var(--color-muted); }
 
+  /* tablet: two columns. The heading moves out from between the legs to beside the chair;
+     ruler, active step and the plan stack beside the list, and the legs run the full height */
+  @media (min-width: 768px) and (max-width: 1023px) {
+    .services-grid { grid-template-columns: var(--col-w) minmax(0, 1fr); column-gap: clamp(32px, 5vw, 56px); }
+    .chair-cell { grid-column: 1; grid-row: 1; align-self: end; }
+    .steps-cell { grid-column: 1; grid-row: 2 / span 2; align-self: stretch; }
+    .steps-intro { display: none; }
+    .steps { padding: 4px 22px 8px; }
+    .intro-cell { display: block; grid-column: 2; grid-row: 1; align-self: end; padding-bottom: 12px; }
+    .detail-cell { grid-column: 2; grid-row: 2; align-self: start; padding: 18px 0 0; }
+    .plan-cell { display: block; grid-column: 2; grid-row: 3; padding-top: 28px; }
+  }
+
   @media (min-width: 1024px) {
     .services-grid {
       /* chair column · heading, then ruler and active step · the plan */
@@ -500,7 +513,15 @@ const stools = Array.from({ length: 7 }, (_, i) => {
         const navH = 72;
         // the plan may grow below the list, but never so far that the pinned block pushes the chair under the navbar
         const chairH = section.querySelector<HTMLElement>('.chair-cell')?.offsetHeight ?? 0;
-        plan?.style.setProperty('--plan-max', `${Math.max(180, Math.round(vh - (navH + 8) - chairH - 18 - 48))}px`);
+        if (window.matchMedia('(min-width: 768px) and (max-width: 1023px)').matches) {
+          // tablet: the plan sits below the active step, so it gets what the pinned block leaves over
+          plan?.style.setProperty('--plan-max', '0px');
+          const withoutPlan = stick.offsetHeight;
+          const room = Math.round(vh - (navH + 8) - withoutPlan - 24 - 28);
+          plan?.style.setProperty('--plan-max', `${room >= 160 ? room : 0}px`); // too little room: no plan rather than a stamp
+        } else {
+          plan?.style.setProperty('--plan-max', `${Math.max(180, Math.round(vh - (navH + 8) - chairH - 18 - 48))}px`);
+        }
         stickH = stick.offsetHeight;
         stickTop = Math.min(navH + 8, vh - stickH - 24);
         section.style.setProperty('--stick-h', `${stickH}px`);

@@ -12,8 +12,6 @@ const catalogUrl = vs.catalogUrl[lang];
 ---
 
 <section id="vs-moebel" class="vs relative py-28 lg:py-40" aria-labelledby="vs-title" data-vs>
-  <!-- the drawn route comes down from the projects stage above and ends here -->
-  <span class="vs-route" aria-hidden="true"></span>
   <div class="shell">
     <div class="vs-grid">
       <div class="vs-head">
@@ -59,7 +57,7 @@ const catalogUrl = vs.catalogUrl[lang];
           ))}
         </ul>
 
-        <div class="mt-12 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+        <div class="vs-actions mt-12 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           <a class="btn btn-ink self-start" href={catalogUrl} target="_blank" rel="noopener">
             {t.all}
             <svg class="btn-arrow h-3.5 w-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" /></svg>
@@ -72,31 +70,6 @@ const catalogUrl = vs.catalogUrl[lang];
 </section>
 
 <style>
-  .vs-route { display: none; }
-  /* only when the projects stage above is pinned: continue its line at the same x (see ProjectTransition: endX) */
-  :global(.transition.is-scrub) ~ .vs .vs-route {
-    display: block;
-    position: absolute;
-    top: 0;
-    right: calc(var(--gutter) + 40px - var(--leg-w) / 2);
-    width: var(--leg-w);
-    height: clamp(72px, 10vw, 128px);
-    background: var(--color-ginster);
-    transform-origin: top;
-    transform: scaleY(var(--route, 1));
-  }
-  :global(.transition.is-scrub) ~ .vs .vs-route::after {
-    content: '';
-    position: absolute;
-    left: 50%;
-    bottom: -6px;
-    width: 12px;
-    height: 12px;
-    margin-left: -6px;
-    border-radius: 50%;
-    background: var(--color-ink);
-    opacity: var(--route-end, 1);
-  }
   .vs-grid { display: grid; gap: 56px; }
   .vs-chair { width: min(62vw, 300px); transform: translateX(var(--shift, 0px)); }
 
@@ -121,6 +94,16 @@ const catalogUrl = vs.catalogUrl[lang];
   a.cat:hover .cat-arrow { transform: translate(3px, -3px); }
   a.cat:hover .cat-dot, [data-cat].is-current .cat-dot { background: var(--color-ginster); border-color: var(--color-ginster); }
 
+  @media (min-width: 768px) and (max-width: 1023px) {
+    .vs-grid { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: 40px; row-gap: 64px; }
+    .vs-head { grid-column: 1 / -1; }
+    .vs-stage { grid-column: 1; }
+    .vs-list { grid-column: 2; }
+    .vs-chair { width: 100%; }
+    /* the list column is too narrow for button and note side by side */
+    .vs-actions { flex-direction: column; align-items: flex-start; }
+  }
+
   @media (min-width: 1024px) {
     .vs-grid { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(24px, 2.6vw, 44px); row-gap: 88px; }
     .vs-head { grid-column: 1 / 8; }
@@ -132,21 +115,9 @@ const catalogUrl = vs.catalogUrl[lang];
 </style>
 
 <script>
-  import { addScene, range, viewProgress } from '../scripts/motion';
+  import { addScene, viewProgress } from '../scripts/motion';
 
   const section = document.querySelector<HTMLElement>('[data-vs]');
-
-  // the line coming down from the projects stage finishes drawing as the section arrives
-  if (section) {
-    addScene({
-      el: section,
-      progress: viewProgress(1, 0.55),
-      render: (p) => {
-        section.style.setProperty('--route', String(range(p, 0, 0.8)));
-        section.style.setProperty('--route-end', p >= 0.8 ? '1' : '0');
-      },
-    });
-  }
   const chair = section?.querySelector<HTMLElement>('[data-vs-chair]');
   if (section && chair) {
     addScene({
@@ -157,7 +128,8 @@ const catalogUrl = vs.catalogUrl[lang];
     });
   }
 
-  const rows = Array.from(document.querySelectorAll<HTMLElement>('[data-cat]'));
+  // the reading point follows the rows only where a row leads somewhere (a category with its own link)
+  const rows = Array.from(document.querySelectorAll<HTMLElement>('[data-cat]')).filter((r) => r.querySelector('a.cat'));
   if ('IntersectionObserver' in window) {
     const io = new IntersectionObserver(
       (entries) => entries.forEach((e) => e.target.classList.toggle('is-current', e.isIntersecting)),

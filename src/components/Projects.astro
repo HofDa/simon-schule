@@ -87,6 +87,17 @@ const src = (file: string, w: number) => asset(`images/projects/${file}-${w}.web
   .p-desc { margin-top: 22px; max-width: 46ch; color: var(--color-muted); line-height: 1.65; }
   .p-detail { display: block; width: 62%; margin-top: 36px; aspect-ratio: 4 / 3; object-fit: cover; }
 
+  /* tablet: two projects side by side, the full-width one across both columns */
+  @media (min-width: 768px) and (max-width: 1023px) {
+    .projects-inner { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 32px; row-gap: 72px; align-items: start; }
+    .project--full,
+    .projects-inner > :global(.p-quote) { grid-column: 1 / -1; }
+    .project--full .p-media img { aspect-ratio: 16 / 9; }
+    .project--full .p-info { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 32px; }
+    .project--full .p-info > :global(*) { grid-column: 1; }
+    .project--full .p-desc { grid-column: 2; grid-row: 1 / span 3; margin-top: 0; }
+  }
+
   @media (min-width: 1024px) {
     .projects-inner { gap: clamp(120px, 14vh, 180px); padding-top: 40px; }
     .project { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(24px, 2.6vw, 44px); align-items: start; }

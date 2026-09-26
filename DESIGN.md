@@ -193,11 +193,13 @@ A 12-column grid inside a shell (max 1520px, gutter token), column gap `clamp(24
 
 - **Hero:** a board of `clamp(600px, 100svh − nav − 30px, 1000px)`. The text column is 38.2% wide and starts 14.6% down. On desktop the prints and sketch live in a frame `min(100%, board height × 1.66)` anchored right, so they keep golden proportions on wide, short screens; the largest print is centred on the golden point.
 - **Services:** desktop grid `chair column · 4fr · 5fr` (chair and steps · heading, ruler and active step · floor plan). Without the scrubbed scene (reduced motion, short screens, no script) the heading moves beside the list.
-- **Projects:** a pinned stage of flex rows resting on the route: image sized by height `min(row height, 60vw / 1.618)` at 1.618:1, the full-width project at 66vw, info `min(22rem, 26vw)`; the people follow as the last stop (heading `min(26rem, 26vw)`, persons stacked, notes). Static layout alternates image 8 + info 4, then a 21:9 full-width image with three info columns.
-- **Phases:** five phases along a ruler, five columns on desktop, vertical on phones.
+- **Projects:** a pinned stage holding only the projects, as flex rows resting on the route: image sized by height `min(row height, 64vw / 1.618)` at 1.618:1, the full-width project at 66vw, info `min(22rem, 26vw)`, 80px between projects. Static layout alternates image 8 + info 4, then a 21:9 full-width image with three info columns.
+- **People:** a section of its own in the downward scroll after the stage (the route lands at its top): names and contact left, planning questions right.
+- **Phases:** five phases along a ruler, five columns on desktop, vertical on tablets and phones (five Italian phase names do not fit across below desktop width).
 - **Contact:** pinned scene of 160vh with headline and CTA visible from the start; the opened form pushes the figures aside by ±3vw.
 - **Legal pages:** section title in columns 1–4, text from column 5, hairline divider above each section.
-- **Rhythm:** sections 112px vertical padding, 144–160px on desktop. Mobile stacks everything.
+- **Tablet (768–1023px):** two columns rather than the phone layout scaled up. Services: the chair column with heading beside the chair and ruler, active step and floor plan stacked beside the steps (the plan steps aside when the pinned block leaves too little room). Projects two-up, the full-width one across both columns. People: persons left, questions right. VS: drawing beside the categories. Phases: vertical ruler, name and hint side by side.
+- **Rhythm:** sections 112px vertical padding, 144–160px on desktop. Phones stack everything.
 - **Touch:** every target is 44px on coarse pointers (text links through an invisible extension, footer rows, chips, header CTA).
 
 ## Elevation & Depth
@@ -231,10 +233,10 @@ Architectural corners: 2px on buttons, chips and focus rings; 0 on inputs and im
 - **Around it:** a privacy line at label size under submit; the mailto status says the mail program should open, with an "Anfrage kopieren" link that copies the composed inquiry.
 
 ### Navigation
-Wordmark "TRIAS SCHULE" (bold / regular, tracked 0.14em), five links in page order with a ginstergelb dot for the current section, and a compact ink "Projekt anfragen" button. Below 640px: wordmark, a 40px "Anfragen" button and "Menü"; the language switch moves to the top of the full-height white sheet, whose own ginstergelb CTA replaces the header button.
+Wordmark "TRIAS SCHULE" (bold / regular, tracked 0.14em), five links in page order with a ginstergelb dot for the current section (none over sections without an entry: hero, phases), and a compact ink "Projekt anfragen" button. Below 640px: wordmark, a 40px "Anfragen" button and "Menü"; the language switch moves to the top of the full-height white sheet, whose own ginstergelb CTA replaces the header button.
 
 ### Signature: Drawn Line
-A ginstergelb SVG route as thick as the chair legs (`--leg-w`), `stroke-dashoffset` scrubbed by scroll, with ink nodes (start point and moving head). It comes down from the chair's left leg, runs along the bottom of the pinned stage revealing "Unsere Projekte". The pen tip then stays at ~62% of the screen width while the whole plan sheet (line, title, the row of projects and quotes, then the two contact people as the last stop) slides left beneath it, so the line keeps drawing to the right under everything. At the end of the row it turns 90° down (ink right-angle mark in the inner corner) and lands at the top of the VS section with an ink dot. Mobile and reduced motion show the U-shaped line with the title and the projects stacked below.
+A ginstergelb SVG route as thick as the chair legs (`--leg-w`), `stroke-dashoffset` scrubbed by scroll, with ink nodes (start point and moving head). It comes down from the chair's left leg, runs along the bottom of the pinned stage revealing "Unsere Projekte". The pen tip then stays at ~62% of the screen width while the whole plan sheet (line, title, the row of projects and quotes) slides left beneath it, so the line keeps drawing to the right under each project. Ahead of the pen the whole route is pencilled in as a 1px hairline in the line colour, with a 45° dimension tick at the start of each project and at the end of the row: ticks ahead are pencil grey, ticks the pen has passed are ink, so the line shows how far is left. At the end of the row it turns 90° down (ink right-angle mark in the inner corner) and lands at the top of the people section with an ink dot. Mobile and reduced motion show the U-shaped line with the title and the projects stacked below.
 
 ### Signature: Planning Surface (hero)
 White paper, prints held by magnets, marker notes and arrows, and a floor-plan sketch with a "7,20 m" dimension. Preparation takes about a second: the claim is written stroke by stroke at constant pen speed (~0.85s in any language) from 0.1s, subline and buttons rise at 0.12s, prints pin from 0.35s with magnets 0.3s later, notes draw from ~0.75s, and the chair arrives at 0.9s in one 900ms turn from off-left. The wordmark does not animate.
@@ -247,6 +249,9 @@ White paper, prints held by magnets, marker notes and arrows, and a floor-plan s
 
 ### Signature: Phase Ruler
 "Wo stehen Sie gerade?": a 1px ink rule drawn on scroll with a tick per phase and a closing end tick. Each phase opens the form with that phase selected; hover and focus set a ginstergelb node on the tick and reveal an arrow.
+
+### VS Categories
+A list of categories with hollow dots. A row becomes a link, with an arrow and a ginstergelb reading point that follows the scroll, only once it has its own deep link into the VS catalogue; until then rows are plain text and the one ink catalogue button is the way out.
 
 ## Do's and Don'ts
 

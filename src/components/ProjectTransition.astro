@@ -7,8 +7,8 @@ const t = useTranslations(getLang(Astro.currentLocale)).projects;
  * the line comes down from the chair's leg and turns along the bottom of the
  * screen, revealing "Unsere Projekte". Then the whole plan sheet (line, title
  * and the projects passed in as the slot) slides to the left under a fixed pen
- * tip, so the line keeps drawing to the right beneath each project and then the
- * two contact people. At the end of the row it turns 90° down, towards the next section.
+ * tip, so the line keeps drawing to the right beneath each project. At the end of the
+ * row it turns 90° down and lands in the people section below.
  * Mobile and reduced motion: a U-shaped line with the title, projects stacked below.
  */
 ---
@@ -18,7 +18,9 @@ const t = useTranslations(getLang(Astro.currentLocale)).projects;
     <div class="t-sheet" data-sheet>
       <div class="t-head relative" data-head>
         <svg class="t-svg absolute inset-0 h-full w-full" data-svg aria-hidden="true">
+          <path class="t-guide" data-guide d="" />
           <path class="t-path" data-path d="" />
+          <g class="t-ticks" data-ticks></g>
           <path class="t-corner" data-corner d="" />
           <circle class="t-node" data-start r="5.5" cx="-20" cy="-20" />
           <circle class="t-head-dot" data-head-dot r="6" cx="-20" cy="-20" />
@@ -58,6 +60,12 @@ const t = useTranslations(getLang(Astro.currentLocale)).projects;
     stroke-linejoin: miter;
   }
   .t-corner { fill: none; stroke: var(--color-ink); stroke-width: 1.5; }
+  /* pinned stage: the whole route is pencilled in ahead of the pen, with a dimension tick at the start
+     of each project and at the end of the row; ticks the pen has passed are inked */
+  .t-guide { display: none; fill: none; stroke: var(--color-line); stroke-width: 1; }
+  .transition.is-scrub .t-guide { display: block; }
+  .t-ticks :global(path) { fill: none; stroke: color-mix(in oklab, var(--color-muted) 55%, var(--color-paper)); stroke-width: 1.5; stroke-linecap: round; transition: stroke 200ms var(--ease-draw); }
+  .t-ticks :global(path.is-passed) { stroke: var(--color-ink); }
   .t-node, .t-head-dot { fill: var(--color-ink); }
 
   .t-title-wrap { bottom: calc(100% - var(--ym, 300px) + 14px); }
@@ -105,14 +113,14 @@ const t = useTranslations(getLang(Astro.currentLocale)).projects;
   .transition.is-scrub .t-row :global(.projects-inner) {
     flex-direction: row;
     align-items: stretch;
-    gap: 120px;
+    gap: 80px;
     height: 100%;
     padding: 0;
   }
   /* everything rests on the drawn line like objects on a shelf; images are golden rectangles,
      sized by the height of the stage (nav to line) so the rooms appear at full scale */
   .transition.is-scrub .t-row {
-    --img-h: min(var(--row-h, 600px), calc(60vw / 1.618));
+    --img-h: min(var(--row-h, 600px), calc(64vw / 1.618));
     --img-h-full: min(var(--row-h, 600px), calc(66vw / 1.618));
   }
   .transition.is-scrub .t-row :global(.project) {
@@ -131,34 +139,8 @@ const t = useTranslations(getLang(Astro.currentLocale)).projects;
   .transition.is-scrub .t-row :global(.project--full .p-meta) { margin-top: 28px; }
   .transition.is-scrub .t-row :global(.project--full .p-desc) { margin-top: 22px; }
   .transition.is-scrub .t-row :global(.p-detail) { display: none; }
-  /* the row: projects, then the people as the last stop, all resting on the line */
-  .transition.is-scrub .t-row { display: flex; align-items: stretch; gap: 180px; }
-  .transition.is-scrub .t-row :global(.people) { flex: none; height: 100%; padding: 0; background: transparent; }
-  /* the last stop has to fit one screen (minus the line's turn), or the heading is cut off at the end */
-  .transition.is-scrub .t-row :global(.people > .shell) {
-    display: flex;
-    align-items: flex-end;
-    gap: min(56px, 4vw);
-    height: 100%;
-    width: max-content;
-    max-width: none;
-    margin: 0;
-    padding: 0;
-  }
-  .transition.is-scrub .t-row :global(.people-intro) { flex: none; width: min(26rem, 26vw); padding-bottom: 8px; }
-  .transition.is-scrub .t-row :global(.people h2) { font-size: var(--text-title); }
-  /* heading · the two names stacked · the planning questions */
-  .transition.is-scrub .t-row :global(.people-grid) {
-    display: flex;
-    align-items: flex-end;
-    gap: min(56px, 4vw);
-    margin-top: 0;
-  }
-  .transition.is-scrub .t-row :global(.persons) { flex: none; width: min(20rem, 24vw); padding-bottom: 8px; }
-  .transition.is-scrub .t-row :global(.persons-list) { grid-template-columns: 1fr; row-gap: 28px; }
-  .transition.is-scrub .t-row :global(.notes) { flex: none; width: min(240px, 17vw); padding-bottom: 12px; }
-  .transition.is-scrub .t-row :global(.notes ul) { gap: 26px; }
-
+  /* the row of projects, all resting on the line */
+  .transition.is-scrub .t-row { display: flex; align-items: stretch; }
   .transition.is-scrub .t-row :global(.p-quote) { flex: none; width: min(520px, 38vw); align-self: end; margin-left: 0; }
 </style>
 
@@ -171,13 +153,15 @@ const t = useTranslations(getLang(Astro.currentLocale)).projects;
   const headBox = section?.querySelector<HTMLElement>('[data-head]');
   const svg = section?.querySelector<SVGSVGElement>('[data-svg]');
   const path = section?.querySelector<SVGPathElement>('[data-path]');
+  const guide = section?.querySelector<SVGPathElement>('[data-guide]');
+  const ticksBox = section?.querySelector<SVGGElement>('[data-ticks]');
   const corner = section?.querySelector<SVGPathElement>('[data-corner]');
   const dot = section?.querySelector<SVGCircleElement>('[data-head-dot]');
   const start = section?.querySelector<SVGCircleElement>('[data-start]');
   const title = section?.querySelector<HTMLElement>('[data-title]');
   const row = section?.querySelector<HTMLElement>('[data-row]');
 
-  if (section && sheet && headBox && svg && path && corner && dot && start && title && row) {
+  if (section && sheet && headBox && svg && path && guide && ticksBox && corner && dot && start && title && row) {
     let total = 1;
     let x0 = 0;
     let ym = 0;
@@ -193,6 +177,7 @@ const t = useTranslations(getLang(Astro.currentLocale)).projects;
     let span = 1;
     let lenA = 0; // path length when the pen reaches its fixed position
     let travel = 0; // how far the sheet slides
+    let ticks: { x: number; el: SVGPathElement }[] = [];
 
     // half the route's stroke width, so the right-angle mark sits inside the corner
     const half = () => (parseFloat(getComputedStyle(path).strokeWidth) || 4) / 2;
@@ -202,6 +187,9 @@ const t = useTranslations(getLang(Astro.currentLocale)).projects;
       section.classList.toggle('is-scrub', scrub);
       section.style.height = '';
       sheet.style.removeProperty('--tx');
+      ticksBox.replaceChildren();
+      ticks = [];
+      guide.setAttribute('d', '');
 
       const isDesktop = window.matchMedia('(min-width: 1024px)').matches;
       const pad = parseFloat(getComputedStyle(title.parentElement as HTMLElement).paddingLeft);
@@ -266,6 +254,19 @@ const t = useTranslations(getLang(Astro.currentLocale)).projects;
       start.setAttribute('cx', String(x0));
       start.setAttribute('cy', String(ym));
 
+      // the pencilled route and one dimension tick per stop, so the line shows how far is left
+      guide.setAttribute('d', path.getAttribute('d') ?? '');
+      const sheetLeft = sheet.getBoundingClientRect().left;
+      const stops = [...row.querySelectorAll<HTMLElement>('[data-project]')].map(
+        (el) => el.getBoundingClientRect().left - sheetLeft,
+      );
+      ticks = [...stops, rowLeft + rowW].map((x) => {
+        const el = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        el.setAttribute('d', `M${(x - 9).toFixed(1)} ${ym + 9} L${(x + 9).toFixed(1)} ${ym - 9}`);
+        ticksBox.append(el);
+        return { x, el };
+      });
+
       const penX = vw * 0.62; // where the pen tip stays while the sheet slides
       travel = Math.max(0, sheetW - vw);
       lenA = ym + (penX - x0);
@@ -286,6 +287,7 @@ const t = useTranslations(getLang(Astro.currentLocale)).projects;
       start.style.opacity = len >= ym ? '1' : '0';
       corner.style.opacity = len >= bendAt + 18 ? '1' : '0';
       const headX = len <= ym ? x0 : x0 + (len - ym);
+      ticks.forEach((t) => t.el.classList.toggle('is-passed', headX >= t.x - 1));
       section.style.setProperty('--reveal', String(len > ym ? clamp((headX - titleLeft) / titleW) : 0));
       section.style.setProperty('--sub', String(range(headX, titleLeft + titleW * 0.6, titleLeft + titleW + 200)));
     };
@@ -320,7 +322,7 @@ const t = useTranslations(getLang(Astro.currentLocale)).projects;
       },
     });
 
-    // Links to anchors inside the sliding sheet (e.g. #menschen): scroll to where the sheet shows them.
+    // Links to anchors inside the sliding sheet (e.g. a project heading): scroll to where the sheet shows them.
     document.addEventListener('click', (event) => {
       if (!pinned) return;
       const link = (event.target as Element | null)?.closest<HTMLAnchorElement>('a[href^="#"]');

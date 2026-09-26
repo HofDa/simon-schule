@@ -177,16 +177,15 @@ const nav = t.nav.items.map((item) => ({ ...item, href: `${home}${item.href}` })
   const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-nav-link]'));
   // only links into this page's own sections (other pages link to the home page's sections)
   const inPage = (a: HTMLAnchorElement) => new URL(a.href).pathname === location.pathname;
-  const sections = links
-    .map((a) => (inPage(a) && a.hash ? document.getElementById(a.hash.slice(1)) : null))
-    .filter((s): s is HTMLElement => Boolean(s));
-  if ('IntersectionObserver' in window && sections.length) {
+  // every section of the page is watched: over one that has no nav entry (hero, phases) no link is marked
+  const sections = Array.from(document.querySelectorAll<HTMLElement>('main > section'));
+  if ('IntersectionObserver' in window && links.some(inPage)) {
     const io = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
           if (!entry.isIntersecting) continue;
-          const id = `#${entry.target.id}`;
-          links.forEach((a) => a.setAttribute('aria-current', String(inPage(a) && a.hash === id)));
+          const id = entry.target.id ? `#${entry.target.id}` : '';
+          links.forEach((a) => a.setAttribute('aria-current', String(Boolean(id) && inPage(a) && a.hash === id)));
         }
       },
       { rootMargin: '-45% 0px -50% 0px' },
