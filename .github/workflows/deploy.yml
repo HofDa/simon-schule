@@ -26,10 +26,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Configure public domain
+      # Served by GitHub Pages at hofda.github.io/simon-schule/ until trias-schule.it points here.
+      # For the custom domain: SITE_URL=https://trias-schule.it and BASE_PATH=/ (and /old/ below).
+      - name: Configure site address
         run: |
-          echo "SITE_URL=https://trias-schule.it" >> "$GITHUB_ENV"
-          echo "BASE_PATH=/" >> "$GITHUB_ENV"
+          echo "SITE_URL=https://hofda.github.io" >> "$GITHUB_ENV"
+          echo "BASE_PATH=/simon-schule/" >> "$GITHUB_ENV"
 
       - name: Check Astro diagnostics
         run: npm run check
@@ -48,7 +50,7 @@ jobs:
           git fetch --no-tags --depth=1 origin "$OLD_REF"
           git worktree add --detach ../old "$OLD_REF"
           ln -s "$GITHUB_WORKSPACE/node_modules" ../old/node_modules
-          (cd ../old && BASE_PATH=/old/ npx astro build)
+          (cd ../old && BASE_PATH="${BASE_PATH}old/" npx astro build)
           rm -f ../old/dist/CNAME ../old/dist/robots.txt ../old/dist/sitemap.xml
           find ../old/dist -name '*.html' -exec sed -i 's|<head>|<head><meta name="robots" content="noindex">|' {} +
           cp -r ../old/dist ./dist/old
