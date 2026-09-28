@@ -1,4 +1,9 @@
 ---
+/**
+ * Example rooms on white paper. Each photograph is measured before it opens:
+ * a dimension line draws across its width, then the frame opens from the plan's
+ * outline to the full image. Without motion everything is simply shown.
+ */
 import { getProjects } from '../data/projects';
 import { asset } from '../lib/paths';
 import { getLang, useTranslations } from '../i18n/ui';
@@ -10,139 +15,152 @@ const projects = getProjects(lang);
 const layouts = ['left', 'right', 'full'] as const;
 const src = (file: string, w: number) => asset(`images/projects/${file}-${w}.webp`);
 const widths = [320, 480, 640, 720, 900, 960, 1800];
+const srcset = (file: string) => widths.map((w) => `${src(file, w)} ${w}w`).join(', ');
 ---
 
-<div class="projects shell relative pb-24 lg:pb-36" data-projects>
-  <div class="projects-inner relative" data-projects-inner>
-    {projects.map((project, i) => {
-      const layout = layouts[i % layouts.length];
-      const [main, detail] = project.images;
-      const mainSizes = layout === 'full'
-        ? '(min-width: 1520px) 1392px, (min-width: 768px) 92vw, calc(100vw - 40px)'
-        : '(min-width: 1520px) 912px, (min-width: 1024px) 61vw, (min-width: 768px) calc(46vw - 16px), calc(100vw - 40px)';
-      const detailSizes = '(min-width: 1520px) 270px, (min-width: 1024px) 18vw, (min-width: 768px) 28vw, 62vw';
-      return (
-        <>
-          <article class={`project project--${layout}`} data-project data-layout={layout} aria-labelledby={`p-${project.id}`}>
-            <div class="p-media" data-media>
-              <img
-                src={src(main.file, 900)}
-                srcset={widths.map((width) => `${src(main.file, width)} ${width}w`).join(', ')}
-                sizes={mainSizes}
-                alt={main.alt}
-                width="1800"
-                height="1200"
-                loading="lazy"
-                decoding="async"
-              />
-            </div>
+<section id="projekte" class="projects sheet-paper" aria-labelledby="projects-title" data-projects>
+  <div class="shell">
+    <header class="pr-head">
+      <h2 id="projects-title" class="pr-title display">{t.title}</h2>
+      <p class="pr-sub">{t.sub}</p>
+    </header>
 
-            <div class="p-info" data-info>
-              {project.placeholder && <p class="tag-placeholder mb-5">{t.placeholder}</p>}
-              <h3 id={`p-${project.id}`} class="p-title">{project.title}</h3>
-              <dl class="p-meta">
-                {project.location && <div><dt>{t.meta.location}</dt><dd>{project.location}</dd></div>}
-                <div><dt>{t.meta.type}</dt><dd>{project.type}</dd></div>
-                <div><dt>{t.meta.services}</dt><dd>{project.services.join(' · ')}</dd></div>
-                {project.year && <div><dt>{t.meta.year}</dt><dd>{project.year}</dd></div>}
-                {project.architect && <div><dt>{t.meta.architect}</dt><dd>{project.architect}</dd></div>}
-                {project.client && <div><dt>{t.meta.client}</dt><dd>{project.client}</dd></div>}
-              </dl>
-              <p class="p-desc">{project.description}</p>
-              {detail && layout !== 'full' && (
-                <img
-                  class="p-detail"
-                  src={src(detail.file, 900)}
-                  srcset={widths.map((width) => `${src(detail.file, width)} ${width}w`).join(', ')}
-                  sizes={detailSizes}
-                  alt={detail.alt}
-                  width="900"
-                  height="675"
-                  loading="lazy"
-                  decoding="async"
-                />
-              )}
-            </div>
-          </article>
-          {project.testimonial && <ProjectTestimonial testimonial={project.testimonial} />}
-        </>
-      );
-    })}
+    <div class="pr-list">
+      {projects.map((project, i) => {
+        const layout = layouts[i % layouts.length];
+        const [main, detail] = project.images;
+        const sizes = layout === 'full'
+          ? '(min-width: 1560px) 1560px, 100vw'
+          : '(min-width: 1560px) 960px, (min-width: 1024px) 64vw, calc(100vw - 40px)';
+        return (
+          <>
+            <article class={`pr pr--${layout}`} data-project aria-labelledby={`p-${project.id}`}>
+              <div class="pr-figure">
+                <div class="dim pr-dim" aria-hidden="true"><span class="dim-end"></span></div>
+                <div class="pr-media" data-media>
+                  <img
+                    src={src(main.file, 900)}
+                    srcset={srcset(main.file)}
+                    sizes={sizes}
+                    alt={main.alt}
+                    width="1800"
+                    height="1200"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
+              </div>
+
+              <div class="pr-info">
+                <h3 id={`p-${project.id}`} class="pr-name">{project.title}</h3>
+                {project.placeholder && <p class="tag-placeholder pr-status">{t.placeholder}</p>}
+                <p class="pr-desc">{project.description}</p>
+                <dl class="pr-meta">
+                  {project.location && <div><dt>{t.meta.location}</dt><dd>{project.location}</dd></div>}
+                  <div><dt>{t.meta.type}</dt><dd>{project.type}</dd></div>
+                  <div><dt>{t.meta.services}</dt><dd>{project.services.join(' · ')}</dd></div>
+                  {project.year && <div><dt>{t.meta.year}</dt><dd class="tnum">{project.year}</dd></div>}
+                  {project.architect && <div><dt>{t.meta.architect}</dt><dd>{project.architect}</dd></div>}
+                  {project.client && <div><dt>{t.meta.client}</dt><dd>{project.client}</dd></div>}
+                </dl>
+                {detail && layout !== 'full' && (
+                  <div class="pr-detail">
+                    <img
+                      src={src(detail.file, 640)}
+                      srcset={srcset(detail.file)}
+                      sizes="(min-width: 1024px) 22vw, 60vw"
+                      alt={detail.alt}
+                      width="900"
+                      height="675"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </div>
+                )}
+              </div>
+            </article>
+            {project.testimonial && <ProjectTestimonial testimonial={project.testimonial} />}
+          </>
+        );
+      })}
+    </div>
   </div>
-</div>
+</section>
 
 <style>
-  .projects-inner { display: flex; flex-direction: column; gap: 88px; padding-top: 24px; }
+  .projects { padding-block: clamp(104px, 12vw, 176px); }
+  .pr-head { display: grid; gap: 24px; align-items: end; }
+  .pr-title { font-size: var(--text-display); }
+  .pr-sub { max-width: 46ch; color: var(--color-muted); font-size: var(--text-body); }
 
-  .p-media { overflow: hidden; background: var(--color-surface); }
-  .p-media img {
-    display: block;
-    width: 100%;
-    aspect-ratio: 3 / 2;
-    object-fit: cover;
-    transform: translateY(calc(var(--r, 0) * 3%)) scale(calc(1 + var(--r, 0) * 0.05));
-    transform-origin: 50% 0;
-  }
-  .p-media { clip-path: inset(calc(var(--r, 0) * 10%) 0 0 0); }
+  .pr-list { display: flex; flex-direction: column; gap: clamp(96px, 11vw, 168px); margin-top: clamp(64px, 8vw, 120px); }
 
-  .p-info { margin-top: 28px; opacity: var(--io, 1); transform: translateY(calc((1 - var(--io, 1)) * 14px)); }
-  .p-title { font-size: var(--text-title); line-height: 1.02; letter-spacing: -0.04em; max-width: 16ch; }
-  .p-meta { margin: 26px 0 0; }
-  .p-meta div { display: grid; grid-template-columns: 7.5rem 1fr; gap: 12px; padding: 5px 0; font-size: var(--text-meta); }
-  .p-meta dt { color: var(--color-muted); }
-  .p-meta dd { margin: 0; }
-  .p-desc { margin-top: 22px; max-width: 46ch; color: var(--color-muted); line-height: 1.65; }
-  .p-detail { display: block; width: 62%; margin-top: 36px; aspect-ratio: 4 / 3; object-fit: cover; }
+  .pr { display: grid; gap: 28px; align-items: start; }
+  .pr-figure { min-width: 0; }
+  .pr-dim { margin-bottom: 14px; color: var(--color-ink); }
+  .pr-media { position: relative; overflow: hidden; background: var(--color-warm); aspect-ratio: 3 / 2; clip-path: inset(var(--clip, 0%)); }
+  .pr-media img { display: block; width: 100%; height: 100%; object-fit: cover; transform: scale(var(--zoom, 1)); transform-origin: 50% 60%; }
 
-  /* tablet: two projects side by side, the full-width one across both columns */
-  @media (min-width: 768px) and (max-width: 1023px) {
-    .projects-inner { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 32px; row-gap: 72px; align-items: start; }
-    .project--full,
-    .projects-inner > :global(.p-quote) { grid-column: 1 / -1; }
-    .project--full .p-media img { aspect-ratio: 16 / 9; }
-    .project--full .p-info { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 32px; }
-    .project--full .p-info > :global(*) { grid-column: 1; }
-    .project--full .p-desc { grid-column: 2; grid-row: 1 / span 3; margin-top: 0; }
-  }
+  .pr-info { min-width: 0; }
+  .pr-name { font-size: var(--text-title); font-variation-settings: "wdth" 112; font-weight: 680; letter-spacing: -0.03em; line-height: 1.02; max-width: 16ch; }
+  .pr-status { margin-top: 12px; }
+  .pr-desc { margin-top: 18px; max-width: 40ch; color: var(--color-muted); }
+  .pr-meta { margin: 28px 0 0; font-size: var(--text-meta); border-top: 1px solid var(--color-ink); }
+  .pr-meta div { display: grid; grid-template-columns: 7.5rem 1fr; gap: 16px; padding: 11px 0; border-bottom: 1px solid var(--color-line); }
+  .pr-meta dt { color: var(--color-muted); }
+  .pr-meta dd { margin: 0; }
+  .pr-detail { margin-top: 32px; max-width: 320px; overflow: hidden; aspect-ratio: 4 / 3; background: var(--color-warm); }
+  .pr-detail img { display: block; width: 100%; height: 100%; object-fit: cover; }
 
   @media (min-width: 1024px) {
-    .projects-inner { gap: clamp(120px, 14vh, 180px); padding-top: 40px; }
-    .project { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(24px, 2.6vw, 44px); align-items: start; }
-    .project--left .p-media { grid-column: 1 / 9; }
-    .project--left .p-info { grid-column: 9 / 13; margin-top: 0; padding-top: 12px; }
-    .project--right .p-info { grid-column: 1 / 5; grid-row: 1; margin-top: 0; padding-top: 12px; }
-    .project--right .p-media { grid-column: 5 / 13; grid-row: 1; }
-    .project--full .p-media { grid-column: 1 / -1; }
-    .project--full .p-media img { aspect-ratio: 21 / 9; }
-    .project--full .p-info {
+    .pr-head { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(24px, 2.6vw, 44px); }
+    .pr-title { grid-column: 1 / span 7; }
+    .pr-sub { grid-column: 9 / span 4; padding-bottom: 0.6em; }
+
+    .pr { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(24px, 2.6vw, 44px); }
+    .pr--left .pr-figure { grid-column: 1 / span 8; }
+    .pr--left .pr-info { grid-column: 9 / span 4; padding-top: 20px; }
+    .pr--right .pr-figure { grid-column: 5 / span 8; grid-row: 1; }
+    .pr--right .pr-info { grid-column: 1 / span 4; grid-row: 1; padding-top: 20px; }
+    .pr--full .pr-figure { grid-column: 1 / -1; margin-inline: calc(-1 * var(--gutter)); }
+    .pr--full .pr-dim { margin-inline: var(--gutter); }
+    .pr--full .pr-media { aspect-ratio: 21 / 9; }
+    .pr--full .pr-info {
       grid-column: 1 / -1;
       display: grid;
       grid-template-columns: repeat(12, minmax(0, 1fr));
-      column-gap: inherit;
-      margin-top: 36px;
+      column-gap: clamp(24px, 2.6vw, 44px);
+      align-items: start;
     }
-    .project--full .p-info > :global(*) { grid-column: 1 / 5; }
-    .project--full .p-meta { grid-column: 6 / 9; grid-row: 1 / span 3; margin-top: 0; }
-    .project--full .p-desc { grid-column: 10 / 13; grid-row: 1 / span 3; margin-top: 0; }
+    .pr--full .pr-name { grid-column: 1 / span 5; grid-row: 1; }
+    .pr--full .pr-status { grid-column: 1 / span 5; grid-row: 2; }
+    .pr--full .pr-desc { grid-column: 6 / span 3; grid-row: 1 / span 2; margin-top: 4px; }
+    .pr--full .pr-meta { grid-column: 9 / span 4; grid-row: 1 / span 2; margin-top: 4px; }
+  }
+  @media (min-width: 1560px) {
+    .pr--full .pr-figure { margin-inline: calc((100vw - 1560px) / -2 - var(--gutter)); }
+    .pr--full .pr-dim { margin-inline: calc((100vw - 1560px) / 2 + var(--gutter)); }
   }
 </style>
 
 <script>
-  import { addScene, range, viewProgress } from '../scripts/motion';
+  import { addScene, easeOut, range } from '../scripts/motion';
 
-  // Image reveals where the projects scroll normally (mobile, short screens).
-  // On the pinned desktop stage (ProjectTransition) the projects arrive by moving, so they render fully.
-  document.querySelectorAll<HTMLElement>('[data-project]').forEach((article) => {
-    const media = article.querySelector<HTMLElement>('[data-media]');
-    const info = article.querySelector<HTMLElement>('[data-info]');
-    if (!media || !info) return;
+  document.querySelectorAll<HTMLElement>('[data-project]').forEach((project) => {
+    const dim = project.querySelector<HTMLElement>('.pr-dim');
+    const media = project.querySelector<HTMLElement>('[data-media]');
+    if (!dim || !media) return;
     addScene({
       el: media,
-      media: '(max-width: 1023px), (max-height: 639px)',
-      progress: viewProgress(1, 0.3),
+      // from the frame's top entering the lower edge until it sits in the upper third
+      progress: (rect, vh) => (vh * 1.02 - rect.top) / (vh * 0.75),
       render(p) {
-        media.style.setProperty('--r', String(1 - p));
-        info.style.setProperty('--io', String(range(p, 0.45, 1)));
+        const measure = easeOut(range(p, 0, 0.4));
+        const open = easeOut(range(p, 0.25, 1));
+        dim.style.setProperty('--dim-p', measure.toFixed(3));
+        dim.style.setProperty('--dim-end', measure > 0.98 ? '1' : '0');
+        media.style.setProperty('--clip', `${((1 - open) * 9).toFixed(2)}% ${((1 - open) * 14).toFixed(2)}%`);
+        media.style.setProperty('--zoom', (1 + (1 - open) * 0.14).toFixed(4));
       },
     });
   });

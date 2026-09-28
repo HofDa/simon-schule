@@ -1,64 +1,67 @@
 ---
 name: Trias Schule
-description: A planning surface that becomes a building – white, architectural, ruler-drawn.
+description: Die Maßkette. Learning spaces for South Tyrol, drawn as a measured plan on hard-edged sheets of Ginstergelb, ink and paper.
 colors:
-  paper: "#ffffff"
-  warm: "#f6f5f0"
-  surface: "#f2f1ec"
-  ink: "#20201d"
-  ink-deep: "#000000"
-  muted: "#6e6c65"
-  line: "#dddad1"
   ginster: "#e2a300"
-  ginster-deep: "#b88400"
   ginster-light: "#f1c23b"
+  ginster-deep: "#8a6300"
+  on-ginster: "#463606"
+  ink: "#1d1d1b"
+  ink-deep: "#000000"
+  ink-line: "#3b3a36"
+  on-ink: "#aeaba1"
+  paper: "#ffffff"
+  warm: "#f4f3ee"
+  muted: "#66645d"
+  line: "#dcd9d0"
   error: "#a4331c"
 typography:
   display:
-    fontFamily: "Kalam, Caveat, Segoe Print, cursive"
-    fontSize: "clamp(2.9rem, min(5.4vw, 9.4vh), 5.8rem)"
-    fontWeight: 700
-    lineHeight: 1
-    letterSpacing: "-0.005em"
+    fontFamily: "Archivo, Archivo Fallback, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "clamp(2.7rem, 6.2vw, 6rem)"
+    fontWeight: 720
+    lineHeight: 0.94
+    letterSpacing: "-0.035em"
+    fontVariation: "'wdth' 118"
   headline:
     fontFamily: "Archivo, Archivo Fallback, ui-sans-serif, system-ui, sans-serif"
-    fontSize: "clamp(2.4rem, 5vw, 4.45rem)"
-    fontWeight: 600
-    lineHeight: 0.98
-    letterSpacing: "-0.045em"
+    fontSize: "clamp(2.3rem, 4.6vw, 4.5rem)"
+    fontWeight: 720
+    lineHeight: 0.94
+    letterSpacing: "-0.035em"
+    fontVariation: "'wdth' 118"
+  step:
+    fontFamily: "Archivo, Archivo Fallback, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "clamp(2.6rem, 5.4vw, 5.6rem)"
+    fontWeight: 720
+    lineHeight: 0.94
+    letterSpacing: "-0.035em"
+    fontVariation: "'wdth' 118"
   title:
     fontFamily: "Archivo, Archivo Fallback, ui-sans-serif, system-ui, sans-serif"
-    fontSize: "clamp(1.75rem, 2.6vw, 2.75rem)"
-    fontWeight: 600
-    lineHeight: 1.05
-    letterSpacing: "-0.035em"
-  route-title:
-    fontFamily: "Archivo, Archivo Fallback, ui-sans-serif, system-ui, sans-serif"
-    fontSize: "clamp(2.75rem, 7vw, 6rem)"
-    fontWeight: 600
-    lineHeight: 0.95
-    letterSpacing: "-0.045em"
-  quote:
-    fontFamily: "Archivo, Archivo Fallback, ui-sans-serif, system-ui, sans-serif"
-    fontSize: "clamp(1.6rem, 2.9vw, 2.75rem)"
-    fontWeight: 500
-    lineHeight: 1.18
+    fontSize: "clamp(1.6rem, 2.4vw, 2.5rem)"
+    fontWeight: 680
+    lineHeight: 1.02
     letterSpacing: "-0.03em"
-  phi-1:
+    fontVariation: "'wdth' 112"
+  focal:
     fontFamily: "Archivo, Archivo Fallback, ui-sans-serif, system-ui, sans-serif"
-    fontSize: "1.7rem"
-    fontWeight: 600
+    fontSize: "1.6rem"
+    fontWeight: 680
     letterSpacing: "-0.03em"
+    fontVariation: "'wdth' 112"
   lead:
     fontFamily: "Archivo, Archivo Fallback, ui-sans-serif, system-ui, sans-serif"
-    fontSize: "1.2rem"
+    fontSize: "clamp(1.14rem, 1.25vw, 1.3rem)"
     fontWeight: 400
-    lineHeight: 1.55
+    lineHeight: 1.5
+    fontVariation: "'wdth' 100"
   body:
     fontFamily: "Archivo, Archivo Fallback, ui-sans-serif, system-ui, sans-serif"
-    fontSize: "1.05rem"
+    fontSize: "1.06rem"
     fontWeight: 400
-    lineHeight: 1.65
+    lineHeight: 1.62
+    fontVariation: "'wdth' 100"
   meta:
     fontFamily: "Archivo, Archivo Fallback, ui-sans-serif, system-ui, sans-serif"
     fontSize: "0.92rem"
@@ -66,205 +69,208 @@ typography:
     lineHeight: 1.5
   label:
     fontFamily: "Archivo, Archivo Fallback, ui-sans-serif, system-ui, sans-serif"
-    fontSize: "0.82rem"
+    fontSize: "0.8rem"
     fontWeight: 500
     lineHeight: 1.4
-  marker:
-    fontFamily: "Caveat, Segoe Print, cursive"
-    fontSize: "clamp(1.35rem, 1.8vw, 1.9rem)"
-    fontWeight: 600
-    lineHeight: 1
-    letterSpacing: "0"
 rounded:
   none: "0px"
-  sm: "2px"
-  full: "9999px"
+  marker: "50%"
 spacing:
   gutter: "clamp(20px, 4vw, 64px)"
-  nav: "72px"
-  chair-w: "clamp(250px, 21vw, 330px)"
-  section: "112px"
-  section-lg: "160px"
+  nav-h: "72px"
+  column-gap: "clamp(24px, 2.6vw, 44px)"
+  section: "clamp(104px, 12vw, 176px)"
+  shell-max: "1560px"
 components:
-  button-primary:
+  button-ink:
     backgroundColor: "{colors.ink}"
     textColor: "{colors.paper}"
     typography: "{typography.meta}"
-    rounded: "{rounded.sm}"
-    padding: "0 1.4rem"
-    height: "48px"
-  button-primary-hover:
+    rounded: "{rounded.none}"
+    padding: "0 1.5rem"
+    height: "52px"
+  button-ink-hover:
     backgroundColor: "{colors.ink-deep}"
-  button-cta:
+    textColor: "{colors.paper}"
+  button-ginster:
     backgroundColor: "{colors.ginster}"
     textColor: "{colors.ink}"
     typography: "{typography.meta}"
-    rounded: "{rounded.sm}"
-    padding: "0 1.4rem"
-    height: "48px"
-  button-cta-hover:
+    rounded: "{rounded.none}"
+    padding: "0 1.5rem"
+    height: "52px"
+  button-ginster-hover:
     backgroundColor: "{colors.ginster-light}"
-  nav-cta:
+    textColor: "{colors.ink}"
+  sheet-ginster:
+    backgroundColor: "{colors.ginster}"
+    textColor: "{colors.ink}"
+  sheet-ink:
     backgroundColor: "{colors.ink}"
     textColor: "{colors.paper}"
-    typography: "{typography.meta}"
-    rounded: "{rounded.sm}"
-    padding: "0 16px"
-    height: "40px"
-  chip:
+  sheet-paper:
     backgroundColor: "{colors.paper}"
     textColor: "{colors.ink}"
+  input-line:
+    textColor: "{colors.ink}"
+    typography: "{typography.body}"
+    rounded: "{rounded.none}"
+    padding: "8px 0 9px"
+  chip:
+    textColor: "{colors.ink}"
     typography: "{typography.meta}"
-    rounded: "{rounded.sm}"
+    rounded: "{rounded.none}"
     padding: "0 12px"
     height: "36px"
   chip-selected:
     backgroundColor: "{colors.ink}"
     textColor: "{colors.paper}"
-  input:
-    backgroundColor: "transparent"
-    textColor: "{colors.ink}"
-    typography: "{typography.body}"
-    rounded: "{rounded.none}"
-    padding: "8px 0 9px"
-  open-fact:
-    textColor: "{colors.muted}"
 ---
 
 # Design System: Trias Schule
 
 ## Overview
 
-**Creative North Star: "A planning surface that becomes a building"**
+**Creative North Star: "Die Maßkette"**
 
-The site reads as one continuous architectural drawing. It opens on white paper: pinned photo prints held by ginstergelb magnets, marker notes and a small floor-plan sketch, with the claim written across it by hand like the first idea of a plan. A flat ginstergelb PantoSwing (front view) turns in last at the bottom of the hero; its left leg becomes one quiet route beside the services list, then meets the route that carries the projects and the two people and finally lands on the VS section. Everything drawn is a technical line drawing: ink strokes, flat ginstergelb only on the object, no gradients. The interface itself stays white and quiet; colour comes from photographs, the chairs, the stools and a few ginstergelb points.
+The site is an architect's measured drawing laid out at page scale. Colour is committed in whole, hard-edged sheets: Ginstergelb fields, ink fields and white paper fields, stacked edge to edge with no transition between them. On those sheets the only ornament is the draughtsman's own vocabulary: 1.5px ink lines, dimension lines closed by 45° ticks, hatched cut walls, door swings, tabular figures. The chain of dimensions is the organising device; it measures the project steps, the realised rooms and the visitor's own phase.
+
+Type is one family, Archivo, used at two widths: an expanded, heavy, tightly tracked cut for anything that is a name or a claim, and the normal width for reading. Density is low. Sections breathe on 104–176px vertical padding, and the 12-column grid is held strictly, often with a copy block on 5 columns against a drawing or photograph on 7.
+
+Motion reads as measuring. Scroll progress is animation progress (scrubbed, reversible); lines draw, fills run along the chain, frames open from a dimension line. Only the hero plan draws on load. Reduced motion renders every scene in its final state.
 
 **Key Characteristics:**
-- Generous white space; hairline structure instead of containers.
-- Technical-drawing vocabulary: end ticks, right-angle marks, dimension lines, hatched floors, dashed zones.
-- One drawing style: ink contours, flat ginstergelb fills, no gradients, no blurred shadows.
-- Handwriting only as annotation, and for the one claim in the hero.
-- Motion scrubbed by scroll rather than played on a timer; final states without motion.
+- Page-scale colour sheets (Ginstergelb, ink, paper) with hard edges, never gradients or tints between them.
+- Line drawing as the only illustration: 1.5px strokes, 45° end ticks, hatched poché.
+- One typeface, two widths: expanded 118 display, normal 100 reading.
+- Square corners everywhere; circles only as small point markers.
+- Flat: depth comes from sheet colour, never from shadow.
+- Scroll-scrubbed motion that measures and draws, and is fully static when motion is reduced.
 
 ## Colors
 
-White paper, one ink, one yellow.
+Three committed sheet colours, each carrying its own secondary text and line colour, plus quiet paper neutrals for photography.
 
 ### Primary
-- **Ink** (#20201d): text, drawn lines, the ink button, figure contours, plan walls and filled tables.
+- **Ginstergelb** (ginster): the broom-flower yellow. Full sheets for the hero, the people section and the contact; on ink sheets it becomes the object and progress colour (seats in the plan, the chain fill, passed ticks, phase hover). Also the ginster button and the selection colour on ink.
+- **Pale Ginster** (ginster-light): hover state of the ginster button only.
+- **Deep Ginster** (ginster-deep): text caret colour; not a surface colour.
+- **Ginster Shadow Text** (on-ginster): secondary text on a Ginstergelb sheet, ink tinted from the yellow (about 5:1).
 
 ### Secondary
-- **Ginstergelb** (#e2a300; RAL 1032, working value): magnets, chairs and stools, the drawn route, the active-step and phase nodes, the active nav dot, the hand-underline under the claim, the conversion CTA. **Ginster light** (#f1c23b): CTA hover and the lit face of a shell or seat. **Ginster deep** (#b88400): the hollow open-fact ring and the caret.
+- **Drawing Ink** (ink): body text on light sheets, the ink sheet (chain, phases, footer), primary buttons, all line drawing on light sheets, selected chips.
+- **Pure Black** (ink-deep): ink button hover only.
+- **Ink Rule** (ink-line): unlit rules and the chain track on an ink sheet.
+- **Ink Secondary** (on-ink): secondary text and unpassed ticks on an ink sheet.
 
 ### Neutral
-- **Paper** (#ffffff): page ground and the opened form. **Warm** (#f6f5f0): footer. **Surface** (#f2f1ec): portrait ground and the far limbs of the seated figures. **Line** (#dddad1): hairline dividers. **Muted** (#6e6c65): secondary text (≥4.5:1 on paper). **Error** (#a4331c): invalid field underline and message.
+- **Paper** (paper): the page, the paper sheet behind photography, the inquiry form's sheet, text and lines on ink.
+- **Warm Paper** (warm): placeholder fill behind images while they load.
+- **Graphite** (muted): secondary text on paper.
+- **Pencil Line** (line): hairline dividers on paper (list rows, project meta, scrolled nav edge).
+- **Correction Red** (error): form field errors only.
 
 ### Named Rules
-**The Rare Yellow Rule.** Ginstergelb marks objects, points and the one drawn route, never fills a region. At most one ginstergelb button on screen; the conversion CTA owns it.
+**The Sheet Rule.** Every section is exactly one sheet (ginster, ink or paper), and the sheet sets the text, secondary text and line colours for everything on it. Never place a sheet colour as a small tint, card or badge.
 
-**The Honest Blank Rule.** Missing content is left out, not staged. Testimonials and the closing quote render only when approved; portraits only when a photo is set; unknown optional facts (such as a project location) are omitted. What remains open collapses into one quiet line per person or footer, marked as an open fact (muted text after a 6px hollow ginster-deep ring, never an underline that reads as a link). Placeholder projects carry "Beispielprojekt · Platzhalter" with the same marker. Never fill a gap with invented names, numbers or quotes.
+**The Object Rule.** On an ink sheet, lines turn paper and objects turn Ginstergelb. Ginstergelb on ink marks progress or the thing being placed, never decoration.
 
 ## Typography
 
-**Display:** Kalam 700 (self-hosted, one weight), a calm and even hand, for the hero claim only.
-**Body Font:** Archivo variable 400–700 (with "Archivo Fallback": Arial at size-adjust 105.5%, ascent 83.2%, descent 19.9%).
-**Marker Font:** Caveat variable 500–700.
+**Display Font:** Archivo variable, expanded cut (wdth 118), with Archivo Fallback (metric-matched Arial)
+**Body Font:** Archivo variable, normal cut (wdth 100)
 
-Fonts are self-hosted Latin subsets (woff2, OFL); Archivo is preloaded. No third-party font requests.
-
-**Character:** A plain architectural grotesque carries every UI and editorial role; a marker hand annotates the plan.
+**Character:** One grotesque stretched wide and heavy for names and claims, like lettering on a title block; the same family at normal width reads as plain technical prose.
 
 ### Hierarchy
-Every role is a token in `global.css` (`--text-label|meta|body|lead`, `--text-headline|title|route-title|marker|service-title`, `--text-phi-1|2|3`); components use the token, never a literal size. The one exception is lettering inside SVG drawings (plan labels, the chair's "Sitzhöhe"), sized in drawing units so it scales with its drawing. Reading sizes are four steps (label, meta, body, lead). Titles follow a golden scale from body: 1.7rem (`phi-1`, focal text such as form titles and menu links), 2.75rem (`phi-2`, project titles and quotes at most), 4.45rem (`phi-3`, the cap of every section heading). Service step titles use the larger, fluid `service-title` role; their small phase numbers stay at label size.
+- **Display** (720, clamp 2.7–6rem, 0.94): the hero H1 and the projects heading.
+- **Headline** (720, clamp 2.3–4.5rem, 0.94): section headings on every sheet.
+- **Step** (720, clamp 2.6–5.6rem, 0.94): the step names of the chain; in the pinned scene they narrow to wdth 88 so the longest Italian word fits.
+- **Title** (650–680, wdth 112, clamp 1.6–2.5rem, 1.02–1.05): project names, VS categories, phase names.
+- **Focal** (680, wdth 112, 1.6rem): the form title and the mobile menu links.
+- **Lead** (400, clamp 1.14–1.3rem, 1.5): section intros and sublines, 40–46ch.
+- **Body** (400, 1.06rem, 1.62): running text, about 40ch in project descriptions.
+- **Meta** (400–600, 0.92rem): buttons, metadata rows, footer.
+- **Label** (500–600, 0.8rem): form labels, the chain step names in the hero.
 
-- **Display (hero claim):** Kalam 700, line height 1, rotated −1.5°, written letter by letter (each letter wiped in over 120ms) with a ginstergelb hand-drawn underline under the last word. The visible letters are hidden from assistive technology; screen readers get the claim as one piece of text.
-- **Headline:** section H2, weight 600, capped at `phi-3`.
-- **Route title:** "Unsere Projekte", the one heading the drawn route writes; the largest Archivo size on the page.
-- **Title:** person, project and category names, 600. Service phase names use `service-title` (Archivo 600, `clamp(2rem, 3vw, 3.2rem)`) and remain fully visible while scrolling.
-- **Quote:** 500, hanging opening quote.
-- **Lead / Body:** intros and subline at lead; running text at body, measure ≤ 52ch.
-- **Meta / Label:** buttons, nav, lists and details at meta; field labels, captions and credits at label.
+The people section sets the two names at an oversized clamp(2.6rem, 9.2vw, 9.5rem), 0.88 leading, -0.045em tracking; the footer carries the wordmark at display width.
 
 ### Named Rules
-**The Annotation Rule.** Handwriting annotates: board notes, photo captions, planning questions and plan labels. Caveat never carries navigation, buttons, body text or anything a visitor must read to act. The hero claim is the one exception, written in Kalam, a calmer hand than the Caveat notes; the offer beside it (subline, buttons) stays in Archivo.
+**The Two Widths Rule.** Expanded (112–118) is for names and claims; 100 is for reading. Nothing in between, and no second family.
+
+**The Tabular Rule.** Every dimension, year and measured figure uses tabular numerals.
 
 ## Layout
 
-A 12-column grid inside a shell (max 1520px, gutter token), column gap `clamp(24px, 2.6vw, 44px)`. The chair column (`chair-w`) is the PantoSwing's width and shares the left edge with the hero claim.
+A single shell (max 1560px, gutter clamp 20–64px) holds a 12-column grid from 1024px up, column gap clamp 24–44px. Below 1024px everything stacks into one column; 640–1023px sometimes splits into two. Recurrent splits: copy on columns 1–5 against a drawing on 6–12 (hero, chain, contact); heading on 1–7 or 1–8 against an intro on 9–12 aligned to its baseline (projects, people, phases). Projects alternate left figure (8 cols), right figure (8 cols) and a full-bleed 21:9 figure that breaks the shell.
 
-- **Hero:** a board of `clamp(600px, 100svh − nav − 30px, 1000px)`. The text column is 38.2% wide and starts 14.6% down. On desktop the prints and sketch live in a frame `min(100%, board height × 1.66)` anchored right, so they keep golden proportions on wide, short screens; the largest print is centred on the golden point.
-- **Services:** a normal-flow planning route. The chair sits at the top-left and its left leg continues as one line beside the five editorial steps; the technical floor plan occupies the right column and stays sticky on desktop while the step list scrolls normally. The plan grows one SVG layer per active step. Mobile and shorter tablet views stack the steps and completed plan; no text is hidden or pinned.
-- **Projects:** a pinned stage holding only the projects, as flex rows resting on the route: image sized by height `min(row height, 64vw / 1.618)` at 1.618:1, the full-width project at 66vw, info `min(22rem, 26vw)`, 80px between projects. Static layout alternates image 8 + info 4, then a 21:9 full-width image with three info columns.
-- **People:** a section of its own in the downward scroll after the stage (the route lands at its top): names and contact left, planning questions right.
-- **Phases:** five phases along a ruler, five columns on desktop, vertical on tablets and phones (five Italian phase names do not fit across below desktop width).
-- **Contact:** pinned scene of 160vh with headline and CTA visible from the start; the opened form pushes the figures aside by ±3vw.
-- **Legal pages:** section title in columns 1–4, text from column 5, hairline divider above each section.
-- **Tablet (768–1023px):** two columns rather than the phone layout scaled up. Services: steps left and a non-sticky plan right when there is enough height; otherwise both stack. Projects two-up, the full-width one across both columns. People: persons left, questions right. VS: drawing beside the categories. Phases: vertical ruler, name and hint side by side.
-- **Rhythm:** sections 112px vertical padding, 144–160px on desktop. Phones stack everything.
-- **Touch:** every target is 44px on coarse pointers (text links through an invisible extension, footer rows, chips, header CTA).
+Sections pad clamp(96–104px, 12vw, 160–176px) vertically. The navbar is 72px tall and fixed; anchors scroll with a nav-height offset. The chain section pins on large screens and scrolls its panels sideways; without scrubbing it falls back to a sticky plan beside stacked steps.
 
 ## Elevation & Depth
 
-Flat. UI carries no shadow; drawings carry no blurred shadow and stand on hatched floor lines instead. Depth belongs only to the physical objects pinned on the hero paper. The header turns to white at 88% with a 12px blur once scrolled, and drops the blur when the menu is open.
+The system is flat. Depth is carried only by the change of sheet colour and by the paper inquiry sheet set on a Ginstergelb field. Box-shadow appears solely as line work: a 1px inset hairline under the scrolled nav, 1–2px underline rules on focused fields, and a 1.5px ring on the hero's first tick marker.
 
-### Shadow Vocabulary
-- **Print** (`box-shadow: 0 1px 1px rgba(32,32,29,.08), 0 12px 22px -12px rgba(32,32,29,.35)`): photo prints (white 5px border, rotated ±1–2.5°).
-- **Magnet** (`box-shadow: inset 0 -1px 1px rgba(120,80,0,.35), 0 2px 2px rgba(32,32,29,.22), 0 6px 10px -4px rgba(32,32,29,.3)`): the 22px ginstergelb magnet, the one object with a rendered (radial) shading.
+### Named Rules
+**The No-Lift Rule.** No blurred or offset shadows. If something must stand forward, it sits on a different sheet.
 
 ## Shapes
 
-Architectural corners: 2px on buttons, chips and focus rings; 0 on inputs and images. Circles are reserved for magnets, line nodes, status dots and the open-fact ring.
+All surfaces, buttons, chips, fields and images have square corners (0). The only round forms are point markers: the 7px hollow open-fact dot, the 6px selected-chip dot, the 12px Ginstergelb phase marker, the hero's first tick. Borders are drawing lines: 1.5px ink for section-level rules (list tops, form head, people rows), 1px for secondary rows. Dimension lines end in 45° ticks 13px tall. Drawings use hatching at 45° on a 7px pitch for cut walls, and 6/6 dashes for zones.
+
+### Named Rules
+**The Tick Rule.** A measured length ends in a 45° tick, never an arrowhead or a dot, except the chain's starting point.
 
 ## Components
 
 ### Buttons
-- **Shape:** rectangular, 48px tall, slightly softened corners (2px), weight 600.
-- **Primary:** ink on white paper. **CTA:** ginstergelb with ink text, lightening on hover.
-- **Hover / Focus:** the arrow nudges 3px; focus is a 2px ink outline at 3px offset.
-- **Text link:** a 1px underline that retracts on hover.
+Blunt, solid blocks with an arrow that moves.
+- **Shape:** square (0), min-height 52px (nav 40px, 44px on touch), padding 0 1.5rem, weight 600.
+- **Ink:** ink ground, paper text; hover to pure black. The primary action on ginster and paper sheets.
+- **Ginster:** Ginstergelb ground, ink text; hover to pale ginster. Used on ink (mobile menu).
+- **Hover / Focus:** 220ms colour change on the draw ease; the inline arrow SVG (1.6 stroke) slides 4px right. Focus is a 2px outline offset 3px in current colour.
+- **Text link:** a 1px underline drawn as a background that retracts to the right on hover (280ms).
 
 ### Chips
-- **Style:** project-phase radios, 1px #c9c6bc border, 36px (44px on touch).
-- **State:** selected fills ink with white text and a small ginstergelb dot.
+- **Style:** square, 1px warm-grey border, 36px tall (44px on touch), meta size.
+- **State:** checked fills ink with paper text and a 6px Ginstergelb dot; hover darkens the border to ink.
+
+### Cards / Containers
+There are no cards. Grouping is done with rules: a 1.5px ink top rule and 1px dividers between rows (project metadata, VS categories, people, questions). The inquiry form sits on a paper sheet padded clamp(24–56px) inside the ginster contact sheet.
 
 ### Inputs / Fields
-- **Style:** underline only (1px #b9b6ad), label above at label size.
-- **Focus:** underline turns ink; keyboard focus adds a 2px ginstergelb underline.
-- **Error:** underline and a sentence explaining the fix in the error colour.
-- **Around it:** a privacy line at label size under submit; the mailto status says the mail program should open, with an "Anfrage kopieren" link that copies the composed inquiry.
+- **Style:** underline only: transparent ground, 1px bottom border, square, body size, label above at label size.
+- **Focus:** border turns ink with a 1px ink underline; keyboard focus adds a 2px Ginstergelb underline.
+- **Error:** correction red border, underline and message at label size.
 
 ### Navigation
-Wordmark "TRIAS SCHULE" (bold / regular, tracked 0.14em), five links in page order with a ginstergelb dot for the current section (none over sections without an entry: hero, phases), and a compact ink "Projekt anfragen" button. Below 640px: wordmark, a 40px "Anfragen" button and "Menü"; the language switch moves to the top of the full-height white sheet, whose own ginstergelb CTA replaces the header button.
+Transparent over the hero, paper with a hairline once scrolled. Wordmark "Trias Schule" in meta size, uppercase, 0.14em tracking, bold/regular split. Links underline with a 1.5px rule drawn left to right; current section keeps it. Compact ink CTA at the right. Mobile: two-bar icon crossing to an X, full menu with focal-size links and a ginster CTA.
 
-### Signature: Drawn Line
-A ginstergelb SVG route as thick as the chair legs (`--leg-w`), `stroke-dashoffset` scrubbed by scroll, with ink nodes (start point and moving head). It comes down from the chair's left leg, runs along the bottom of the pinned stage revealing "Unsere Projekte". The pen tip then stays at ~62% of the screen width while the whole plan sheet (line, title, the row of projects and quotes) slides left beneath it, so the line keeps drawing to the right under each project. Ahead of the pen the whole route is pencilled in as a 1px hairline in the line colour, with a 45° dimension tick at the start of each project and at the end of the row: ticks ahead are pencil grey, ticks the pen has passed are ink, so the line shows how far is left. At the end of the row it turns 90° down (ink right-angle mark in the inner corner) and lands at the top of the people section with an ink dot. Mobile and reduced motion show the U-shaped line with the title and the projects stacked below.
+### Dimension Line (signature)
+A 1px rule with 45° end ticks, drawn by scroll (scaleX from the left); the closing tick appears when the line completes. It sits above each project photograph, whose frame then opens from it.
 
-### Signature: Planning Surface (hero)
-White paper, prints held by magnets, marker notes and arrows, and a floor-plan sketch with a "7,20 m" dimension. Preparation takes about a second: the claim is written letter by letter (~0.85s in any language) from 0.1s, subline and buttons rise at 0.12s, prints pin from 0.35s with magnets 0.3s later, notes draw from ~0.75s, and the chair arrives at 0.9s in one 900ms turn from off-left. The wordmark does not animate.
+### The Chain (signature)
+Five segments, ticks at every joint. In the hero it is an ink rule under the fold with step names. On the ink sheet it pins, a 3.5px Ginstergelb fill runs along a 1.5px ink-line track, passed ticks turn Ginstergelb, the active step name brightens to paper, and the room plan gains a layer per step. It returns as the phase ruler before the inquiry, where hovering a phase lights its segment and marker in Ginstergelb.
 
-### Signature: Drawings
-- **Services chair:** flat PantoSwing front silhouette; its left leg continues as the single ginstergelb route beside the list.
-- **Services plan:** a room plan that builds one layer per step: walls, door, windows and dimensions; dashed zones with marker labels; tables with ginstergelb chair and stool dots; tables filled ink, cabinets, zones stepping back as the room is completed; a marker note "und später?" with a small arrow. Complete without motion.
-- **VS chair:** the PantoSwing in side elevation: flat ginster shell with a ginster-light face, tube frame as outlined ink (paper core over a wider ink stroke), pivot circle, dashed swing arc, hatched floor, "Sitzhöhe" dimension.
-- **Contact figures:** contour figures (paper core over ink), heads as ink rings, far limbs in surface; Hokki stools flat ginster with a ginster-light seat; one shared hatched floor line that stays level while the figures turn to the visitor.
+### Room Plan (signature)
+An SVG plan that recolours per sheet through three variables (line, furniture, seat): ink lines with paper furniture on ginster; paper lines, ink furniture and Ginstergelb seats on ink.
 
-### Signature: Phase Ruler
-"Wo stehen Sie gerade?": a 1px ink rule drawn on scroll with a tick per phase and a closing end tick. Each phase opens the form with that phase selected; hover and focus set a ginstergelb node on the tick and reveal an arrow.
-
-### VS Categories
-A list of categories with hollow dots. A row becomes a link, with an arrow and a ginstergelb reading point that follows the scroll, only once it has its own deep link into the VS catalogue; until then rows are plain text and the one ink catalogue button is the way out.
+### Open Fact
+Unconfirmed facts are shown in secondary text behind a 7px hollow circle, never invented.
 
 ## Do's and Don'ts
 
 ### Do:
-- **Do** make motion a function of scroll position so it reverses when scrolling back, and render the final state under `prefers-reduced-motion`.
-- **Do** keep content visible by default; scripts may only add scrubbing.
-- **Do** keep new sections to hairline dividers and white space.
-- **Do** draw new illustrations as ink contours with flat ginstergelb objects, standing on a hatched floor line.
-- **Do** leave out what is not confirmed, and name what is still open once, quietly.
+- **Do** give every section one full sheet (ginster, ink or paper) and take text, muted and line colours from it.
+- **Do** set names and claims in Archivo at wdth 112–118, weight 650–720, tracking -0.03 to -0.045em.
+- **Do** draw lines at 1.5px and end measured lengths with 45° ticks 13px tall.
+- **Do** use tabular numerals for every dimension and year.
+- **Do** tie motion to scroll progress with the draw ease (cubic-bezier(0.16, 1, 0.3, 1)) and render the final state under reduced motion.
+- **Do** mark missing facts with the hollow open-fact dot instead of filling them in.
 
 ### Don't:
-- **Don't** use cards, gradients, glass panels or big shadows on UI or drawings.
-- **Don't** use ginstergelb as a background area or for body text.
-- **Don't** invent or stage testimonials, project facts, people's titles, portraits or figures.
-- **Don't** use handwriting for anything a visitor must read to act.
+- **Don't** round corners on surfaces, buttons, fields or images; circles are only for point markers.
+- **Don't** use blurred or offset drop shadows; depth is the sheet.
+- **Don't** introduce a second typeface or a handwritten face.
+- **Don't** build card grids; group with ink rules and hairline dividers.
+- **Don't** use Ginstergelb as a tint, badge or decoration on paper; it is a sheet, a button or an object on ink.
+- **Don't** add illustration beyond line drawings of plans and furniture (no drawn figures, no icon sets).

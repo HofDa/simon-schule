@@ -1,0 +1,193 @@
+---
+/**
+ * Variant "Schnitt": the walk through the building. On large screens the section pins on
+ * an ink sheet and the drawing's viewBox travels: the whole house, then up the stair tread by
+ * tread (two treads per project step), then into each room, where the photo of the room fills
+ * the cut. Stacked (phones, reduced motion): the finished drawing, then every chapter in order.
+ */
+import SchoolSection from '../art/SchoolSection.astro';
+import { getProjects } from '../../data/projects';
+import { asset } from '../../lib/paths';
+import { getLang, useTranslations } from '../../i18n/ui';
+
+const lang = getLang(Astro.currentLocale);
+const ui = useTranslations(lang);
+const t = ui.services;
+const p = ui.projects;
+const projects = getProjects(lang);
+const widths = [480, 640, 960];
+const src = (file: string, w: number) => asset(`images/projects/${file}-${w}.webp`);
+const segments = 1 + t.items.length + projects.length;
+---
+
+<section id="leistungen" class="jr sheet-ink" aria-labelledby="services-title" data-journey style={`--segs:${segments}`}>
+  <span id="projekte" class="jr-anchor" aria-hidden="true" data-anchor></span>
+  <div class="jr-stage">
+    <div class="shell jr-grid">
+      <ol class="jr-chapters">
+        <li class="jr-ch" data-ch>
+          <h2 id="services-title" class="jr-h2 display">{t.title}</h2>
+          <p class="jr-text">{t.intro}</p>
+        </li>
+        {t.items.map((s) => (
+          <li class="jr-ch" data-ch>
+            <h3 class="jr-step display">{s.title}</h3>
+            <p class="jr-text">{s.text}</p>
+          </li>
+        ))}
+        {projects.map((project, j) => (
+          <li class="jr-ch jr-room" data-ch data-room-ch={j}>
+            {j === 0 && <h2 class="sr-only">{p.title}</h2>}
+            <h3 class="jr-name">{project.title}</h3>
+            {project.placeholder && <p class="tag-placeholder jr-status">{p.placeholder}</p>}
+            <p class="jr-text">{project.description}</p>
+            <dl class="jr-meta">
+              {project.location && <div><dt>{p.meta.location}</dt><dd>{project.location}</dd></div>}
+              <div><dt>{p.meta.type}</dt><dd>{project.type}</dd></div>
+              <div><dt>{p.meta.services}</dt><dd>{project.services.join(' · ')}</dd></div>
+            </dl>
+            {j === 0 && <p class="jr-note">{p.sub}</p>}
+            <img
+              class="jr-photo"
+              src={src(project.images[0].file, 960)}
+              srcset={widths.map((w) => `${src(project.images[0].file, w)} ${w}w`).join(', ')}
+              sizes="calc(100vw - 40px)"
+              alt={project.images[0].alt}
+              width="960"
+              height="640"
+              loading="lazy"
+              decoding="async"
+            />
+          </li>
+        ))}
+      </ol>
+
+      <figure class="jr-drawing m-0">
+        <SchoolSection mode="journey" projects={projects} />
+      </figure>
+    </div>
+  </div>
+</section>
+
+<style>
+  .jr {
+    --sx-line: var(--color-paper);
+    --sx-ground: var(--color-ink);
+    --sx-seat: var(--color-ginster);
+    --sx-seat-line: var(--color-ginster);
+    position: relative;
+  }
+  .jr-anchor { position: absolute; left: 0; top: 0; width: 1px; height: 1px; }
+  .jr-grid { display: grid; gap: 56px; padding-block: clamp(96px, 12vw, 160px); }
+  .jr-drawing { order: -1; }
+  .jr-chapters { list-style: none; margin: 0; padding: 0; display: grid; gap: 64px; }
+  .jr-h2 { font-size: var(--text-headline); max-width: 13ch; }
+  .jr-step { font-size: var(--text-step); }
+  .jr-name { font-size: var(--text-title); font-variation-settings: "wdth" 112; font-weight: 680; letter-spacing: -0.03em; line-height: 1.02; max-width: 16ch; }
+  .jr-status { margin-top: 12px; }
+  .jr-text { margin-top: 18px; max-width: 40ch; font-size: var(--text-lead); line-height: 1.5; color: var(--color-on-ink); }
+  .jr-meta { margin: 24px 0 0; font-size: var(--text-meta); border-top: 1px solid var(--color-paper); max-width: 30rem; }
+  .jr-meta div { display: grid; grid-template-columns: 7.5rem 1fr; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--color-ink-line); }
+  .jr-meta dt { color: var(--color-on-ink); }
+  .jr-meta dd { margin: 0; }
+  .jr-note { margin-top: 18px; max-width: 42ch; font-size: var(--text-label); color: var(--color-on-ink); }
+  .jr-photo { display: block; width: 100%; aspect-ratio: 3 / 2; object-fit: cover; margin-top: 28px; }
+  .jr-room .tag-placeholder { color: var(--color-on-ink); }
+
+  @media (max-width: 639px) {
+    .jr-drawing :global(.sx-label) { font-size: 26px; }
+    .jr-drawing :global(.sx-num) { font-size: 22px; }
+  }
+
+  /* ---------- pinned: the viewBox walks through the house ---------- */
+  .jr.is-scrub { height: calc(var(--segs) * 80vh + 100vh); }
+  .jr.is-scrub .jr-stage { position: sticky; top: 0; height: 100vh; overflow: hidden; }
+  .jr.is-scrub .jr-grid {
+    height: 100%;
+    padding-block: calc(var(--nav-h) + 4vh) 5vh;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    grid-template-rows: minmax(0, 1fr);
+    column-gap: clamp(24px, 2.6vw, 44px);
+  }
+  .jr.is-scrub .jr-chapters { grid-column: 1 / span 4; grid-row: 1; position: relative; display: block; }
+  .jr.is-scrub .jr-ch {
+    position: absolute;
+    inset: 0 0 auto 0;
+    top: 50%;
+    translate: 0 calc(-50% + (1 - var(--on, 0)) * 24px);
+    opacity: var(--on, 0);
+    visibility: hidden;
+    transition: opacity 500ms var(--ease-draw), translate 700ms var(--ease-draw), visibility 0s 500ms;
+  }
+  .jr.is-scrub .jr-ch.is-on { --on: 1; visibility: visible; transition: opacity 500ms var(--ease-draw), translate 700ms var(--ease-draw), visibility 0s; }
+  .jr.is-scrub .jr-photo { display: none; }
+  .jr.is-scrub .jr-h2 { font-size: clamp(2.4rem, 3.6vw, 3.8rem); }
+  .jr.is-scrub .jr-step { font-size: clamp(3rem, 4.6vw, 5.4rem); font-variation-settings: "wdth" 88; }
+  .jr.is-scrub .jr-drawing { order: 0; grid-column: 5 / span 8; grid-row: 1; min-height: 0; display: flex; align-items: center; }
+  .jr.is-scrub .jr-drawing { overflow: hidden; }
+  .jr.is-scrub .jr-drawing :global(svg) { width: 100%; height: 100%; overflow: hidden; }
+</style>
+
+<script>
+  import { addScene, clamp, range, stickyProgress } from '../../scripts/motion';
+
+  const section = document.querySelector<HTMLElement>('[data-journey]');
+  if (section) {
+    const svg = section.querySelector<SVGSVGElement>('[data-school]')!;
+    const chapters = Array.from(section.querySelectorAll<HTMLElement>('[data-ch]'));
+    const treads = Array.from(svg.querySelectorAll<SVGRectElement>('[data-tread]'));
+    const photos = Array.from(svg.querySelectorAll<SVGGElement>('[data-room]'));
+    const anchor = section.querySelector<HTMLElement>('[data-anchor]')!;
+    const firstRoom = section.querySelector<HTMLElement>('[data-room-ch="0"]');
+    const steps = treads.length / 2;
+    const n = chapters.length;
+    const roomStart = 1 + steps;
+
+    type Box = [number, number, number, number];
+    const overview: Box = [0, 130, 1200, 640];
+    const stair: Box = [60, 330, 380, 400];
+    const rooms: Box[] = [[270, 330, 560, 220], [270, 510, 560, 220], [790, 330, 320, 400]];
+    const boxes: Box[] = [overview, ...Array.from({ length: steps }, () => stair), ...rooms];
+    const smooth = (t: number) => t * t * (3 - 2 * t);
+    const lerp = (a: Box, b: Box, t: number) => a.map((v, k) => v + (b[k] - v) * t) as Box;
+    let active = -1;
+
+    const setChapter = (i: number) => {
+      if (i === active) return;
+      active = i;
+      chapters.forEach((c, k) => c.classList.toggle('is-on', k === i));
+    };
+
+    addScene({
+      el: section,
+      media: '(min-width: 1024px) and (min-height: 680px)',
+      measure(on) {
+        section.classList.toggle('is-scrub', on);
+        const travel = section.offsetHeight - window.innerHeight;
+        anchor.style.top = on ? `${Math.round((travel * (roomStart + 0.05)) / n)}px` : `${firstRoom?.offsetTop ?? 0}px`;
+        if (!on) {
+          chapters.forEach((c) => c.classList.remove('is-on'));
+          active = -1;
+        }
+      },
+      progress: stickyProgress(),
+      render(p) {
+        if (!section.classList.contains('is-scrub')) {
+          svg.setAttribute('viewBox', overview.join(' '));
+          treads.forEach((t) => t.classList.add('is-lit'));
+          photos.forEach((ph) => ph.style.setProperty('--room-in', '1'));
+          return;
+        }
+        const s = Math.min(n - 0.0001, p * n);
+        const i = Math.floor(s);
+        const move = smooth(range(s - i, 0.62, 1));
+        const box = i < n - 1 ? lerp(boxes[i], boxes[i + 1], move) : boxes[i];
+        svg.setAttribute('viewBox', box.map((v) => v.toFixed(2)).join(' '));
+        setChapter(move > 0.5 && i < n - 1 ? i + 1 : i);
+        const lit = 2 * Math.min(steps, i + (move > 0.5 ? 1 : 0));
+        treads.forEach((t, k) => t.classList.toggle('is-lit', k < lit));
+        photos.forEach((ph, j) => ph.style.setProperty('--room-in', clamp((s - (roomStart + j) + 0.4) / 0.5).toFixed(3)));
+      },
+    });
+  }
+</script>

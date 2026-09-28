@@ -1,244 +1,285 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-26T12:00:00Z",
+  "generatedAt": "2026-09-28T15:40:33.003632+00:00",
   "title": "Design System: Trias Schule",
   "extensions": {
     "colorMeta": {
-      "ink": {
-        "role": "primary",
-        "displayName": "Ink",
-        "tonalRamp": [
-          "#0e0e0c",
-          "#20201d",
-          "#3a3a35",
-          "#55544e",
-          "#75736c",
-          "#9a978f",
-          "#c4c1b8",
-          "#e9e7e1"
-        ]
-      },
       "ginster": {
-        "role": "secondary",
-        "displayName": "Ginstergelb (RAL 1032, working value)",
+        "role": "primary",
+        "displayName": "Ginstergelb",
+        "canonical": "oklch(76.5% 0.16 80)",
         "tonalRamp": [
-          "#4d3700",
-          "#7a5800",
-          "#a07300",
-          "#b88400",
-          "#e2a300",
-          "#f1c23b",
-          "#f7da85",
-          "#fcf0cc"
-        ]
-      },
-      "ginster-deep": {
-        "role": "secondary",
-        "displayName": "Ginster Deep",
-        "tonalRamp": [
-          "#4d3700",
-          "#7a5800",
-          "#a07300",
-          "#b88400",
-          "#e2a300",
-          "#f1c23b",
-          "#f7da85",
-          "#fcf0cc"
+          "oklch(15% 0.14 80)",
+          "oklch(26% 0.14 80)",
+          "oklch(38% 0.14 80)",
+          "oklch(50% 0.14 80)",
+          "oklch(62% 0.14 80)",
+          "oklch(74% 0.14 80)",
+          "oklch(85% 0.14 80)",
+          "oklch(95% 0.14 80)"
         ]
       },
       "ginster-light": {
-        "role": "secondary",
-        "displayName": "Ginster Light",
+        "role": "primary",
+        "displayName": "Pale Ginster",
+        "canonical": "oklch(84% 0.15 88)",
         "tonalRamp": [
-          "#4d3700",
-          "#7a5800",
-          "#a07300",
-          "#b88400",
-          "#e2a300",
-          "#f1c23b",
-          "#f7da85",
-          "#fcf0cc"
+          "oklch(15% 0.13 88)",
+          "oklch(26% 0.13 88)",
+          "oklch(38% 0.13 88)",
+          "oklch(50% 0.13 88)",
+          "oklch(62% 0.13 88)",
+          "oklch(74% 0.13 88)",
+          "oklch(85% 0.13 88)",
+          "oklch(95% 0.13 88)"
+        ]
+      },
+      "ginster-deep": {
+        "role": "primary",
+        "displayName": "Deep Ginster",
+        "canonical": "oklch(52% 0.11 80)",
+        "tonalRamp": [
+          "oklch(15% 0.1 80)",
+          "oklch(26% 0.1 80)",
+          "oklch(38% 0.1 80)",
+          "oklch(50% 0.1 80)",
+          "oklch(62% 0.1 80)",
+          "oklch(74% 0.1 80)",
+          "oklch(85% 0.1 80)",
+          "oklch(95% 0.1 80)"
+        ]
+      },
+      "on-ginster": {
+        "role": "primary",
+        "displayName": "Ginster Shadow Text",
+        "canonical": "oklch(33% 0.06 85)",
+        "tonalRamp": [
+          "oklch(15% 0.05 85)",
+          "oklch(26% 0.05 85)",
+          "oklch(38% 0.05 85)",
+          "oklch(50% 0.05 85)",
+          "oklch(62% 0.05 85)",
+          "oklch(74% 0.05 85)",
+          "oklch(85% 0.05 85)",
+          "oklch(95% 0.05 85)"
+        ]
+      },
+      "ink": {
+        "role": "secondary",
+        "displayName": "Drawing Ink",
+        "canonical": "oklch(22.5% 0.003 106)",
+        "tonalRamp": [
+          "oklch(15% 0.003 106)",
+          "oklch(26% 0.003 106)",
+          "oklch(38% 0.003 106)",
+          "oklch(50% 0.003 106)",
+          "oklch(62% 0.003 106)",
+          "oklch(74% 0.003 106)",
+          "oklch(85% 0.003 106)",
+          "oklch(95% 0.003 106)"
+        ]
+      },
+      "ink-deep": {
+        "role": "secondary",
+        "displayName": "Pure Black",
+        "canonical": "oklch(0% 0 0)",
+        "tonalRamp": [
+          "oklch(15% 0 0)",
+          "oklch(26% 0 0)",
+          "oklch(38% 0 0)",
+          "oklch(50% 0 0)",
+          "oklch(62% 0 0)",
+          "oklch(74% 0 0)",
+          "oklch(85% 0 0)",
+          "oklch(95% 0 0)"
+        ]
+      },
+      "ink-line": {
+        "role": "secondary",
+        "displayName": "Ink Rule",
+        "canonical": "oklch(35% 0.006 90)",
+        "tonalRamp": [
+          "oklch(15% 0.006 90)",
+          "oklch(26% 0.006 90)",
+          "oklch(38% 0.006 90)",
+          "oklch(50% 0.006 90)",
+          "oklch(62% 0.006 90)",
+          "oklch(74% 0.006 90)",
+          "oklch(85% 0.006 90)",
+          "oklch(95% 0.006 90)"
+        ]
+      },
+      "on-ink": {
+        "role": "secondary",
+        "displayName": "Ink Secondary",
+        "canonical": "oklch(74% 0.012 90)",
+        "tonalRamp": [
+          "oklch(15% 0.012 90)",
+          "oklch(26% 0.012 90)",
+          "oklch(38% 0.012 90)",
+          "oklch(50% 0.012 90)",
+          "oklch(62% 0.012 90)",
+          "oklch(74% 0.012 90)",
+          "oklch(85% 0.012 90)",
+          "oklch(95% 0.012 90)"
         ]
       },
       "paper": {
         "role": "neutral",
         "displayName": "Paper",
+        "canonical": "oklch(100% 0 0)",
         "tonalRamp": [
-          "#2b2a27",
-          "#55534d",
-          "#8a877e",
-          "#b9b6ad",
-          "#dddad1",
-          "#f2f1ec",
-          "#f6f5f0",
-          "#ffffff"
+          "oklch(15% 0 0)",
+          "oklch(26% 0 0)",
+          "oklch(38% 0 0)",
+          "oklch(50% 0 0)",
+          "oklch(62% 0 0)",
+          "oklch(74% 0 0)",
+          "oklch(85% 0 0)",
+          "oklch(95% 0 0)"
         ]
       },
       "warm": {
         "role": "neutral",
-        "displayName": "Warm (footer)",
+        "displayName": "Warm Paper",
+        "canonical": "oklch(96.5% 0.007 100)",
         "tonalRamp": [
-          "#2b2a27",
-          "#55534d",
-          "#8a877e",
-          "#b9b6ad",
-          "#dddad1",
-          "#f2f1ec",
-          "#f6f5f0",
-          "#ffffff"
-        ]
-      },
-      "surface": {
-        "role": "neutral",
-        "displayName": "Surface",
-        "tonalRamp": [
-          "#2b2a27",
-          "#55534d",
-          "#8a877e",
-          "#b9b6ad",
-          "#dddad1",
-          "#f2f1ec",
-          "#f6f5f0",
-          "#ffffff"
-        ]
-      },
-      "line": {
-        "role": "neutral",
-        "displayName": "Hairline",
-        "tonalRamp": [
-          "#2b2a27",
-          "#55534d",
-          "#8a877e",
-          "#b9b6ad",
-          "#dddad1",
-          "#f2f1ec",
-          "#f6f5f0",
-          "#ffffff"
+          "oklch(15% 0.007 100)",
+          "oklch(26% 0.007 100)",
+          "oklch(38% 0.007 100)",
+          "oklch(50% 0.007 100)",
+          "oklch(62% 0.007 100)",
+          "oklch(74% 0.007 100)",
+          "oklch(85% 0.007 100)",
+          "oklch(95% 0.007 100)"
         ]
       },
       "muted": {
         "role": "neutral",
-        "displayName": "Muted Text",
+        "displayName": "Graphite",
+        "canonical": "oklch(50% 0.012 90)",
         "tonalRamp": [
-          "#0e0e0c",
-          "#20201d",
-          "#3a3a35",
-          "#55544e",
-          "#6e6c65",
-          "#9a978f",
-          "#c4c1b8",
-          "#e9e7e1"
+          "oklch(15% 0.012 90)",
+          "oklch(26% 0.012 90)",
+          "oklch(38% 0.012 90)",
+          "oklch(50% 0.012 90)",
+          "oklch(62% 0.012 90)",
+          "oklch(74% 0.012 90)",
+          "oklch(85% 0.012 90)",
+          "oklch(95% 0.012 90)"
+        ]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Pencil Line",
+        "canonical": "oklch(88.5% 0.013 95)",
+        "tonalRamp": [
+          "oklch(15% 0.013 95)",
+          "oklch(26% 0.013 95)",
+          "oklch(38% 0.013 95)",
+          "oklch(50% 0.013 95)",
+          "oklch(62% 0.013 95)",
+          "oklch(74% 0.013 95)",
+          "oklch(85% 0.013 95)",
+          "oklch(95% 0.013 95)"
         ]
       },
       "error": {
         "role": "error",
-        "displayName": "Error",
+        "displayName": "Correction Red",
+        "canonical": "oklch(49% 0.15 33)",
         "tonalRamp": [
-          "#3a1209",
-          "#5e1d0f",
-          "#822816",
-          "#a4331c",
-          "#c65a41",
-          "#dd8a75",
-          "#eebcae",
-          "#f9e6e0"
+          "oklch(15% 0.13 33)",
+          "oklch(26% 0.13 33)",
+          "oklch(38% 0.13 33)",
+          "oklch(50% 0.13 33)",
+          "oklch(62% 0.13 33)",
+          "oklch(74% 0.13 33)",
+          "oklch(85% 0.13 33)",
+          "oklch(95% 0.13 33)"
         ]
       }
     },
     "typographyMeta": {
       "display": {
-        "displayName": "Hero Claim",
-        "purpose": "Hero claim only: Kalam 700, line height 1, rotated -1.5deg, written letter by letter (~0.85s), ginstergelb hand-drawn underline under the last word."
+        "displayName": "Display",
+        "purpose": "Hero H1 and projects heading, expanded cut."
       },
       "headline": {
         "displayName": "Headline",
-        "purpose": "Section H2, capped at phi-3 (4.45rem)."
+        "purpose": "Section headings on every sheet."
+      },
+      "step": {
+        "displayName": "Step",
+        "purpose": "Chain step names; wdth 88 in the pinned scene."
       },
       "title": {
         "displayName": "Title",
-        "purpose": "Person, project, category and step names."
+        "purpose": "Project names, VS categories, phase names."
       },
-      "quote": {
-        "displayName": "Quote",
-        "purpose": "Approved testimonials, hanging opening quote."
-      },
-      "phi-1": {
-        "displayName": "Phi 1",
-        "purpose": "Focal text: active step, form title, mobile menu links, legal section titles."
+      "focal": {
+        "displayName": "Focal",
+        "purpose": "Form title, mobile menu links."
       },
       "lead": {
         "displayName": "Lead",
-        "purpose": "Hero subline and intros."
+        "purpose": "Section intros, 40-46ch."
       },
       "body": {
         "displayName": "Body",
-        "purpose": "Running text, measure up to 52ch."
+        "purpose": "Running text."
       },
       "meta": {
         "displayName": "Meta",
-        "purpose": "Buttons, nav, lists, project details."
+        "purpose": "Buttons, metadata rows, footer."
       },
       "label": {
         "displayName": "Label",
-        "purpose": "Field labels, captions, credits, placeholder tags."
-      },
-      "marker": {
-        "displayName": "Marker",
-        "purpose": "Annotations only: board notes, captions, planning questions, plan labels, active-step label, chat line."
+        "purpose": "Form labels, hero chain names."
       }
     },
     "shadows": [
       {
-        "name": "print",
-        "value": "0 1px 1px rgba(32,32,29,.08), 0 12px 22px -12px rgba(32,32,29,.35)",
-        "purpose": "Photo prints pinned on the hero paper."
+        "name": "nav-hairline",
+        "value": "inset 0 -1px 0 #dcd9d0",
+        "purpose": "Bottom edge of the scrolled navbar; a line, not elevation."
       },
       {
-        "name": "magnet",
-        "value": "inset 0 -1px 1px rgba(120,80,0,.35), 0 2px 2px rgba(32,32,29,.22), 0 6px 10px -4px rgba(32,32,29,.3)",
-        "purpose": "The 22px ginstergelb magnet."
+        "name": "field-focus",
+        "value": "0 1px 0 0 #1d1d1b",
+        "purpose": "Thickened underline on a focused field."
+      },
+      {
+        "name": "field-focus-visible",
+        "value": "0 2px 0 0 #e2a300",
+        "purpose": "Keyboard focus underline on a field."
       }
     ],
     "motion": [
       {
         "name": "ease-draw",
         "value": "cubic-bezier(0.16, 1, 0.3, 1)",
-        "purpose": "All reveals and state changes."
+        "purpose": "Default for line drawing, fills, hovers and state changes."
       },
       {
-        "name": "micro",
-        "value": "200ms",
-        "purpose": "Hover and focus feedback (buttons, arrows, fields)."
+        "name": "ease-sheet",
+        "value": "cubic-bezier(0.7, 0, 0.2, 1)",
+        "purpose": "Sheet-scale transitions."
       },
       {
-        "name": "hero-write",
-        "value": "~0.85s from 0.1s",
-        "purpose": "Claim lettered stroke by stroke at constant pen speed, any language."
+        "name": "button-color",
+        "value": "220ms",
+        "purpose": "Button background change."
       },
       {
-        "name": "hero-offer",
-        "value": "600ms rise from 0.12s",
-        "purpose": "Subline and buttons."
+        "name": "link-line",
+        "value": "280ms",
+        "purpose": "Underline retract."
       },
       {
-        "name": "hero-pins",
-        "value": "600ms from 0.35s (+0.1s, +0.2s); magnets 320ms, 0.3s later",
-        "purpose": "Prints and magnets."
-      },
-      {
-        "name": "hero-notes",
-        "value": "500ms, each note's delay (0.95-1.3s) minus 0.2s",
-        "purpose": "Marker notes and sketch strokes."
-      },
-      {
-        "name": "chair-in",
-        "value": "900ms rotateY(-360deg) from off-left, at 0.9s",
-        "purpose": "The PantoSwing's single turn into the hero."
-      },
-      {
-        "name": "scrub",
-        "value": "scroll-linked",
-        "purpose": "Services steps and plan, drawn route, project row, people, phase ruler, contact figures (turn over progress .3-.85)."
+        "name": "hero-load",
+        "value": "<=1.4s",
+        "purpose": "Only the hero headline and plan animate on load; everything else is scroll-scrubbed via src/scripts/motion.ts and static under reduced motion."
       }
     ],
     "breakpoints": [
@@ -247,17 +288,16 @@
         "value": "640px"
       },
       {
+        "name": "md",
+        "value": "768px"
+      },
+      {
         "name": "lg",
         "value": "1024px"
       },
       {
-        "name": "scrub",
-        "value": "(min-width: 1024px) and (min-height: 640px)"
-      },
-      {
-        "name": "coarse",
-        "value": "(pointer: coarse)",
-        "purpose": "44px targets."
+        "name": "shell",
+        "value": "1560px"
       }
     ]
   },
@@ -265,115 +305,129 @@
     {
       "name": "Ink Button",
       "kind": "button",
-      "refersTo": "button-primary",
-      "description": "Default action, ink on paper.",
-      "html": "<a class=\"ds-btn\" href=\"#\">Projekte entdecken <svg viewBox=\"0 0 16 16\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M8 2v11M4 9l4 4 4-4\"/></svg></a>",
-      "css": ".ds-btn { display:inline-flex; align-items:center; gap:0.75rem; min-height:48px; padding:0 1.4rem; border-radius:2px; background:#20201d; color:#fff; font:600 0.92rem Archivo, Arial, sans-serif; letter-spacing:-0.005em; text-decoration:none; transition:background-color 200ms cubic-bezier(0.16,1,0.3,1); } .ds-btn svg { transition:transform 200ms cubic-bezier(0.16,1,0.3,1); } .ds-btn:hover { background:#000; } .ds-btn:hover svg { transform:translateX(3px); } .ds-btn:focus-visible { outline:2px solid #20201d; outline-offset:3px; }"
+      "refersTo": "button-ink",
+      "description": "Primary action on ginster and paper sheets.",
+      "html": "<button class=\"ds-btn ds-btn-ink\">Projekt besprechen <svg width=\"14\" height=\"14\" viewBox=\"0 0 16 16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M1 8h13M9 3l5 5-5 5\"/></svg></button>",
+      "css": ".ds-btn{display:inline-flex;align-items:center;gap:.85rem;min-height:52px;padding:0 1.5rem;border:0;border-radius:0;font-family:var(--font-sans,\"Archivo\",sans-serif);font-size:.92rem;font-weight:600;cursor:pointer;transition:background-color 220ms cubic-bezier(.16,1,.3,1)} .ds-btn svg{transition:transform 260ms cubic-bezier(.16,1,.3,1)} .ds-btn:hover svg{transform:translateX(4px)} .ds-btn:focus-visible{outline:2px solid currentColor;outline-offset:3px} .ds-btn-ink{background:#1d1d1b;color:#fff} .ds-btn-ink:hover{background:#000}"
     },
     {
-      "name": "CTA Button",
+      "name": "Ginster Button",
       "kind": "button",
-      "refersTo": "button-cta",
-      "description": "The one conversion action per screen.",
-      "html": "<a class=\"ds-btn-cta\" href=\"#\">Projekt anfragen</a>",
-      "css": ".ds-btn-cta { display:inline-flex; align-items:center; min-height:48px; padding:0 1.4rem; border-radius:2px; background:#e2a300; color:#20201d; font:600 0.92rem Archivo, Arial, sans-serif; text-decoration:none; transition:background-color 200ms cubic-bezier(0.16,1,0.3,1); } .ds-btn-cta:hover { background:#f1c23b; } .ds-btn-cta:focus-visible { outline:2px solid #20201d; outline-offset:3px; }"
+      "refersTo": "button-ginster",
+      "description": "Action on an ink sheet (mobile menu).",
+      "html": "<div class=\"ds-ink-bg\"><button class=\"ds-btn ds-btn-ginster\">Projekt besprechen <svg width=\"14\" height=\"14\" viewBox=\"0 0 16 16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M1 8h13M9 3l5 5-5 5\"/></svg></button></div>",
+      "css": ".ds-btn{display:inline-flex;align-items:center;gap:.85rem;min-height:52px;padding:0 1.5rem;border:0;border-radius:0;font-family:var(--font-sans,\"Archivo\",sans-serif);font-size:.92rem;font-weight:600;cursor:pointer;transition:background-color 220ms cubic-bezier(.16,1,.3,1)} .ds-btn svg{transition:transform 260ms cubic-bezier(.16,1,.3,1)} .ds-btn:hover svg{transform:translateX(4px)} .ds-btn:focus-visible{outline:2px solid currentColor;outline-offset:3px} .ds-ink-bg{background:#1d1d1b;padding:24px} .ds-btn-ginster{background:#e2a300;color:#1d1d1b} .ds-btn-ginster:hover{background:#f1c23b}"
     },
     {
-      "name": "Text Link",
-      "kind": "button",
-      "refersTo": "link-line",
-      "description": "Secondary action: 1px underline that retracts on hover.",
-      "html": "<a class=\"ds-link\" href=\"#\">Projekt anfragen</a>",
-      "css": ".ds-link { color:#20201d; font:600 0.92rem Archivo, Arial, sans-serif; text-decoration:none; background-image:linear-gradient(currentColor,currentColor); background-size:100% 1px; background-position:0 100%; background-repeat:no-repeat; padding-bottom:2px; transition:background-size 250ms cubic-bezier(0.16,1,0.3,1); } .ds-link:hover { background-size:0 1px; background-position:100% 100%; } .ds-link:focus-visible { outline:2px solid #20201d; outline-offset:3px; border-radius:2px; }"
+      "name": "Line Link",
+      "kind": "custom",
+      "description": "Text link with a 1px drawn underline that retracts on hover.",
+      "html": "<a class=\"ds-link\" href=\"#\">Beispiele ansehen</a>",
+      "css": ".ds-link{font-family:var(--font-sans,\"Archivo\",sans-serif);font-size:.92rem;font-weight:600;color:#1d1d1b;text-decoration:none;background-image:linear-gradient(currentColor,currentColor);background-size:100% 1px;background-position:0 100%;background-repeat:no-repeat;padding-bottom:2px;transition:background-size 280ms cubic-bezier(.16,1,.3,1)} .ds-link:hover{background-size:0 1px;background-position:100% 100%} .ds-link:focus-visible{outline:2px solid currentColor;outline-offset:3px}"
     },
     {
       "name": "Underline Field",
       "kind": "input",
-      "refersTo": "input",
-      "description": "Label above, underline only.",
-      "html": "<label class=\"ds-field\"><span>Name *</span><input type=\"text\"></label>",
-      "css": ".ds-field { display:flex; flex-direction:column; font:500 0.82rem/1.4 Archivo, Arial, sans-serif; color:#20201d; } .ds-field span { margin-bottom:4px; } .ds-field input { border:0; border-bottom:1px solid #b9b6ad; border-radius:0; padding:8px 0 9px; font:400 1.05rem Archivo, Arial, sans-serif; color:#20201d; background:transparent; transition:border-color 200ms, box-shadow 200ms; } .ds-field input:focus { outline:none; border-color:#20201d; box-shadow:0 1px 0 0 #20201d; } .ds-field input:focus-visible { box-shadow:0 2px 0 0 #e2a300; }"
+      "refersTo": "input-line",
+      "description": "Form field drawn as a single underline.",
+      "html": "<label class=\"ds-field\"><span>Name</span><input placeholder=\"Vor- und Nachname\"></label>",
+      "css": ".ds-field{display:flex;flex-direction:column;font-family:var(--font-sans,\"Archivo\",sans-serif);color:#1d1d1b;max-width:320px} .ds-field span{font-size:.8rem;font-weight:500;margin-bottom:4px} .ds-field input{border:0;border-bottom:1px solid #a9a69c;border-radius:0;background:transparent;padding:8px 0 9px;font:inherit;font-size:1.06rem;color:#1d1d1b;transition:border-color 200ms,box-shadow 200ms} .ds-field input:focus{outline:none;border-color:#1d1d1b;box-shadow:0 1px 0 0 #1d1d1b} .ds-field input:focus-visible{box-shadow:0 2px 0 0 #e2a300}"
     },
     {
       "name": "Phase Chip",
       "kind": "chip",
       "refersTo": "chip",
-      "description": "Radio chip for the project phase.",
-      "html": "<span class=\"ds-chip\">Planung läuft</span> <span class=\"ds-chip is-on\">Erste Idee</span>",
-      "css": ".ds-chip { display:inline-flex; align-items:center; min-height:36px; padding:0 12px; border:1px solid #c9c6bc; border-radius:2px; font:400 0.92rem Archivo, Arial, sans-serif; color:#20201d; cursor:pointer; transition:background-color 180ms, border-color 180ms, color 180ms; } .ds-chip:hover { border-color:#20201d; } .ds-chip.is-on { background:#20201d; color:#fff; border-color:#20201d; } .ds-chip.is-on::before { content:''; width:6px; height:6px; margin-right:8px; border-radius:50%; background:#e2a300; }"
+      "description": "Square selectable chip; selected fills ink with a Ginstergelb dot.",
+      "html": "<div class=\"ds-chips\"><button class=\"ds-chip\">Erste Idee</button><button class=\"ds-chip is-on\" aria-pressed=\"true\">Planung läuft</button></div>",
+      "css": ".ds-chips{display:flex;gap:8px} .ds-chip{display:inline-flex;align-items:center;min-height:36px;padding:0 12px;border:1px solid #c9c6bc;border-radius:0;background:#fff;color:#1d1d1b;font-family:var(--font-sans,\"Archivo\",sans-serif);font-size:.92rem;cursor:pointer;transition:background-color 180ms,border-color 180ms} .ds-chip:hover{border-color:#1d1d1b} .ds-chip.is-on{background:#1d1d1b;border-color:#1d1d1b;color:#fff} .ds-chip.is-on::before{content:\"\";width:6px;height:6px;margin-right:8px;border-radius:50%;background:#e2a300} .ds-chip:focus-visible{outline:2px solid #1d1d1b;outline-offset:2px}"
     },
     {
       "name": "Navigation",
       "kind": "nav",
-      "refersTo": "nav-cta",
-      "description": "Wordmark, links in page order with a ginstergelb current dot, compact ink CTA.",
-      "html": "<header class=\"ds-nav\"><a class=\"ds-wm\" href=\"#\"><b>Trias</b> <span>Schule</span></a><nav><a href=\"#\">Leistungen</a><a href=\"#\" class=\"on\">Projekte</a><a href=\"#\">Über uns</a><a href=\"#\">VS Möbel</a><a href=\"#\">Kontakt</a></nav><a class=\"ds-nav-cta\" href=\"#\"><i></i>Projekt anfragen</a></header>",
-      "css": ".ds-nav { display:flex; align-items:center; justify-content:space-between; gap:32px; height:72px; padding:0 32px; background:rgba(255,255,255,.88); font:500 0.92rem Archivo, Arial, sans-serif; } .ds-wm { text-transform:uppercase; letter-spacing:0.14em; color:#20201d; text-decoration:none; } .ds-wm span { color:#6e6c65; } .ds-nav nav { display:flex; gap:36px; } .ds-nav nav a { position:relative; padding:8px 0; color:#6e6c65; text-decoration:none; transition:color 200ms; } .ds-nav nav a:hover, .ds-nav nav a.on { color:#20201d; } .ds-nav nav a.on::after { content:''; position:absolute; left:50%; bottom:-2px; width:5px; height:5px; border-radius:50%; background:#e2a300; transform:translateX(-50%); } .ds-nav-cta { display:inline-flex; align-items:center; gap:12px; min-height:40px; padding:0 16px; border-radius:2px; background:#20201d; color:#fff; font-weight:600; text-decoration:none; } .ds-nav-cta i { width:6px; height:6px; border-radius:50%; background:#e2a300; } .ds-nav-cta:hover { background:#000; } .ds-nav a:focus-visible { outline:2px solid #20201d; outline-offset:3px; border-radius:2px; }"
+      "description": "Wordmark, rule-underlined links and a compact ink CTA on paper.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-mark\" href=\"#\"><b>Trias</b> Schule</a><div class=\"ds-links\"><a href=\"#\">Leistungen</a><a href=\"#\" aria-current=\"true\">Projekte</a><a href=\"#\">Über uns</a></div><a class=\"ds-cta\" href=\"#\">Projekt anfragen</a></nav>",
+      "css": ".ds-nav{display:flex;align-items:center;gap:32px;height:72px;padding:0 24px;background:#fff;box-shadow:inset 0 -1px 0 #dcd9d0;font-family:var(--font-sans,\"Archivo\",sans-serif);color:#1d1d1b} .ds-mark{font-size:.92rem;text-transform:uppercase;letter-spacing:.14em;color:inherit;text-decoration:none;font-weight:400} .ds-links{display:flex;gap:24px;margin-left:auto} .ds-links a{position:relative;font-size:.92rem;font-weight:500;color:inherit;text-decoration:none} .ds-links a::after{content:\"\";position:absolute;left:0;right:0;bottom:-2px;height:1.5px;background:currentColor;transform:scaleX(0);transform-origin:left;transition:transform 300ms cubic-bezier(.16,1,.3,1)} .ds-links a:hover::after,.ds-links a[aria-current]::after{transform:scaleX(1)} .ds-cta{display:inline-flex;align-items:center;min-height:40px;padding:0 14px;background:#1d1d1b;color:#fff;font-size:.92rem;font-weight:600;text-decoration:none} .ds-cta:hover{background:#000}"
+    },
+    {
+      "name": "Dimension Line",
+      "kind": "custom",
+      "description": "1px rule with 45-degree end ticks, drawn by scroll above each project photograph.",
+      "html": "<div class=\"ds-dim-wrap\"><div class=\"ds-dim\"><span></span></div><span class=\"ds-dim-v\">7,20 m</span></div>",
+      "css": ".ds-dim-wrap{width:320px;color:#1d1d1b;font-family:var(--font-sans,\"Archivo\",sans-serif);font-variant-numeric:tabular-nums;font-size:.8rem;text-align:center} .ds-dim{position:relative;height:13px} .ds-dim::before{content:\"\";position:absolute;left:0;right:0;top:6px;height:1px;background:currentColor;transform-origin:left;animation:ds-draw 1.2s cubic-bezier(.16,1,.3,1) both} .ds-dim::after,.ds-dim>span{content:\"\";position:absolute;top:0;width:1px;height:13px;background:currentColor;transform:rotate(45deg)} .ds-dim::after{left:0} .ds-dim>span{right:0} @keyframes ds-draw{from{transform:scaleX(0)}}"
+    },
+    {
+      "name": "Chain on Ink",
+      "kind": "custom",
+      "description": "The Maßkette: ink-line track, Ginstergelb fill, passed ticks lit, active step in paper.",
+      "html": "<div class=\"ds-chain\"><div class=\"ds-track\"><i style=\"width:50%\"></i></div><ol><li class=\"p\">Beraten</li><li class=\"p a\">Planen</li><li>Ausstatten</li><li>Umsetzen</li></ol></div>",
+      "css": ".ds-chain{background:#1d1d1b;padding:32px 24px;font-family:var(--font-sans,\"Archivo\",sans-serif);} .ds-track{position:relative;height:1.5px;background:#3b3a36} .ds-track i{position:absolute;left:0;top:-1px;height:3.5px;background:#e2a300} .ds-chain ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,1fr)} .ds-chain li{position:relative;padding-top:24px;text-align:center;font-size:.92rem;font-weight:500;color:#aeaba1} .ds-chain li::before{content:\"\";position:absolute;left:0;top:-8px;width:1.5px;height:15px;background:#aeaba1;transform:rotate(45deg)} .ds-chain li.p::before{background:#e2a300} .ds-chain li.a{color:#fff;font-weight:650}"
     },
     {
       "name": "Open Fact",
       "kind": "custom",
-      "refersTo": "open-fact",
-      "description": "Names what is still open, once, quietly; never an invented value.",
-      "html": "<span class=\"ds-open\">Telefon folgt</span>",
-      "css": ".ds-open { display:inline-flex; align-items:center; gap:0.5em; color:#6e6c65; font:400 0.92rem Archivo, Arial, sans-serif; } .ds-open::before { content:''; flex:none; width:6px; height:6px; border-radius:50%; border:1px solid #b88400; }"
-    },
-    {
-      "name": "Phase Ruler",
-      "kind": "custom",
-      "refersTo": "phase-ruler",
-      "description": "Project phases on a 1px ink rule; each opens the form with its phase selected.",
-      "html": "<ol class=\"ds-ruler\"><li><a href=\"#\"><i></i><b>Erste Idee</b><span>Es gibt einen Raum und den Wunsch, ihn zu verändern.</span></a></li><li><a href=\"#\"><i></i><b>Planung läuft</b><span>Architektur oder Gemeinde planen bereits.</span></a></li></ol>",
-      "css": ".ds-ruler { list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); column-gap:28px; border-top:1px solid #20201d; font-family:Archivo, Arial, sans-serif; } .ds-ruler a { position:relative; display:grid; gap:12px; padding:30px 0 8px; color:#20201d; text-decoration:none; } .ds-ruler i { position:absolute; left:0; top:0; width:1px; height:12px; background:#20201d; } .ds-ruler i::after { content:''; position:absolute; left:-4px; top:-5px; width:9px; height:9px; border-radius:50%; background:#e2a300; transform:scale(0); transition:transform 250ms cubic-bezier(0.16,1,0.3,1); } .ds-ruler a:hover i::after, .ds-ruler a:focus-visible i::after { transform:scale(1); } .ds-ruler b { font-size:1.7rem; font-weight:600; line-height:1.1; letter-spacing:-0.03em; } .ds-ruler span { font-size:0.92rem; line-height:1.5; color:#6e6c65; }"
-    },
-    {
-      "name": "Drawn Route",
-      "kind": "custom",
-      "refersTo": "drawn-line",
-      "description": "Ginstergelb route as thick as the chair legs, ink nodes and an ink right-angle mark at the 90° turn down.",
-      "html": "<svg class=\"ds-route\" viewBox=\"0 0 240 120\"><path class=\"r\" d=\"M10 40 H200 V110\"/><path class=\"c\" d=\"M188 40 V52 H200\"/><circle cx=\"10\" cy=\"40\" r=\"4\"/><circle cx=\"200\" cy=\"110\" r=\"4\"/></svg>",
-      "css": ".ds-route { width:240px; } .ds-route .r { fill:none; stroke:#e2a300; stroke-width:6; } .ds-route .c { fill:none; stroke:#20201d; stroke-width:1.5; } .ds-route circle { fill:#20201d; }"
+      "description": "Unconfirmed fact marked with a 7px hollow point in secondary text.",
+      "html": "<span class=\"ds-open\">Telefonnummer folgt</span>",
+      "css": ".ds-open{display:inline-flex;align-items:center;gap:.55em;color:#66645d;font-family:var(--font-sans,\"Archivo\",sans-serif);font-size:.92rem} .ds-open::before{content:\"\";width:7px;height:7px;border-radius:50%;border:1px solid currentColor}"
     }
   ],
   "narrative": {
-    "northStar": "A planning surface that becomes a building",
-    "overview": "The site reads as one continuous architectural drawing. It opens on white paper: pinned photo prints held by ginstergelb magnets, marker notes and a small floor-plan sketch, with the claim hand-lettered across it like the first idea of a plan. A flat ginstergelb PantoSwing (front view) turns in last at the bottom of the hero; its legs run on as lines down the services column, and the left one becomes the route that carries the projects and the two people and finally lands on the VS section. Everything drawn is a technical line drawing: ink strokes, flat ginstergelb only on the object, no gradients. The interface itself stays white and quiet; colour comes from photographs, the chairs, the stools and a few ginstergelb points.",
+    "northStar": "Die Maßkette",
+    "overview": "The site is an architect's measured drawing laid out at page scale. Colour is committed in whole, hard-edged sheets: Ginstergelb fields, ink fields and white paper fields, stacked edge to edge with no transition between them. On those sheets the only ornament is the draughtsman's own vocabulary: 1.5px ink lines, dimension lines closed by 45° ticks, hatched cut walls, door swings, tabular figures. The chain of dimensions is the organising device; it measures the project steps, the realised rooms and the visitor's own phase.\n\nType is one family, Archivo, used at two widths: an expanded, heavy, tightly tracked cut for anything that is a name or a claim, and the normal width for reading. Density is low. Sections breathe on 104–176px vertical padding, and the 12-column grid is held strictly, often with a copy block on 5 columns against a drawing or photograph on 7.\n\nMotion reads as measuring. Scroll progress is animation progress (scrubbed, reversible); lines draw, fills run along the chain, frames open from a dimension line. Only the hero plan draws on load. Reduced motion renders every scene in its final state.",
     "keyCharacteristics": [
-      "Generous white space; hairline structure instead of containers.",
-      "Technical-drawing vocabulary: end ticks, right-angle marks, dimension lines, hatched floors, dashed zones.",
-      "One drawing style: ink contours, flat ginstergelb fills, no gradients, no blurred shadows.",
-      "Handwriting only as annotation; the claim is lettered, not set.",
-      "Motion scrubbed by scroll rather than played on a timer; final states without motion."
+      "Page-scale colour sheets (Ginstergelb, ink, paper) with hard edges, never gradients or tints between them.",
+      "Line drawing as the only illustration: 1.5px strokes, 45° end ticks, hatched poché.",
+      "One typeface, two widths: expanded 118 display, normal 100 reading.",
+      "Square corners everywhere; circles only as small point markers.",
+      "Flat: depth comes from sheet colour, never from shadow.",
+      "Scroll-scrubbed motion that measures and draws, and is fully static when motion is reduced."
     ],
     "rules": [
       {
-        "name": "The Rare Yellow Rule",
-        "body": "Ginstergelb marks objects, points and the one drawn route, never fills a region. At most one ginstergelb button on screen; the conversion CTA owns it.",
+        "name": "The Sheet Rule",
+        "body": "Every section is exactly one sheet (ginster, ink or paper), and the sheet sets the text, secondary text and line colours for everything on it. Never place a sheet colour as a small tint, card or badge.",
         "section": "colors"
       },
       {
-        "name": "The Honest Blank Rule",
-        "body": "Missing content is left out, not staged. Testimonials and the closing quote render only when approved; portraits only when a photo is set; unknown optional facts (such as a project location) are omitted. What remains open collapses into one quiet line per person or footer, marked as an open fact (muted text after a 6px hollow ginster-deep ring, never an underline that reads as a link). Placeholder projects carry \"Beispielprojekt · Platzhalter\" with the same marker. Never fill a gap with invented names, numbers or quotes.",
+        "name": "The Object Rule",
+        "body": "On an ink sheet, lines turn paper and objects turn Ginstergelb. Ginstergelb on ink marks progress or the thing being placed, never decoration.",
         "section": "colors"
       },
       {
-        "name": "The Annotation Rule",
-        "body": "Handwriting annotates: board notes, photo captions, planning questions, plan labels, the active-step label, the chat line. Caveat never carries navigation, buttons, body text or anything a visitor must read to act. The hero claim is lettered with a single-line pen, not set in Caveat; the offer beside it (subline, buttons) stays in Archivo.",
+        "name": "The Two Widths Rule",
+        "body": "Expanded (112–118) is for names and claims; 100 is for reading. Nothing in between, and no second family.",
         "section": "typography"
+      },
+      {
+        "name": "The Tabular Rule",
+        "body": "Every dimension, year and measured figure uses tabular numerals.",
+        "section": "typography"
+      },
+      {
+        "name": "The No-Lift Rule",
+        "body": "No blurred or offset shadows. If something must stand forward, it sits on a different sheet.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Tick Rule",
+        "body": "A measured length ends in a 45° tick, never an arrowhead or a dot, except the chain's starting point.",
+        "section": "shapes"
       }
     ],
     "dos": [
-      "**Do** make motion a function of scroll position so it reverses when scrolling back, and render the final state under `prefers-reduced-motion`.",
-      "**Do** keep content visible by default; scripts may only add scrubbing.",
-      "**Do** keep new sections to hairline dividers and white space.",
-      "**Do** draw new illustrations as ink contours with flat ginstergelb objects, standing on a hatched floor line.",
-      "**Do** leave out what is not confirmed, and name what is still open once, quietly."
+      "**Do** give every section one full sheet (ginster, ink or paper) and take text, muted and line colours from it.",
+      "**Do** set names and claims in Archivo at wdth 112–118, weight 650–720, tracking -0.03 to -0.045em.",
+      "**Do** draw lines at 1.5px and end measured lengths with 45° ticks 13px tall.",
+      "**Do** use tabular numerals for every dimension and year.",
+      "**Do** tie motion to scroll progress with the draw ease (cubic-bezier(0.16, 1, 0.3, 1)) and render the final state under reduced motion.",
+      "**Do** mark missing facts with the hollow open-fact dot instead of filling them in."
     ],
     "donts": [
-      "**Don't** use cards, gradients, glass panels or big shadows on UI or drawings.",
-      "**Don't** use ginstergelb as a background area or for body text.",
-      "**Don't** invent or stage testimonials, project facts, people's titles, portraits or figures.",
-      "**Don't** use handwriting for anything a visitor must read to act."
+      "**Don't** round corners on surfaces, buttons, fields or images; circles are only for point markers.",
+      "**Don't** use blurred or offset drop shadows; depth is the sheet.",
+      "**Don't** introduce a second typeface or a handwritten face.",
+      "**Don't** build card grids; group with ink rules and hairline dividers.",
+      "**Don't** use Ginstergelb as a tint, badge or decoration on paper; it is a sheet, a button or an object on ink.",
+      "**Don't** add illustration beyond line drawings of plans and furniture (no drawn figures, no icon sets)."
     ]
   }
 }

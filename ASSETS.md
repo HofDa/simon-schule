@@ -26,7 +26,7 @@ Zitate erscheinen erst, wenn sie eingetragen sind: `testimonial` pro Projekt, da
 - [ ] Abschluss-Testimonial (`closingSource`)
 
 ## Fotos
-Projektfotos liegen als WebP-Varianten mit 320, 480, 640, 720, 900, 960 und 1800 Pixel Breite unter `public/images/projects/`. `srcset` wählt je nach Darstellungsgröße die passende Datei. Die Whiteboard-Bilder im Hero sind dieselben Projekte. Das Vorschaubild für geteilte Links ist `public/images/social-preview.jpg` (1200 × 630) und basiert auf dem Lernlandschaft-Foto.
+Projektfotos liegen als WebP-Varianten mit 320, 480, 640, 720, 900, 960 und 1800 Pixel Breite unter `public/images/projects/`. `srcset` wählt je nach Darstellungsgröße die passende Datei. Das Vorschaubild für geteilte Links ist `public/images/social-preview.jpg` (1200 × 630) und basiert auf dem Lernlandschaft-Foto.
 
 Aktuelle **temporäre** Fotos von Wikimedia Commons (Namensnennung im Footer, bitte ersetzen):
 
@@ -39,7 +39,6 @@ Aktuelle **temporäre** Fotos von Wikimedia Commons (Namensnennung im Footer, bi
 
 Wenn alle ersetzt sind: `photoCredits` in `site.ts` leeren (die Zeile im Footer verschwindet dann nicht automatisch – Absatz in `Footer.astro` entfernen).
 
-## Zeichnungen, die durch Fotos ersetzt werden sollen
-- [ ] **VS-Stuhl ginstergelb** (Hero, Leistungen, VS-Sektion): `src/components/art/VSChair.astro` ist eine schematische Zeichnung. Ideal: freigestelltes PNG/WebP `public/images/products/vs-pantoswing-ginstergelb.webp` (offizielles VS-Material mit Nutzungsrechten), Ansicht leicht von vorn, mit Kontaktschatten.
-- [ ] **Portraits Simon & Rene** (Menschen-Sektion): `public/images/team/simon-portrait.webp`, `rene-portrait.webp`, 4:5, ruhiger Hintergrund, gleiche Lichtstimmung. Danach in `src/data/site.ts` bei der Person `photo: 'simon-portrait'` eintragen; bis dahin zeigt die Sektion nur Namen.
-- [ ] **Kontakt-Szene**: Simon und Rene auf ginstergelben VS-Hockern (Hokki). Die Szene blendet scrollgebunden durch drei Frames: seitlich zueinander → ¾ → frontal. Dafür je Person drei freigestellte Frames aus identischer Kameraposition: `public/images/team/simon-rene-contact-frame-01..03.webp` (oder je Person einzeln). Die Zeichnung in `src/components/art/SeatedPerson.astro` hat dieselbe Frame-Struktur (`data-pose="side|quarter|front"`), sodass die Fotos 1:1 an ihre Stelle treten.
+## Zeichnungen, die durch Fotos ersetzt werden können
+- [ ] **VS-Stuhl ginstergelb** (VS-Sektion): `src/components/art/VSChair.astro` ist eine schematische Seitenansicht, die beim Scrollen schwingt. Ideal: freigestelltes PNG/WebP `public/images/products/vs-pantoswing-ginstergelb.webp` (offizielles VS-Material mit Nutzungsrechten).
+- [ ] **Portraits Simon & Rene** (Menschen-Sektion): `public/images/team/simon-portrait.webp`, `rene-portrait.webp`, 4:5. Danach in `src/data/site.ts` bei der Person `photo: 'simon-portrait'` eintragen; bis dahin zeigt die Sektion nur die Namen.

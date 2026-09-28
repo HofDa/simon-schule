@@ -1,0 +1,180 @@
+---
+/** First viewport: the Ginstergelb sheet, the claim, the plan drawing itself, and the chain of steps along the bottom. */
+import RoomPlan from './art/RoomPlan.astro';
+import { getLang, useTranslations } from '../i18n/ui';
+
+const t = useTranslations(getLang(Astro.currentLocale));
+const words = t.hero.headline.split(' ');
+---
+
+<section id="top" class="hero sheet-ginster" aria-labelledby="hero-title" data-hero>
+  <div class="shell hero-grid">
+    <div class="hero-copy">
+      <h1 id="hero-title" class="hero-title display">
+        <span class="sr-only">{t.hero.headline}</span>
+        <span aria-hidden="true">
+          {words.map((w, i) => (
+            <><span class="hw"><span style={`--i:${i}`}>{w}</span></span>{i < words.length - 1 ? ' ' : ''}</>
+          ))}
+        </span>
+      </h1>
+      <p class="hero-sub">{t.hero.sub}</p>
+      <div class="hero-actions">
+        <a href="#anfrage" class="btn btn-ink" data-open-form>
+          {t.hero.secondary}
+          <svg class="btn-arrow h-3.5 w-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" /></svg>
+        </a>
+        <a href="#projekte" class="link-line text-meta font-semibold">{t.hero.primary}</a>
+      </div>
+    </div>
+
+    <div class="hero-plan" data-hero-plan>
+      <RoomPlan mode="hero" />
+    </div>
+
+    <a class="hero-chain" href="#leistungen" aria-label={t.services.title}>
+      <ol class="chain-row">
+        {t.services.items.map((s, i) => (
+          <li style={`--i:${i}`}><span>{s.title}</span></li>
+        ))}
+      </ol>
+    </a>
+  </div>
+</section>
+
+<style>
+  .hero {
+    --pl-line: var(--color-ink);
+    --pl-furn: var(--color-paper);
+    --pl-seat: var(--color-paper);
+    position: relative;
+    padding-top: var(--nav-h);
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 40px;
+    padding-block: clamp(32px, 6vh, 72px) 32px;
+  }
+  .hero-title { font-size: var(--text-display); max-width: 11ch; }
+  .hw { display: inline-block; overflow: hidden; padding-bottom: 0.08em; margin-bottom: -0.08em; vertical-align: top; }
+  .hw > span { display: inline-block; animation: hw-rise 900ms var(--ease-draw) both; animation-delay: calc(80ms + var(--i) * 70ms); }
+  @keyframes hw-rise { from { transform: translateY(105%); } }
+
+  .hero-sub {
+    margin-top: clamp(22px, 3vh, 32px);
+    max-width: 46ch;
+    font-size: var(--text-lead);
+    line-height: 1.5;
+    color: var(--color-on-ginster);
+    animation: hero-in 800ms var(--ease-draw) 320ms both;
+  }
+  .hero-actions {
+    margin-top: clamp(26px, 4vh, 40px);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px 28px;
+    animation: hero-in 800ms var(--ease-draw) 420ms both;
+  }
+  @keyframes hero-in { from { opacity: 0; transform: translateY(14px); } }
+
+  .hero-plan { max-width: 760px; width: 100%; justify-self: center; will-change: transform; }
+
+  /* the chain along the bottom edge: five segments, ticks at every joint */
+  .hero-chain { display: block; margin-top: 8px; }
+  .chain-row {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    font-size: var(--text-label);
+    font-weight: 600;
+  }
+  .chain-row li {
+    position: relative;
+    padding: 0 0 18px 0;
+    text-align: center;
+    animation: hero-in 700ms var(--ease-draw) both;
+    animation-delay: calc(600ms + var(--i) * 60ms);
+  }
+  .chain-row li span { display: inline-block; padding-inline: 4px; }
+  .chain-row li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 6px;
+    height: 1.5px;
+    background: var(--color-ink);
+  }
+  .chain-row li::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 1.5px;
+    height: 13px;
+    background: var(--color-ink);
+    transform: rotate(45deg);
+  }
+  .chain-row li:last-child { background: none; }
+  .chain-row li:last-child span::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 1.5px;
+    height: 13px;
+    background: var(--color-ink);
+    transform: rotate(45deg);
+  }
+  .chain-row li:first-child::after { width: 9px; height: 9px; bottom: 2px; left: -4px; border-radius: 50%; transform: none; }
+  .hero-chain:hover .chain-row li:first-child::after { background: var(--color-paper); box-shadow: 0 0 0 1.5px var(--color-ink); }
+
+  /* phones: the chain keeps its ticks; the step names follow right below in the services */
+  /* phones: the names alternate above and below the chain so each can run past its segment */
+  @media (max-width: 639px) {
+    .chain-row { font-size: 0.74rem; padding-bottom: 22px; }
+    .chain-row li span { white-space: nowrap; margin-inline: -24px; }
+    .chain-row li:nth-child(even) { padding-bottom: 0; }
+    .chain-row li:nth-child(even) span { position: relative; top: 30px; }
+    .hero-grid { gap: 24px; padding-block: 20px 12px; }
+    .hero-sub { margin-top: 18px; }
+    .hero-actions { margin-top: 22px; }
+  }
+
+  @media (min-width: 1024px) {
+    .hero-grid {
+      min-height: calc(100svh - var(--nav-h));
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      grid-template-rows: 1fr auto;
+      column-gap: clamp(24px, 2.6vw, 44px);
+      row-gap: 0;
+      padding-block: clamp(24px, 5vh, 64px) 28px;
+      align-items: center;
+    }
+    .hero-copy { grid-column: 1 / span 5; align-self: center; }
+    .hero-plan { grid-column: 6 / span 7; justify-self: end; max-width: min(100%, 64vh * 1.6); }
+    .hero-chain { grid-column: 1 / -1; align-self: end; margin-top: clamp(20px, 4vh, 48px); }
+  }
+</style>
+
+<script>
+  import { addScene, clamp } from '../scripts/motion';
+
+  const hero = document.querySelector<HTMLElement>('[data-hero]');
+  const plan = hero?.querySelector<HTMLElement>('[data-hero-plan]');
+  if (hero && plan) {
+    // as the sheet leaves, the plan lags a little behind the words
+    addScene({
+      el: hero,
+      media: '(min-width: 1024px)',
+      progress: (rect) => clamp(-rect.top / Math.max(1, rect.height)),
+      render(p) {
+        plan.style.transform = p >= 1 || p <= 0 ? '' : `translate3d(0, ${(p * 12).toFixed(2)}vh, 0)`;
+      },
+    });
+  }
+</script>

@@ -1,0 +1,176 @@
+---
+/**
+ * A section cut through a two-storey school: pitched roof, a classroom upstairs,
+ * a kindergarten group room downstairs, a double-height learning landscape and
+ * the stair between them (ten treads, two per project step).
+ * `mode="hero"` draws itself in once; `mode="journey"` carries the room photos,
+ * which a parent fades in per room (--room-in on [data-room]) while it moves the viewBox.
+ * Colours come from the parent: --sx-line, --sx-ground (table tops), --sx-seat.
+ */
+import type { Project } from '../../data/projects';
+import { asset } from '../../lib/paths';
+
+interface Props {
+  mode: 'hero' | 'journey';
+  projects: Project[];
+  class?: string;
+}
+const { mode, projects, class: className = '' } = Astro.props;
+const id = (n: string) => `sx-${mode}-${n}`;
+
+// rooms, in the order of the projects: classroom (OG), kindergarten (EG), learning landscape
+const rooms = [
+  { x: 300, y: 360, w: 500, h: 160 },
+  { x: 300, y: 540, w: 490, h: 160 },
+  { x: 820, y: 360, w: 260, h: 340 },
+];
+const walls = [
+  [100, 340, 1000, 20], // roof slab
+  [300, 520, 500, 20], // upper floor
+  [100, 700, 1000, 22], // ground slab
+  [100, 360, 20, 40], [100, 470, 20, 110], [100, 650, 20, 50], // left wall with two windows
+  [1080, 360, 20, 40], [1080, 660, 20, 40], // right wall around the tall window
+  [790, 540, 20, 80], // lintel into the learning landscape
+];
+const treads = Array.from({ length: 10 }, (_, i) => ({ x: 120 + i * 18, y: 700 - (i + 1) * 18, i }));
+const stairProfile = `M120 700 ${treads.map((t) => `V${t.y} H${t.x + 18}`).join(' ')}`;
+
+const chair = (x: number, f: number, dir: 1 | -1) => {
+  const back = dir === 1 ? x : x + 25;
+  return {
+    body: `M${back} ${f - 86} h5 v40 h${dir === 1 ? 25 : -25} v5 h${dir === 1 ? -30 : 30} Z`,
+    legs: `M${x + 3} ${f - 41} L${x + 1} ${f} M${x + 27} ${f - 41} L${x + 29} ${f}`,
+  };
+};
+const chairs = [chair(318, 520, 1), chair(462, 520, -1), chair(508, 520, 1), chair(652, 520, -1)];
+const tables = [
+  { x: 350, w: 110, h: 72, f: 520 },
+  { x: 540, w: 110, h: 72, f: 520 },
+  { x: 340, w: 80, h: 50, f: 700 },
+  { x: 480, w: 80, h: 50, f: 700 },
+  { x: 852, w: 108, h: 100, f: 700 },
+];
+const hokki = [312, 426, 452, 566];
+const levels = [
+  { y: 700, label: '±0,00' },
+  { y: 520, label: '+3,60' },
+  { y: 340, label: '+7,20' },
+];
+const ground = [28, 40, 52, 64, 76, 88, 100, 1112, 1124, 1136, 1148, 1160, 1172].map((x) => `M${x} 702 l-9 9`).join(' ');
+const src = (file: string) => asset(`images/projects/${file}-960.webp`);
+---
+
+<svg class={`school ${className}`} data-mode={mode} viewBox="0 130 1200 640" preserveAspectRatio="xMidYMid meet" role="presentation" aria-hidden="true" data-school>
+  <defs>
+    <pattern id={id('cut')} width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <path d="M0 0 V7" class="sx-hatch" />
+    </pattern>
+    {mode === 'journey' && rooms.map((r, j) => (
+      <clipPath id={id(`room-${j}`)}><rect x={r.x} y={r.y} width={r.w} height={r.h} /></clipPath>
+    ))}
+  </defs>
+
+  <!-- ground -->
+  <path class="sx-draw" pathLength="1" d="M20 700 H100 M1100 700 H1180" />
+  <path class="sx-thin sx-fade" d={ground} />
+
+  <!-- roof -->
+  <path class="sx-cut" d="M40 350 L600 142 L1160 350 L1160 368 L600 160 L40 368 Z" fill={`url(#${id('cut')})`} style="--k:0" />
+
+  <!-- furniture in elevation -->
+  <g class="sx-furniture">
+    {tables.map((t, i) => (
+      <g style={`--k:${i}`}>
+        <rect class="sx-top" x={t.x} y={t.f - t.h} width={t.w} height="6" />
+        <path class="sx-draw sx-thin" pathLength="1" d={`M${t.x + 8} ${t.f - t.h + 6} V${t.f} M${t.x + t.w - 8} ${t.f - t.h + 6} V${t.f}`} />
+      </g>
+    ))}
+    {chairs.map((c, i) => (
+      <g style={`--k:${i + 4}`}>
+        <path class="sx-draw sx-thin" pathLength="1" d={c.legs} />
+        <path class="sx-seat" d={c.body} />
+      </g>
+    ))}
+    {hokki.map((x, i) => <rect class="sx-seat" x={x} y="662" width="20" height="38" rx="3" style={`--k:${i + 8}`} />)}
+    <!-- a cave to crawl into -->
+    <path class="sx-draw" pathLength="1" d="M620 700 V620 L695 572 L770 620 V700 M650 700 V664 A18 18 0 0 1 686 664 V700 M720 630 h26 v22 h-26 Z" />
+    <!-- storage upstairs -->
+    <path class="sx-draw sx-thin" pathLength="1" d="M706 520 V432 H790 V520 M706 461 H790 M706 490 H790 M748 432 V520" />
+    <!-- learning landscape: high stools, a bench, lamps -->
+    <path class="sx-draw sx-thin" pathLength="1" d="M840 628 V700 M832 700 H848 M978 628 V700 M970 700 H986" />
+    <rect class="sx-seat" x="828" y="620" width="24" height="8" style="--k:12" />
+    <rect class="sx-seat" x="966" y="620" width="24" height="8" style="--k:13" />
+    <rect class="sx-top" x="1004" y="664" width="70" height="36" />
+    <rect class="sx-top" x="1062" y="630" width="12" height="34" />
+    <path class="sx-draw sx-thin" pathLength="1" d="M890 360 V440 M940 360 V420 M1020 360 V450" />
+    <circle class="sx-seat" cx="890" cy="446" r="7" style="--k:14" />
+    <circle class="sx-seat" cx="940" cy="426" r="7" style="--k:15" />
+    <circle class="sx-seat" cx="1020" cy="456" r="7" style="--k:16" />
+  </g>
+
+  <!-- the rooms as built (journey only) -->
+  {mode === 'journey' && rooms.map((r, j) => {
+    const img = projects[j]?.images[0];
+    return img ? (
+      <g class="sx-photo" data-room={j} clip-path={`url(#${id(`room-${j}`)})`}>
+        <image href={src(img.file)} x={r.x} y={r.y} width={r.w} height={r.h} preserveAspectRatio="xMidYMid slice" />
+      </g>
+    ) : null;
+  })}
+
+  <!-- cut walls and slabs -->
+  {walls.map(([x, y, w, h], i) => (
+    <rect class="sx-cut" x={x} y={y} width={w} height={h} fill={`url(#${id('cut')})`} style={`--k:${i + 1}`} />
+  ))}
+  <!-- glazing -->
+  <path class="sx-draw sx-thin" pathLength="1" d="M106 400 V470 M114 400 V470 M106 580 V650 M114 580 V650 M1086 400 V660 M1094 400 V660 M1080 530 H1100 M798 360 V520 M802 360 V520" />
+
+  <!-- the stair: ten treads, two for each step of a project -->
+  <path class="sx-cut" d={`${stairProfile} V544 L144 700 Z`} fill={`url(#${id('cut')})`} style="--k:11" />
+  {treads.map((t) => <rect class="sx-tread" x={t.x} y={t.y} width="18" height="18" data-tread={t.i} />)}
+  <path class="sx-draw" pathLength="1" d={stairProfile} />
+  <path class="sx-draw sx-thin" pathLength="1" d="M126 612 L306 432 M126 612 V700 M306 432 V520" />
+
+  <!-- room names -->
+  {rooms.map((r, j) => projects[j] && (
+    <text class="sx-label sx-fade" x={r.x + 12} y={r.y + 22}>{projects[j].boardLabel}</text>
+  ))}
+
+  <!-- levels -->
+  {levels.map((l) => (
+    <g class="sx-fade">
+      <path class="sx-level" d={`M1112 ${l.y} H1166 M1128 ${l.y - 13} L1144 ${l.y - 13} L1136 ${l.y} Z`} />
+      <text class="sx-num" x="1150" y={l.y - 18}>{l.label}</text>
+    </g>
+  ))}
+</svg>
+
+<style>
+  .school { display: block; width: 100%; height: auto; overflow: visible; }
+  .school :global(text) { font-family: var(--font-sans); font-variant-numeric: tabular-nums; }
+
+  .sx-hatch { stroke: var(--sx-line); stroke-width: 1.1; }
+  .sx-cut { stroke: var(--sx-line); stroke-width: 1.5; }
+  .sx-draw { fill: none; stroke: var(--sx-line); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .sx-thin { stroke-width: 1.2; fill: none; stroke: var(--sx-line); }
+  .sx-top { fill: var(--sx-ground); stroke: var(--sx-line); stroke-width: 1.5; }
+  .sx-seat { fill: var(--sx-seat); stroke: var(--sx-seat-line, var(--sx-line)); stroke-width: 1.5; }
+  .sx-tread { fill: var(--sx-tread, transparent); transition: fill 400ms var(--ease-draw); }
+  .sx-tread.is-lit { fill: var(--color-ginster); }
+  .sx-level { fill: none; stroke: var(--sx-line); stroke-width: 1.2; }
+  .sx-num { font-size: 14px; font-weight: 600; fill: var(--sx-line); }
+  .sx-label { font-size: 15px; font-weight: 600; fill: var(--sx-line); }
+  .sx-photo { opacity: var(--room-in, 0); }
+  :global(html:not(.js)) .sx-photo { opacity: 1; }
+
+  /* hero: the building draws itself once */
+  .school[data-mode='hero'] .sx-draw { stroke-dasharray: 1; animation: sx-draw 1200ms var(--ease-draw) 300ms both; }
+  .school[data-mode='hero'] .sx-furniture .sx-draw { animation-delay: 800ms; }
+  .school[data-mode='hero'] .sx-cut { animation: sx-in 600ms var(--ease-draw) both; animation-delay: calc(120ms + var(--k, 0) * 45ms); }
+  .school[data-mode='hero'] .sx-top,
+  .school[data-mode='hero'] .sx-fade { animation: sx-in 600ms var(--ease-draw) 900ms both; }
+  .school[data-mode='hero'] .sx-seat { transform-box: fill-box; transform-origin: 50% 100%; animation: sx-pop 460ms var(--ease-draw) both; animation-delay: calc(1000ms + var(--k, 0) * 30ms); }
+  @keyframes sx-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+  @keyframes sx-in { from { opacity: 0; } }
+  @keyframes sx-pop { from { transform: scaleY(0); } }
+</style>

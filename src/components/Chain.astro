@@ -1,0 +1,249 @@
+---
+/**
+ * "So läuft ein Projekt": the dimension chain. On large screens the ink sheet pins,
+ * the step panels travel sideways along the chain and the plan gains one layer per step.
+ * Everywhere else (and with reduced motion) it is a vertical chain beside the steps
+ * with the finished plan above them.
+ */
+import RoomPlan from './art/RoomPlan.astro';
+import { getLang, useTranslations } from '../i18n/ui';
+
+const t = useTranslations(getLang(Astro.currentLocale)).services;
+const steps = t.items;
+---
+
+<section id="leistungen" class="chain sheet-ink" aria-labelledby="services-title" data-chain style={`--n:${steps.length}`}>
+  <div class="ch-stage" data-stage>
+    <div class="shell ch-grid">
+      <header class="ch-head">
+        <h2 id="services-title" class="ch-heading display">{t.title}</h2>
+        <p class="ch-intro">{t.intro}</p>
+      </header>
+
+      <div class="ch-window">
+        <ol class="ch-track" data-track>
+          {steps.map((s, i) => (
+            <li class="ch-panel" data-step aria-current={i === 0 ? 'step' : undefined}>
+              <h3 class="ch-title display">{s.title}</h3>
+              <p class="ch-text">{s.text}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+
+      <figure class="ch-plan m-0" aria-hidden="true">
+        <RoomPlan mode="steps" />
+      </figure>
+
+      <div class="ch-rule" aria-hidden="true">
+        <div class="ch-line"><span class="ch-fill" data-fill></span></div>
+        <ol class="ch-marks">
+          {steps.map((s, i) => (
+            <li data-mark style={`--i:${i}`}>
+              <button type="button" tabindex="-1" data-goto={i}>{s.title}</button>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .chain {
+    --pl-line: var(--color-paper);
+    --pl-furn: var(--color-ink);
+    --pl-seat: var(--color-ginster);
+    --pl-seat-line: var(--color-ginster);
+    position: relative;
+  }
+  .ch-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 48px;
+    padding-block: clamp(96px, 12vw, 160px);
+  }
+  .ch-heading { font-size: var(--text-headline); max-width: 13ch; }
+  .ch-intro { margin-top: 24px; max-width: 44ch; color: var(--color-on-ink); font-size: var(--text-lead); line-height: 1.5; }
+
+  /* stacked: a vertical chain beside the steps */
+  .ch-plan { order: -1; max-width: 640px; }
+  .ch-head { order: -2; }
+  .ch-track { list-style: none; margin: 0; padding: 0; }
+  .ch-panel {
+    position: relative;
+    padding: 0 0 48px 36px;
+  }
+  .ch-panel::before {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 10px;
+    bottom: -10px;
+    width: 1.5px;
+    background: var(--color-ginster);
+  }
+  .ch-panel:last-child::before { bottom: 30px; }
+  .ch-panel::after {
+    content: '';
+    position: absolute;
+    left: -1px;
+    top: 14px;
+    width: 13px;
+    height: 1.5px;
+    background: var(--color-ginster);
+    transform: rotate(-45deg);
+    transform-origin: center;
+    translate: 0 6px;
+  }
+  .ch-title { font-size: var(--text-step); color: var(--color-paper); }
+  .ch-text { margin-top: 18px; max-width: 34ch; font-size: var(--text-lead); line-height: 1.5; color: var(--color-on-ink); }
+  .ch-rule { display: none; }
+
+  /* large screens without the pinned scene (reduced motion, short windows): steps left, the plan stays beside them */
+  @media (min-width: 1024px) {
+    .chain:not(.is-scrub) .ch-grid { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(24px, 2.6vw, 44px); row-gap: 72px; }
+    .chain:not(.is-scrub) .ch-head { grid-column: 1 / span 7; }
+    .chain:not(.is-scrub) .ch-window { grid-column: 1 / span 5; grid-row: 2; }
+    .chain:not(.is-scrub) .ch-plan { grid-column: 6 / span 7; grid-row: 2; position: sticky; top: calc(var(--nav-h) + 8vh); align-self: start; max-width: none; }
+  }
+
+  /* ---------- pinned, sideways ---------- */
+  .chain.is-scrub { height: calc(var(--n) * 90vh + 100vh); }
+  .chain.is-scrub .ch-stage { position: sticky; top: 0; height: 100vh; overflow: hidden; }
+  .chain.is-scrub .ch-grid {
+    height: 100%;
+    padding-block: calc(var(--nav-h) + clamp(24px, 5vh, 56px)) clamp(28px, 5vh, 52px);
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    grid-template-rows: auto 1fr auto;
+    column-gap: clamp(24px, 2.6vw, 44px);
+    row-gap: 0;
+  }
+  .chain.is-scrub .ch-head { order: 0; grid-column: 1 / span 6; grid-row: 1; }
+  .chain.is-scrub .ch-heading { font-size: clamp(1.6rem, 2vw, 2rem); max-width: 22ch; }
+  .chain.is-scrub .ch-intro { margin-top: 16px; font-size: var(--text-body); max-width: 48ch; }
+  .chain.is-scrub .ch-window { grid-column: 1 / span 5; grid-row: 2; align-self: center; overflow: hidden; }
+  .chain.is-scrub .ch-track { display: flex; will-change: transform; }
+  .chain.is-scrub .ch-panel { flex: 0 0 100%; padding: 0 24px 0 0; transition: opacity 500ms var(--ease-draw); }
+  .chain.is-scrub .ch-panel::before,
+  .chain.is-scrub .ch-panel::after { display: none; }
+  .chain.is-scrub .ch-panel:not([aria-current]) { opacity: 0.18; }
+  /* sized so the longest step name (Italian: "Accompagnare") fits the window */
+  .chain.is-scrub .ch-title { font-size: clamp(3rem, 4.4vw, 6rem); font-variation-settings: "wdth" 88; letter-spacing: -0.03em; }
+  .chain.is-scrub .ch-plan { order: 0; grid-column: 6 / span 7; grid-row: 1 / span 2; align-self: center; justify-self: end; width: 100%; max-width: min(100%, 60vh * 1.6); }
+  .chain.is-scrub .ch-rule { display: block; grid-column: 1 / -1; grid-row: 3; margin-top: clamp(20px, 3vh, 36px); }
+
+  .ch-line { position: relative; height: 1.5px; background: var(--color-ink-line); margin-top: 18px; }
+  .ch-fill { position: absolute; left: 0; top: -1px; height: 3.5px; width: 100%; background: var(--color-ginster); transform-origin: left center; transform: scaleX(var(--fill, 0)); }
+  .ch-marks { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); position: relative; top: -19px; }
+  .ch-marks li { position: relative; text-align: center; }
+  .ch-marks li::before,
+  .ch-marks li:last-child::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 12px;
+    width: 1.5px;
+    height: 15px;
+    background: var(--tick, var(--color-on-ink));
+    transform: rotate(45deg);
+    transition: background-color 300ms var(--ease-draw);
+  }
+  .ch-marks li:last-child::after { left: auto; right: 0; background: var(--tick-end, var(--color-on-ink)); }
+  .ch-marks li.is-passed { --tick: var(--color-ginster); }
+  .ch-marks button {
+    display: inline-block;
+    min-height: 44px;
+    padding: 30px 8px 0;
+    font: inherit;
+    font-size: var(--text-meta);
+    font-weight: 500;
+    color: var(--color-on-ink);
+    background: none;
+    border: 0;
+    cursor: pointer;
+    transition: color 300ms var(--ease-draw);
+  }
+  .ch-marks button:hover { color: var(--color-paper); }
+  .ch-marks li.is-active button { color: var(--color-paper); font-weight: 650; }
+
+  @media (min-width: 640px) and (max-width: 1023px) {
+    .ch-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 40px; }
+    .ch-head { grid-column: 1 / -1; }
+    .ch-plan { grid-column: 1 / -1; }
+    .ch-window { grid-column: 1 / -1; }
+  }
+</style>
+
+<script>
+  import { addScene, range, stickyProgress } from '../scripts/motion';
+
+  const MEDIA = '(min-width: 1024px) and (min-height: 680px)';
+  const section = document.querySelector<HTMLElement>('[data-chain]');
+  if (section) {
+    const track = section.querySelector<HTMLElement>('[data-track]')!;
+    const panels = Array.from(section.querySelectorAll<HTMLElement>('[data-step]'));
+    const marks = Array.from(section.querySelectorAll<HTMLElement>('[data-mark]'));
+    const plan = section.querySelector<SVGElement>('[data-plan]')!;
+    const layers = Array.from(plan.querySelectorAll<SVGGElement>('[data-layer]'));
+    const fill = section.querySelector<HTMLElement>('[data-fill]')!;
+    const n = panels.length;
+    const smooth = (t: number) => t * t * (3 - 2 * t);
+    let current = -1;
+
+    const setStep = (i: number) => {
+      if (i === current) return;
+      current = i;
+      panels.forEach((p, k) => (k === i ? p.setAttribute('aria-current', 'step') : p.removeAttribute('aria-current')));
+      marks.forEach((m, k) => {
+        m.classList.toggle('is-active', k === i);
+        m.classList.toggle('is-passed', k <= i);
+      });
+      layers.forEach((l, k) => l.classList.toggle('is-on', k <= i));
+      plan.dataset.level = String(i);
+    };
+
+    addScene({
+      el: section,
+      media: MEDIA,
+      measure(active) {
+        section.classList.toggle('is-scrub', active);
+        marks.forEach((m) => m.querySelector('button')?.setAttribute('tabindex', active ? '0' : '-1'));
+        if (!active) {
+          track.style.transform = '';
+          panels.forEach((p) => p.removeAttribute('aria-current'));
+        }
+      },
+      progress: stickyProgress(),
+      render(p) {
+        if (!section.classList.contains('is-scrub')) {
+          // stacked view: the complete plan, every step readable
+          current = -1;
+          layers.forEach((l) => l.classList.add('is-on'));
+          plan.dataset.level = String(n - 1);
+          return;
+        }
+        const s = p * n;
+        const i = Math.min(n - 1, Math.floor(s));
+        // hold on each step, then travel to the next in the last third of its segment
+        const x = Math.min(n - 1, i + smooth(range(s - i, 0.68, 1)));
+        track.style.transform = `translate3d(${(-x * 100).toFixed(3)}%, 0, 0)`;
+        fill.style.setProperty('--fill', p.toFixed(4));
+        const end = marks[n - 1];
+        end.style.setProperty('--tick-end', p >= 0.999 ? 'var(--color-ginster)' : '');
+        setStep(i);
+      },
+    });
+
+    // the chain's labels jump to their step
+    section.querySelectorAll<HTMLButtonElement>('[data-goto]').forEach((btn) =>
+      btn.addEventListener('click', () => {
+        const k = Number(btn.dataset.goto);
+        const top = section.getBoundingClientRect().top + window.scrollY;
+        const travel = section.offsetHeight - window.innerHeight;
+        const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+        window.scrollTo({ top: top + travel * ((k + 0.3) / n), behavior });
+      }),
+    );
+  }
+</script>

@@ -5,13 +5,15 @@ import { getLang, langs, useTranslations, type Lang } from '../../i18n/ui';
 interface Props {
   /** This page in each language, for the language switch (default: the home pages). */
   alternates?: Record<Lang, string>;
+  /** The page carries the home page's sections itself (e.g. a design variant): links stay in-page. */
+  inPage?: boolean;
 }
 
 const lang = getLang(Astro.currentLocale);
 const t = useTranslations(lang);
 const alternates = Astro.props.alternates ?? { de: homeFor('de'), it: homeFor('it') };
 // the section links and the inquiry point into the home page; on the home page itself they stay in-page
-const onHome = isHome(Astro.url.pathname, lang);
+const onHome = Astro.props.inPage || isHome(Astro.url.pathname, lang);
 const home = onHome ? '' : homeFor(lang);
 const nav = t.nav.items.map((item) => ({ ...item, href: `${home}${item.href}` }));
 ---
@@ -20,12 +22,12 @@ const nav = t.nav.items.map((item) => ({ ...item, href: `${home}${item.href}` })
   <div class="shell flex h-full items-center justify-between gap-8 max-[359px]:gap-3">
     <a href={onHome ? '#top' : homeFor(lang)} class="wordmark flex items-baseline gap-[0.4em] text-meta uppercase tracking-[0.14em] max-[359px]:tracking-[0.08em]" aria-label={t.nav.home}>
       <span class="font-bold">Trias</span>
-      <span class="font-normal text-muted">Schule</span>
+      <span class="font-normal">Schule</span>
     </a>
 
     <nav class="hidden items-center gap-9 lg:flex" aria-label={t.nav.main}>
       {nav.map((item) => (
-        <a class="nav-link relative py-2 text-meta font-medium text-muted transition-colors duration-200 hover:text-ink" href={item.href} data-nav-link>
+        <a class="nav-link relative py-2 text-meta font-medium" href={item.href} data-nav-link>
           {item.label}
         </a>
       ))}
@@ -35,11 +37,11 @@ const nav = t.nav.items.map((item) => ({ ...item, href: `${home}${item.href}` })
       <nav class="lang-switch hidden items-center text-label font-semibold uppercase tracking-[0.08em] sm:flex" aria-label={t.nav.switchLabel}>
         {langs.map((l, i) => (
           <>
-            {i > 0 && <span class="px-1.5 text-line" aria-hidden="true">/</span>}
+            {i > 0 && <span class="px-1.5 opacity-40" aria-hidden="true">/</span>}
             {l === lang ? (
               <span class="text-ink" aria-current="true">{l}</span>
             ) : (
-              <a class="text-muted transition-colors hover:text-ink" href={alternates[l]} hreflang={l} lang={l} title={useTranslations(l).langName}>{l}</a>
+              <a class="lang-other" href={alternates[l]} hreflang={l} lang={l} title={useTranslations(l).langName}>{l}</a>
             )}
           </>
         ))}
@@ -79,7 +81,7 @@ const nav = t.nav.items.map((item) => ({ ...item, href: `${home}${item.href}` })
       <ul class="flex flex-col">
         {nav.map((item) => (
           <li>
-            <a href={item.href} class="flex items-center justify-between py-5 text-phi-1 font-semibold tracking-[-0.03em]" data-menu-link>
+            <a href={item.href} class="flex items-center justify-between py-5 text-focal font-semibold tracking-[-0.03em]" data-menu-link>
               {item.label}
               <svg class="h-4 w-4 text-muted" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" /></svg>
             </a>
@@ -92,42 +94,36 @@ const nav = t.nav.items.map((item) => ({ ...item, href: `${home}${item.href}` })
 </header>
 
 <style>
-  .site-nav {
-    transition: background-color 300ms var(--ease-draw);
-  }
+  .site-nav { color: var(--color-ink); transition: background-color 300ms var(--ease-draw); }
   .site-nav.is-scrolled,
   .site-nav.is-open,
-  :global(html:not(.js)) .site-nav {
-    background: rgba(255, 255, 255, 0.88);
-    -webkit-backdrop-filter: blur(12px) saturate(1.1);
-    backdrop-filter: blur(12px) saturate(1.1);
-  }
-  /* open: an opaque header without the blur, which would otherwise become the containing block
-     of the fixed menu sheet and collapse it to the header's height */
-  .site-nav.is-open { background: var(--color-paper); -webkit-backdrop-filter: none; backdrop-filter: none; }
+  :global(html:not(.js)) .site-nav { background: var(--color-paper); }
 
-  /* a compact button in the header; on touch a full 44px target at every width */
+  .site-nav.is-scrolled { box-shadow: inset 0 -1px 0 var(--color-line); }
+
   .nav-cta { min-height: 40px; }
-  /* with the sheet open its own inquiry button takes over, and "Schließen" needs the room */
   .site-nav.is-open .nav-cta { display: none; }
   @media (pointer: coarse) {
     .nav-cta { min-height: 44px; }
   }
 
+  .nav-link { color: var(--color-ink); }
   .nav-link::after {
     content: '';
     position: absolute;
-    left: 50%;
-    bottom: -2px;
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: var(--color-ginster);
-    transform: translateX(-50%) scale(0);
-    transition: transform 250ms var(--ease-draw);
+    left: 0;
+    right: 0;
+    bottom: 2px;
+    height: 1.5px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 300ms var(--ease-draw);
   }
-  .nav-link[aria-current='true'] { color: var(--color-ink); }
-  .nav-link[aria-current='true']::after { transform: translateX(-50%) scale(1); }
+  .nav-link:hover::after,
+  .nav-link[aria-current='true']::after { transform: scaleX(1); }
+  .lang-other { opacity: 0.6; transition: opacity 200ms; }
+  .lang-other:hover { opacity: 1; }
 
   .menu-icon span {
     position: absolute;

@@ -66,7 +66,7 @@ const de: Record<'imprint' | 'privacy', LegalDoc> = {
       {
         title: 'Schriften',
         paragraphs: [
-          'Archivo, Caveat und Kalam (Indian Type Foundry), SIL Open Font License 1.1.',
+          'Archivo (Omnibus-Type), SIL Open Font License 1.1.',
         ],
       },
       {
@@ -152,7 +152,7 @@ const it: Record<'imprint' | 'privacy', LegalDoc> = {
       {
         title: 'Caratteri',
         paragraphs: [
-          'Archivo, Caveat e Kalam (Indian Type Foundry), SIL Open Font License 1.1.',
+          'Archivo (Omnibus-Type), SIL Open Font License 1.1.',
         ],
       },
       {

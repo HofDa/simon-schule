@@ -2,148 +2,137 @@
 import { getLang, useTranslations } from '../i18n/ui';
 
 /**
- * "Where are you right now?": the five project phases as a ruler. Each phase opens
- * the inquiry form with that phase already chosen (see ContactScene: data-phase).
+ * "Where are you right now?": the chain returns as a ruler of the five project phases.
+ * Each phase opens the inquiry with that phase already chosen (Contact: data-phase).
  */
 const ui = useTranslations(getLang(Astro.currentLocale));
 const t = ui.phases;
 const phases = ui.form.phases.map((name, i) => ({ name, hint: t.hints[i] }));
 ---
 
-<section class="phases py-28 lg:py-36" aria-labelledby="phases-title" data-phases>
+<section class="phases sheet-ink" aria-labelledby="phases-title" data-phases>
   <div class="shell">
-    <h2 id="phases-title" class="max-w-[16ch] text-headline leading-[0.98] tracking-[-0.045em]">
-      {t.title}
-    </h2>
-    <p class="mt-6 max-w-[44ch] text-body leading-[1.65] text-muted">{t.lead}</p>
+    <header class="ph-head">
+      <h2 id="phases-title" class="ph-title display">{t.title}</h2>
+      <p class="ph-lead">{t.lead}</p>
+    </header>
 
-    <div class="ruler mt-14 lg:mt-20">
-      <span class="rule" aria-hidden="true"></span>
-      <ol class="phase-list">
-        {phases.map((p, i) => (
-          <li class="phase-item" style={`--i: ${i}`}>
-            <a class="phase" href="#anfrage" data-open-form data-phase={p.name}>
-              <span class="tick" aria-hidden="true"></span>
-              <span class="phase-name">
-                {p.name}
-                <svg class="phase-arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" /></svg>
-              </span>
-              <span class="phase-hint">{p.hint}</span>
-            </a>
-          </li>
-        ))}
-      </ol>
-    </div>
+    <ol class="ph-ruler" data-ruler>
+      {phases.map((p, i) => (
+        <li style={`--i:${i}`}>
+          <a class="ph" href="#anfrage" data-open-form data-phase={p.name}>
+            <span class="ph-seg" aria-hidden="true"></span>
+            <span class="ph-name">
+              {p.name}
+              <svg class="ph-arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" /></svg>
+            </span>
+            <span class="ph-hint">{p.hint}</span>
+          </a>
+        </li>
+      ))}
+    </ol>
   </div>
 </section>
 
 <style>
-  .ruler { position: relative; }
-  /* the ruler is drawn as the section arrives (--draw); without the scene it is complete */
-  .rule {
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 1px;
-    background: var(--color-ink);
-    transform-origin: top;
-    transform: scaleY(var(--draw, 1));
-  }
-  .phase-list { list-style: none; margin: 0; padding: 0; display: grid; }
-  .phase-item { opacity: clamp(0, calc(var(--draw, 1) * 5 - var(--i)), 1); }
+  .phases { padding-block: clamp(104px, 12vw, 168px); }
+  .ph-head { display: grid; gap: 24px; }
+  .ph-title { font-size: var(--text-headline); max-width: 12ch; }
+  .ph-lead { max-width: 42ch; color: var(--color-on-ink); font-size: var(--text-lead); line-height: 1.5; }
 
-  .phase {
+  .ph-ruler { list-style: none; margin: clamp(56px, 7vw, 104px) 0 0; padding: 0; display: grid; }
+  .ph {
     position: relative;
     display: grid;
     gap: 8px;
-    padding: 18px 0 22px 28px;
+    padding: 22px 0 26px 36px;
+    min-height: 44px;
   }
-  .tick {
+  /* vertical ruler (stacked): a line with a tick per phase */
+  .ph-seg { position: absolute; left: 6px; top: 0; bottom: 0; width: 1.5px; background: var(--color-ink-line); transform-origin: top; transform: scaleY(var(--draw, 1)); }
+  .ph-seg::before {
+    content: '';
     position: absolute;
-    left: 0;
-    top: 30px;
-    width: 12px;
-    height: 1px;
-    background: var(--color-ink);
+    left: -6px;
+    top: 24px;
+    width: 13px;
+    height: 1.5px;
+    background: var(--color-paper);
+    transform: rotate(-45deg);
   }
-  /* the chosen point on the ruler: a ginstergelb node, like the step progress */
-  .tick::after {
+  .ph-seg::after {
     content: '';
     position: absolute;
     left: -5px;
-    top: -4px;
-    width: 9px;
-    height: 9px;
+    top: 19px;
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
     background: var(--color-ginster);
     transform: scale(0);
-    transition: transform 250ms var(--ease-draw);
+    transition: transform 300ms var(--ease-draw);
   }
-  .phase:hover .tick::after,
-  .phase:focus-visible .tick::after { transform: scale(1); }
-
-  .phase-name {
+  .ph-name {
     display: inline-flex;
     align-items: baseline;
-    gap: 0.5em;
-    font-size: var(--text-phi-1);
-    font-weight: 600;
-    line-height: 1.1;
+    gap: 12px;
+    font-size: var(--text-title);
+    font-variation-settings: "wdth" 112;
+    font-weight: 650;
     letter-spacing: -0.03em;
+    line-height: 1.05;
   }
-  .phase-arrow {
-    flex: none;
-    width: 0.55em;
-    height: 0.55em;
-    opacity: 0;
-    transform: translateX(-4px);
-    transition: opacity 200ms var(--ease-draw), transform 200ms var(--ease-draw);
-  }
-  .phase:hover .phase-arrow,
-  .phase:focus-visible .phase-arrow { opacity: 1; transform: none; }
-  .phase-hint { max-width: 30ch; font-size: var(--text-meta); line-height: 1.5; color: var(--color-muted); }
-
-  /* tablet: still vertical (Italian phase names are too long for five columns), name and hint side by side */
-  @media (min-width: 768px) and (max-width: 1023px) {
-    .phase { grid-template-columns: minmax(11rem, 16rem) minmax(0, 1fr); column-gap: 32px; align-items: baseline; padding-block: 22px 26px; }
-    .tick { top: 36px; }
-    .phase-hint { max-width: 40ch; }
-  }
+  .ph-arrow { flex: none; width: 0.55em; height: 0.55em; opacity: 0; transform: translateX(-6px); transition: opacity 250ms var(--ease-draw), transform 250ms var(--ease-draw); color: var(--color-ginster); }
+  .ph-hint { max-width: 30ch; font-size: var(--text-meta); color: var(--color-on-ink); }
+  .ph:hover .ph-seg::after, .ph:focus-visible .ph-seg::after { transform: scale(1); }
+  .ph:hover .ph-arrow, .ph:focus-visible .ph-arrow { opacity: 1; transform: none; }
+  .ph:hover .ph-name, .ph:focus-visible .ph-name { color: var(--color-ginster); }
+  .ph:focus-visible { outline-color: var(--color-ginster); }
 
   @media (min-width: 1024px) {
-    /* horizontal: the rule runs along the top, one tick per phase */
-    .rule { top: 0; right: 0; bottom: auto; width: auto; height: 1px; transform-origin: left; transform: scaleX(var(--draw, 1)); }
-    /* the closing end tick, once the rule has reached it */
-    .ruler::after {
+    .ph-head { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(24px, 2.6vw, 44px); align-items: end; }
+    .ph-title { grid-column: 1 / span 7; }
+    .ph-lead { grid-column: 9 / span 4; padding-bottom: 0.4em; }
+
+    .ph-ruler { grid-template-columns: repeat(5, minmax(0, 1fr)); position: relative; }
+    .ph { padding: 44px 20px 12px 0; height: 100%; align-content: start; }
+    .ph-name { font-size: clamp(1.3rem, 1.75vw, 1.9rem); hyphens: auto; }
+    /* horizontal ruler: each phase owns a segment, ticks at the joints, a closing tick at the end */
+    .ph-seg { left: 0; right: 0; top: 0; bottom: auto; width: auto; height: 1.5px; transform-origin: left; transform: scaleX(var(--draw, 1)); }
+    .ph-seg::before { left: -1px; top: -6px; width: 1.5px; height: 13px; transform: rotate(45deg); }
+    .ph-seg::after { left: -6px; top: -6px; }
+    li:last-child .ph-seg { box-shadow: none; }
+    li:last-child .ph::after {
       content: '';
       position: absolute;
       right: 0;
-      top: 0;
-      width: 1px;
-      height: 12px;
-      background: var(--color-ink);
-      opacity: clamp(0, calc((var(--draw, 1) - 0.96) * 25), 1);
+      top: -6px;
+      width: 1.5px;
+      height: 13px;
+      background: var(--color-paper);
+      transform: rotate(45deg);
+      opacity: var(--end, 1);
     }
-    .phase-list { grid-template-columns: repeat(5, minmax(0, 1fr)); column-gap: clamp(20px, 2vw, 36px); }
-    .phase { padding: 30px 0 8px; gap: 12px; }
-    .tick { top: 0; width: 1px; height: 12px; }
-    .tick::after { left: -4px; top: -5px; }
-    .phase-hint { max-width: 24ch; }
-    .phase-name { font-size: clamp(var(--text-lead), 1.9vw, var(--text-phi-1)); }
+    .ph:hover .ph-seg, .ph:focus-visible .ph-seg { background: var(--color-ginster); }
   }
 </style>
 
 <script>
-  import { addScene, viewProgress } from '../scripts/motion';
+  import { addScene, range } from '../scripts/motion';
 
-  const section = document.querySelector<HTMLElement>('[data-phases]');
-  const ruler = section?.querySelector<HTMLElement>('.ruler');
-  if (section && ruler) {
+  const ruler = document.querySelector<HTMLElement>('[data-ruler]');
+  if (ruler) {
+    const segs = Array.from(ruler.querySelectorAll<HTMLElement>('li'));
+    // the ruler is drawn segment by segment as it comes into view
     addScene({
       el: ruler,
-      progress: viewProgress(0.95, 0.45),
-      render: (p) => section.style.setProperty('--draw', p.toFixed(3)),
+      progress: (rect, vh) => (vh * 0.95 - rect.top) / (vh * 0.45),
+      render(p) {
+        segs.forEach((li, i) => {
+          li.style.setProperty('--draw', range(p * segs.length, i, i + 1).toFixed(3));
+        });
+        segs[segs.length - 1]?.style.setProperty('--end', p >= 1 ? '1' : '0');
+      },
     });
   }
 </script>

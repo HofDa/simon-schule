@@ -21,12 +21,12 @@ const f = t.fields;
   data-org-key={f.org.key}
   data-messages={JSON.stringify(t.status)}
 >
-  <div class="flex items-baseline justify-between gap-6">
-    <h3 id="inquiry-title" class="text-phi-1 tracking-[-0.03em]">{t.title}</h3>
+  <div class="form-head">
+    <h3 id="inquiry-title" class="form-title">{t.title}</h3>
     <p class="text-label text-muted">{t.required}</p>
   </div>
 
-  <div class="fields mt-6">
+  <div class="fields mt-8">
     <div class="field">
       <label for="f-name">{f.name.label} *</label>
       <input id="f-name" name={f.name.key} type="text" autocomplete="name" required aria-describedby="f-name-err" />
@@ -69,7 +69,7 @@ const f = t.fields;
   </div>
 
   <div class="mt-7 flex flex-wrap items-center gap-x-6 gap-y-3">
-    <button type="submit" class="btn btn-ginster">
+    <button type="submit" class="btn btn-ink">
       {t.submit}
       <svg class="btn-arrow h-3.5 w-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" /></svg>
     </button>
@@ -83,7 +83,9 @@ const f = t.fields;
 </form>
 
 <style>
-  .fields { display: grid; gap: 18px 28px; }
+  .form-head { display: flex; align-items: baseline; justify-content: space-between; gap: 24px; padding-bottom: 16px; border-bottom: 1.5px solid var(--color-ink); }
+  .form-title { font-size: var(--text-focal); font-variation-settings: "wdth" 112; font-weight: 680; letter-spacing: -0.03em; }
+  .fields { display: grid; gap: 22px 32px; }
   @media (min-width: 640px) {
     .fields { grid-template-columns: 1fr 1fr; }
     .field-wide { grid-column: 1 / -1; }
@@ -94,7 +96,7 @@ const f = t.fields;
   .field textarea {
     width: 100%;
     border: 0;
-    border-bottom: 1px solid #b9b6ad;
+    border-bottom: 1px solid #a9a69c;
     border-radius: 0;
     background: transparent;
     padding: 8px 0 9px;
@@ -104,7 +106,7 @@ const f = t.fields;
     transition: border-color 200ms var(--ease-draw), box-shadow 200ms var(--ease-draw);
   }
   .field textarea { resize: vertical; min-height: 84px; }
-  .field input::placeholder, .field textarea::placeholder { color: #8f8c83; }
+  .field input::placeholder, .field textarea::placeholder { color: #737069; }
   .field input:focus, .field textarea:focus { outline: none; border-color: var(--color-ink); box-shadow: 0 1px 0 0 var(--color-ink); }
   .field input:focus-visible, .field textarea:focus-visible { box-shadow: 0 2px 0 0 var(--color-ginster); }
   .field [aria-invalid='true'] { border-color: #a4331c; box-shadow: 0 1px 0 0 #a4331c; }
@@ -119,7 +121,7 @@ const f = t.fields;
     min-height: 36px;
     padding: 0 12px;
     border: 1px solid #c9c6bc;
-    border-radius: 2px;
+    border-radius: 0;
     font-size: var(--text-meta);
     cursor: pointer;
     transition: background-color 180ms var(--ease-draw), border-color 180ms var(--ease-draw), color 180ms var(--ease-draw);

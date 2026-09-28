@@ -3,30 +3,27 @@
 import Layout from '../layouts/Layout.astro';
 import Navbar from './shared/Navbar.astro';
 import Footer from './shared/Footer.astro';
-import WhiteboardHero from './WhiteboardHero.astro';
-import ServicesStory from './ServicesStory.astro';
-import ProjectTransition from './ProjectTransition.astro';
+import Hero from './Hero.astro';
+import Chain from './Chain.astro';
 import Projects from './Projects.astro';
 import People from './People.astro';
 import VSProducts from './VSProducts.astro';
 import ClosingTestimonial from './ClosingTestimonial.astro';
 import ProjectPhases from './ProjectPhases.astro';
-import ContactScene from './ContactScene.astro';
+import Contact from './Contact.astro';
 ---
 
 <Layout homepage>
   <Navbar />
   <main id="inhalt">
-    <WhiteboardHero />
-    <ServicesStory />
-    <ProjectTransition>
-      <Projects />
-    </ProjectTransition>
+    <Hero />
+    <Chain />
+    <Projects />
     <People />
     <VSProducts />
     <ClosingTestimonial />
     <ProjectPhases />
-    <ContactScene />
+    <Contact />
   </main>
   <Footer />
 </Layout>

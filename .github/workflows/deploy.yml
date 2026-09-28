@@ -39,6 +39,20 @@ jobs:
           PUBLIC_INQUIRY_ENDPOINT: ${{ vars.PUBLIC_INQUIRY_ENDPOINT }}
         run: npm run build
 
+      # The previous design (before the Maßkette redesign), kept at /old/ for comparison.
+      - name: Build previous version at /old/
+        env:
+          PUBLIC_INQUIRY_ENDPOINT: ${{ vars.PUBLIC_INQUIRY_ENDPOINT }}
+          OLD_REF: 0c0011879ee8e1d85e258814256a88569d6eaad8
+        run: |
+          git fetch --no-tags --depth=1 origin "$OLD_REF"
+          git worktree add --detach ../old "$OLD_REF"
+          ln -s "$GITHUB_WORKSPACE/node_modules" ../old/node_modules
+          (cd ../old && BASE_PATH=/old/ npx astro build)
+          rm -f ../old/dist/CNAME ../old/dist/robots.txt ../old/dist/sitemap.xml
+          find ../old/dist -name '*.html' -exec sed -i 's|<head>|<head><meta name="robots" content="noindex">|' {} +
+          cp -r ../old/dist ./dist/old
+
       - name: Upload artifact
         if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v3

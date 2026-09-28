@@ -1,28 +1,14 @@
 @import "tailwindcss";
 
-/* Fonts are served from this site (no request to Google). Variable, Latin subset: German and Italian.
-   Licences: src/assets/fonts/OFL.txt */
+/* Archivo, variable in weight (100–900) and width (62–125), served from this site (no request to Google).
+   Latin subset for German and Italian. Licence: src/assets/fonts/OFL.txt */
 @font-face {
   font-family: "Archivo";
   font-style: normal;
-  font-weight: 400 700;
+  font-weight: 100 900;
+  font-stretch: 62% 125%;
   font-display: swap;
   src: url("../assets/fonts/archivo-latin-var.woff2") format("woff2");
-}
-/* the hero claim, written on the plan: one weight only */
-@font-face {
-  font-family: "Kalam";
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url("../assets/fonts/kalam-700-latin.woff2") format("woff2");
-}
-@font-face {
-  font-family: "Caveat";
-  font-style: normal;
-  font-weight: 500 700;
-  font-display: swap;
-  src: url("../assets/fonts/caveat-latin-var.woff2") format("woff2");
 }
 /* Arial scaled to Archivo's width and vertical metrics, so the swap does not move the layout */
 @font-face {
@@ -36,59 +22,48 @@
 
 @theme {
   --color-paper: #ffffff;
-  --color-warm: #f6f5f0;
-  --color-surface: #f2f1ec;
-  --color-ink: #20201d;
-  --color-ink-deep: #000000; /* ink button hover */
-  --color-muted: #6e6c65;
-  --color-line: #dddad1;
+  --color-warm: #f4f3ee;
+  --color-ink: #1d1d1b;
+  --color-ink-deep: #000000;
+  --color-muted: #66645d;
+  --color-line: #dcd9d0;
   --color-ginster: #e2a300;
-  --color-ginster-deep: #b88400;
   --color-ginster-light: #f1c23b;
+  --color-ginster-deep: #8a6300;
+  /* secondary text on a ginster sheet: ink tinted from the yellow (5:1) */
+  --color-on-ginster: #463606;
+  /* on an ink sheet: lines and secondary text */
+  --color-ink-line: #3b3a36;
+  --color-on-ink: #aeaba1;
 
   --font-sans: "Archivo", "Archivo Fallback", ui-sans-serif, system-ui, sans-serif;
-  --font-marker: "Caveat", "Segoe Print", cursive;
-  --font-hand: "Kalam", "Caveat", "Segoe Print", cursive; /* the hero claim */
 
   --ease-draw: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-sheet: cubic-bezier(0.7, 0, 0.2, 1);
 
-  /* reading scale: four steps for everything below the headings (labels and meta, body, lead) */
-  --text-label: 0.82rem;
+  /* reading scale */
+  --text-label: 0.8rem;
   --text-label--line-height: 1.4;
   --text-meta: 0.92rem;
   --text-meta--line-height: 1.5;
-  --text-body: 1.05rem;
-  --text-body--line-height: 1.65;
-  --text-lead: 1.2rem;
-  --text-lead--line-height: 1.55;
+  --text-body: 1.06rem;
+  --text-body--line-height: 1.62;
+  --text-lead: clamp(1.14rem, 1.25vw, 1.3rem);
+  --text-lead--line-height: 1.5;
 
-  /* heading and annotation roles, fluid between the golden steps */
-  --text-headline: clamp(2.4rem, 5vw, 4.45rem); /* section headings */
-  --text-title: clamp(1.75rem, 2.6vw, 2.75rem); /* names, project titles, categories */
-  --text-route-title: clamp(2.75rem, 7vw, 6rem); /* "Unsere Projekte", written by the route */
-  --text-marker: clamp(1.35rem, 1.8vw, 1.9rem); /* handwritten annotations (Caveat) */
-  --text-service-title: clamp(2rem, 3vw, 3.2rem); /* editorial titles in the services route */
-
-  /* golden type scale: body × φ per step */
-  --text-phi-1: 1.7rem;
-  --text-phi-2: 2.75rem;
-  --text-phi-3: 4.45rem;
+  /* display scale, set in the expanded cut (see .display) */
+  --text-display: clamp(2.7rem, 6.2vw, 6rem);
+  --text-headline: clamp(2.3rem, 4.6vw, 4.5rem);
+  --text-step: clamp(2.6rem, 5.4vw, 5.6rem);
+  --text-title: clamp(1.6rem, 2.4vw, 2.5rem);
+  --text-focal: 1.6rem;
 }
 
 :root {
   --gutter: clamp(20px, 4vw, 64px);
   --nav-h: 72px;
-  /* the PantoSwing's width on desktop and the thickness of its tubes (10 of 400 units);
-     the drawn route uses the same thickness as the legs it continues */
-  --chair-w: min(72vw, 300px);
-  /* how much of the chair shows at the bottom of the hero (mobile: just the upper shell) */
-  --chair-peek: calc(var(--chair-w) * 0.34);
-  --leg-w: calc(var(--chair-w) * 0.025);
+  --line-w: 1.5px;
   color-scheme: light;
-}
-
-@media (min-width: 1024px) {
-  :root { --chair-w: clamp(250px, 21vw, 330px); --chair-peek: calc(var(--chair-w) * 0.44); }
 }
 
 @layer base {
@@ -105,6 +80,7 @@
     font-family: var(--font-sans);
     font-size: var(--text-body);
     line-height: 1.6;
+    font-variation-settings: "wdth" 100;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
     overflow-x: clip;
@@ -113,8 +89,8 @@
 
   h1, h2, h3 {
     text-wrap: balance;
-    font-weight: 600;
-    letter-spacing: -0.035em;
+    font-weight: 650;
+    letter-spacing: -0.03em;
     line-height: 1;
   }
 
@@ -122,70 +98,82 @@
 
   a { color: inherit; text-decoration: none; }
 
-  ::selection { background: var(--color-ginster); color: var(--color-ink); }
+  ::selection { background: var(--color-ink); color: var(--color-ginster); }
 
   :focus-visible {
-    outline: 2px solid var(--color-ink);
+    outline: 2px solid currentColor;
     outline-offset: 3px;
-    border-radius: 2px;
+    border-radius: 1px;
   }
 
-  html { scrollbar-color: #c9c6bc var(--color-paper); scrollbar-width: thin; }
+  html { scrollbar-color: #9d9a91 var(--color-paper); scrollbar-width: thin; }
 }
 
 @layer components {
   .shell {
     width: 100%;
-    max-width: 1520px;
+    max-width: 1560px;
     margin-inline: auto;
     padding-inline: var(--gutter);
   }
 
-  .marker {
-    font-family: var(--font-marker);
-    font-weight: 600;
-    letter-spacing: 0;
-    line-height: 1;
+  /* The architectural lettering: Archivo in its expanded cut, heavy and tight. */
+  .display {
+    font-variation-settings: "wdth" 118;
+    font-weight: 720;
+    letter-spacing: -0.035em;
+    line-height: 0.94;
   }
 
-  /* Facts that are not confirmed yet: marked quietly (a hollow point, never an underline that reads as a link),
-     never invented. */
+  /* Colour sheets: whole regions, hard edges. */
+  .sheet-ginster { background: var(--color-ginster); color: var(--color-ink); --sheet-muted: var(--color-on-ginster); --sheet-line: var(--color-ink); }
+  .sheet-ink { background: var(--color-ink); color: var(--color-paper); --sheet-muted: var(--color-on-ink); --sheet-line: var(--color-ink-line); }
+  .sheet-paper { background: var(--color-paper); color: var(--color-ink); --sheet-muted: var(--color-muted); --sheet-line: var(--color-line); }
+  .sheet-ink ::selection { background: var(--color-ginster); color: var(--color-ink); }
+
+  .tnum { font-variant-numeric: tabular-nums; }
+
+  /* Facts that are not confirmed yet: marked quietly (a hollow point), never invented. */
   .open-fact,
   .tag-placeholder {
     display: inline-flex;
     align-items: center;
-    gap: 0.5em;
-    color: var(--color-muted);
+    gap: 0.55em;
+    color: var(--sheet-muted, var(--color-muted));
   }
   .open-fact::before,
   .tag-placeholder::before {
     content: "";
     flex: none;
-    width: 6px;
-    height: 6px;
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
-    border: 1px solid var(--color-ginster-deep);
+    border: 1px solid currentColor;
   }
-  .tag-placeholder { font-size: var(--text-label); letter-spacing: 0.02em; }
+  .tag-placeholder { font-size: var(--text-label); letter-spacing: 0.01em; }
 
   .btn {
     display: inline-flex;
     align-items: center;
-    gap: 0.75rem;
-    min-height: 48px;
-    padding: 0 1.4rem;
-    border-radius: 2px;
+    gap: 0.85rem;
+    min-height: 52px;
+    padding: 0 1.5rem;
+    border-radius: 0;
     font-size: var(--text-meta);
     font-weight: 600;
-    letter-spacing: -0.005em;
-    transition: background-color 200ms var(--ease-draw), color 200ms var(--ease-draw), transform 200ms var(--ease-draw);
+    letter-spacing: 0;
+    white-space: nowrap;
+    transition: background-color 220ms var(--ease-draw), color 220ms var(--ease-draw);
   }
   .btn-ink { background: var(--color-ink); color: var(--color-paper); }
   .btn-ink:hover { background: var(--color-ink-deep); }
+  .btn-ink:focus-visible { outline-color: var(--color-ink); }
   .btn-ginster { background: var(--color-ginster); color: var(--color-ink); }
   .btn-ginster:hover { background: var(--color-ginster-light); }
-  .btn .btn-arrow { transition: transform 200ms var(--ease-draw); }
-  .btn:hover .btn-arrow { transform: translateX(3px); }
+  .btn-paper { background: var(--color-paper); color: var(--color-ink); }
+  .btn-paper:hover { background: var(--color-ginster); }
+  .btn .btn-arrow { flex: none; transition: transform 260ms var(--ease-draw); }
+  .btn:hover .btn-arrow { transform: translateX(4px); }
 
   .link-line {
     background-image: linear-gradient(currentColor, currentColor);
@@ -193,11 +181,40 @@
     background-position: 0 100%;
     background-repeat: no-repeat;
     padding-bottom: 2px;
-    transition: background-size 250ms var(--ease-draw);
+    transition: background-size 280ms var(--ease-draw);
   }
   .link-line:hover { background-size: 0 1px; background-position: 100% 100%; }
 
-  /* touch: text links get a 44px hit area through an invisible extension, the layout stays as it is */
+  /* A dimension line: a rule with 45° end ticks. Children position themselves on it. */
+  .dim {
+    position: relative;
+    height: 13px;
+    --tick: currentColor;
+  }
+  .dim::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 6px;
+    height: 1px;
+    background: currentColor;
+    transform-origin: left center;
+    transform: scaleX(var(--dim-p, 1));
+  }
+  .dim::after,
+  .dim > .dim-end {
+    content: "";
+    position: absolute;
+    top: 0;
+    width: 1px;
+    height: 13px;
+    background: var(--tick);
+    transform: rotate(45deg);
+  }
+  .dim::after { left: 0; }
+  .dim > .dim-end { right: 0; opacity: var(--dim-end, 1); }
+
   @media (pointer: coarse) {
     .link-line { position: relative; }
     .link-line::after { content: ""; position: absolute; inset: -12px -6px; }

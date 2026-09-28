@@ -1,0 +1,146 @@
+---
+/**
+ * The page's one room plan: a 7,20 × 4,32 m learning space drawn in five layers,
+ * one per project step (surveyed room, zones, furniture, fitted out, and later).
+ * `mode="hero"` draws every layer in once on load; `mode="steps"` shows the layers
+ * a parent switches on with `.is-on` (all layers show without JS).
+ * Colours come from the parent: --pl-line, --pl-furn (furniture ground), --pl-seat.
+ */
+import { getLang, useTranslations } from '../../i18n/ui';
+
+interface Props {
+  mode: 'hero' | 'steps';
+  class?: string;
+}
+const { mode, class: className = '' } = Astro.props;
+const hatchId = `plan-hatch-${mode}`;
+const t = useTranslations(getLang(Astro.currentLocale)).services.plan;
+
+// cut walls (poché): top wall with three windows, bottom wall with the door
+const walls = [
+  [64, 34, 86, 16], [250, 34, 80, 16], [430, 34, 80, 16], [610, 34, 86, 16],
+  [64, 410, 46, 16], [180, 410, 516, 16],
+  [64, 50, 16, 360], [680, 50, 16, 360],
+];
+const windows = [150, 330, 510];
+const tables = [
+  [130, 118], [270, 118], [130, 268], [270, 268],
+];
+const chairs = tables.flatMap(([x, y], ti) =>
+  [[x + 24, y - 15], [x + 66, y - 15], [x + 24, y + 65], [x + 66, y + 65]].map(([cx, cy], ci) => ({ cx, cy, k: ti * 4 + ci })),
+);
+const stools = Array.from({ length: 6 }, (_, i) => {
+  const a = (i / 6) * Math.PI * 2 - Math.PI / 2;
+  return { cx: +(566 + Math.cos(a) * 50).toFixed(1), cy: +(318 + Math.sin(a) * 50).toFixed(1), k: 16 + i };
+});
+const hatch = (x0: number, x1: number, y: number) =>
+  Array.from({ length: Math.floor((x1 - x0) / 12) }, (_, i) => `M${x0 + i * 12 + 12} ${y} l-10 10`).join(' ');
+---
+
+<svg class={`room-plan ${className}`} data-mode={mode} viewBox="0 0 800 500" role="presentation" aria-hidden="true" data-plan>
+  <defs>
+    <pattern id={hatchId} width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <path d="M0 0 V7" class="pl-hatch-line" />
+    </pattern>
+  </defs>
+  <!-- 1 · the room as it is: walls, windows, door, dimensions -->
+  <g class="pl-layer is-on" data-layer="0">
+    {walls.map(([x, y, w, h], i) => <rect class="pl-poche" x={x} y={y} width={w} height={h} fill={`url(#${hatchId})`} style={`--k:${i}`} />)}
+    {windows.map((x) => (
+      <path class="pl-draw pl-thin" pathLength="1" d={`M${x} 34 H${x + 100} M${x} 42 H${x + 100} M${x} 50 H${x + 100}`} />
+    ))}
+    <path class="pl-draw pl-thin" pathLength="1" d="M110 410 V340 A70 70 0 0 1 180 410" />
+    <path class="pl-draw pl-thin" pathLength="1" d="M80 434 V474 M680 434 V474 M80 466 H680" />
+    <path class="pl-draw pl-thin" pathLength="1" d="M74 460 L86 472 M674 460 L686 472" />
+    <path class="pl-draw pl-thin" pathLength="1" d="M56 50 H18 M56 410 H18 M26 50 V410" />
+    <path class="pl-draw pl-thin" pathLength="1" d="M20 44 L32 56 M20 404 L32 416" />
+    <text class="pl-fade pl-dim" x="380" y="458" text-anchor="middle">7,20</text>
+    <text class="pl-fade pl-dim" x="0" y="0" transform="translate(18 230) rotate(-90)" text-anchor="middle">4,32</text>
+  </g>
+
+  <!-- 2 · zones -->
+  <g class="pl-layer" data-layer="1">
+    <rect class="pl-zone" x="102" y="76" width="304" height="316" />
+    <rect class="pl-zone" x="430" y="76" width="228" height="136" />
+    <rect class="pl-zone" x="430" y="236" width="228" height="156" />
+    <text class="pl-fade pl-label" x="394" y="380" text-anchor="end">{t.zones[0]}</text>
+    <text class="pl-fade pl-label" x="442" y="200">{t.zones[1]}</text>
+    <text class="pl-fade pl-label" x="442" y="382">{t.zones[2]}</text>
+  </g>
+
+  <!-- 3 · furniture set out -->
+  <g class="pl-layer" data-layer="2">
+    {tables.map(([x, y]) => <rect class="pl-furn" x={x} y={y} width="90" height="50" />)}
+    <path class="pl-draw pl-thin" pathLength="1" d="M456 96 H632 V134 H456 Z M515 96 V134 M573 96 V134" />
+    <path class="pl-draw pl-thin" pathLength="1" d="M456 150 H560 V166 H456 Z" />
+    {chairs.map((c) => <circle class="pl-seat" cx={c.cx} cy={c.cy} r="8" style={`--k:${c.k}`} />)}
+    {stools.map((s) => <circle class="pl-seat" cx={s.cx} cy={s.cy} r="10" style={`--k:${s.k}`} />)}
+  </g>
+
+  <!-- 4 · fitted out: tables set, storage along the wall -->
+  <g class="pl-layer" data-layer="3">
+    {tables.map(([x, y]) => <rect class="pl-solid" x={x} y={y} width="90" height="50" />)}
+    <path class="pl-draw pl-thin" pathLength="1" d="M84 130 H100 V330 H84 Z M84 170 H100 M84 210 H100 M84 250 H100 M84 290 H100" />
+    <path class="pl-hatch" d={hatch(84, 100, 330)} />
+  </g>
+
+  <!-- 5 · and later -->
+  <g class="pl-layer" data-layer="4">
+    <text class="pl-fade pl-label pl-later" x="700" y="236">{t.later}</text>
+    <path class="pl-draw pl-note-line" pathLength="1" d="M740 246 C746 286 722 306 676 312" />
+    <path class="pl-draw pl-note-line" pathLength="1" d="M687 303 L674 312 L688 320" />
+  </g>
+</svg>
+
+<style>
+  .room-plan { display: block; width: 100%; height: auto; overflow: visible; }
+  .room-plan :global(text) { font-family: var(--font-sans); font-variant-numeric: tabular-nums; }
+
+  .pl-poche { stroke: var(--pl-line); stroke-width: 1.5; }
+  .pl-hatch-line { stroke: var(--pl-line); stroke-width: 1.1; }
+  .pl-draw { fill: none; stroke: var(--pl-line); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .pl-thin { stroke-width: 1.25; }
+  .pl-note-line { stroke-width: 1.5; }
+  .pl-zone { fill: none; stroke: var(--pl-line); stroke-width: 1; stroke-dasharray: 6 6; opacity: 0.55; }
+  .pl-furn { fill: var(--pl-furn); stroke: var(--pl-line); stroke-width: 1.5; }
+  .pl-solid { fill: var(--pl-line); }
+  .pl-seat { fill: var(--pl-seat); stroke: var(--pl-seat-line, var(--pl-line)); stroke-width: 1.5; }
+  .pl-hatch { fill: none; stroke: var(--pl-line); stroke-width: 1; }
+  .pl-dim { font-size: 15px; font-weight: 600; fill: var(--pl-line); }
+  .pl-label { font-size: 14px; font-weight: 500; fill: var(--pl-line); opacity: 0.8; }
+  .pl-later { font-weight: 600; opacity: 1; }
+  /* phones: lettering is enlarged in drawing units so it stays readable at a third of the size */
+  @media (max-width: 639px) {
+    .pl-dim { font-size: 28px; }
+    .pl-label { font-size: 24px; }
+    .pl-later { font-size: 22px; }
+  }
+
+  /* ---- hero: every layer draws in once, in plan order ---- */
+  .room-plan[data-mode='hero'] .pl-draw { stroke-dasharray: 1; animation: pl-draw 1100ms var(--ease-draw) both; }
+  .room-plan[data-mode='hero'] .pl-poche { animation: pl-in 500ms var(--ease-draw) both; animation-delay: calc(150ms + var(--k) * 40ms); }
+  .room-plan[data-mode='hero'] [data-layer='0'] .pl-draw { animation-delay: 350ms; }
+  .room-plan[data-mode='hero'] [data-layer='1'] > * { animation: pl-in 600ms var(--ease-draw) 700ms both; }
+  .room-plan[data-mode='hero'] [data-layer='2'] .pl-furn { animation: pl-in 500ms var(--ease-draw) 850ms both; }
+  .room-plan[data-mode='hero'] [data-layer='2'] .pl-draw { animation-delay: 850ms; }
+  .room-plan[data-mode='hero'] .pl-seat { transform-box: fill-box; transform-origin: center; animation: pl-pop 420ms var(--ease-draw) both; animation-delay: calc(950ms + var(--k) * 22ms); }
+  .room-plan[data-mode='hero'] .pl-fade { animation: pl-in 600ms var(--ease-draw) 900ms both; }
+  .room-plan[data-mode='hero'] [data-layer='3'],
+  .room-plan[data-mode='hero'] [data-layer='4'] { display: none; }
+
+  @keyframes pl-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+  @keyframes pl-in { from { opacity: 0; } }
+  @keyframes pl-pop { from { transform: scale(0); } }
+
+  /* ---- steps: a parent switches layers on; without JS all are on ---- */
+  :global(html.js) .room-plan[data-mode='steps'] .pl-layer .pl-draw { stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 900ms var(--ease-draw); }
+  :global(html.js) .room-plan[data-mode='steps'] .pl-layer :is(.pl-fade, .pl-zone, .pl-furn, .pl-solid, .pl-hatch, .pl-poche) { opacity: 0; transition: opacity 600ms var(--ease-draw); }
+  :global(html.js) .room-plan[data-mode='steps'] .pl-seat { transform-box: fill-box; transform-origin: center; transform: scale(0); transition: transform 460ms var(--ease-draw); transition-delay: calc(var(--k) * 18ms); }
+  :global(html.js) .room-plan[data-mode='steps'] .pl-layer.is-on .pl-draw { stroke-dashoffset: 0; }
+  :global(html.js) .room-plan[data-mode='steps'] .pl-layer.is-on :is(.pl-fade, .pl-furn, .pl-solid, .pl-hatch, .pl-poche) { opacity: 1; }
+  :global(html.js) .room-plan[data-mode='steps'] .pl-layer.is-on .pl-zone { opacity: 0.55; }
+  :global(html.js) .room-plan[data-mode='steps'] .pl-layer.is-on .pl-seat { transform: scale(1); }
+  /* once the room is fitted out, the zones step back */
+  :global(html.js) .room-plan[data-mode='steps'][data-level='3'] [data-layer='1'] .pl-zone,
+  :global(html.js) .room-plan[data-mode='steps'][data-level='4'] [data-layer='1'] .pl-zone { opacity: 0.22; }
+</style>

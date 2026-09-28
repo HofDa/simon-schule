@@ -27,6 +27,7 @@ const hatch = Array.from({ length: 18 }, (_, i) => `M${44 + i * 20} 522 l-12 13`
     <path class="hatch" d={hatch} />
   </g>
 
+  <g class="swing">
   <!-- frame: tubes drawn as two ink edges (a wide ink stroke under a paper-coloured one) -->
   <path d={frame} class="tube-edge" />
   <path d={frame} class="tube-core" />
@@ -54,6 +55,8 @@ const hatch = Array.from({ length: 18 }, (_, i) => `M${44 + i * 20} 522 l-12 13`
     <path d="M140 21.6 L149.7 23.8 L142.4 30.6 M87.8 52.7 L77.8 52.9 L83.2 44.5" />
   </g>
 
+  </g>
+
   <!-- seat height -->
   <g class="ln thin">
     <path class="dash" d="M344 302 H382" />
@@ -75,5 +78,7 @@ const hatch = Array.from({ length: 18 }, (_, i) => `M${44 + i * 20} 522 l-12 13`
   .shell-face { fill: var(--color-ginster-light); }
   .pivot { fill: var(--color-paper); stroke: var(--color-ink); stroke-width: 1.6; }
   /* drawing units (viewBox): the label scales with the drawing, outside the type tokens */
-  .label { font-family: var(--font-marker); font-weight: 600; font-size: 24px; fill: var(--color-ink); }
+  .label { font-family: var(--font-sans); font-weight: 500; font-size: 17px; fill: var(--color-ink); }
+  /* the swing: the whole chair rocks about its front glide, driven by the parent's --swing (degrees) */
+  .swing { transform-box: view-box; transform-origin: 316px 519px; transform: rotate(calc(var(--swing, 0) * 1deg)); }
 </style>

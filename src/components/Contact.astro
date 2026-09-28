@@ -1,0 +1,78 @@
+---
+/** The close: a Ginstergelb sheet with the invitation and the inquiry laid on it as a white drawing sheet. */
+import { contact, fullName, people } from '../data/site';
+import { getLang, useTranslations } from '../i18n/ui';
+import ContactForm from './ContactForm.astro';
+
+const t = useTranslations(getLang(Astro.currentLocale)).contact;
+---
+
+<section id="kontakt" class="contact sheet-ginster" aria-labelledby="contact-title" data-contact>
+  <div class="shell co-grid">
+    <div class="co-copy">
+      <h2 id="contact-title" class="co-title display">{t.title}</h2>
+      <p class="co-lead">{t.lead}</p>
+      <ul class="co-people">
+        {people.map((p) => <li>{fullName(p)}</li>)}
+      </ul>
+      <p class="co-direct">
+        {contact.phone ? (
+          <a class="link-line font-semibold" href={`tel:${contact.phone.replace(/\s/g, '')}`}>{t.call}</a>
+        ) : (
+          <a class="link-line font-semibold" href={`mailto:${contact.email}`}>{t.mail(contact.email)}</a>
+        )}
+      </p>
+    </div>
+
+    <div id="anfrage" class="co-sheet" tabindex="-1" data-form-wrap>
+      <ContactForm />
+    </div>
+  </div>
+</section>
+
+<style>
+  .contact { padding-block: clamp(104px, 12vw, 168px); }
+  .co-grid { display: grid; gap: 56px; }
+  .co-title { font-size: var(--text-headline); max-width: 13ch; }
+  .co-lead { margin-top: 24px; max-width: 40ch; font-size: var(--text-lead); line-height: 1.5; color: var(--color-on-ginster); }
+  .co-people { list-style: none; margin: 40px 0 0; padding: 0; border-top: 1.5px solid var(--color-ink); max-width: 420px; }
+  .co-people li { padding: 12px 0; border-bottom: 1px solid color-mix(in srgb, var(--color-ink) 35%, transparent); font-size: var(--text-lead); font-weight: 600; letter-spacing: -0.01em; }
+  .co-direct { margin-top: 28px; font-size: var(--text-meta); }
+
+  .co-sheet {
+    background: var(--color-paper);
+    padding: clamp(24px, 4vw, 56px);
+    outline: none;
+    scroll-margin-top: calc(var(--nav-h) + 16px);
+  }
+  .co-sheet:focus-visible { outline: 2px solid var(--color-ink); outline-offset: 4px; }
+
+  @media (min-width: 1024px) {
+    .co-grid { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(24px, 2.6vw, 44px); align-items: start; }
+    .co-copy { grid-column: 1 / span 5; position: sticky; top: calc(var(--nav-h) + 48px); }
+    .co-sheet { grid-column: 6 / span 7; }
+  }
+</style>
+
+<script>
+  const wrap = document.querySelector<HTMLElement>('[data-form-wrap]');
+  if (wrap) {
+    const open = (event: Event) => {
+      const link = event.currentTarget as HTMLElement;
+      // only in-page links: on other pages the link navigates to the home page
+      if (link instanceof HTMLAnchorElement && new URL(link.href).pathname !== location.pathname) return;
+      event.preventDefault();
+      const phase = link.dataset.phase;
+      if (phase) {
+        wrap.querySelectorAll<HTMLInputElement>('input[type="radio"]').forEach((radio) => {
+          radio.checked = radio.value === phase;
+        });
+      }
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      wrap.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+      window.setTimeout(() => wrap.querySelector<HTMLInputElement>('input')?.focus({ preventScroll: true }), reduce ? 0 : 650);
+      history.replaceState(null, '', '#anfrage');
+    };
+    document.querySelectorAll<HTMLElement>('[data-open-form]').forEach((el) => el.addEventListener('click', open));
+  }
+</script>

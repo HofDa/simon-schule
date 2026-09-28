@@ -3,32 +3,37 @@ import { contact, photoCredits, vs } from '../../data/site';
 import { homeFor, isHome, legalFor } from '../../lib/paths';
 import { getLang, useTranslations } from '../../i18n/ui';
 
+interface Props {
+  /** The page carries the home page's sections itself: links stay in-page. */
+  inPage?: boolean;
+}
+
 const lang = getLang(Astro.currentLocale);
 const t = useTranslations(lang);
 const f = t.footer;
 const year = new Date().getFullYear();
-const home = isHome(Astro.url.pathname, lang) ? '' : homeFor(lang);
+const home = Astro.props.inPage || isHome(Astro.url.pathname, lang) ? '' : homeFor(lang);
 const openContact = [!contact.phone && t.pendingFields.phone, !contact.address && t.pendingFields.address].filter(
   (f): f is string => Boolean(f),
 );
 ---
 
-<footer class="bg-warm pt-20 pb-10 text-meta">
+<footer class="sheet-ink footer pt-24 pb-10 text-meta">
   <div class="shell">
     <div class="grid gap-12 pb-14 md:grid-cols-12">
       <div class="md:col-span-5">
         <p class="flex items-baseline gap-[0.4em] text-meta uppercase tracking-[0.14em]">
-          <span class="font-bold">Trias</span><span class="text-muted">Schule</span>
+          <span class="font-bold">Trias</span><span>Schule</span>
         </p>
-        <p class="mt-5 max-w-[34ch] leading-relaxed text-muted">
+        <p class="mt-5 max-w-[34ch] leading-relaxed text-on-ink">
           {f.claim}
         </p>
       </div>
 
       <div class="md:col-span-3">
         <h2 class="mb-4 text-meta font-semibold tracking-normal">{f.contact}</h2>
-        <ul class="touch-list space-y-2 text-muted">
-          <li><a class="link-line text-ink" href={`mailto:${contact.email}`}>{contact.email}</a></li>
+        <ul class="touch-list space-y-2 text-on-ink">
+          <li><a class="link-line text-paper" href={`mailto:${contact.email}`}>{contact.email}</a></li>
           {contact.phone && <li><a href={`tel:${contact.phone.replace(/\s/g, '')}`}>{contact.phone}</a></li>}
           {contact.address && <li>{contact.address}</li>}
           {openContact.length > 0 && <li class="open-fact">{t.pending(openContact)}</li>}
@@ -37,31 +42,32 @@ const openContact = [!contact.phone && t.pendingFields.phone, !contact.address &
 
       <div class="md:col-span-2">
         <h2 class="mb-4 text-meta font-semibold tracking-normal">{f.page}</h2>
-        <ul class="touch-list space-y-2 text-muted">
-          {t.nav.items.map((item) => <li><a class="transition-colors hover:text-ink" href={`${home}${item.href}`}>{item.label}</a></li>)}
+        <ul class="touch-list space-y-2 text-on-ink">
+          {t.nav.items.map((item) => <li><a class="transition-colors hover:text-paper" href={`${home}${item.href}`}>{item.label}</a></li>)}
         </ul>
       </div>
 
       <div class="md:col-span-2">
         <h2 class="mb-4 text-meta font-semibold tracking-normal">{f.legal}</h2>
-        <ul class="touch-list space-y-2 text-muted">
-          <li><a class="transition-colors hover:text-ink" href={legalFor(lang, 'imprint')}>{f.imprint}</a></li>
-          <li><a class="transition-colors hover:text-ink" href={legalFor(lang, 'privacy')}>{f.privacy}</a></li>
+        <ul class="touch-list space-y-2 text-on-ink">
+          <li><a class="transition-colors hover:text-paper" href={legalFor(lang, 'imprint')}>{f.imprint}</a></li>
+          <li><a class="transition-colors hover:text-paper" href={legalFor(lang, 'privacy')}>{f.privacy}</a></li>
         </ul>
       </div>
     </div>
 
-    <div class="flex flex-col gap-4 pt-8 text-label text-muted md:flex-row md:items-start md:justify-between">
+    <p class="footer-mark display" aria-hidden="true">Trias Schule</p>
+    <div class="flex flex-col gap-4 border-t border-rule pt-8 text-label text-on-ink md:flex-row md:items-start md:justify-between">
       <p>© {year} Trias Schule · {f.company}</p>
       <p>
         <a class="link-line" href={vs.catalogUrl[lang]} target="_blank" rel="noopener">{f.partner}</a>
       </p>
     </div>
-    <p class="mt-6 max-w-[65ch] text-label leading-relaxed text-muted/90">
+    <p class="mt-6 max-w-[65ch] text-label leading-relaxed text-on-ink/90">
       {f.credits}
       {photoCredits.map((c, i) => (
         <>
-          <a class="underline underline-offset-2 hover:text-ink" href={c.url} target="_blank" rel="noopener">{c.author}</a> ({c.license}){i < photoCredits.length - 1 ? ', ' : '.'}
+          <a class="underline underline-offset-2 hover:text-paper" href={c.url} target="_blank" rel="noopener">{c.author}</a> ({c.license}){i < photoCredits.length - 1 ? ', ' : '.'}
         </>
       ))}
     </p>
@@ -69,6 +75,9 @@ const openContact = [!contact.phone && t.pendingFields.phone, !contact.address &
 </footer>
 
 <style>
+  .footer :global(.open-fact) { color: var(--color-on-ink); }
+  .footer-mark { font-size: clamp(3.2rem, 12.4vw, 13.5rem); line-height: 0.8; letter-spacing: -0.05em; white-space: nowrap; margin: 24px 0 40px; color: var(--color-ginster); }
+  .footer .border-rule { border-color: var(--color-ink-line); }
   /* touch: each entry is a full 44px row */
   @media (pointer: coarse) {
     .touch-list > li { display: flex; align-items: center; min-height: 44px; margin-block: 0; }

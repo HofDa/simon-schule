@@ -1,0 +1,78 @@
+---
+/** Variant "Schnitt": the claim above a section cut through a school, drawn across the Ginstergelb sheet. */
+import SchoolSection from '../art/SchoolSection.astro';
+import { getProjects } from '../../data/projects';
+import { getLang, useTranslations } from '../../i18n/ui';
+
+const lang = getLang(Astro.currentLocale);
+const t = useTranslations(lang);
+const projects = getProjects(lang);
+const words = t.hero.headline.split(' ');
+---
+
+<section id="top" class="sh sheet-ginster" aria-labelledby="hero-title">
+  <div class="shell sh-grid">
+    <h1 id="hero-title" class="sh-title display">
+      <span class="sr-only">{t.hero.headline}</span>
+      <span aria-hidden="true">
+        {words.map((w, i) => (
+          <><span class="hw"><span style={`--i:${i}`}>{w}</span></span>{i < words.length - 1 ? ' ' : ''}</>
+        ))}
+      </span>
+    </h1>
+    <div class="sh-offer">
+      <p class="sh-sub">{t.hero.sub}</p>
+      <div class="sh-actions">
+        <a href="#anfrage" class="btn btn-ink" data-open-form>
+          {t.hero.secondary}
+          <svg class="btn-arrow h-3.5 w-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" /></svg>
+        </a>
+        <a href="#projekte" class="link-line text-meta font-semibold">{t.hero.primary}</a>
+      </div>
+    </div>
+    <div class="sh-drawing">
+      <SchoolSection mode="hero" projects={projects} />
+    </div>
+  </div>
+</section>
+
+<style>
+  .sh {
+    --sx-line: var(--color-ink);
+    --sx-ground: var(--color-paper);
+    --sx-seat: var(--color-paper);
+    padding-top: var(--nav-h);
+    overflow: hidden;
+  }
+  .sh-grid { display: grid; gap: 28px; padding-block: clamp(28px, 6vh, 72px) 0; }
+  .sh-title { font-size: var(--text-display); max-width: 12ch; }
+  .hw { display: inline-block; overflow: hidden; padding-bottom: 0.08em; margin-bottom: -0.08em; vertical-align: top; }
+  .hw > span { display: inline-block; animation: sh-rise 900ms var(--ease-draw) both; animation-delay: calc(80ms + var(--i) * 70ms); }
+  @keyframes sh-rise { from { transform: translateY(105%); } }
+  @keyframes sh-in { from { opacity: 0; transform: translateY(14px); } }
+  .sh-offer { animation: sh-in 800ms var(--ease-draw) 320ms both; }
+  .sh-sub { max-width: 44ch; font-size: var(--text-lead); line-height: 1.5; color: var(--color-on-ginster); }
+  .sh-actions { margin-top: 26px; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 28px; }
+  /* the building stands on the sheet's lower edge */
+  .sh-drawing { margin-inline: calc(-0.5 * var(--gutter)); margin-bottom: -10px; }
+
+  @media (max-width: 639px) {
+    .sh-drawing { margin-inline: -8px; }
+    .sh-drawing :global(.sx-label) { font-size: 26px; }
+    .sh-drawing :global(.sx-num) { font-size: 22px; }
+  }
+
+  @media (min-width: 1024px) {
+    .sh-grid {
+      min-height: calc(100svh - var(--nav-h));
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      grid-template-rows: auto 1fr;
+      column-gap: clamp(24px, 2.6vw, 44px);
+      row-gap: 0;
+    }
+    .sh-title { grid-column: 1 / span 7; }
+    .sh-offer { grid-column: 9 / span 4; align-self: end; padding-bottom: 0.5em; }
+    .sh-drawing { grid-column: 1 / -1; align-self: end; max-height: 62vh; margin-top: 16px; }
+    .sh-drawing :global(svg) { max-height: 62vh; margin-inline: auto; }
+  }
+</style>
