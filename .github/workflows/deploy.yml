@@ -53,6 +53,8 @@ jobs:
           (cd ../old && BASE_PATH="${BASE_PATH}old/" npx astro build)
           rm -f ../old/dist/CNAME ../old/dist/robots.txt ../old/dist/sitemap.xml
           find ../old/dist -name '*.html' -exec sed -i 's|<head>|<head><meta name="robots" content="noindex">|' {} +
+          sed -i "s|</head>|<link rel=\"stylesheet\" href=\"${BASE_PATH}variant-switcher.css\"></head>|" ../old/dist/index.html
+          sed -i "s|</body>|<script src=\"${BASE_PATH}variant-switcher.js\" data-variant-switcher></script></body>|" ../old/dist/index.html
           cp -r ../old/dist ./dist/old
 
       - name: Upload artifact

@@ -16,6 +16,8 @@ interface Props {
   homepage?: boolean;
   /** A design exploration: kept out of search engines and without language alternates. */
   noindex?: boolean;
+  /** Show the floating chooser on a design variant or the entry page. */
+  variantSwitcher?: boolean;
 }
 
 const lang = getLang(Astro.currentLocale);
@@ -99,6 +101,7 @@ const structuredData = Astro.props.homepage && site
     {!Astro.props.noindex && langs.map((l) => <link rel="alternate" hreflang={l} href={absolute(alternates[l])} />)}
     {!Astro.props.noindex && <link rel="alternate" hreflang="x-default" href={absolute(alternates.de)} />}
     <link rel="icon" type="image/svg+xml" href={asset('favicon.svg')} />
+    {Astro.props.variantSwitcher && <link rel="stylesheet" href={asset('variant-switcher.css')} />}
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
     {structuredData && <script type="application/ld+json" set:html={structuredData}></script>}
@@ -108,5 +111,6 @@ const structuredData = Astro.props.homepage && site
   <body>
     <a href="#inhalt" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[200] focus:bg-paper focus:px-4 focus:py-2">{t.skip}</a>
     <slot />
+    {Astro.props.variantSwitcher && <script is:inline src={asset('variant-switcher.js')} data-variant-switcher></script>}
   </body>
 </html>

@@ -14,7 +14,7 @@ import { asset, homeFor } from '../lib/paths';
 const alternates = { de: asset('leistungsverzeichnis/'), it: homeFor('it') };
 ---
 
-<Layout title="Trias Schule | Das Leistungsverzeichnis" noindex canonical={asset('leistungsverzeichnis/')} alternates={alternates}>
+<Layout title="Trias Schule | Das Leistungsverzeichnis" noindex canonical={asset('leistungsverzeichnis/')} alternates={alternates} variantSwitcher>
   <Navbar inPage alternates={alternates} />
   <main id="inhalt">
     <DossierHero />

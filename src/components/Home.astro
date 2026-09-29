@@ -27,6 +27,7 @@ const alternates = { de: asset('masskette/'), it: homeFor('it') };
   canonical={variant ? asset('masskette/') : undefined}
   alternates={variant ? alternates : undefined}
   noindex={variant}
+  variantSwitcher={variant}
 >
   <Navbar inPage={variant} alternates={variant ? alternates : undefined} />
   <main id="inhalt">
