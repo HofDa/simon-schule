@@ -1,5 +1,5 @@
 ---
-/** The homepage, shared by the German (/) and Italian (/it/) routes. */
+/** The main site, used for the German design variant and the Italian page. */
 import Layout from '../layouts/Layout.astro';
 import Navbar from './shared/Navbar.astro';
 import Footer from './shared/Footer.astro';
@@ -11,10 +11,24 @@ import VSProducts from './VSProducts.astro';
 import ClosingTestimonial from './ClosingTestimonial.astro';
 import ProjectPhases from './ProjectPhases.astro';
 import Contact from './Contact.astro';
+import { asset, homeFor } from '../lib/paths';
+
+interface Props {
+  variant?: boolean;
+}
+
+const variant = Astro.props.variant ?? false;
+const alternates = { de: asset('masskette/'), it: homeFor('it') };
 ---
 
-<Layout homepage>
-  <Navbar />
+<Layout
+  homepage={!variant}
+  title={variant ? 'Trias Schule | Die Maßkette' : undefined}
+  canonical={variant ? asset('masskette/') : undefined}
+  alternates={variant ? alternates : undefined}
+  noindex={variant}
+>
+  <Navbar inPage={variant} alternates={variant ? alternates : undefined} />
   <main id="inhalt">
     <Hero />
     <Chain />
@@ -25,5 +39,5 @@ import Contact from './Contact.astro';
     <ProjectPhases />
     <Contact />
   </main>
-  <Footer />
+  <Footer inPage={variant} />
 </Layout>

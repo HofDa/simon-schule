@@ -1,5 +1,69 @@
 ---
-import Home from '../components/Home.astro';
+import Layout from '../layouts/Layout.astro';
+import { asset } from '../lib/paths';
+
+const variants = [
+  { number: '01', name: 'Die Maßkette', detail: 'Der neue Entwurf', href: asset('masskette/') },
+  { number: '02', name: 'Schnitt durch die Schule', detail: 'Ein Rundgang durch die Räume', href: asset('schnitt/') },
+  { number: '03', name: 'Bisherige Version', detail: 'Der vorherige Entwurf', href: asset('old/') },
+];
 ---
 
-<Home />
+<Layout title="Trias Schule | Entwürfe auswählen" description="Drei Entwürfe für die Website von Trias Schule ansehen." canonical={asset('')}>
+  <main id="inhalt" class="entry">
+    <div class="entry-inner">
+      <p class="brand"><strong>Trias</strong> Schule</p>
+      <div class="intro">
+        <p class="eyebrow">Website-Entwürfe <span aria-hidden="true">/</span> Trias Schule</p>
+        <h1>Wählen Sie eine Variante.</h1>
+        <p class="lead">Drei Wege, Lernräume für Südtirol zu zeigen.</p>
+      </div>
+
+      <nav aria-label="Website-Varianten" class="variant-list">
+        {variants.map((variant) => (
+          <a class="variant" href={variant.href}>
+            <span class="number" aria-hidden="true">{variant.number}</span>
+            <span class="variant-copy">
+              <span class="variant-name">{variant.name}</span>
+              <span class="variant-detail">{variant.detail}</span>
+            </span>
+            <svg class="arrow" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 16h23M18 7l9 9-9 9" /></svg>
+          </a>
+        ))}
+      </nav>
+      <p class="note">Entwurf auswählen, um die Seite anzusehen.</p>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .entry { min-height: 100svh; background: var(--color-ginster); color: var(--color-ink); }
+  .entry-inner { width: min(100% - 2 * var(--gutter), 1120px); min-height: 100svh; margin-inline: auto; display: flex; flex-direction: column; padding-block: clamp(28px, 5vh, 60px); }
+  .brand { font-size: .92rem; text-transform: uppercase; letter-spacing: .14em; }
+  .brand strong { font-weight: 800; }
+  .intro { margin-top: auto; padding-block: clamp(48px, 8vh, 100px) 40px; }
+  .eyebrow, .number, .variant-detail, .note { font-size: .82rem; font-weight: 600; letter-spacing: .06em; }
+  .eyebrow { text-transform: uppercase; }
+  .eyebrow span { margin-inline: .5em; }
+  h1 { max-width: 12ch; margin-top: 18px; font-size: clamp(3rem, 8vw, 7.5rem); line-height: .94; letter-spacing: -.065em; font-weight: 800; }
+  .lead { margin-top: 26px; font-size: clamp(1rem, 1.6vw, 1.3rem); }
+  .variant-list { border-top: 1.5px solid currentColor; }
+  .variant { display: grid; grid-template-columns: 52px minmax(0, 1fr) 32px; align-items: center; gap: 20px; min-height: 104px; padding: 18px 6px; border-bottom: 1.5px solid currentColor; transition: padding-inline .25s var(--ease-draw), background-color .25s; }
+  .variant:hover { padding-inline: 18px; background: rgba(255,255,255,.2); }
+  .variant:focus-visible { outline: 3px solid var(--color-ink); outline-offset: -3px; }
+  .number { align-self: start; padding-top: 5px; font-variant-numeric: tabular-nums; }
+  .variant-copy { display: flex; flex-direction: column; gap: 4px; }
+  .variant-name { font-size: clamp(1.45rem, 3vw, 2.6rem); font-weight: 750; letter-spacing: -.045em; line-height: 1.1; }
+  .variant-detail { opacity: .75; letter-spacing: 0; }
+  .arrow { width: 32px; height: 32px; transition: transform .25s var(--ease-draw); }
+  .variant:hover .arrow { transform: translateX(4px); }
+  .note { margin-top: 22px; opacity: .75; }
+  @media (max-width: 600px) {
+    .entry-inner { padding-block: 24px 32px; }
+    .intro { padding-block: 72px 36px; }
+    h1 { font-size: clamp(2.7rem, 13vw, 4.5rem); }
+    .variant { grid-template-columns: 28px minmax(0, 1fr) 24px; gap: 12px; min-height: 96px; }
+    .arrow { width: 24px; height: 24px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .variant, .arrow { transition: none; } }
+</style>
