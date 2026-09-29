@@ -1,0 +1,195 @@
+---
+import { homeFor } from '../../../lib/paths';
+import { getLang, langs, useTranslations, type Lang } from '../../../i18n/ui';
+
+interface Props {
+  /** This page in each language, for the language switch (default: the home pages). */
+  alternates?: Record<Lang, string>;
+}
+
+const lang = getLang(Astro.currentLocale);
+const t = useTranslations(lang);
+const alternates = Astro.props.alternates ?? { de: homeFor('de'), it: homeFor('it') };
+// the previous design is one page: its section links and the inquiry stay in-page
+const onHome = true;
+const home = onHome ? '' : homeFor(lang);
+const nav = t.nav.items.map((item) => ({ ...item, href: `${home}${item.href}` }));
+---
+
+<header class="site-nav fixed inset-x-0 top-0 z-[100] h-[var(--nav-h)]" data-nav>
+  <div class="shell flex h-full items-center justify-between gap-8 max-[359px]:gap-3">
+    <a href={onHome ? '#top' : homeFor(lang)} class="wordmark flex items-baseline gap-[0.4em] text-meta uppercase tracking-[0.14em] max-[359px]:tracking-[0.08em]" aria-label={t.nav.home}>
+      <span class="font-bold">Trias</span>
+      <span class="font-normal text-muted">Schule</span>
+    </a>
+
+    <nav class="hidden items-center gap-9 lg:flex" aria-label={t.nav.main}>
+      {nav.map((item) => (
+        <a class="nav-link relative py-2 text-meta font-medium text-muted transition-colors duration-200 hover:text-ink" href={item.href} data-nav-link>
+          {item.label}
+        </a>
+      ))}
+    </nav>
+
+    <div class="flex items-center gap-3 sm:gap-5">
+      <nav class="lang-switch hidden items-center text-label font-semibold uppercase tracking-[0.08em] sm:flex" aria-label={t.nav.switchLabel}>
+        {langs.map((l, i) => (
+          <>
+            {i > 0 && <span class="px-1.5 text-line" aria-hidden="true">/</span>}
+            {l === lang ? (
+              <span class="text-ink" aria-current="true">{l}</span>
+            ) : (
+              <a class="text-muted transition-colors hover:text-ink" href={alternates[l]} hreflang={l} lang={l} title={useTranslations(l).langName}>{l}</a>
+            )}
+          </>
+        ))}
+      </nav>
+      <a href={`${home}#anfrage`} class="nav-cta btn btn-ink !gap-2.5 !px-3.5 text-meta sm:!gap-3 sm:!px-4 max-[359px]:!px-3" data-open-form>
+        <span class="h-1.5 w-1.5 rounded-full bg-ginster max-[359px]:hidden" aria-hidden="true"></span>
+        <span class="sm:hidden">{t.nav.ctaShort}</span>
+        <span class="hidden sm:inline">{t.nav.cta}</span>
+      </a>
+      <button
+        type="button"
+        class="menu-toggle inline-flex h-11 items-center gap-2 px-1 text-meta font-medium lg:hidden"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        data-menu-toggle
+        data-label-open={t.nav.menu}
+        data-label-close={t.nav.close}
+      >
+        <span class="menu-icon relative block h-3 w-5" aria-hidden="true"><span></span><span></span></span>
+        <span class="max-[374px]:sr-only" data-menu-label>{t.nav.menu}</span>
+      </button>
+    </div>
+  </div>
+
+  <div id="mobile-menu" class="mobile-menu fixed inset-x-0 bottom-0 top-[var(--nav-h)] bg-paper lg:hidden" hidden>
+    <nav class="shell flex h-full flex-col pt-6 pb-10" aria-label={t.nav.mobile}>
+      <div class="flex gap-2 pb-4 text-meta font-semibold sm:hidden" role="group" aria-label={t.nav.switchLabel}>
+        {langs.map((l) => {
+          const name = useTranslations(l).langName;
+          return l === lang ? (
+            <span class="inline-flex min-h-11 items-center pr-4 text-ink" aria-current="true">{name}</span>
+          ) : (
+            <a class="inline-flex min-h-11 items-center pr-4 text-muted" href={alternates[l]} hreflang={l} lang={l}>{name}</a>
+          );
+        })}
+      </div>
+      <ul class="flex flex-col">
+        {nav.map((item) => (
+          <li>
+            <a href={item.href} class="flex items-center justify-between py-5 text-phi-1 font-semibold tracking-[-0.03em]" data-menu-link>
+              {item.label}
+              <svg class="h-4 w-4 text-muted" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" /></svg>
+            </a>
+          </li>
+        ))}
+      </ul>
+      <a href={`${home}#anfrage`} class="btn btn-ginster mt-auto justify-center" data-menu-link data-open-form>{t.nav.cta}</a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-nav {
+    transition: background-color 300ms var(--ease-draw);
+  }
+  .site-nav.is-scrolled,
+  .site-nav.is-open,
+  :global(html:not(.js)) .site-nav {
+    background: rgba(255, 255, 255, 0.88);
+    -webkit-backdrop-filter: blur(12px) saturate(1.1);
+    backdrop-filter: blur(12px) saturate(1.1);
+  }
+  /* open: an opaque header without the blur, which would otherwise become the containing block
+     of the fixed menu sheet and collapse it to the header's height */
+  .site-nav.is-open { background: var(--color-paper); -webkit-backdrop-filter: none; backdrop-filter: none; }
+
+  /* a compact button in the header; on touch a full 44px target at every width */
+  .nav-cta { min-height: 40px; }
+  /* with the sheet open its own inquiry button takes over, and "Schließen" needs the room */
+  .site-nav.is-open .nav-cta { display: none; }
+  @media (pointer: coarse) {
+    .nav-cta { min-height: 44px; }
+  }
+
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -2px;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--color-ginster);
+    transform: translateX(-50%) scale(0);
+    transition: transform 250ms var(--ease-draw);
+  }
+  .nav-link[aria-current='true'] { color: var(--color-ink); }
+  .nav-link[aria-current='true']::after { transform: translateX(-50%) scale(1); }
+
+  .menu-icon span {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 1.5px;
+    background: currentColor;
+    transition: transform 250ms var(--ease-draw), top 250ms var(--ease-draw);
+  }
+  .menu-icon span:first-child { top: 1px; }
+  .menu-icon span:last-child { top: 9px; }
+  [aria-expanded='true'] .menu-icon span:first-child { top: 5px; transform: rotate(45deg); }
+  [aria-expanded='true'] .menu-icon span:last-child { top: 5px; transform: rotate(-45deg); }
+</style>
+
+<script>
+  const header = document.querySelector<HTMLElement>('[data-nav]');
+  const toggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
+  const menu = document.getElementById('mobile-menu');
+  const label = document.querySelector<HTMLElement>('[data-menu-label]');
+
+  if (header) {
+    const onScroll = () => header.classList.toggle('is-scrolled', window.scrollY > 8);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+  }
+
+  const setMenu = (open: boolean) => {
+    if (!toggle || !menu || !header) return;
+    toggle.setAttribute('aria-expanded', String(open));
+    menu.hidden = !open;
+    header.classList.toggle('is-open', open);
+    document.body.style.overflow = open ? 'hidden' : '';
+    if (label) label.textContent = (open ? toggle.dataset.labelClose : toggle.dataset.labelOpen) ?? '';
+  };
+
+  toggle?.addEventListener('click', () => setMenu(toggle.getAttribute('aria-expanded') !== 'true'));
+  document.querySelectorAll('[data-menu-link]').forEach((link) => link.addEventListener('click', () => setMenu(false)));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && toggle?.getAttribute('aria-expanded') === 'true') {
+      setMenu(false);
+      toggle.focus();
+    }
+  });
+
+  // Active section marker
+  const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-nav-link]'));
+  // only links into this page's own sections (other pages link to the home page's sections)
+  const inPage = (a: HTMLAnchorElement) => new URL(a.href).pathname === location.pathname;
+  // every section of the page is watched: over one that has no nav entry (hero, phases) no link is marked
+  const sections = Array.from(document.querySelectorAll<HTMLElement>('main > section'));
+  if ('IntersectionObserver' in window && links.some(inPage)) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          const id = entry.target.id ? `#${entry.target.id}` : '';
+          links.forEach((a) => a.setAttribute('aria-current', String(Boolean(id) && inPage(a) && a.hash === id)));
+        }
+      },
+      { rootMargin: '-45% 0px -50% 0px' },
+    );
+    sections.forEach((s) => io.observe(s));
+  }
+</script>

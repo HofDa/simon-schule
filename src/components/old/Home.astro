@@ -1,0 +1,35 @@
+---
+/** The previous design (before the Maßkette redesign), served at /old/ as a German-only variant. */
+import Layout from '../../layouts/OldLayout.astro';
+import Navbar from './shared/Navbar.astro';
+import Footer from './shared/Footer.astro';
+import WhiteboardHero from './WhiteboardHero.astro';
+import ServicesStory from './ServicesStory.astro';
+import ProjectTransition from './ProjectTransition.astro';
+import Projects from './Projects.astro';
+import People from './People.astro';
+import VSProducts from './VSProducts.astro';
+import ClosingTestimonial from '../ClosingTestimonial.astro';
+import ProjectPhases from './ProjectPhases.astro';
+import ContactScene from './ContactScene.astro';
+import { asset, homeFor } from '../../lib/paths';
+
+const alternates = { de: asset('old/'), it: homeFor('it') };
+---
+
+<Layout title="Trias Schule | Bisherige Version" canonical={asset('old/')} alternates={alternates} noindex variantSwitcher>
+  <Navbar alternates={alternates} />
+  <main id="inhalt">
+    <WhiteboardHero />
+    <ServicesStory />
+    <ProjectTransition>
+      <Projects />
+    </ProjectTransition>
+    <People />
+    <VSProducts />
+    <ClosingTestimonial />
+    <ProjectPhases />
+    <ContactScene />
+  </main>
+  <Footer />
+</Layout>

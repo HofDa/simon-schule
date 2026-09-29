@@ -1,0 +1,407 @@
+---
+import { getLang, useTranslations } from '../../i18n/ui';
+
+const t = useTranslations(getLang(Astro.currentLocale)).projects;
+/**
+ * The ruler-drawn route and the projects, as one pinned stage (phones and desktop alike):
+ * the line comes down from the chair's leg, bends into the bottom of the screen and
+ * writes "Raumbeispiele". Then the whole sheet (line, title and the projects passed in
+ * as the slot) slides to the left under a fixed pen tip, so the line keeps drawing
+ * beneath each project. Every project stands on the line at a numbered station; the
+ * route closes with an end bar after the last one.
+ * Short landscape screens and reduced motion: a static line with the title, projects stacked below.
+ */
+---
+
+<section id="projekte" class="transition relative" aria-labelledby="projects-title" data-transition>
+  <div class="t-stage relative" data-stage>
+    <div class="t-sheet" data-sheet>
+      <div class="t-head relative" data-head>
+        <svg class="t-svg absolute inset-0 h-full w-full" data-svg aria-hidden="true">
+          <path class="t-guide" data-guide d="" />
+          <path class="t-path" data-path d="" />
+          <g class="t-stations" data-stations></g>
+          <path class="t-end" data-end d="" />
+          <circle class="t-pen" data-pen r="7" cx="-20" cy="-20" />
+        </svg>
+
+        <div class="t-title-wrap absolute inset-x-0">
+          <div class="shell">
+            <h2 id="projects-title" class="t-title" data-title>{t.title}</h2>
+          </div>
+        </div>
+        <div class="t-sub-wrap absolute inset-x-0">
+          <div class="shell">
+            <p class="t-sub">{t.sub}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="t-row" data-row>
+        <slot />
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .t-head { height: 440px; }
+  @media (min-width: 1024px) {
+    .t-head { height: 440px; }
+  }
+
+  /* the drawn route: one bold ginster line with rounded bends, continuing the chair's leg */
+  .t-path {
+    fill: none;
+    stroke: var(--color-ginster);
+    stroke-width: var(--route-width, var(--leg-w, 4px));
+    stroke-linecap: butt;
+    stroke-linejoin: round;
+  }
+  /* the route still to come, pencilled in as a fine dotted line */
+  .t-guide { display: none; fill: none; stroke: var(--color-muted); stroke-width: 1.5; stroke-linecap: round; stroke-dasharray: 0 7; opacity: 0.45; }
+  .transition.is-scrub .t-guide { display: block; }
+  /* the pen tip: a ginster point ringed in ink, riding the head of the line */
+  .t-pen { fill: var(--color-ginster); stroke: var(--color-ink); stroke-width: 2; transition: opacity 200ms var(--ease-draw); }
+  /* the closing bar across the end of the route */
+  .t-end { fill: none; stroke: var(--color-ink); stroke-width: 2; stroke-linecap: square; transition: opacity 300ms var(--ease-draw); }
+  /* stations: a short ink post from the line up to the project standing on it, numbered below the line */
+  .t-stations :global(line) { stroke: var(--color-line); stroke-width: 1.5; transition: stroke 250ms var(--ease-draw); }
+  .t-stations :global(text) { font-family: var(--font-sans); font-size: 12px; font-weight: 600; letter-spacing: 0.06em; font-variant-numeric: tabular-nums; fill: var(--color-muted); opacity: 0.55; transition: opacity 250ms var(--ease-draw), fill 250ms var(--ease-draw); }
+  .t-stations :global(.is-passed line) { stroke: var(--color-ink); }
+  .t-stations :global(.is-passed text) { fill: var(--color-ink); opacity: 1; }
+
+  .t-title-wrap { bottom: calc(100% - var(--ym, 300px) + 18px); }
+  .t-sub-wrap { top: calc(var(--ym, 300px) + 22px); }
+  .t-title {
+    display: inline-block;
+    font-size: var(--text-route-title);
+    line-height: 0.95;
+    letter-spacing: -0.045em;
+    clip-path: inset(-10% calc((1 - var(--reveal, 1)) * 100%) -20% 0);
+    margin-left: var(--title-x, 0px);
+  }
+  .t-sub {
+    max-width: 44ch;
+    color: var(--color-muted);
+    font-size: var(--text-body);
+    margin-left: var(--title-x, 0px);
+    opacity: var(--sub, 1);
+    transform: translateY(calc((1 - var(--sub, 1)) * 6px));
+  }
+
+  /* pinned stage: a wide sheet that slides left */
+  .transition.is-scrub .t-stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
+  .transition.is-scrub .t-sheet {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: var(--sheet-w, 300vw);
+    transform: translateX(var(--tx, 0px));
+    will-change: transform;
+  }
+  .transition.is-scrub .t-head { position: absolute; inset: 0; height: auto; pointer-events: none; }
+  .transition.is-scrub .t-title-wrap,
+  .transition.is-scrub .t-sub-wrap { right: auto; width: 100vw; }
+  .transition.is-scrub .t-row {
+    position: absolute;
+    top: var(--row-top, 104px);
+    height: var(--row-h, 600px);
+    left: var(--row-left, 900px);
+    display: flex;
+    align-items: stretch;
+  }
+
+  /* the projects as a horizontal row standing on the drawn line */
+  .transition.is-scrub .t-row :global(.projects) { padding: 0; height: 100%; width: max-content; max-width: none; }
+  .transition.is-scrub .t-row :global(.projects-inner) {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    gap: 80px;
+    height: 100%;
+    padding: 0;
+  }
+  /* images are golden rectangles sized by the stage height (nav to line), so the rooms appear at full scale */
+  .transition.is-scrub .t-row {
+    --img-h: min(var(--row-h, 600px), calc(64vw / 1.618));
+    --img-h-full: min(var(--row-h, 600px), calc(66vw / 1.618));
+  }
+  .transition.is-scrub .t-row :global(.project) {
+    flex: none;
+    display: flex;
+    align-items: flex-end;
+    gap: clamp(28px, 2.6vw, 44px);
+    height: 100%;
+  }
+  .transition.is-scrub .t-row :global(.project--right) { flex-direction: row-reverse; }
+  .transition.is-scrub .t-row :global(.p-media) { flex: none; height: var(--img-h); aspect-ratio: 1.618 / 1; }
+  .transition.is-scrub .t-row :global(.project--full .p-media) { height: var(--img-h-full); }
+  .transition.is-scrub .t-row :global(.p-media img) { width: 100%; height: 100%; aspect-ratio: auto; }
+  .transition.is-scrub .t-row :global(.p-info) { flex: none; width: min(22rem, 26vw); margin-top: 0; padding-top: 0; }
+  .transition.is-scrub .t-row :global(.project--full .p-info) { display: block; }
+  .transition.is-scrub .t-row :global(.project--full .p-meta) { margin-top: 28px; }
+  .transition.is-scrub .t-row :global(.project--full .p-desc) { margin-top: 22px; }
+  .transition.is-scrub .t-row :global(.p-detail) { display: none; }
+  .transition.is-scrub .t-row :global(.p-quote) { flex: none; width: min(520px, 38vw); align-self: end; margin-left: 0; }
+
+  /* phones and tablets: each project is a card (photo over text) standing on the line */
+  @media (max-width: 1023px) {
+    .transition.is-scrub .t-sub { font-size: var(--text-meta); max-width: 36ch; }
+    .transition.is-scrub .t-row { --card-w: min(78vw, 380px); }
+    .transition.is-scrub .t-row :global(.projects-inner) { gap: 36px; }
+    .transition.is-scrub .t-row :global(.project),
+    .transition.is-scrub .t-row :global(.project--right) {
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: stretch;
+      gap: 18px;
+      width: var(--card-w);
+    }
+    .transition.is-scrub .t-row :global(.p-media),
+    .transition.is-scrub .t-row :global(.project--full .p-media) {
+      width: 100%;
+      height: min(calc(var(--card-w) / 1.5), calc(var(--row-h, 600px) * 0.42));
+      aspect-ratio: auto;
+    }
+    .transition.is-scrub .t-row :global(.p-info),
+    .transition.is-scrub .t-row :global(.project--full .p-info) { width: 100%; display: block; }
+    .transition.is-scrub .t-row :global(.p-meta),
+    .transition.is-scrub .t-row :global(.project--full .p-meta) { margin-top: 14px; }
+    .transition.is-scrub .t-row :global(.p-desc),
+    .transition.is-scrub .t-row :global(.project--full .p-desc) {
+      margin-top: 12px;
+      display: -webkit-box;
+      -webkit-line-clamp: 4;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .transition.is-scrub .t-row :global(.tag-placeholder) { margin-bottom: 10px; }
+  }
+</style>
+
+<script>
+  import { addScene, clamp, range } from '../../scripts/motion';
+
+  // the stage pins on any screen tall enough to hold a project above the line
+  const PINNED = '(min-height: 560px)';
+  const section = document.querySelector<HTMLElement>('[data-transition]');
+  const sheet = section?.querySelector<HTMLElement>('[data-sheet]');
+  const headBox = section?.querySelector<HTMLElement>('[data-head]');
+  const svg = section?.querySelector<SVGSVGElement>('[data-svg]');
+  const path = section?.querySelector<SVGPathElement>('[data-path]');
+  const guide = section?.querySelector<SVGPathElement>('[data-guide]');
+  const stationsBox = section?.querySelector<SVGGElement>('[data-stations]');
+  const endBar = section?.querySelector<SVGPathElement>('[data-end]');
+  const pen = section?.querySelector<SVGCircleElement>('[data-pen]');
+  const title = section?.querySelector<HTMLElement>('[data-title]');
+  const row = section?.querySelector<HTMLElement>('[data-row]');
+
+  if (section && sheet && headBox && svg && path && guide && stationsBox && endBar && pen && title && row) {
+    const SVGNS = 'http://www.w3.org/2000/svg';
+    let total = 1;
+    let x0 = 0;
+    let ym = 0;
+    let titleLeft = 0;
+    let titleW = 1;
+    let pinned = false;
+    // scroll budget of the pinned stage (px)
+    let lead = 0; // the line starts drawing while the stage scrolls in
+    let A = 1; // draw down, round the bend and along to the pen position
+    let B = 1; // slide the sheet (1:1 with scroll)
+    let C = 1; // finish the line to its end bar
+    let span = 1;
+    let lenA = 0; // path length when the pen reaches its fixed position
+    let travel = 0; // how far the sheet slides
+    let downLen = 0; // length of the straight part coming down
+    let stations: { x: number; el: SVGGElement }[] = [];
+
+    const strokeW = () => parseFloat(getComputedStyle(path).strokeWidth) || 4;
+
+    /** Down from the top at x0, a rounded bend, then along the line to x1 (and optionally down again). */
+    const route = (x1: number, bottom?: number) => {
+      const r = Math.min(40, ym * 0.25);
+      downLen = ym - r;
+      let d = `M${x0} 0 V${ym - r} A${r} ${r} 0 0 0 ${x0 + r} ${ym} H${bottom === undefined ? x1 : x1 - r}`;
+      if (bottom !== undefined) d += ` A${r} ${r} 0 0 1 ${x1} ${ym + r} V${bottom}`;
+      return d;
+    };
+
+    const measure = (scrub: boolean) => {
+      pinned = scrub;
+      section.classList.toggle('is-scrub', scrub);
+      section.style.height = '';
+      sheet.style.removeProperty('--tx');
+      stationsBox.replaceChildren();
+      stations = [];
+      guide.setAttribute('d', '');
+      endBar.setAttribute('d', '');
+
+      const isDesktop = window.matchMedia('(min-width: 1024px)').matches;
+      const pad = parseFloat(getComputedStyle(title.parentElement as HTMLElement).paddingLeft);
+      const vw = document.documentElement.clientWidth;
+      const leg = document.querySelector<HTMLElement>('[data-axis]')?.getBoundingClientRect();
+      x0 = leg && leg.width ? leg.left + leg.width / 2 : pad;
+      if (leg?.width) section.style.setProperty('--route-width', `${leg.width}px`);
+      else section.style.removeProperty('--route-width');
+
+      if (!scrub) {
+        // static: down, along under the title, and down again at the right edge
+        const w = headBox.clientWidth;
+        const h = headBox.clientHeight;
+        const x1 = w - pad - 2;
+        ym = h - (isDesktop ? 80 : 140); // phones: room below the line for the intro's four lines
+        svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+        section.style.setProperty('--ym', `${ym}px`);
+        const tw = title.offsetWidth;
+        const titleX = isDesktop ? Math.max(0, (w - tw) / 2 - pad) : Math.max(0, x0 + 24 - pad);
+        section.style.setProperty('--title-x', `${titleX}px`);
+        titleLeft = pad + titleX;
+        titleW = tw;
+        path.setAttribute('d', route(x1, h));
+        total = path.getTotalLength();
+        path.style.strokeDasharray = `${total}`;
+        return;
+      }
+
+      // pinned: one long sheet; title at its start, projects to the right
+      const vh = window.innerHeight;
+      const navH = 72;
+      ym = Math.round(vh - Math.max(isDesktop ? 96 : 104, vh * 0.12));
+      section.style.setProperty('--ym', `${ym}px`);
+      const titleX = x0 + (isDesktop ? 40 : 24) - pad;
+      section.style.setProperty('--title-x', `${titleX}px`);
+      titleW = title.offsetWidth;
+      titleLeft = title.getBoundingClientRect().left - sheet.getBoundingClientRect().left;
+
+      // projects stand on the line: the row ends a station post's height above it
+      const gap = 26;
+      const rowTop = navH + (isDesktop ? 32 : 20);
+      const rowLeft = Math.round(titleLeft + titleW + (isDesktop ? 120 : 56));
+      section.style.setProperty('--row-top', `${rowTop}px`);
+      section.style.setProperty('--row-h', `${ym - strokeW() / 2 - gap - rowTop}px`);
+      section.style.setProperty('--row-left', `${rowLeft}px`);
+      const rowW = row.scrollWidth;
+      const endX = rowLeft + rowW + (isDesktop ? 60 : 28); // the route closes just past the last project
+      const sheetW = Math.max(vw, endX + pad + 24);
+      section.style.setProperty('--sheet-w', `${sheetW}px`);
+
+      svg.setAttribute('viewBox', `0 0 ${sheetW} ${vh}`);
+      path.setAttribute('d', route(endX));
+      total = path.getTotalLength();
+      path.style.strokeDasharray = `${total}`;
+      guide.setAttribute('d', path.getAttribute('d') ?? '');
+      const half = strokeW() / 2;
+      endBar.setAttribute('d', `M${endX} ${ym - half - 12} V${ym + half + 12}`);
+
+      // one numbered station under each project: a post up to it, its number below the line
+      const sheetLeft = sheet.getBoundingClientRect().left;
+      const stops = [...row.querySelectorAll<HTMLElement>('[data-project]')].map((el) => {
+        const media = el.querySelector<HTMLElement>('[data-media]') ?? el;
+        const r = media.getBoundingClientRect();
+        return r.left - sheetLeft + Math.min(r.width / 2, 48);
+      });
+      stations = stops.map((x, i) => {
+        const g = document.createElementNS(SVGNS, 'g');
+        const post = document.createElementNS(SVGNS, 'line');
+        post.setAttribute('x1', x.toFixed(1));
+        post.setAttribute('x2', x.toFixed(1));
+        post.setAttribute('y1', String(ym - half));
+        post.setAttribute('y2', String(ym - half - gap + 4));
+        const label = document.createElementNS(SVGNS, 'text');
+        label.setAttribute('x', x.toFixed(1));
+        label.setAttribute('y', String(ym + half + 20));
+        label.setAttribute('text-anchor', 'middle');
+        label.textContent = String(i + 1).padStart(2, '0');
+        g.append(post, label);
+        stationsBox.append(g);
+        return { x, el: g };
+      });
+
+      const penX = vw * (isDesktop ? 0.62 : 0.7); // where the pen tip stays while the sheet slides
+      travel = Math.max(0, sheetW - vw);
+      path.style.strokeDashoffset = '0';
+      // path length up to the pen position: the straight run down, the bend, then along
+      lenA = downLen + (Math.PI / 2) * (ym - downLen) + (penX - (x0 + (ym - downLen)));
+      lead = vh; // drawing starts the moment the stage enters at the bottom of the screen
+      A = lead + vh * 0.6;
+      B = travel;
+      C = vh * 0.25;
+      span = A + B + C + vh * 0.1;
+      section.style.height = `${vh + span - lead}px`;
+    };
+
+    const draw = (len: number) => {
+      path.style.strokeDashoffset = String(total - len);
+      const pt = path.getPointAtLength(len);
+      pen.setAttribute('cx', String(pt.x));
+      pen.setAttribute('cy', String(pt.y));
+      pen.style.opacity = len > 1 && len < total - 1 ? '1' : '0';
+      endBar.style.opacity = len >= total - 1 ? '1' : '0';
+      const headX = len <= downLen ? x0 : pt.x;
+      stations.forEach((s) => s.el.classList.toggle('is-passed', headX >= s.x - 1));
+      section.style.setProperty('--reveal', String(len > downLen ? clamp((headX - titleLeft) / titleW) : 0));
+      section.style.setProperty('--sub', String(range(headX, titleLeft + titleW * 0.6, titleLeft + titleW + 200)));
+    };
+
+    addScene({
+      el: section,
+      media: PINNED,
+      measure: (active) => {
+        if (active || window.matchMedia(PINNED).matches) measure(active);
+      },
+      progress: (rect, vh) => (vh - rect.top) / span,
+      render: (p) => {
+        if (!pinned) {
+          if (window.matchMedia(PINNED).matches) draw(total);
+          return;
+        }
+        const s = p * span;
+        let len: number;
+        let tx = 0;
+        if (s < A) {
+          // down 1:1 with the scroll (its tip stays at the screen's bottom edge), then round the bend and across
+          len = s <= downLen ? s : downLen + ((s - downLen) / (A - downLen)) * (lenA - downLen);
+        } else if (s < A + B) {
+          tx = s - A;
+          len = lenA + tx; // the pen stays put while the sheet moves under it
+        } else {
+          tx = travel;
+          len = lenA + travel + clamp((s - A - B) / C) * (total - lenA - travel);
+        }
+        sheet.style.setProperty('--tx', `${(-tx).toFixed(1)}px`);
+        draw(Math.min(total, len));
+      },
+    });
+
+    // Links to anchors inside the sliding sheet (e.g. a project heading): scroll to where the sheet shows them.
+    document.addEventListener('click', (event) => {
+      if (!pinned) return;
+      const link = (event.target as Element | null)?.closest<HTMLAnchorElement>('a[href^="#"]');
+      const id = link?.getAttribute('href')?.slice(1);
+      const target = id ? document.getElementById(id) : null;
+      if (!target || target === section || !sheet.contains(target)) return;
+      event.preventDefault();
+      const pad = parseFloat(getComputedStyle(title.parentElement as HTMLElement).paddingLeft);
+      const x = target.getBoundingClientRect().left - sheet.getBoundingClientRect().left;
+      const s = A + clamp((x - pad) / Math.max(1, travel)) * travel;
+      const docTop = section.getBoundingClientRect().top + window.scrollY;
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      window.scrollTo({ top: docTop - window.innerHeight + s, behavior: reduced ? 'auto' : 'smooth' });
+    });
+
+    addScene({
+      el: headBox,
+      media: '(max-height: 559px)',
+      measure: (active) => {
+        if (active || !window.matchMedia(PINNED).matches) measure(false);
+      },
+      // runs slightly ahead of the scroll, so the line is drawn wherever it is on screen
+      progress: (rect, vh) => ((vh - rect.top) * 1.6) / Math.max(1, total),
+      render: (p) => {
+        if (!window.matchMedia(PINNED).matches) draw(total * p);
+      },
+    });
+  }
+</script>

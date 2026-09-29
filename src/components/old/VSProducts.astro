@@ -1,0 +1,140 @@
+---
+import { vs } from '../../data/site';
+import { getLang, useTranslations } from '../../i18n/ui';
+import VSChair from './art/VSChair.astro';
+
+const lang = getLang(Astro.currentLocale);
+const t = useTranslations(lang).vs;
+// a category links out only once it has its own deep link into the VS catalogue (open fact);
+// until then the one catalogue button below is the way out
+const categories: { name: string; text: string; url?: string }[] = t.categories;
+const catalogUrl = vs.catalogUrl[lang];
+---
+
+<section id="vs-moebel" class="vs relative py-28 lg:py-40" aria-labelledby="vs-title" data-vs>
+  <div class="shell">
+    <div class="vs-grid">
+      <div class="vs-head">
+        <h2 id="vs-title" class="text-headline leading-[0.98] tracking-[-0.045em]">{t.title}</h2>
+        <p class="mt-7 max-w-[48ch] text-body leading-[1.65] text-muted">
+          {t.intro}
+        </p>
+      </div>
+
+      <div class="vs-stage">
+        <div class="vs-sticky">
+          <div class="vs-chair" data-vs-chair>
+            <VSChair id="vs-chair" class="block w-full" />
+          </div>
+          <p class="mt-4 text-label text-muted">{t.caption}</p>
+        </div>
+      </div>
+
+      <div class="vs-list">
+        <ul>
+          {categories.map((c) => (
+            <li data-cat>
+              {c.url ? (
+                <a class="cat group" href={c.url} target="_blank" rel="noopener">
+                  <span class="cat-dot" aria-hidden="true"></span>
+                  <span class="min-w-0">
+                    <span class="cat-name">{c.name}</span>
+                    <span class="cat-text">{c.text}</span>
+                  </span>
+                  <svg class="cat-arrow" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 14L14 6M7 6h7v7" /></svg>
+                  <span class="sr-only">{t.newTab}</span>
+                </a>
+              ) : (
+                <div class="cat">
+                  <span class="cat-dot" aria-hidden="true"></span>
+                  <span class="min-w-0">
+                    <span class="cat-name">{c.name}</span>
+                    <span class="cat-text">{c.text}</span>
+                  </span>
+                </div>
+              )}
+            </li>
+          ))}
+        </ul>
+
+        <div class="vs-actions mt-12 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+          <a class="btn btn-ink self-start" href={catalogUrl} target="_blank" rel="noopener">
+            {t.all}
+            <svg class="btn-arrow h-3.5 w-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" /></svg>
+          </a>
+          <p class="text-meta font-medium">{t.exclusive}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .vs-grid { display: grid; gap: 56px; }
+  .vs-chair { width: min(62vw, 300px); transform: translateX(var(--shift, 0px)); }
+
+  .cat {
+    display: grid;
+    grid-template-columns: 14px minmax(0, 1fr) 24px;
+    align-items: start;
+    gap: 18px;
+    padding: 26px 0;
+  }
+  .cat-dot {
+    width: 9px;
+    height: 9px;
+    margin-top: 0.85em;
+    border-radius: 50%;
+    border: 1px solid var(--color-ink);
+    transition: background-color 250ms var(--ease-draw), border-color 250ms var(--ease-draw);
+  }
+  .cat-arrow { width: 22px; height: 22px; margin-top: 0.35em; transition: transform 250ms var(--ease-draw); }
+  .cat-name { display: block; font-size: var(--text-title); font-weight: 600; line-height: 1.05; letter-spacing: -0.035em; }
+  .cat-text { display: block; margin-top: 8px; font-size: var(--text-meta); color: var(--color-muted); }
+  a.cat:hover .cat-arrow { transform: translate(3px, -3px); }
+  a.cat:hover .cat-dot, [data-cat].is-current .cat-dot { background: var(--color-ginster); border-color: var(--color-ginster); }
+
+  @media (min-width: 768px) and (max-width: 1023px) {
+    .vs-grid { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: 40px; row-gap: 64px; }
+    .vs-head { grid-column: 1 / -1; }
+    .vs-stage { grid-column: 1; }
+    .vs-list { grid-column: 2; }
+    .vs-chair { width: 100%; }
+    /* the list column is too narrow for button and note side by side */
+    .vs-actions { flex-direction: column; align-items: flex-start; }
+  }
+
+  @media (min-width: 1024px) {
+    .vs-grid { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(24px, 2.6vw, 44px); row-gap: 88px; }
+    .vs-head { grid-column: 1 / 8; }
+    .vs-stage { grid-column: 1 / 6; grid-row: 2; }
+    .vs-sticky { position: sticky; top: calc(var(--nav-h) + 8vh); }
+    .vs-chair { width: min(100%, 360px); margin-left: 8%; }
+    .vs-list { grid-column: 7 / 13; grid-row: 2; }
+  }
+</style>
+
+<script>
+  import { addScene, viewProgress } from '../../scripts/motion';
+
+  const section = document.querySelector<HTMLElement>('[data-vs]');
+  const chair = section?.querySelector<HTMLElement>('[data-vs-chair]');
+  if (section && chair) {
+    addScene({
+      el: section,
+      media: '(min-width: 1024px)',
+      progress: viewProgress(1, -0.6),
+      render: (p) => chair.style.setProperty('--shift', `${((p - 0.5) * 36).toFixed(1)}px`),
+    });
+  }
+
+  // the reading point follows the rows only where a row leads somewhere (a category with its own link)
+  const rows = Array.from(document.querySelectorAll<HTMLElement>('[data-cat]')).filter((r) => r.querySelector('a.cat'));
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver(
+      (entries) => entries.forEach((e) => e.target.classList.toggle('is-current', e.isIntersecting)),
+      { rootMargin: '-48% 0px -48% 0px' },
+    );
+    rows.forEach((r) => io.observe(r));
+  }
+</script>

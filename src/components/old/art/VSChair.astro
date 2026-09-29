@@ -1,0 +1,79 @@
+---
+/**
+ * The ginstergelb VS PantoSwing as a side elevation, in the page's drawing
+ * vocabulary: flat ginstergelb shell, the tube frame as outlined ink lines,
+ * the pivot, a dashed swing arc, a hatched floor and a dimension line.
+ * Stand-in until a cut-out product photo (vs-pantoswing-ginstergelb.webp) exists.
+ */
+import { getLang, useTranslations } from '../../../i18n/ui';
+
+interface Props {
+  id: string;
+  class?: string;
+}
+const { id, class: className = '' } = Astro.props;
+const t = useTranslations(getLang(Astro.currentLocale)).chair;
+// four-leg frame seen from the side: rear leg, seat rail, front leg
+const frame = 'M138 516 L172 336 L292 326 L316 516';
+const hatch = Array.from({ length: 18 }, (_, i) => `M${44 + i * 20} 522 l-12 13`).join(' ');
+---
+
+<svg class={className} viewBox="0 0 420 560" role="img" aria-labelledby={`${id}-t`}>
+  <title id={`${id}-t`}>{t.detailed}</title>
+
+  <!-- floor, cut and hatched -->
+  <g class="ln">
+    <path d="M24 522 H396" />
+    <path class="hatch" d={hatch} />
+  </g>
+
+  <!-- frame: tubes drawn as two ink edges (a wide ink stroke under a paper-coloured one) -->
+  <path d={frame} class="tube-edge" />
+  <path d={frame} class="tube-core" />
+  <path class="glide" d="M129 519 H147 M307 519 H325" />
+
+  <!-- the shell: one flat piece, seat rolling over the front edge -->
+  <path
+    class="shell"
+    d="M128 56 C136 120 148 192 152 240 C155 280 162 302 186 310 C232 316 290 304 318 300 C336 298 346 310 342 328
+       L326 330 C326 320 320 318 312 318 C284 322 232 334 182 332 C146 328 132 304 128 264
+       C122 200 110 128 102 64 C100 48 126 40 128 56 Z"
+  />
+  <!-- the inner face of the shell, a shade lighter -->
+  <path
+    class="shell-face"
+    d="M128 56 C136 120 148 192 152 240 C155 280 162 302 186 310 C232 316 290 304 318 300 C336 298 346 310 342 328
+       L335 329 C336 316 330 308 318 308 C290 312 232 323 185 318 C157 311 146 286 143 242 C139 192 128 122 120 60
+       C119 52 126 50 128 56 Z"
+  />
+
+  <!-- the swing: pivot and its arc -->
+  <circle class="pivot" cx="232" cy="331" r="6" />
+  <g class="ln thin">
+    <path class="dash" d="M77.8 52.9 A318 318 0 0 1 149.7 23.8" />
+    <path d="M140 21.6 L149.7 23.8 L142.4 30.6 M87.8 52.7 L77.8 52.9 L83.2 44.5" />
+  </g>
+
+  <!-- seat height -->
+  <g class="ln thin">
+    <path class="dash" d="M344 302 H382" />
+    <path d="M374 302 V522 M368 308 L380 296 M368 528 L380 516" />
+  </g>
+  <text class="label" x="0" y="0" transform="translate(396 412) rotate(-90)" text-anchor="middle">{t.seatHeight}</text>
+</svg>
+
+<style>
+  svg { overflow: visible; }
+  .ln { fill: none; stroke: var(--color-ink); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+  .thin { stroke-width: 1.2; }
+  .hatch { stroke-width: 1; }
+  .dash { stroke-dasharray: 5 5; }
+  .tube-edge { fill: none; stroke: var(--color-ink); stroke-width: 11; stroke-linejoin: round; }
+  .tube-core { fill: none; stroke: var(--color-paper); stroke-width: 8; stroke-linejoin: round; }
+  .glide { fill: none; stroke: var(--color-ink); stroke-width: 5; stroke-linecap: round; }
+  .shell { fill: var(--color-ginster); }
+  .shell-face { fill: var(--color-ginster-light); }
+  .pivot { fill: var(--color-paper); stroke: var(--color-ink); stroke-width: 1.6; }
+  /* drawing units (viewBox): the label scales with the drawing, outside the type tokens */
+  .label { font-family: var(--font-marker); font-weight: 600; font-size: 24px; fill: var(--color-ink); }
+</style>

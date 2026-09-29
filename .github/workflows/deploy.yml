@@ -27,7 +27,7 @@ jobs:
         run: npm ci
 
       # Served by GitHub Pages at hofda.github.io/simon-schule/ until trias-schule.it points here.
-      # For the custom domain: SITE_URL=https://trias-schule.it and BASE_PATH=/ (and /old/ below).
+      # For the custom domain: SITE_URL=https://trias-schule.it and BASE_PATH=/.
       - name: Configure site address
         run: |
           echo "SITE_URL=https://hofda.github.io" >> "$GITHUB_ENV"
@@ -40,22 +40,6 @@ jobs:
         env:
           PUBLIC_INQUIRY_ENDPOINT: ${{ vars.PUBLIC_INQUIRY_ENDPOINT }}
         run: npm run build
-
-      # The previous design (before the Maßkette redesign), kept at /old/ for comparison.
-      - name: Build previous version at /old/
-        env:
-          PUBLIC_INQUIRY_ENDPOINT: ${{ vars.PUBLIC_INQUIRY_ENDPOINT }}
-          OLD_REF: 0c0011879ee8e1d85e258814256a88569d6eaad8
-        run: |
-          git fetch --no-tags --depth=1 origin "$OLD_REF"
-          git worktree add --detach ../old "$OLD_REF"
-          ln -s "$GITHUB_WORKSPACE/node_modules" ../old/node_modules
-          (cd ../old && BASE_PATH="${BASE_PATH}old/" npx astro build)
-          rm -f ../old/dist/CNAME ../old/dist/robots.txt ../old/dist/sitemap.xml
-          find ../old/dist -name '*.html' -exec sed -i 's|<head>|<head><meta name="robots" content="noindex">|' {} +
-          sed -i "s|</head>|<link rel=\"stylesheet\" href=\"${BASE_PATH}variant-switcher.css\"></head>|" ../old/dist/index.html
-          sed -i "s|</body>|<script src=\"${BASE_PATH}variant-switcher.js\" data-variant-switcher></script></body>|" ../old/dist/index.html
-          cp -r ../old/dist ./dist/old
 
       - name: Upload artifact
         if: github.event_name != 'pull_request'

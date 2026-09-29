@@ -1,0 +1,149 @@
+---
+import { getProjects } from '../../data/projects';
+import { asset } from '../../lib/paths';
+import { getLang, useTranslations } from '../../i18n/ui';
+import ProjectTestimonial from './ProjectTestimonial.astro';
+
+const lang = getLang(Astro.currentLocale);
+const t = useTranslations(lang).projects;
+const projects = getProjects(lang);
+const layouts = ['left', 'right', 'full'] as const;
+const src = (file: string, w: number) => asset(`images/projects/${file}-${w}.webp`);
+const widths = [320, 480, 640, 720, 900, 960, 1800];
+---
+
+<div class="projects shell relative pb-24 lg:pb-36" data-projects>
+  <div class="projects-inner relative" data-projects-inner>
+    {projects.map((project, i) => {
+      const layout = layouts[i % layouts.length];
+      const [main, detail] = project.images;
+      const mainSizes = layout === 'full'
+        ? '(min-width: 1520px) 1392px, (min-width: 768px) 92vw, calc(100vw - 40px)'
+        : '(min-width: 1520px) 912px, (min-width: 1024px) 61vw, (min-width: 768px) calc(46vw - 16px), calc(100vw - 40px)';
+      const detailSizes = '(min-width: 1520px) 270px, (min-width: 1024px) 18vw, (min-width: 768px) 28vw, 62vw';
+      return (
+        <>
+          <article class={`project project--${layout}`} data-project data-layout={layout} aria-labelledby={`p-${project.id}`}>
+            <div class="p-media" data-media>
+              <img
+                src={src(main.file, 900)}
+                srcset={widths.map((width) => `${src(main.file, width)} ${width}w`).join(', ')}
+                sizes={mainSizes}
+                alt={main.alt}
+                width="1800"
+                height="1200"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+
+            <div class="p-info" data-info>
+              {project.placeholder && <p class="tag-placeholder mb-5">{t.placeholder}</p>}
+              <h3 id={`p-${project.id}`} class="p-title">{project.title}</h3>
+              <dl class="p-meta">
+                {project.location && <div><dt>{t.meta.location}</dt><dd>{project.location}</dd></div>}
+                <div><dt>{t.meta.type}</dt><dd>{project.type}</dd></div>
+                <div><dt>{t.meta.services}</dt><dd>{project.services.join(' · ')}</dd></div>
+                {project.year && <div><dt>{t.meta.year}</dt><dd>{project.year}</dd></div>}
+                {project.architect && <div><dt>{t.meta.architect}</dt><dd>{project.architect}</dd></div>}
+                {project.client && <div><dt>{t.meta.client}</dt><dd>{project.client}</dd></div>}
+              </dl>
+              <p class="p-desc">{project.description}</p>
+              {detail && layout !== 'full' && (
+                <img
+                  class="p-detail"
+                  src={src(detail.file, 900)}
+                  srcset={widths.map((width) => `${src(detail.file, width)} ${width}w`).join(', ')}
+                  sizes={detailSizes}
+                  alt={detail.alt}
+                  width="900"
+                  height="675"
+                  loading="lazy"
+                  decoding="async"
+                />
+              )}
+            </div>
+          </article>
+          {project.testimonial && <ProjectTestimonial testimonial={project.testimonial} />}
+        </>
+      );
+    })}
+  </div>
+</div>
+
+<style>
+  .projects-inner { display: flex; flex-direction: column; gap: 88px; padding-top: 24px; }
+
+  .p-media { overflow: hidden; background: var(--color-surface); }
+  .p-media img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    transform: translateY(calc(var(--r, 0) * 3%)) scale(calc(1 + var(--r, 0) * 0.05));
+    transform-origin: 50% 0;
+  }
+  .p-media { clip-path: inset(calc(var(--r, 0) * 10%) 0 0 0); }
+
+  .p-info { margin-top: 28px; opacity: var(--io, 1); transform: translateY(calc((1 - var(--io, 1)) * 14px)); }
+  .p-title { font-size: var(--text-title); line-height: 1.02; letter-spacing: -0.04em; max-width: 16ch; }
+  .p-meta { margin: 26px 0 0; }
+  .p-meta div { display: grid; grid-template-columns: 7.5rem 1fr; gap: 12px; padding: 5px 0; font-size: var(--text-meta); }
+  .p-meta dt { color: var(--color-muted); }
+  .p-meta dd { margin: 0; }
+  .p-desc { margin-top: 22px; max-width: 46ch; color: var(--color-muted); line-height: 1.65; }
+  .p-detail { display: block; width: 62%; margin-top: 36px; aspect-ratio: 4 / 3; object-fit: cover; }
+
+  /* tablet: two projects side by side, the full-width one across both columns */
+  @media (min-width: 768px) and (max-width: 1023px) {
+    .projects-inner { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 32px; row-gap: 72px; align-items: start; }
+    .project--full,
+    .projects-inner > :global(.p-quote) { grid-column: 1 / -1; }
+    .project--full .p-media img { aspect-ratio: 16 / 9; }
+    .project--full .p-info { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 32px; }
+    .project--full .p-info > :global(*) { grid-column: 1; }
+    .project--full .p-desc { grid-column: 2; grid-row: 1 / span 3; margin-top: 0; }
+  }
+
+  @media (min-width: 1024px) {
+    .projects-inner { gap: clamp(120px, 14vh, 180px); padding-top: 40px; }
+    .project { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(24px, 2.6vw, 44px); align-items: start; }
+    .project--left .p-media { grid-column: 1 / 9; }
+    .project--left .p-info { grid-column: 9 / 13; margin-top: 0; padding-top: 12px; }
+    .project--right .p-info { grid-column: 1 / 5; grid-row: 1; margin-top: 0; padding-top: 12px; }
+    .project--right .p-media { grid-column: 5 / 13; grid-row: 1; }
+    .project--full .p-media { grid-column: 1 / -1; }
+    .project--full .p-media img { aspect-ratio: 21 / 9; }
+    .project--full .p-info {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: inherit;
+      margin-top: 36px;
+    }
+    .project--full .p-info > :global(*) { grid-column: 1 / 5; }
+    .project--full .p-meta { grid-column: 6 / 9; grid-row: 1 / span 3; margin-top: 0; }
+    .project--full .p-desc { grid-column: 10 / 13; grid-row: 1 / span 3; margin-top: 0; }
+  }
+</style>
+
+<script>
+  import { addScene, range, viewProgress } from '../../scripts/motion';
+
+  // Image reveals where the projects scroll normally (short landscape screens).
+  // On the pinned stage (ProjectTransition) the projects arrive by moving, so they render fully.
+  document.querySelectorAll<HTMLElement>('[data-project]').forEach((article) => {
+    const media = article.querySelector<HTMLElement>('[data-media]');
+    const info = article.querySelector<HTMLElement>('[data-info]');
+    if (!media || !info) return;
+    addScene({
+      el: media,
+      media: '(max-height: 559px)',
+      progress: viewProgress(1, 0.3),
+      render(p) {
+        media.style.setProperty('--r', String(1 - p));
+        info.style.setProperty('--io', String(range(p, 0.45, 1)));
+      },
+    });
+  });
+</script>

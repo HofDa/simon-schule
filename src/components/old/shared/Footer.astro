@@ -1,0 +1,77 @@
+---
+import { contact, photoCredits, vs } from '../../../data/site';
+import { legalFor } from '../../../lib/paths';
+import { getLang, useTranslations } from '../../../i18n/ui';
+
+const lang = getLang(Astro.currentLocale);
+const t = useTranslations(lang);
+const f = t.footer;
+const year = new Date().getFullYear();
+// the previous design is one page: its section links stay in-page
+const home = '';
+const openContact = [!contact.phone && t.pendingFields.phone, !contact.address && t.pendingFields.address].filter(
+  (f): f is string => Boolean(f),
+);
+---
+
+<footer class="bg-warm pt-20 pb-10 text-meta">
+  <div class="shell">
+    <div class="grid gap-12 pb-14 md:grid-cols-12">
+      <div class="md:col-span-5">
+        <p class="flex items-baseline gap-[0.4em] text-meta uppercase tracking-[0.14em]">
+          <span class="font-bold">Trias</span><span class="text-muted">Schule</span>
+        </p>
+        <p class="mt-5 max-w-[34ch] leading-relaxed text-muted">
+          {f.claim}
+        </p>
+      </div>
+
+      <div class="md:col-span-3">
+        <h2 class="mb-4 text-meta font-semibold tracking-normal">{f.contact}</h2>
+        <ul class="touch-list space-y-2 text-muted">
+          <li><a class="link-line text-ink" href={`mailto:${contact.email}`}>{contact.email}</a></li>
+          {contact.phone && <li><a href={`tel:${contact.phone.replace(/\s/g, '')}`}>{contact.phone}</a></li>}
+          {contact.address && <li>{contact.address}</li>}
+          {openContact.length > 0 && <li class="open-fact">{t.pending(openContact)}</li>}
+        </ul>
+      </div>
+
+      <div class="md:col-span-2">
+        <h2 class="mb-4 text-meta font-semibold tracking-normal">{f.page}</h2>
+        <ul class="touch-list space-y-2 text-muted">
+          {t.nav.items.map((item) => <li><a class="transition-colors hover:text-ink" href={`${home}${item.href}`}>{item.label}</a></li>)}
+        </ul>
+      </div>
+
+      <div class="md:col-span-2">
+        <h2 class="mb-4 text-meta font-semibold tracking-normal">{f.legal}</h2>
+        <ul class="touch-list space-y-2 text-muted">
+          <li><a class="transition-colors hover:text-ink" href={legalFor(lang, 'imprint')}>{f.imprint}</a></li>
+          <li><a class="transition-colors hover:text-ink" href={legalFor(lang, 'privacy')}>{f.privacy}</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-4 pt-8 text-label text-muted md:flex-row md:items-start md:justify-between">
+      <p>© {year} Trias Schule · {f.company}</p>
+      <p>
+        <a class="link-line" href={vs.catalogUrl[lang]} target="_blank" rel="noopener">{f.partner}</a>
+      </p>
+    </div>
+    <p class="mt-6 max-w-[65ch] text-label leading-relaxed text-muted/90">
+      {f.credits}
+      {photoCredits.map((c, i) => (
+        <>
+          <a class="underline underline-offset-2 hover:text-ink" href={c.url} target="_blank" rel="noopener">{c.author}</a> ({c.license}){i < photoCredits.length - 1 ? ', ' : '.'}
+        </>
+      ))}
+    </p>
+  </div>
+</footer>
+
+<style>
+  /* touch: each entry is a full 44px row */
+  @media (pointer: coarse) {
+    .touch-list > li { display: flex; align-items: center; min-height: 44px; margin-block: 0; }
+  }
+</style>

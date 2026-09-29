@@ -1,0 +1,257 @@
+---
+import { inquiry } from '../../data/site';
+import { getLang, useTranslations } from '../../i18n/ui';
+import { legalFor } from '../../lib/paths';
+
+const lang = getLang(Astro.currentLocale);
+const t = useTranslations(lang).form;
+const f = t.fields;
+---
+
+<form
+  class="inquiry"
+  action={inquiry.endpoint ?? `mailto:${inquiry.mailto}`}
+  method="post"
+  enctype={inquiry.endpoint ? undefined : 'text/plain'}
+  novalidate
+  data-inquiry
+  data-endpoint={inquiry.endpoint ?? ''}
+  data-mailto={inquiry.mailto}
+  aria-labelledby="inquiry-title"
+  data-org-key={f.org.key}
+  data-messages={JSON.stringify(t.status)}
+>
+  <div class="flex items-baseline justify-between gap-6">
+    <h3 id="inquiry-title" class="text-phi-1 tracking-[-0.03em]">{t.title}</h3>
+    <p class="text-label text-muted">{t.required}</p>
+  </div>
+
+  <div class="fields mt-6">
+    <div class="field">
+      <label for="f-name">{f.name.label} *</label>
+      <input id="f-name" name={f.name.key} type="text" autocomplete="name" required aria-describedby="f-name-err" />
+      <p class="err" id="f-name-err" data-msg={f.name.error}></p>
+    </div>
+    <div class="field">
+      <label for="f-org">{f.org.label} *</label>
+      <input id="f-org" name={f.org.key} type="text" autocomplete="organization" required aria-describedby="f-org-err" />
+      <p class="err" id="f-org-err" data-msg={f.org.error}></p>
+    </div>
+    <div class="field">
+      <label for="f-mail">{f.mail.label} *</label>
+      <input id="f-mail" name={f.mail.key} type="email" autocomplete="email" required aria-describedby="f-mail-err" />
+      <p class="err" id="f-mail-err" data-msg={f.mail.error}></p>
+    </div>
+    <div class="field">
+      <label for="f-tel">{f.tel.label} <span class="text-muted">{t.optional}</span></label>
+      <input id="f-tel" name={f.tel.key} type="tel" autocomplete="tel" />
+    </div>
+    <div class="field">
+      <label for="f-ort">{f.place.label}</label>
+      <input id="f-ort" name={f.place.key} type="text" autocomplete="address-level2" placeholder={f.place.placeholder} />
+    </div>
+    <fieldset class="field field-wide phases">
+      <legend>{f.phase.label}</legend>
+      <div class="chips">
+        {t.phases.map((phase) => (
+          <label class="chip">
+            <input type="radio" name={f.phase.key} value={phase} class="sr-only" />
+            <span>{phase}</span>
+          </label>
+        ))}
+      </div>
+    </fieldset>
+    <div class="field field-wide">
+      <label for="f-msg">{f.msg.label} *</label>
+      <textarea id="f-msg" name={f.msg.key} rows="3" required aria-describedby="f-msg-err" placeholder={f.msg.placeholder}></textarea>
+      <p class="err" id="f-msg-err" data-msg={f.msg.error}></p>
+    </div>
+  </div>
+
+  <div class="mt-7 flex flex-wrap items-center gap-x-6 gap-y-3">
+    <button type="submit" class="btn btn-ginster">
+      {t.submit}
+      <svg class="btn-arrow h-3.5 w-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" /></svg>
+    </button>
+    <p class="status text-meta text-muted" role="status" aria-live="polite" data-status></p>
+    <a class="mail-fallback link-line text-meta font-semibold" data-mail-fallback hidden>{t.emailAction}</a>
+    <button type="button" class="copy link-line text-meta font-semibold" data-copy hidden>{t.copy}</button>
+  </div>
+  <p class="mt-5 text-label text-muted">
+    {inquiry.endpoint ? t.privacyHosted : t.privacy} <a class="link-line" href={legalFor(lang, 'privacy')}>{t.privacyLink}</a>
+  </p>
+</form>
+
+<style>
+  .fields { display: grid; gap: 18px 28px; }
+  @media (min-width: 640px) {
+    .fields { grid-template-columns: 1fr 1fr; }
+    .field-wide { grid-column: 1 / -1; }
+  }
+  .field { display: flex; flex-direction: column; min-width: 0; border: 0; margin: 0; padding: 0; }
+  .field label, .field legend { font-size: var(--text-label); font-weight: 500; margin-bottom: 4px; padding: 0; }
+  .field input,
+  .field textarea {
+    width: 100%;
+    border: 0;
+    border-bottom: 1px solid #b9b6ad;
+    border-radius: 0;
+    background: transparent;
+    padding: 8px 0 9px;
+    font: inherit;
+    font-size: var(--text-body);
+    color: var(--color-ink);
+    transition: border-color 200ms var(--ease-draw), box-shadow 200ms var(--ease-draw);
+  }
+  .field textarea { resize: vertical; min-height: 84px; }
+  .field input::placeholder, .field textarea::placeholder { color: #8f8c83; }
+  .field input:focus, .field textarea:focus { outline: none; border-color: var(--color-ink); box-shadow: 0 1px 0 0 var(--color-ink); }
+  .field input:focus-visible, .field textarea:focus-visible { box-shadow: 0 2px 0 0 var(--color-ginster); }
+  .field [aria-invalid='true'] { border-color: #a4331c; box-shadow: 0 1px 0 0 #a4331c; }
+  .err { margin: 6px 0 0; font-size: var(--text-label); color: #a4331c; min-height: 0; }
+  .err:empty { display: none; }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+  .chip { position: relative; }
+  .chip span {
+    display: inline-flex;
+    align-items: center;
+    min-height: 36px;
+    padding: 0 12px;
+    border: 1px solid #c9c6bc;
+    border-radius: 2px;
+    font-size: var(--text-meta);
+    cursor: pointer;
+    transition: background-color 180ms var(--ease-draw), border-color 180ms var(--ease-draw), color 180ms var(--ease-draw);
+  }
+  .chip:hover span { border-color: var(--color-ink); }
+  @media (pointer: coarse) {
+    .chip span { min-height: 44px; }
+  }
+  .chip input:checked + span { background: var(--color-ink); border-color: var(--color-ink); color: #fff; }
+  .chip input:checked + span::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    margin-right: 8px;
+    border-radius: 50%;
+    background: var(--color-ginster);
+  }
+  .chip input:focus-visible + span { outline: 2px solid var(--color-ink); outline-offset: 2px; }
+  .status.is-ok { color: var(--color-ink); }
+  .inquiry button:disabled { cursor: wait; opacity: 0.65; }
+</style>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('[data-inquiry]');
+  const status = form?.querySelector<HTMLElement>('[data-status]');
+  const mailFallback = form?.querySelector<HTMLAnchorElement>('[data-mail-fallback]');
+  const copy = form?.querySelector<HTMLButtonElement>('[data-copy]');
+  let composed = '';
+
+  if (form && status) {
+    // texts in the page's language, rendered by Astro into data-messages
+    const msg = JSON.parse(form.dataset.messages ?? '{}') as Record<string, string>;
+    const withEmail = (text: string) => text.replace('{email}', form.dataset.mailto ?? '');
+    const fields = Array.from(form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('input[required], textarea[required]'));
+
+    const showError = (field: HTMLInputElement | HTMLTextAreaElement) => {
+      const err = document.getElementById(`${field.id}-err`);
+      const valid = field.checkValidity();
+      field.setAttribute('aria-invalid', String(!valid));
+      if (err) err.textContent = valid ? '' : (err.dataset.msg ?? '');
+      return valid;
+    };
+
+    fields.forEach((f) => {
+      f.addEventListener('blur', () => f.value && showError(f));
+      f.addEventListener('input', () => f.getAttribute('aria-invalid') === 'true' && showError(f));
+    });
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (form.getAttribute('aria-busy') === 'true') return;
+      const invalid = fields.filter((f) => !showError(f));
+      if (invalid.length) {
+        invalid[0].focus();
+        status.classList.remove('is-ok');
+        status.textContent = msg.invalid;
+        return;
+      }
+
+      const data = new FormData(form);
+      const org = String(data.get(form.dataset.orgKey ?? '') ?? '');
+      const subject = `${msg.subject}: ${org}`;
+      const lines: string[] = [];
+      for (const [key, value] of data.entries()) {
+        if (String(value).trim()) lines.push(`${key}: ${value}`);
+      }
+      composed = `${subject}\n\n${lines.join('\n')}`;
+      const mailto = `mailto:${form.dataset.mailto}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines.join('\n'))}`;
+
+      const endpoint = form.dataset.endpoint;
+      if (endpoint) {
+        if (mailFallback) {
+          mailFallback.href = mailto;
+          mailFallback.hidden = true;
+        }
+        if (copy) copy.hidden = true;
+        status.textContent = msg.sending;
+        form.setAttribute('aria-busy', 'true');
+        const controls = Array.from(
+          form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement | HTMLButtonElement>('input, textarea, button'),
+        );
+        controls.forEach((control) => { control.disabled = true; });
+        const emailField = form.querySelector<HTMLInputElement>('#f-mail');
+        if (emailField) data.set('_replyto', emailField.value);
+        data.set('_subject', subject);
+        const controller = new AbortController();
+        const timeout = window.setTimeout(() => controller.abort(), 15_000);
+        try {
+          const res = await fetch(endpoint, {
+            method: 'POST',
+            body: data,
+            headers: { Accept: 'application/json' },
+            signal: controller.signal,
+          });
+          if (!res.ok) throw new Error(String(res.status));
+          form.reset();
+          if (mailFallback) mailFallback.hidden = true;
+          if (copy) copy.hidden = true;
+          status.classList.add('is-ok');
+          status.textContent = msg.sent;
+        } catch {
+          status.classList.remove('is-ok');
+          status.textContent = withEmail(msg.failed);
+          if (mailFallback) mailFallback.hidden = false;
+          if (copy) copy.hidden = false;
+        } finally {
+          window.clearTimeout(timeout);
+          form.removeAttribute('aria-busy');
+          controls.forEach((control) => { control.disabled = false; });
+        }
+        return;
+      }
+
+      if (mailFallback) {
+        mailFallback.href = mailto;
+        mailFallback.hidden = false;
+      }
+      if (copy) copy.hidden = false;
+      window.location.href = mailto;
+      // Whether a mail program opened cannot be known here: say so, and offer the text to copy.
+      status.classList.remove('is-ok');
+      status.textContent = withEmail(msg.mailto);
+    });
+
+    copy?.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(composed);
+        status.classList.add('is-ok');
+        status.textContent = withEmail(msg.copied);
+      } catch {
+        status.textContent = withEmail(msg.copyFailed);
+      }
+    });
+  }
+</script>

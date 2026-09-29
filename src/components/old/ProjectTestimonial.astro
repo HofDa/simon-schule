@@ -1,0 +1,35 @@
+---
+import type { Testimonial } from '../../data/projects';
+
+/** A client's words as an editorial interruption inside the project flow (approved quotes only). */
+interface Props {
+  testimonial: Testimonial;
+}
+const { testimonial } = Astro.props;
+---
+
+<figure class="p-quote m-0" data-quote>
+  <blockquote>
+    <p>„{testimonial.quote}“</p>
+  </blockquote>
+  <figcaption class="mt-8 flex flex-wrap gap-x-3 gap-y-1 text-meta">
+    <span class="font-semibold">{testimonial.author}</span>
+    {testimonial.role && <span class="text-muted">{testimonial.role}</span>}
+    {testimonial.organisation && <span class="text-muted">{testimonial.organisation}</span>}
+  </figcaption>
+</figure>
+
+<style>
+  .p-quote { max-width: 30ch; font-size: clamp(1.6rem, 2.9vw, var(--text-phi-2)); }
+  .p-quote blockquote { margin: 0; }
+  .p-quote p {
+    font-weight: 500;
+    line-height: 1.18;
+    letter-spacing: -0.03em;
+    text-indent: -0.42em;
+  }
+  .p-quote figcaption { font-size: var(--text-meta); letter-spacing: 0; }
+  @media (min-width: 1024px) {
+    .p-quote { margin-left: calc(100% / 12 * 2); }
+  }
+</style>

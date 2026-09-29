@@ -1,0 +1,144 @@
+---
+import { contact, fullName, people, type Person } from '../../data/site';
+import { asset } from '../../lib/paths';
+import { getLang, useTranslations } from '../../i18n/ui';
+
+const ui = useTranslations(getLang(Astro.currentLocale));
+const t = ui.people;
+const questions = t.questions;
+
+// What is still open about a person, said once in one quiet line.
+const openFacts = (p: Person) =>
+  [!p.lastName && ui.pendingFields.lastName, !p.role && ui.pendingFields.role, !p.phone && ui.pendingFields.phone].filter(
+    (f): f is string => Boolean(f),
+  );
+// Without direct addresses, the shared one is given once for both.
+const sharedMail = people.some((p) => !p.email);
+---
+
+<section id="menschen" class="people relative bg-paper py-28 lg:py-40" aria-labelledby="people-title" data-people>
+  <div class="shell">
+    <div class="people-intro max-w-[60rem]">
+      <h2 id="people-title" class="text-headline leading-[0.98] tracking-[-0.045em]">
+        {t.title}
+      </h2>
+      <p class="mt-7 max-w-[52ch] text-body leading-[1.65] text-muted">
+        {t.intro}
+      </p>
+    </div>
+
+    <div class="people-grid mt-16 lg:mt-24">
+      <div class="persons">
+        <div class="persons-list">
+          {people.map((person) => {
+            const open = openFacts(person);
+            return (
+              <article class="person" data-person>
+                {person.photo && (
+                  <img
+                    class="portrait"
+                    src={asset(`images/team/${person.photo}.webp`)}
+                    alt={t.portraitAlt(fullName(person))}
+                    width="800"
+                    height="1000"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                )}
+                <h3 class="person-name">{fullName(person)}</h3>
+                {person.role && <p class="mt-1.5 text-muted">{person.role}</p>}
+                {open.length > 0 && <p class="open-fact mt-2 text-meta">{ui.pending(open)}</p>}
+                {(person.phone || person.email) && (
+                  <ul class="mt-4 space-y-1.5 text-meta">
+                    {person.phone && <li><a class="link-line" href={`tel:${person.phone.replace(/\s/g, '')}`}>{person.phone}</a></li>}
+                    {person.email && <li><a class="link-line" href={`mailto:${person.email}`}>{person.email}</a></li>}
+                  </ul>
+                )}
+              </article>
+            );
+          })}
+        </div>
+        {sharedMail && (
+          <p class="shared-mail">
+            {t.reachBoth} <a class="link-line font-semibold text-ink" href={`mailto:${contact.email}`}>{contact.email}</a>
+          </p>
+        )}
+      </div>
+
+      <div class="notes" aria-label={t.questionsLabel}>
+        <ul>
+          {questions.map((q, i) => (
+            <li class="note marker" style={`--i: ${i}`} data-note>{q}</li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .people-grid { display: grid; gap: 64px; }
+  .persons-list { display: grid; gap: 32px; }
+  .person-name {
+    font-size: var(--text-title);
+    line-height: 1.05;
+    letter-spacing: -0.035em;
+  }
+  .portrait {
+    display: block;
+    width: 100%;
+    max-width: 20rem;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    margin-bottom: 20px;
+    background: var(--color-surface);
+  }
+  .shared-mail { margin-top: 28px; font-size: var(--text-meta); color: var(--color-muted); }
+
+  .notes { position: relative; }
+  .notes ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 22px; }
+  .note {
+    font-size: var(--text-marker);
+    color: #2b2b27;
+    line-height: 1.1;
+  }
+  .note:nth-child(odd) { transform: rotate(-1.2deg); }
+  .note:nth-child(even) { transform: rotate(0.8deg); padding-left: 1.2em; }
+
+  @media (min-width: 640px) {
+    .persons-list { grid-template-columns: 1fr 1fr; column-gap: 40px; }
+  }
+  @media (min-width: 768px) and (max-width: 1023px) {
+    .people-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 48px; align-items: end; }
+    .persons-list { grid-template-columns: 1fr; }
+  }
+  @media (min-width: 1024px) {
+    .people-grid { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(24px, 2.6vw, 44px); align-items: end; }
+    .persons { grid-column: 1 / 8; }
+    .notes { grid-column: 9 / 13; }
+    .notes ul { gap: 40px; }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    :global(html.js) .person {
+      opacity: 0;
+      translate: 0 14px;
+      transition: opacity 900ms var(--ease-draw), translate 900ms var(--ease-draw);
+    }
+    :global(html.js) .person + .person { transition-delay: 120ms; }
+    :global(html.js) .person.is-in { opacity: 1; translate: 0 0; }
+    :global(html.js) .note {
+      opacity: 0;
+      clip-path: inset(0 100% 0 0);
+      transition: opacity 500ms var(--ease-draw), clip-path 700ms var(--ease-draw);
+      transition-delay: calc(var(--i) * 260ms + 200ms);
+    }
+    :global(html.js) .notes.is-in .note { opacity: 1; clip-path: inset(-10% -5% -10% 0); }
+  }
+</style>
+
+<script>
+  import { revealOnce } from '../../scripts/motion';
+  revealOnce(document.querySelectorAll('[data-person], .notes'));
+
+</script>
