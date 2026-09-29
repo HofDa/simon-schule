@@ -1,0 +1,66 @@
+---
+import { useTranslations } from '../../i18n/ui';
+
+const t = useTranslations('de');
+---
+
+<section id="top" class="cover sheet-ginster" aria-labelledby="dossier-title">
+  <div class="shell cover-inner">
+    <div class="cover-top" aria-hidden="true">
+      <span>TRIAS SCHULE</span>
+      <span>PROJEKTBLATT <span class="tnum">/ 01</span></span>
+    </div>
+    <div class="cover-main">
+      <p class="cover-label">Leistungsverzeichnis <span class="tnum">01—05</span></p>
+      <h1 id="dossier-title">Lernräume<br />für Südtirol.</h1>
+      <p class="cover-lead">{t.hero.sub}</p>
+      <a class="cover-cta" href="#anfrage" data-open-form>
+        <span>Pos. 06 — Projekt anfragen</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 12h18m-7-7 7 7-7 7" /></svg>
+      </a>
+    </div>
+    <div class="title-block" aria-label="Projektdaten">
+      <div><span>PROJEKT</span><strong>Lernräume für Südtirol</strong></div>
+      <div><span>ORT</span><strong>Südtirol</strong></div>
+      <div><span>PHASE</span><strong>Von der Idee bis zur Montage</strong></div>
+      <div><span>KONTAKT</span><strong>Simon &amp; Rene</strong></div>
+    </div>
+    <a class="cover-next" href="#leistungen"><span>Positionen ansehen</span><span aria-hidden="true">↓</span></a>
+  </div>
+</section>
+
+<style>
+  .cover { padding-top: var(--nav-h); }
+  .cover-inner { min-height: calc(100svh - var(--nav-h)); display: grid; grid-template-columns: minmax(0, 1fr) minmax(300px, .38fr); grid-template-rows: auto 1fr auto; column-gap: clamp(30px, 5vw, 100px); }
+  .cover-top { grid-column: 1 / -1; display: flex; justify-content: space-between; gap: 24px; padding-block: 20px; border-top: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; font-size: .76rem; font-weight: 750; letter-spacing: .14em; }
+  .cover-main { align-self: center; padding-block: clamp(52px, 8vh, 108px); }
+  .cover-label { font-size: .82rem; font-weight: 750; letter-spacing: .1em; text-transform: uppercase; }
+  .cover-label span { margin-left: 12px; }
+  h1 { max-width: 12ch; margin-top: 22px; font-size: clamp(3.5rem, 7.5vw, 8.5rem); line-height: .9; letter-spacing: -.065em; font-weight: 800; }
+  .cover-lead { max-width: 49ch; margin-top: 32px; font-size: clamp(1.05rem, 1.4vw, 1.25rem); line-height: 1.5; }
+  .cover-cta { display: inline-flex; align-items: center; justify-content: space-between; gap: 28px; min-height: 54px; margin-top: 32px; padding: 12px 18px; background: var(--color-ink); color: var(--color-paper); font-weight: 700; transition: background .2s, gap .2s; }
+  .cover-cta:hover { background: #000; gap: 38px; }
+  .cover-cta:focus-visible, .cover-next:focus-visible { outline: 3px solid var(--color-ink); outline-offset: 4px; }
+  .cover-cta svg { width: 22px; height: 22px; }
+  .title-block { align-self: end; margin-bottom: clamp(52px, 8vh, 108px); border: 1.5px solid currentColor; font-size: .82rem; }
+  .title-block div { display: grid; grid-template-columns: 130px 1fr; min-height: 64px; border-bottom: 1.5px solid currentColor; }
+  .title-block div:last-child { border-bottom: 0; }
+  .title-block span, .title-block strong { padding: 14px; }
+  .title-block span { border-right: 1.5px solid currentColor; font-size: .7rem; font-weight: 750; letter-spacing: .07em; }
+  .title-block strong { font-weight: 650; line-height: 1.35; }
+  .cover-next { grid-column: 1 / -1; display: flex; justify-content: space-between; padding-block: 18px; border-top: 1.5px solid currentColor; font-size: .8rem; font-weight: 750; text-transform: uppercase; letter-spacing: .1em; }
+  .cover-next span:last-child { font-size: 1.25rem; line-height: 1; }
+  @media (max-width: 900px) {
+    .cover-inner { grid-template-columns: 1fr; }
+    .cover-top, .cover-next { grid-column: 1; }
+    .cover-main { padding-block: 60px; }
+    .title-block { margin-bottom: 40px; }
+  }
+  @media (max-width: 600px) {
+    .cover-top span:last-child { display: none; }
+    h1 { font-size: clamp(3.25rem, 13vw, 5.5rem); }
+    .title-block div { grid-template-columns: 105px 1fr; min-height: 56px; }
+    .title-block span, .title-block strong { padding: 11px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .cover-cta { transition: none; } }
+</style>

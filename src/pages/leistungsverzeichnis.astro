@@ -1,0 +1,28 @@
+---
+/** Impeccable concept: a project dossier made of a cover sheet, positions and annexes. */
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/shared/Navbar.astro';
+import Footer from '../components/shared/Footer.astro';
+import DossierHero from '../components/dossier/DossierHero.astro';
+import DossierContents from '../components/dossier/DossierContents.astro';
+import People from '../components/People.astro';
+import VSProducts from '../components/VSProducts.astro';
+import ProjectPhases from '../components/ProjectPhases.astro';
+import Contact from '../components/Contact.astro';
+import { asset, homeFor } from '../lib/paths';
+
+const alternates = { de: asset('leistungsverzeichnis/'), it: homeFor('it') };
+---
+
+<Layout title="Trias Schule | Das Leistungsverzeichnis" noindex canonical={asset('leistungsverzeichnis/')} alternates={alternates}>
+  <Navbar inPage alternates={alternates} />
+  <main id="inhalt">
+    <DossierHero />
+    <DossierContents />
+    <People />
+    <VSProducts />
+    <ProjectPhases />
+    <Contact />
+  </main>
+  <Footer inPage />
+</Layout>
