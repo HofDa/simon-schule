@@ -7,7 +7,7 @@
     { key: 'masskette', number: '01', title: 'Die Maßkette', description: 'Der neue Entwurf' },
     { key: 'schnitt', number: '02', title: 'Schnitt durch die Schule', description: 'Ein Rundgang durch die Räume' },
     { key: 'old', number: '03', title: 'Bisherige Version', description: 'Der vorherige Entwurf' },
-    { key: 'leistungsverzeichnis', number: '04', title: 'Das Leistungsverzeichnis', description: 'Ein Projekt als Dossier' },
+    { key: 'leistungsverzeichnis', number: '04', title: 'Der Raumplaner', description: 'Einen Klassenraum selbst einrichten' },
   ];
   const current = location.pathname.slice(base.length).split('/')[0];
   const root = document.createElement('div');
@@ -17,7 +17,7 @@
     <button class="vs-trigger" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="vs-palette">
       <span class="vs-trigger-mark" aria-hidden="true">↗</span>
       <span>Varianten</span>
-      <kbd>⌘ K</kbd>
+      <kbd>⌘ / Ctrl K</kbd>
     </button>
     <div class="vs-backdrop" hidden></div>
     <section id="vs-palette" class="vs-panel" role="dialog" aria-modal="true" aria-labelledby="vs-title" hidden>
@@ -32,7 +32,6 @@
       <div class="vs-footer"><span>↑ ↓ auswählen</span><span>↵ öffnen</span><span>Esc schließen</span></div>
     </section>`;
   document.body.append(root);
-  root.querySelector('.vs-trigger kbd').textContent = /Mac|iPhone|iPad/.test(navigator.platform) ? '⌘ K' : 'Ctrl K';
 
   const trigger = root.querySelector('.vs-trigger');
   const backdrop = root.querySelector('.vs-backdrop');

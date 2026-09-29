@@ -2,15 +2,36 @@
 version: 1
 slug: "src-pages-leistungsverzeichnis-astro"
 primary_target: "src/pages/leistungsverzeichnis.astro"
-related_targets:
-  - "src/components/dossier/DossierHero.astro"
-  - "src/components/dossier/DossierContents.astro"
+related_targets: ["src/components/planer/PlanerTable.astro","src/components/planer/PlanerExamples.astro","src/components/planer/PlanerPeople.astro","src/components/planer/PlanerVS.astro","src/components/planer/PlanerContact.astro"]
 ---
 
-# Das Leistungsverzeichnis
+# Der Raumplaner (route /leistungsverzeichnis/)
 
-Impeccable's third structure option from `questions/c2022856.next.json` becomes the fourth public design variant. A Ginstergelb cover sheet carries the project title, a ruled title block and the inquiry as position 06. Five numbered positions explain the work, followed by an ink-coloured annex of room examples. The remaining people, VS, phase and contact sections are shared with the other current variants.
+Persuade surface, German only, noindex design variant. Replaces the earlier "Leistungsverzeichnis" dossier structure (user asked for a redesign that is more professional, engaging and interesting; concept open, build-your-inquiry interaction chosen, variant-only section versions allowed). Visual world stays Die Maßkette (DESIGN.md). URL stays for the entry page and shared links.
 
-The concept uses the established Archivo type, flat colour sheets and ruled lines. The photos are marked as examples, not Trias references. The German-only variant is excluded from search indexing. Mobile layouts stack the cover and the annex; the content needs no motion to be read.
+Audience: principals, kindergarten leads, Gemeinde offices, architects. Action: a qualified inquiry that already says which arrangement, VS equipment, services and phase they have in mind.
 
-Review: Astro check and GitHub Pages base-path build pass. Desktop and mobile browser inspection found no horizontal overflow; annex images load. Remaining content dependencies are the real project photos and confirmed business facts listed in `ASSETS.md` and `PRODUCT.md`.
+## Direction contract
+
+THESIS: The visitor furnishes a real classroom on a live, measured plan, and that plan becomes the inquiry. Refuses the default headline + feature list + form: the product (planning a room with you) is demonstrated, not described.
+
+OWN-WORLD: Maßkette unchanged: Ginstergelb, ink and paper sheets with hard edges, Archivo at wdth 118/100, 1.5px ink line drawing with hatched cut walls, 45° dimension ticks, tabular figures, an architect's title block (Planschriftfeld) as the live readout. No cards, no shadows, square corners.
+
+STORY: Seconds in, the visitor sees a drawn 8,40 × 7,20 m classroom and switches it from Frontal to Gruppentische, Lerninseln or Sitzkreis; the furniture moves. They add VS equipment, choose which services Trias should carry and their phase; the title block tracks everything. Room examples and the two people back it up. The inquiry arrives pre-filled with their plan.
+
+FIRST VIEWPORT: Ginstergelb sheet. Columns 1–5: H1 at headline size (display size breaks "Lernraum ein." into four lines in five columns and pushes the tiles and CTA below the fold at 1440×900), a short lead, then the first step "Anordnung" as four near-square toggle tiles in one row, each led by a true miniature of that arrangement drawn from the same positions as the plan (2×2 on phones). Columns 6–12, sticky: the room plan at full column width, a title block beneath it (Anordnung, Plätze, Ausstattung, Leistungen, Phase). Primary action: ink button "Plan als Anfrage senden" under the tiles; the nav CTA stays.
+
+FORM: Der Raumplaner, position 7 of the seven grounded structures (architect's Möblierungsplan as configurator); surface seed 215e5618, dealt lead.
+
+SIGNATURE: all 25 chairs and 13 tables are one set of SVG objects that glide (staggered transform transitions on the draw ease) into each arrangement; equipment choices fill or add plan layers (seats fill ink, storage wall, lounge steps, child-height note). Reduced motion: arrangements switch instantly.
+
+FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
+
+## Sections
+1. Planungstisch (ginster): intro + steps Anordnung / Ausstattung (VS categories) / Leistungen (five services, id leistungen) / Projektphase; sticky plan + title block.
+2. Musterräume (paper, id projekte): the three placeholder examples, each opens its arrangement in the planner.
+3. Menschen (ink, id menschen): Simon and Rene, open facts, their on-site questions.
+4. VS Möbel (variant, paper, id vs-moebel): the chair drawing and the five categories as toggles that put each category into the plan or show it is already in.
+5. Anfrage (ginster, id kontakt/anfrage): a still copy of the drawing and the live Planauszug beside the shared inquiry form; the plan travels as hidden fields, the phase syncs to the form's radio.
+
+Open: real photos, confirmed people facts (see PRODUCT.md, ASSETS.md). Seat counts are the drawing's, not a promise.

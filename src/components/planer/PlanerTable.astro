@@ -1,0 +1,497 @@
+---
+/**
+ * The planning table: a Ginstergelb sheet with the configurator on the left and the
+ * room plan with its title block pinned on the right. The plan is drawn server-side
+ * in the default arrangement, so it reads complete without JavaScript; the script
+ * moves the same furniture into each arrangement and keeps the title block current.
+ */
+import { useTranslations } from '../../i18n/ui';
+import { defaultLayout, deskSize, layoutById, layouts, place, podiumSize, room, seats, table } from './plan';
+
+const t = useTranslations('de');
+const initial = layoutById[defaultLayout];
+
+const equipment = t.vs.categories.map((c, i) => ({ ...c, id: ['sitzen', 'tische', 'stauraum', 'flex', 'kita'][i] }));
+const services = t.services.items;
+const phases = t.form.phases.map((name, i) => ({ name, hint: t.phases.hints[i] }));
+
+// cut walls (poché): top wall around three windows, bottom wall around the door
+const walls = [
+  [84, 54, 66, 16], [270, 54, 85, 16], [475, 54, 85, 16], [680, 54, 66, 16],
+  [84, 610, 26, 16], [185, 610, 561, 16],
+  [84, 70, 16, 540], [730, 70, 16, 540],
+];
+const windows = [150, 355, 560];
+
+// a miniature of each arrangement for its tile, drawn from the same positions as the plan
+const mini = (pl: { x: number; y: number; r: number }) => `translate(${pl.x} ${pl.y}) rotate(${pl.r})`;
+---
+
+<section id="top" class="planer sheet-ginster" aria-labelledby="planer-title" data-planer>
+  <div class="shell pt-grid">
+    <header class="pt-intro">
+      <h1 id="planer-title" class="pt-title display">Richten Sie Ihren Lernraum ein.</h1>
+      <p class="pt-lead">Ein Klassenraum, 8,40 auf 7,20 Meter. Stellen Sie ihn um und wählen Sie, was wir übernehmen sollen. Den echten Raum planen Simon und Rene mit Ihnen.</p>
+    </header>
+
+    <div class="pt-stage" data-stage>
+      <figure class="pt-figure">
+        <svg class="pt-plan" viewBox="0 0 860 700" role="img" aria-labelledby="plan-desc" data-plan data-layout={initial.id} data-eq="">
+          <title id="plan-desc" data-plan-desc>Grundriss eines Klassenraums, Anordnung {initial.name}, {seats} Schülerplätze</title>
+          <defs>
+            <pattern id="pt-hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+              <path d="M0 0 V7" class="pt-hatch-line" />
+            </pattern>
+          </defs>
+
+          <g class="pt-shell">
+            {walls.map(([x, y, w, h], i) => <rect class="pt-poche" x={x} y={y} width={w} height={h} fill="url(#pt-hatch)" style={`--k:${i}`} />)}
+            {windows.map((x) => <path class="pt-draw pt-thin" pathLength="1" d={`M${x} 54 H${x + 120} M${x} 62 H${x + 120} M${x} 70 H${x + 120}`} />)}
+            <path class="pt-draw pt-thin" pathLength="1" d="M110 610 V535 A75 75 0 0 1 185 610" />
+            <rect class="pt-board" x="724" y="230" width="6" height="220" />
+            <text class="pt-note" x="0" y="0" transform="translate(770 340) rotate(90)" text-anchor="middle">Tafel</text>
+            <!-- dimension chains -->
+            <path class="pt-draw pt-thin" pathLength="1" d="M100 636 V680 M730 636 V680 M100 670 H730" />
+            <path class="pt-draw pt-thin" pathLength="1" d="M94 664 L106 676 M724 664 L736 676" />
+            <path class="pt-draw pt-thin" pathLength="1" d="M74 70 H30 M74 610 H30 M40 70 V610" />
+            <path class="pt-draw pt-thin" pathLength="1" d="M34 64 L46 76 M34 604 L46 616" />
+            <text class="pt-dim" x="415" y="660" text-anchor="middle">{room.width}</text>
+            <text class="pt-dim" x="0" y="0" transform="translate(30 340) rotate(-90)" text-anchor="middle">{room.depth}</text>
+          </g>
+
+          <!-- zones, shown per arrangement -->
+          <g class="pt-zones" data-for="inseln">
+            <rect class="pt-zone" x="128" y="76" width="420" height="88" />
+            <rect class="pt-zone" x="178" y="208" width="318" height="184" />
+            <rect class="pt-zone" x="440" y="398" width="240" height="172" />
+            <text class="pt-label" x="540" y="184" text-anchor="end">Fensterplätze</text>
+            <text class="pt-label" x="504" y="226">Gruppen</text>
+            <text class="pt-label" x="672" y="590" text-anchor="end">Projekttisch</text>
+          </g>
+          <g class="pt-zones" data-for="kreis">
+            <circle class="pt-zone" cx="400" cy="340" r="204" />
+            <text class="pt-label tnum" x="400" y="153" text-anchor="middle">Sitzkreis Ø 4,48 m</text>
+          </g>
+
+          <!-- equipment layer: storage along the left wall -->
+          <g class="pt-extra" data-eq-layer="stauraum">
+            <rect class="pt-store" x="100" y="150" width="30" height="320" />
+            <path class="pt-line" d="M100 214 H130 M100 278 H130 M100 342 H130 M100 406 H130" />
+            <text class="pt-label pt-strong pt-on-ink" x="0" y="0" transform="translate(120 310) rotate(-90)" text-anchor="middle">Stauraum</text>
+          </g>
+
+          <!-- the moving furniture -->
+          <g class="pt-item pt-podium-item" data-eq-layer="flex" data-podium style={`transform:${place(initial.podium)}`}>
+            <rect class="pt-podium" x={-podiumSize.w / 2} y={-podiumSize.h / 2} width={podiumSize.w} height={podiumSize.h} />
+            <path class="pt-line" d={`M${-podiumSize.w / 2} -14 H${podiumSize.w / 2} M${-podiumSize.w / 2} 14 H${podiumSize.w / 2}`} />
+            <text class="pt-label pt-strong" x="0" y={podiumSize.h / 2 + 18} text-anchor="middle">Podest</text>
+          </g>
+          {initial.tables.map((pl, i) => (
+            <g class="pt-item" data-table={i} style={`transform:${place(pl)};--k:${i}`}>
+              <rect class="pt-table" x={-table.w / 2} y={-table.h / 2} width={table.w} height={table.h} />
+            </g>
+          ))}
+          <g class="pt-item" data-desk style={`transform:${place(initial.desk)};--k:12`}>
+            <rect class="pt-table pt-desk" x={-deskSize.w / 2} y={-deskSize.h / 2} width={deskSize.w} height={deskSize.h} />
+          </g>
+          {initial.chairs.map((pl, i) => (
+            <g class="pt-item" data-chair={i} style={`transform:${place(pl)};--k:${i}`}>
+              <circle class={`pt-seat${i === seats ? ' pt-seat-teacher' : ''}`} r="12" />
+            </g>
+          ))}
+
+          <text class="pt-note pt-kita" data-eq-layer="kita" x="415" y="30" text-anchor="middle">Tische und Stühle in Kinderhöhe</text>
+        </svg>
+      </figure>
+
+      <p class="pt-compact" aria-hidden="true" data-compact></p>
+
+      <dl class="pt-block" data-block>
+        <div class="pt-cell pt-cell-wide"><dt>Anordnung</dt><dd data-out="layout">{initial.name}</dd></div>
+        <div class="pt-cell"><dt>Plätze</dt><dd class="tnum" data-out="seats">{seats} + 1</dd></div>
+        <div class="pt-cell"><dt>Fläche</dt><dd class="tnum">{room.area} m²</dd></div>
+        <div class="pt-cell pt-cell-wide"><dt>Ausstattung VS</dt><dd data-out="equipment">noch offen</dd></div>
+        <div class="pt-cell"><dt>Leistungen</dt><dd class="tnum" data-out="services">{services.length} von {services.length}</dd></div>
+        <div class="pt-cell"><dt>Phase</dt><dd data-out="phase">noch offen</dd></div>
+        <div class="pt-cell pt-cell-foot"><dt class="sr-only">Plan</dt><dd>Trias Schule · Beispielraum, schematisch</dd></div>
+      </dl>
+    </div>
+
+    <form class="pt-steps" data-planer-form aria-label="Raum einrichten">
+      <fieldset class="pt-step">
+        <legend class="pt-q"><span class="pt-count tnum">1/4</span> Wie wird gearbeitet?</legend>
+        <div class="pt-tiles">
+          {layouts.map((l) => (
+            <label class="pt-tile">
+              <input class="sr-only" type="radio" name="anordnung" value={l.id} checked={l.id === initial.id} />
+              <span class="pt-tile-box">
+                <svg class="pt-mini" viewBox="76 46 678 588" aria-hidden="true">
+                  <rect class="pt-mini-wall" x="92" y="62" width="646" height="556" />
+                  {l.tables.map((pl) => <rect class="pt-mini-table" x={-table.w / 2} y={-table.h / 2} width={table.w} height={table.h} transform={mini(pl)} />)}
+                  <rect class="pt-mini-table" x={-deskSize.w / 2} y={-deskSize.h / 2} width={deskSize.w} height={deskSize.h} transform={mini(l.desk)} />
+                  {l.chairs.map((pl) => <circle class="pt-mini-seat" cx={pl.x} cy={pl.y} r="13" />)}
+                </svg>
+                <span class="pt-tile-name">{l.name}</span>
+                <span class="pt-tile-hint">{l.hint}</span>
+              </span>
+            </label>
+          ))}
+        </div>
+        <div class="pt-actions">
+          <a class="btn btn-ink" href="#anfrage" data-open-form>
+            Plan als Anfrage senden
+            <svg class="btn-arrow h-3.5 w-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" /></svg>
+          </a>
+          <a class="link-line text-meta font-semibold" href="#ausstattung">Weiter einrichten</a>
+        </div>
+      </fieldset>
+
+      <fieldset class="pt-step" id="ausstattung">
+        <legend class="pt-q"><span class="pt-count tnum">2/4</span> Was soll neu in den Raum?</legend>
+        <p class="pt-help">Möbel von VS, für die wir in Südtirol die Exklusivvertretung sind.</p>
+        <ul class="pt-rows">
+          {equipment.map((e) => (
+            <li>
+              <label class="pt-row">
+                <input class="pt-check" type="checkbox" name="ausstattung" value={e.id} data-label={e.name} />
+                <span class="pt-row-name">{e.name}</span>
+                <span class="pt-row-text">{e.text}</span>
+              </label>
+            </li>
+          ))}
+        </ul>
+      </fieldset>
+
+      <fieldset class="pt-step" id="leistungen">
+        <legend class="pt-q"><span class="pt-count tnum">3/4</span> Wobei sollen wir Sie begleiten?</legend>
+        <p class="pt-help">{t.services.intro}</p>
+        <ul class="pt-rows">
+          {services.map((s) => (
+            <li>
+              <label class="pt-row">
+                <input class="pt-check" type="checkbox" name="leistungen" value={s.title} checked />
+                <span class="pt-row-name">{s.title}</span>
+                <span class="pt-row-text">{s.text}</span>
+              </label>
+            </li>
+          ))}
+        </ul>
+      </fieldset>
+
+      <fieldset class="pt-step">
+        <legend class="pt-q"><span class="pt-count tnum">4/4</span> Wo steht Ihr Projekt?</legend>
+        <ul class="pt-rows">
+          {phases.map((ph) => (
+            <li>
+              <label class="pt-row">
+                <input class="pt-check pt-radio" type="radio" name="phase" value={ph.name} />
+                <span class="pt-row-name">{ph.name}</span>
+                <span class="pt-row-text">{ph.hint}</span>
+              </label>
+            </li>
+          ))}
+        </ul>
+        <div class="pt-actions pt-actions-end">
+          <a class="btn btn-ink" href="#anfrage" data-open-form>
+            Plan als Anfrage senden
+            <svg class="btn-arrow h-3.5 w-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" /></svg>
+          </a>
+          <p class="pt-help">Der Plan kommt als Teil Ihrer Anfrage mit. Sie können alles im Formular noch ergänzen.</p>
+        </div>
+      </fieldset>
+    </form>
+  </div>
+</section>
+
+<style>
+  .planer { padding-top: var(--nav-h); padding-bottom: clamp(88px, 10vw, 150px); }
+  .pt-grid { display: flex; flex-direction: column; }
+
+  /* ---- intro ---- */
+  .pt-intro { padding-block: 20px 20px; }
+  .pt-title { font-size: var(--text-headline); max-width: 11ch; }
+  .pt-lead { margin-top: 24px; max-width: 44ch; font-size: var(--text-lead); line-height: 1.5; color: var(--color-on-ginster); }
+
+  /* ---- stage: the plan and its title block ---- */
+  .pt-stage { position: sticky; top: var(--nav-h); z-index: 2; background: var(--color-ginster); border-bottom: 1.5px solid var(--color-ink); padding-block: 8px 10px; margin-inline: calc(var(--gutter) * -1); padding-inline: var(--gutter); }
+  .pt-figure { margin: 0; }
+  .pt-plan { display: block; width: 100%; max-height: 26svh; overflow: visible; }
+  .pt-compact { margin-top: 4px; font-size: var(--text-label); font-weight: 600; font-variant-numeric: tabular-nums; }
+  .pt-block { display: none; }
+
+  /* drawing, on Ginstergelb: ink lines, paper furniture; chosen equipment turns ink */
+  .pt-plan text { font-family: var(--font-sans); font-variant-numeric: tabular-nums; fill: var(--color-ink); }
+  .pt-poche { stroke: var(--color-ink); stroke-width: 1.5; }
+  .pt-hatch-line { stroke: var(--color-ink); stroke-width: 1.1; }
+  .pt-draw { fill: none; stroke: var(--color-ink); stroke-width: 1.5; stroke-linecap: round; }
+  .pt-thin { stroke-width: 1.25; }
+  .pt-line { fill: none; stroke: var(--color-ink); stroke-width: 1.25; }
+  .pt-board { fill: var(--color-ink); }
+  .pt-dim { font-size: 17px; font-weight: 600; }
+  .pt-note { font-size: 15px; font-weight: 600; }
+  .pt-label { font-size: 14px; font-weight: 500; opacity: 0.85; }
+  .pt-strong { font-weight: 650; opacity: 1; }
+  .pt-zone { fill: none; stroke: var(--color-ink); stroke-width: 1; stroke-dasharray: 6 6; opacity: 0.6; }
+  .pt-table { fill: var(--color-paper); stroke: var(--color-ink); stroke-width: 1.5; transition: fill 300ms var(--ease-draw); }
+  .pt-seat { fill: var(--color-paper); stroke: var(--color-ink); stroke-width: 1.5; transition: fill 300ms var(--ease-draw); }
+  .pt-seat-teacher { fill: var(--color-ginster); }
+  .pt-store { fill: var(--color-ink); }
+  .pt-store + .pt-line { stroke: var(--color-ginster); }
+  .pt-plan text.pt-on-ink { fill: var(--color-ginster); }
+  .pt-podium { fill: url(#pt-hatch); stroke: var(--color-ink); stroke-width: 1.5; }
+  @media (max-width: 639px) {
+    .pt-dim { font-size: 30px; }
+    .pt-note { font-size: 26px; }
+    .pt-label { font-size: 24px; }
+  }
+
+  .pt-item { transition: transform 950ms var(--ease-draw); transition-delay: calc(var(--k, 0) * 12ms); }
+  .pt-zones, .pt-extra, .pt-kita { opacity: 0; transition: opacity 450ms var(--ease-draw); }
+  .pt-podium-item { opacity: 0; transition: opacity 450ms var(--ease-draw), transform 950ms var(--ease-draw); }
+  .pt-plan[data-layout='frontal'] [data-for='frontal'],
+  .pt-plan[data-layout='gruppen'] [data-for='gruppen'],
+  .pt-plan[data-layout='inseln'] [data-for='inseln'],
+  .pt-plan[data-layout='kreis'] [data-for='kreis'] { opacity: 1; transition-delay: 450ms; }
+  .pt-plan[data-eq~='sitzen'] .pt-seat:not(.pt-seat-teacher) { fill: var(--color-ink); }
+  .pt-plan[data-eq~='tische'] .pt-table { fill: var(--color-ink); stroke: var(--color-ginster); }
+  .pt-plan[data-eq~='stauraum'] [data-eq-layer='stauraum'],
+  .pt-plan[data-eq~='flex'] [data-eq-layer='flex'],
+  .pt-plan[data-eq~='kita'] [data-eq-layer='kita'] { opacity: 1; }
+
+  /* the room draws itself once on load */
+  @media (prefers-reduced-motion: no-preference) {
+    .pt-plan .pt-draw { stroke-dasharray: 1; animation: pt-draw 1200ms var(--ease-draw) 250ms both; }
+    .pt-plan .pt-poche { animation: pt-in 500ms var(--ease-draw) both; animation-delay: calc(100ms + var(--k) * 45ms); }
+    .pt-plan .pt-item[data-chair] .pt-seat,
+    .pt-plan .pt-item[data-table] .pt-table,
+    .pt-plan .pt-item[data-desk] .pt-table { transform-box: fill-box; transform-origin: center; animation: pt-pop 500ms var(--ease-draw) both; animation-delay: calc(700ms + var(--k) * 24ms); }
+  }
+  @keyframes pt-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+  @keyframes pt-in { from { opacity: 0; } }
+  @keyframes pt-pop { from { transform: scale(0); } }
+
+  /* ---- steps ---- */
+  .pt-steps { display: grid; gap: clamp(56px, 7vw, 96px); padding-top: 20px; }
+  .pt-step { margin: 0; padding: 0; border: 0; min-width: 0; scroll-margin-top: calc(var(--nav-h) + 30svh + 40px); }
+  .pt-q {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    width: 100%;
+    padding: 16px 0 0;
+    border-top: 1.5px solid var(--color-ink);
+    font-size: var(--text-title);
+    font-variation-settings: "wdth" 112;
+    font-weight: 680;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    text-wrap: balance;
+  }
+  .pt-count { flex: none; font-size: var(--text-label); font-weight: 650; letter-spacing: 0.02em; font-variation-settings: "wdth" 100; color: var(--color-on-ginster); transform: translateY(-0.3em); }
+  .pt-help { margin-top: 14px; max-width: 46ch; font-size: var(--text-meta); color: var(--color-on-ginster); }
+
+  .pt-tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 20px; }
+  .pt-tile { display: block; cursor: pointer; }
+  .pt-tile-box {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start;
+    gap: 4px;
+    height: 100%;
+    padding: 10px 10px 12px;
+    border: 1.5px solid var(--color-ink);
+    transition: background-color 220ms var(--ease-draw), color 220ms var(--ease-draw), box-shadow 220ms var(--ease-draw);
+  }
+  .pt-mini { display: block; width: 100%; aspect-ratio: 678 / 588; margin-bottom: 6px; overflow: visible; }
+  .pt-mini-wall { fill: none; stroke: currentColor; stroke-width: 16; }
+  .pt-mini-table { fill: none; stroke: currentColor; stroke-width: 9; }
+  .pt-mini-seat { fill: currentColor; }
+  .pt-tile-name { overflow-wrap: anywhere; font-size: clamp(0.9rem, 1.1vw, 1.05rem); font-variation-settings: "wdth" 88; font-weight: 650; letter-spacing: -0.01em; line-height: 1.15; }
+  .pt-tile-hint { font-size: var(--text-label); line-height: 1.35; color: var(--color-on-ginster); }
+  @media (min-width: 1024px) {
+    .pt-tiles { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .pt-tile-hint { display: none; }
+  }
+  .pt-tile:hover .pt-tile-box { box-shadow: inset 0 0 0 1.5px var(--color-ink); }
+  .pt-tile input:checked + .pt-tile-box { background: var(--color-ink); color: var(--color-paper); }
+  .pt-tile input:checked + .pt-tile-box .pt-tile-hint { color: var(--color-on-ink); }
+  .pt-tile input:checked + .pt-tile-box .pt-mini-seat { fill: var(--color-ginster); }
+  .pt-tile input:focus-visible + .pt-tile-box { outline: 2px solid var(--color-ink); outline-offset: 3px; }
+
+  .pt-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 28px; margin-top: 28px; }
+  .pt-actions-end { margin-top: 40px; }
+  .pt-actions-end .pt-help { margin-top: 0; max-width: 34ch; }
+
+  .pt-rows { list-style: none; margin: 22px 0 0; padding: 0; }
+  .pt-rows li { border-bottom: 1px solid color-mix(in srgb, var(--color-ink) 35%, transparent); }
+  .pt-rows li:first-child { border-top: 1px solid color-mix(in srgb, var(--color-ink) 35%, transparent); }
+  .pt-row { display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 4px 16px; align-items: baseline; padding: 16px 0; cursor: pointer; }
+  .pt-check {
+    appearance: none;
+    grid-row: 1 / span 2;
+    align-self: start;
+    width: 22px;
+    height: 22px;
+    margin: 3px 0 0;
+    border: 1.5px solid var(--color-ink);
+    border-radius: 0;
+    background: transparent;
+    display: grid;
+    place-content: center;
+    cursor: pointer;
+    transition: background-color 180ms var(--ease-draw);
+  }
+  .pt-check::before { content: ''; width: 11px; height: 6px; border-left: 2px solid var(--color-ginster); border-bottom: 2px solid var(--color-ginster); transform: translateY(-2px) rotate(-45deg) scale(0); transition: transform 220ms var(--ease-draw); }
+  .pt-check:checked { background: var(--color-ink); }
+  .pt-check:checked::before { transform: translateY(-2px) rotate(-45deg) scale(1); }
+  .pt-radio { border-radius: 50%; }
+  .pt-radio::before { width: 8px; height: 8px; border: 0; border-radius: 50%; background: var(--color-ginster); transform: scale(0); }
+  .pt-radio:checked::before { transform: scale(1); }
+  .pt-check:focus-visible { outline: 2px solid var(--color-ink); outline-offset: 3px; }
+  .pt-row:hover .pt-check { box-shadow: inset 0 0 0 1px var(--color-ink); }
+  .pt-row-name { font-size: 1.3rem; font-variation-settings: "wdth" 112; font-weight: 650; letter-spacing: -0.02em; line-height: 1.15; }
+  .pt-row-text { grid-column: 2; font-size: var(--text-meta); color: var(--color-on-ginster); max-width: 48ch; }
+
+  /* ---- desktop: steps left, the plan pinned right ---- */
+  @media (min-width: 1024px) {
+    .pt-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(24px, 2.6vw, 44px); align-items: start; }
+    .pt-intro { grid-column: 1 / span 5; grid-row: 1; padding-block: clamp(32px, 5vh, 64px) 0; }
+    .pt-steps { grid-column: 1 / span 5; grid-row: 2; padding-top: clamp(24px, 3.4vh, 40px); }
+    .pt-stage {
+      grid-column: 6 / span 7;
+      grid-row: 1 / span 2;
+      top: calc(var(--nav-h) + 8px);
+      margin: 0;
+      padding: clamp(20px, 3vh, 36px) 0 0;
+      border: 0;
+      background: none;
+    }
+    .pt-plan { max-height: calc(100svh - var(--nav-h) - 236px); margin-inline: auto; }
+    .pt-compact { display: none; }
+    .pt-block {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      margin: 14px 0 0;
+      border: 1.5px solid var(--color-ink);
+      font-size: var(--text-meta);
+    }
+    .pt-cell { padding: 9px 12px 10px; border-right: 1.5px solid var(--color-ink); border-bottom: 1.5px solid var(--color-ink); min-width: 0; }
+    .pt-cell:nth-child(3), .pt-cell:nth-child(6) { border-right: 0; }
+    .pt-cell dt { font-size: 0.7rem; font-weight: 650; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-on-ginster); }
+    .pt-cell dd { margin: 2px 0 0; font-weight: 650; line-height: 1.3; }
+    .pt-cell-foot { grid-column: 1 / -1; border: 0; padding-block: 8px; }
+    .pt-cell-foot dd { margin: 0; font-size: var(--text-label); font-weight: 500; color: var(--color-on-ginster); }
+    .pt-step { scroll-margin-top: calc(var(--nav-h) + 32px); }
+    [data-out].is-new { animation: pt-flash 900ms var(--ease-draw); }
+  }
+  @keyframes pt-flash { from { background: var(--color-ink); color: var(--color-ginster); } }
+  @media (min-width: 1024px) and (max-height: 760px) {
+    .pt-plan { max-height: calc(100svh - var(--nav-h) - 200px); }
+    .pt-cell-foot { display: none; }
+  }
+</style>
+
+<script>
+  import { layoutById, place, seats, type LayoutId } from './plan';
+
+  const section = document.querySelector<HTMLElement>('[data-planer]');
+  const form = section?.querySelector<HTMLFormElement>('[data-planer-form]');
+  const plan = section?.querySelector<SVGSVGElement>('[data-plan]');
+
+  if (section && form && plan) {
+    const tables = Array.from(plan.querySelectorAll<SVGGElement>('[data-table]'));
+    const chairs = Array.from(plan.querySelectorAll<SVGGElement>('[data-chair]'));
+    const desk = plan.querySelector<SVGGElement>('[data-desk]');
+    const podium = plan.querySelector<SVGGElement>('[data-podium]');
+    const desc = plan.querySelector('[data-plan-desc]');
+    const compact = section.querySelector<HTMLElement>('[data-compact]');
+    const out = (key: string) => section.querySelector<HTMLElement>(`[data-out="${key}"]`);
+    const total = form.querySelectorAll('input[name="leistungen"]').length;
+
+    const write = (el: HTMLElement | null, text: string) => {
+      if (!el || el.textContent === text) return;
+      el.textContent = text;
+      el.classList.remove('is-new');
+      void el.offsetWidth;
+      el.classList.add('is-new');
+    };
+
+    const read = () => {
+      const data = new FormData(form);
+      const layout = layoutById[(data.get('anordnung') as LayoutId) ?? 'gruppen'];
+      const equipment = Array.from(form.querySelectorAll<HTMLInputElement>('input[name="ausstattung"]:checked'));
+      return {
+        layout: layout.id,
+        layoutName: layout.name,
+        seats,
+        equipment: equipment.map((i) => i.value),
+        equipmentNames: equipment.map((i) => i.dataset.label ?? i.value),
+        services: data.getAll('leistungen').map(String),
+        servicesTotal: total,
+        phase: (data.get('phase') as string | null) ?? '',
+      };
+    };
+
+    const apply = () => {
+      const state = read();
+      const layout = layoutById[state.layout];
+      plan.dataset.layout = layout.id;
+      plan.dataset.eq = state.equipment.join(' ');
+      tables.forEach((g, i) => { g.style.transform = place(layout.tables[i]); });
+      chairs.forEach((g, i) => { g.style.transform = place(layout.chairs[i]); });
+      if (desk) desk.style.transform = place(layout.desk);
+      if (podium) podium.style.transform = place(layout.podium);
+
+      const equipment = state.equipmentNames.length ? state.equipmentNames.join(', ') : 'noch offen';
+      write(out('layout'), layout.name);
+      write(out('equipment'), equipment);
+      write(out('services'), `${state.services.length} von ${state.servicesTotal}`);
+      write(out('phase'), state.phase || 'noch offen');
+      if (desc) desc.textContent = `Grundriss eines Klassenraums, Anordnung ${layout.name}, ${seats} Schülerplätze${state.equipmentNames.length ? `, Ausstattung: ${equipment}` : ''}`;
+      if (compact) {
+        compact.textContent = [
+          layout.name,
+          `${seats} Plätze`,
+          state.equipment.length ? `${state.equipment.length} × VS` : null,
+          `${state.services.length}/${state.servicesTotal} Leistungen`,
+          state.phase || null,
+        ].filter(Boolean).join(' · ');
+      }
+      document.dispatchEvent(new CustomEvent('planer:change', { detail: state }));
+    };
+
+    form.addEventListener('change', apply);
+    form.addEventListener('submit', (event) => event.preventDefault());
+
+    // "open this arrangement": links elsewhere on the page set the layout and bring the plan into view
+    document.querySelectorAll<HTMLElement>('[data-set-layout]').forEach((link) => {
+      link.addEventListener('click', (event) => {
+        const radio = form.querySelector<HTMLInputElement>(`input[name="anordnung"][value="${link.dataset.setLayout}"]`);
+        if (!radio) return;
+        event.preventDefault();
+        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        section.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+        // move the furniture once the plan is on screen, so the change is seen
+        window.setTimeout(() => {
+          radio.checked = true;
+          apply();
+          radio.focus({ preventScroll: true });
+        }, reduce ? 0 : 700);
+      });
+    });
+
+    // the form's own phase choice flows back into the plan
+    document.addEventListener('inquiry:phase', (event) => {
+      const value = (event as CustomEvent<string>).detail;
+      const radio = form.querySelector<HTMLInputElement>(`input[name="phase"][value="${CSS.escape(value)}"]`);
+      if (radio && !radio.checked) {
+        radio.checked = true;
+        apply();
+      }
+    });
+
+    // sections further down ask for the current plan once they are listening
+    document.addEventListener('planer:request', apply);
+    apply();
+  }
+</script>

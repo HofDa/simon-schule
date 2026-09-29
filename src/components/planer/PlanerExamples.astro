@@ -1,0 +1,132 @@
+---
+/**
+ * Room examples on a paper sheet. Each one opens the arrangement that fits it in the
+ * planner above, so the photographs lead back to the visitor's own plan.
+ * The photos are placeholders and say so.
+ */
+import { getProjects } from '../../data/projects';
+import { asset } from '../../lib/paths';
+import { useTranslations } from '../../i18n/ui';
+import { layoutById, type LayoutId } from './plan';
+
+const t = useTranslations('de');
+const projects = getProjects('de');
+const widths = [480, 720, 960, 1800];
+const image = (file: string, width: number) => asset(`images/projects/${file}-${width}.webp`);
+const layoutFor: Record<string, LayoutId> = {
+  'schule-klassenraeume': 'gruppen',
+  'kindergarten-spielraum': 'kreis',
+  lernlandschaft: 'inseln',
+};
+---
+
+<section id="projekte" class="examples sheet-paper" aria-labelledby="examples-title">
+  <div class="shell">
+    <header class="ex-head">
+      <h2 id="examples-title" class="ex-title display">Drei Räume, drei Anordnungen.</h2>
+      <p class="ex-intro">{t.projects.sub}</p>
+    </header>
+
+    <div class="ex-list">
+      {projects.map((project, i) => {
+        const layout = layoutById[layoutFor[project.id] ?? 'gruppen'];
+        return (
+          <article class="ex-item" data-flip={i % 2 === 1 ? '' : undefined}>
+            <div class="ex-dim dim" aria-hidden="true"><span class="dim-end"></span></div>
+            <figure class="ex-figure">
+              <img
+                src={image(project.images[0].file, 960)}
+                srcset={widths.map((w) => `${image(project.images[0].file, w)} ${w}w`).join(', ')}
+                sizes="(min-width: 1024px) 56vw, calc(100vw - 40px)"
+                alt={project.images[0].alt}
+                width="960"
+                height="640"
+                loading="lazy"
+                decoding="async"
+              />
+            </figure>
+            <div class="ex-info">
+              <h3 class="ex-name">{project.title}</h3>
+              {project.placeholder && <p class="tag-placeholder">{t.projects.placeholder}</p>}
+              <p class="ex-desc">{project.description}</p>
+              <dl class="ex-meta">
+                <div><dt>Raumtyp</dt><dd>{project.type}</dd></div>
+                <div><dt>{t.projects.meta.services}</dt><dd>{project.services.join(' · ')}</dd></div>
+                <div><dt>Im Planer</dt><dd>{layout.name}</dd></div>
+              </dl>
+              <a class="ex-open" href="#top" data-set-layout={layout.id}>
+                <span>{layout.name} im Planer öffnen</span>
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M8 14V3M4 7l4-4 4 4" /></svg>
+              </a>
+            </div>
+          </article>
+        );
+      })}
+    </div>
+  </div>
+</section>
+
+<style>
+  .examples { padding-block: clamp(104px, 12vw, 176px); }
+  .ex-head { display: grid; gap: 24px; }
+  .ex-title { font-size: var(--text-headline); max-width: 15ch; }
+  .ex-intro { max-width: 44ch; color: var(--color-muted); font-size: var(--text-lead); line-height: 1.5; }
+
+  .ex-list { display: grid; gap: clamp(72px, 9vw, 136px); margin-top: clamp(56px, 7vw, 104px); }
+  .ex-item { display: grid; gap: 24px; }
+  .ex-dim { color: var(--color-ink); }
+  .ex-figure { margin: 0; background: var(--color-warm); aspect-ratio: 3 / 2; overflow: hidden; }
+  .ex-figure img { width: 100%; height: 100%; object-fit: cover; }
+  .ex-info { display: flex; flex-direction: column; align-items: flex-start; gap: 0; }
+  .ex-name { max-width: 16ch; font-size: var(--text-title); font-variation-settings: "wdth" 112; font-weight: 680; letter-spacing: -0.03em; line-height: 1.04; }
+  .ex-info .tag-placeholder { margin-top: 14px; }
+  .ex-desc { margin-top: 18px; max-width: 42ch; color: var(--color-muted); }
+  .ex-meta { width: 100%; margin: 26px 0 0; border-top: 1.5px solid var(--color-ink); font-size: var(--text-meta); }
+  .ex-meta div { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 12px; padding-block: 10px; border-bottom: 1px solid var(--color-line); }
+  .ex-meta dt { color: var(--color-muted); }
+  .ex-meta dd { margin: 0; font-weight: 600; }
+  .ex-open {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    min-height: 52px;
+    margin-top: 28px;
+    padding: 0 1.25rem;
+    border: 1.5px solid var(--color-ink);
+    font-size: var(--text-meta);
+    font-weight: 600;
+    transition: background-color 220ms var(--ease-draw), color 220ms var(--ease-draw);
+  }
+  .ex-open svg { width: 14px; height: 14px; transition: transform 260ms var(--ease-draw); }
+  .ex-open:hover { background: var(--color-ink); color: var(--color-paper); }
+  .ex-open:hover svg { transform: translateY(-3px); }
+  .ex-open:focus-visible { outline: 2px solid var(--color-ink); outline-offset: 3px; }
+
+  @media (min-width: 1024px) {
+    .ex-head { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(24px, 2.6vw, 44px); align-items: end; }
+    .ex-title { grid-column: 1 / span 7; }
+    .ex-intro { grid-column: 9 / span 4; padding-bottom: 0.4em; }
+    .ex-item { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(24px, 2.6vw, 44px); row-gap: 20px; align-items: start; }
+    .ex-dim { grid-column: 1 / span 7; }
+    .ex-figure { grid-column: 1 / span 7; grid-row: 2; }
+    .ex-info { grid-column: 9 / span 4; grid-row: 2; padding-top: 4px; }
+    .ex-item[data-flip] .ex-dim, .ex-item[data-flip] .ex-figure { grid-column: 6 / span 7; }
+    .ex-item[data-flip] .ex-info { grid-column: 1 / span 4; }
+  }
+</style>
+
+<script>
+  import { addScene, viewProgress } from '../../scripts/motion';
+
+  // each dimension line draws as its photograph comes up, and closes with its end tick
+  document.querySelectorAll<HTMLElement>('.ex-dim').forEach((dim) => {
+    addScene({
+      el: dim,
+      progress: viewProgress(0.95, 0.55),
+      render(p) {
+        dim.style.setProperty('--dim-p', p.toFixed(3));
+        dim.style.setProperty('--dim-end', p >= 1 ? '1' : '0');
+      },
+    });
+  });
+</script>

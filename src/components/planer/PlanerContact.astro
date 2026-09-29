@@ -1,0 +1,145 @@
+---
+/**
+ * The close: the visitor's plan as a title block beside the inquiry sheet.
+ * The plan travels with the inquiry as extra fields; the phase stays in step with the planner.
+ */
+import { contact } from '../../data/site';
+import { useTranslations } from '../../i18n/ui';
+import ContactForm from '../ContactForm.astro';
+
+const t = useTranslations('de').contact;
+---
+
+<section id="kontakt" class="close sheet-ginster" aria-labelledby="close-title">
+  <div class="shell cl-grid">
+    <div class="cl-copy">
+      <h2 id="close-title" class="cl-title display">Ihr Plan geht an Simon und Rene.</h2>
+      <p class="cl-lead">{t.lead}</p>
+
+      <div class="cl-plan" aria-hidden="true" data-summary-plan></div>
+      <dl class="cl-block" aria-label="Ihr Planauszug" data-summary>
+        <div><dt>Anordnung</dt><dd data-sum="layout">Gruppentische · 24 Plätze</dd></div>
+        <div><dt>Ausstattung VS</dt><dd data-sum="equipment">noch offen</dd></div>
+        <div><dt>Leistungen</dt><dd data-sum="services">Beraten, Planen, Ausstatten, Umsetzen, Begleiten</dd></div>
+        <div><dt>Phase</dt><dd data-sum="phase">noch offen</dd></div>
+      </dl>
+      <p class="cl-links">
+        <a class="link-line font-semibold" href="#top">Im Planer ändern</a>
+        <a class="link-line font-semibold" href={`mailto:${contact.email}`}>{t.mail(contact.email)}</a>
+      </p>
+    </div>
+
+    <div id="anfrage" class="cl-sheet" tabindex="-1" data-form-wrap>
+      <ContactForm />
+    </div>
+  </div>
+</section>
+
+<style>
+  .close { padding-block: clamp(104px, 12vw, 168px); }
+  .cl-grid { display: grid; gap: 56px; }
+  .cl-title { font-size: var(--text-headline); max-width: 12ch; }
+  .cl-lead { margin-top: 24px; max-width: 40ch; font-size: var(--text-lead); line-height: 1.5; color: var(--color-on-ginster); }
+
+  .cl-plan { margin-top: 40px; max-width: 420px; }
+  .cl-plan:empty { display: none; }
+  .cl-plan :global(svg) { display: block; width: 100%; height: auto; max-height: none !important; overflow: visible; }
+  .cl-plan :global(*) { animation: none !important; transition: none !important; }
+  .cl-plan + .cl-block { margin-top: 20px; }
+  /* at copy scale only the two room dimensions stay, lettered large enough to read */
+  .cl-plan :global(text) { display: none; }
+  .cl-plan :global(text.pt-dim) { display: inline; font-size: 34px; }
+  .cl-block { margin: 40px 0 0; border: 1.5px solid var(--color-ink); max-width: 520px; font-size: var(--text-meta); }
+  .cl-block div { display: grid; grid-template-columns: 124px minmax(0, 1fr); border-bottom: 1.5px solid var(--color-ink); }
+  .cl-block div:last-child { border-bottom: 0; }
+  .cl-block dt, .cl-block dd { margin: 0; padding: 11px 12px; }
+  .cl-block dt { border-right: 1.5px solid var(--color-ink); font-size: 0.7rem; font-weight: 650; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-on-ginster); padding-top: 13px; }
+  .cl-block dd { font-weight: 650; line-height: 1.35; }
+  .cl-links { display: flex; flex-wrap: wrap; gap: 12px 28px; margin-top: 24px; font-size: var(--text-meta); }
+
+  .cl-sheet { background: var(--color-paper); padding: clamp(24px, 4vw, 56px); outline: none; scroll-margin-top: calc(var(--nav-h) + 16px); }
+  .cl-sheet:focus-visible { outline: 2px solid var(--color-ink); outline-offset: 4px; }
+
+  @media (min-width: 1024px) {
+    .cl-grid { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(24px, 2.6vw, 44px); align-items: start; }
+    .cl-copy { grid-column: 1 / span 5; }
+    .cl-sheet { grid-column: 6 / span 7; }
+  }
+</style>
+
+<script>
+  interface PlanState {
+    layoutName: string;
+    seats: number;
+    equipmentNames: string[];
+    services: string[];
+    servicesTotal: number;
+    phase: string;
+  }
+
+  const wrap = document.querySelector<HTMLElement>('[data-form-wrap]');
+  const form = wrap?.querySelector<HTMLFormElement>('[data-inquiry]');
+  const summary = document.querySelector<HTMLElement>('[data-summary]');
+  const summaryPlan = document.querySelector<HTMLElement>('[data-summary-plan]');
+  const source = document.querySelector<SVGSVGElement>('[data-plan]');
+
+  if (wrap && form) {
+    // in-page links to the inquiry scroll to the sheet and focus its first field
+    const open = (event: Event) => {
+      event.preventDefault();
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      wrap.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+      window.setTimeout(() => wrap.querySelector<HTMLInputElement>('input')?.focus({ preventScroll: true }), reduce ? 0 : 650);
+      history.replaceState(null, '', '#anfrage');
+    };
+    document.querySelectorAll<HTMLElement>('[data-open-form]').forEach((el) => el.addEventListener('click', open));
+
+    // the plan rides along as extra fields, in the order the mail lists them
+    const hidden = (name: string) => {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = name;
+      form.append(input);
+      return input;
+    };
+    const fields = {
+      layout: hidden('Raumplan: Anordnung'),
+      equipment: hidden('Raumplan: Ausstattung VS'),
+      services: hidden('Raumplan: Leistungen'),
+    };
+    const sum = (key: string) => summary?.querySelector<HTMLElement>(`[data-sum="${key}"]`);
+    const phaseRadios = Array.from(form.querySelectorAll<HTMLInputElement>('input[type="radio"]'));
+
+    document.addEventListener('planer:change', (event) => {
+      const s = (event as CustomEvent<PlanState>).detail;
+      const layout = `${s.layoutName} · ${s.seats} Plätze`;
+      const equipment = s.equipmentNames.join(', ');
+      const services = s.services.join(', ');
+      fields.layout.value = layout;
+      fields.equipment.value = equipment;
+      fields.services.value = services;
+      const set = (key: string, text: string) => { const el = sum(key); if (el) el.textContent = text; };
+      set('layout', layout);
+      set('equipment', equipment || 'noch offen');
+      set('services', services || 'keine gewählt');
+      set('phase', s.phase || 'noch offen');
+      // a still copy of the drawing, as it will be sent
+      if (summaryPlan && source) {
+        const copy = source.cloneNode(true) as SVGSVGElement;
+        copy.querySelectorAll('[id]').forEach((el) => el.removeAttribute('id'));
+        copy.removeAttribute('aria-labelledby');
+        copy.removeAttribute('data-plan');
+        copy.setAttribute('role', 'presentation');
+        summaryPlan.replaceChildren(copy);
+      }
+      if (s.phase) phaseRadios.forEach((r) => { r.checked = r.value === s.phase; });
+    });
+
+    phaseRadios.forEach((radio) =>
+      radio.addEventListener('change', () => {
+        if (radio.checked) document.dispatchEvent(new CustomEvent('inquiry:phase', { detail: radio.value }));
+      }),
+    );
+    document.dispatchEvent(new CustomEvent('planer:request'));
+  }
+</script>

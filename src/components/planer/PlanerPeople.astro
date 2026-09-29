@@ -1,0 +1,97 @@
+---
+/**
+ * The two people on an ink sheet: whoever sends a plan gets these two to draw the real one.
+ * Open facts stay marked; the questions are the ones asked on site.
+ */
+import { contact, fullName, people, type Person } from '../../data/site';
+import { useTranslations } from '../../i18n/ui';
+
+const ui = useTranslations('de');
+const t = ui.people;
+const openFacts = (p: Person) =>
+  [!p.lastName && ui.pendingFields.lastName, !p.role && ui.pendingFields.role, !p.phone && ui.pendingFields.phone].filter(
+    (f): f is string => Boolean(f),
+  );
+---
+
+<section id="menschen" class="team sheet-ink" aria-labelledby="team-title">
+  <div class="shell">
+    <header class="tm-head">
+      <h2 id="team-title" class="tm-title display">Den echten Plan zeichnen wir mit Ihnen.</h2>
+      <p class="tm-intro">{t.intro}</p>
+    </header>
+
+    <div class="tm-names">
+      {people.map((person) => {
+        const open = openFacts(person);
+        return (
+          <article class="tm-person">
+            <h3 class="tm-name display">{fullName(person)}</h3>
+            <div class="tm-facts">
+              {person.role && <p>{person.role}</p>}
+              {open.length > 0 && <p class="open-fact">{ui.pending(open)}</p>}
+              {person.phone && <p><a class="link-line" href={`tel:${person.phone.replace(/\s/g, '')}`}>{person.phone}</a></p>}
+              {person.email && <p><a class="link-line" href={`mailto:${person.email}`}>{person.email}</a></p>}
+            </div>
+          </article>
+        );
+      })}
+    </div>
+
+    <div class="tm-foot">
+      <p class="tm-mail">
+        {t.reachBoth} <a class="link-line font-semibold" href={`mailto:${contact.email}`}>{contact.email}</a>
+      </p>
+      <div class="tm-questions">
+        <h3 class="tm-q-label">{t.questionsLabel}</h3>
+        <ol>
+          {t.questions.map((q) => <li>{q}</li>)}
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .team { padding-block: clamp(104px, 12vw, 176px); }
+  .tm-head { display: grid; gap: 24px; }
+  .tm-title { font-size: var(--text-headline); max-width: 14ch; }
+  .tm-intro { max-width: 44ch; color: var(--color-on-ink); font-size: var(--text-lead); line-height: 1.5; }
+
+  .tm-names { margin-top: clamp(56px, 7vw, 104px); border-top: 1.5px solid var(--color-paper); }
+  .tm-person { display: grid; gap: 12px; padding-block: clamp(20px, 2.6vw, 36px); border-bottom: 1.5px solid var(--color-ink-line); }
+  .tm-name { font-size: clamp(2.6rem, 9.2vw, 9.5rem); line-height: 0.88; letter-spacing: -0.045em; }
+  .tm-facts { display: flex; flex-wrap: wrap; gap: 6px 28px; font-size: var(--text-meta); color: var(--color-on-ink); }
+
+  .tm-foot { margin-top: clamp(48px, 6vw, 88px); display: grid; gap: 48px; }
+  .tm-mail { font-size: var(--text-lead); color: var(--color-on-ink); }
+  .tm-mail a { color: var(--color-paper); }
+  .tm-q-label { font-size: var(--text-meta); font-weight: 600; letter-spacing: 0; color: var(--color-on-ink); }
+  .tm-questions ol { list-style: none; counter-reset: q; margin: 16px 0 0; padding: 0; border-top: 1.5px solid var(--color-paper); }
+  .tm-questions li {
+    counter-increment: q;
+    display: grid;
+    grid-template-columns: 22px minmax(0, 1fr);
+    gap: 16px;
+    align-items: baseline;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--color-ink-line);
+    font-size: var(--text-lead);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+  /* each question is marked by a Ginstergelb point: something the planning will place */
+  .tm-questions li::before { content: ''; width: 10px; height: 10px; border-radius: 50%; background: var(--color-ginster); transform: translateY(-0.1em); }
+
+  @media (min-width: 640px) { .tm-name { white-space: nowrap; } }
+  @media (min-width: 1024px) {
+    .tm-head { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(24px, 2.6vw, 44px); align-items: end; }
+    .tm-title { grid-column: 1 / span 8; }
+    .tm-intro { grid-column: 9 / span 4; padding-bottom: 0.4em; }
+    .tm-person { grid-template-columns: 1fr auto; align-items: end; }
+    .tm-facts { flex-direction: column; align-items: flex-end; text-align: right; padding-bottom: 0.9em; }
+    .tm-foot { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(24px, 2.6vw, 44px); }
+    .tm-mail { grid-column: 1 / span 5; }
+    .tm-questions { grid-column: 7 / span 6; }
+  }
+</style>

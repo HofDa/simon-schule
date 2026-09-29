@@ -1,0 +1,108 @@
+---
+/**
+ * VS as the toolkit, tied to the plan: each category shows whether it is in the
+ * visitor's room and can be put in or taken out from here. Paper sheet.
+ */
+import { vs } from '../../data/site';
+import { useTranslations } from '../../i18n/ui';
+import VSChair from '../art/VSChair.astro';
+
+const t = useTranslations('de').vs;
+const ids = ['sitzen', 'tische', 'stauraum', 'flex', 'kita'];
+---
+
+<section id="vs-moebel" class="pvs sheet-paper" aria-labelledby="pvs-title" data-pvs>
+  <div class="shell pvs-grid">
+    <div class="pvs-copy">
+      <h2 id="pvs-title" class="pvs-title display">Die Möbel kommen von VS.</h2>
+      <p class="pvs-intro">{t.intro}</p>
+      <figure class="pvs-stage">
+        <div class="pvs-chair"><VSChair id="pvs-chair" class="block w-full" /></div>
+        <figcaption class="pvs-caption">{t.caption}</figcaption>
+      </figure>
+    </div>
+
+    <div class="pvs-list">
+      <ul>
+        {t.categories.map((c, i) => (
+          <li class="pvs-row">
+            <span class="pvs-name">{c.name}</span>
+            <button type="button" class="pvs-toggle" data-eq-toggle={ids[i]} aria-pressed="false">
+              <span class="pvs-box" aria-hidden="true"></span>
+              <span class="pvs-off">In den Plan</span>
+              <span class="pvs-on">Im Plan</span>
+              <span class="sr-only">: {c.name}</span>
+            </button>
+          </li>
+        ))}
+      </ul>
+      <a class="btn btn-ink pvs-cta" href={vs.catalogUrl.de} target="_blank" rel="noopener">
+        {t.all}
+        <svg class="btn-arrow h-3.5 w-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 12L12 4M5 4h7v7" /></svg>
+        <span class="sr-only">{t.newTab}</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .pvs { padding-block: clamp(104px, 12vw, 176px); }
+  .pvs-grid { display: grid; gap: 56px; }
+  .pvs-title { font-size: var(--text-headline); max-width: 12ch; }
+  .pvs-intro { margin-top: 24px; max-width: 44ch; color: var(--color-muted); font-size: var(--text-lead); line-height: 1.5; }
+  .pvs-stage { margin: 48px 0 0; }
+  .pvs-chair { width: min(60vw, 280px); }
+  .pvs-caption { margin-top: 16px; font-size: var(--text-label); color: var(--color-muted); }
+
+  .pvs-list ul { list-style: none; margin: 0; padding: 0; border-top: 1.5px solid var(--color-ink); }
+  .pvs-row { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 18px 0; border-bottom: 1px solid var(--color-line); }
+  .pvs-name { min-width: 0; hyphens: auto; font-size: var(--text-title); font-variation-settings: "wdth" 112; font-weight: 650; letter-spacing: -0.03em; line-height: 1.05; }
+  .pvs-toggle {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    padding: 0 14px;
+    border: 1.5px solid var(--color-ink);
+    font: inherit;
+    font-size: var(--text-meta);
+    font-weight: 600;
+    color: var(--color-ink);
+    background: transparent;
+    cursor: pointer;
+    transition: background-color 200ms var(--ease-draw), color 200ms var(--ease-draw);
+  }
+  .pvs-box { width: 12px; height: 12px; border: 1.5px solid currentColor; }
+  .pvs-on { display: none; }
+  .pvs-toggle:hover { background: var(--color-ink); color: var(--color-paper); }
+  .pvs-toggle[aria-pressed='true'] { background: var(--color-ink); color: var(--color-paper); }
+  .pvs-toggle[aria-pressed='true'] .pvs-box { background: var(--color-ginster); border-color: var(--color-ginster); }
+  .pvs-toggle[aria-pressed='true'] .pvs-on { display: inline; }
+  .pvs-toggle[aria-pressed='true'] .pvs-off { display: none; }
+  .pvs-toggle:focus-visible { outline: 2px solid var(--color-ink); outline-offset: 3px; }
+  .pvs-cta { margin-top: 40px; }
+
+  @media (min-width: 1024px) {
+    .pvs-grid { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(24px, 2.6vw, 44px); align-items: start; }
+    .pvs-copy { grid-column: 1 / span 5; }
+    .pvs-list { grid-column: 7 / span 6; padding-top: 12px; }
+  }
+</style>
+
+<script>
+  const section = document.querySelector<HTMLElement>('[data-pvs]');
+  const toggles = Array.from(section?.querySelectorAll<HTMLButtonElement>('[data-eq-toggle]') ?? []);
+  const box = (id: string) => document.querySelector<HTMLInputElement>(`[data-planer-form] input[name="ausstattung"][value="${id}"]`);
+
+  // the checkboxes in the planner stay the one source of truth; these buttons flip them
+  toggles.forEach((btn) =>
+    btn.addEventListener('click', () => {
+      box(btn.dataset.eqToggle ?? '')?.click();
+    }),
+  );
+  document.addEventListener('planer:change', () => {
+    toggles.forEach((btn) => btn.setAttribute('aria-pressed', String(Boolean(box(btn.dataset.eqToggle ?? '')?.checked))));
+  });
+  document.dispatchEvent(new CustomEvent('planer:request'));
+</script>
