@@ -45,8 +45,8 @@ const stools = Array.from({ length: 5 }, (_, i) => {
 
       <header class="services-heading">
         <h2 id="services-title">{t.title}</h2>
-        <p>{t.intro}</p>
       </header>
+      <p class="services-intro">{t.intro}</p>
 
       <ol class="steps" data-steps>
         {services.map((service, index) => (
@@ -133,7 +133,7 @@ const stools = Array.from({ length: 5 }, (_, i) => {
   .service-route {
     position: absolute;
     z-index: 0;
-    top: calc(var(--chair-w) * 1.375); /* under the left glide of the base (y 550 of 400 wide) */
+    top: calc(var(--chair-w) * 1.2); /* under the left glide of the base (y 480 of 400 wide) */
     bottom: calc(-1 * var(--services-space));
     left: calc(var(--route-center) - var(--leg-w) / 2);
     width: var(--leg-w);
@@ -143,6 +143,7 @@ const stools = Array.from({ length: 5 }, (_, i) => {
 
   .chair-cell,
   .services-heading,
+  .services-intro,
   .steps,
   .plan-cell {
     position: relative;
@@ -172,6 +173,16 @@ const stools = Array.from({ length: 5 }, (_, i) => {
     padding: clamp(36px, 5vw, 56px) 0 0 var(--route-indent);
   }
 
+  .services-intro {
+    grid-row: 3;
+    max-width: calc(40ch + var(--route-indent));
+    margin: 24px 0 0;
+    padding-left: var(--route-indent);
+    color: var(--color-muted);
+    font-size: var(--text-lead);
+    line-height: 1.55;
+  }
+
   .services-heading h2 {
     max-width: 15ch;
     font-size: var(--text-headline);
@@ -179,16 +190,8 @@ const stools = Array.from({ length: 5 }, (_, i) => {
     letter-spacing: -0.03em;
   }
 
-  .services-heading p {
-    max-width: 40ch;
-    margin: 24px 0 0;
-    color: var(--color-muted);
-    font-size: var(--text-lead);
-    line-height: 1.55;
-  }
-
   .steps {
-    grid-row: 3;
+    grid-row: 4;
     margin: clamp(40px, 5vw, 64px) 0 0;
     padding: 0 0 0 var(--route-indent);
     list-style: none;
@@ -262,7 +265,7 @@ const stools = Array.from({ length: 5 }, (_, i) => {
   }
 
   .plan-cell {
-    grid-row: 4;
+    grid-row: 5;
     margin: 52px 0 0 var(--route-indent);
   }
 
@@ -336,8 +339,9 @@ const stools = Array.from({ length: 5 }, (_, i) => {
     .services-grid { grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr); column-gap: clamp(32px, 5vw, 64px); }
     .chair-cell { grid-column: 1; grid-row: 1; }
     .services-heading { grid-column: 1; grid-row: 2; }
-    .steps { grid-column: 1; grid-row: 3; }
-    .plan-cell { grid-column: 2; grid-row: 2 / span 2; align-self: stretch; margin: 32px 0 0; }
+    .services-intro { grid-column: 1; grid-row: 3; }
+    .steps { grid-column: 1; grid-row: 4; }
+    .plan-cell { grid-column: 2; grid-row: 2 / span 3; align-self: stretch; margin: 32px 0 0; }
   }
 
   @media (min-width: 1024px) {
@@ -354,13 +358,20 @@ const stools = Array.from({ length: 5 }, (_, i) => {
       column-gap: clamp(48px, 7vw, 112px);
     }
     .chair-cell { grid-column: 1; grid-row: 1; }
-    .services-heading { grid-column: 1; grid-row: 2; }
+    /* the heading stands beside the chair, on the same floor as its glides */
+    .services-heading {
+      grid-column: 1 / -1;
+      grid-row: 1;
+      align-self: end;
+      max-width: none;
+      padding: 0 0 0 calc(var(--chair-w) + clamp(36px, 4vw, 64px));
+    }
+    .services-intro { grid-column: 1; grid-row: 2; margin-top: clamp(40px, 4vw, 56px); }
     .steps { grid-column: 1; grid-row: 3; }
-    .services-heading { padding-top: clamp(38px, 4vw, 60px); }
-    .steps { margin-top: clamp(44px, 5vw, 72px); }
+    .steps { margin-top: clamp(40px, 4.5vw, 64px); }
     .step { padding: 30px 0 34px; }
     .step-text { margin-top: 14px; }
-    .plan-cell { grid-column: 2; grid-row: 2 / span 2; align-self: stretch; margin: 0; padding-top: clamp(22px, 3vw, 40px); }
+    .plan-cell { grid-column: 2; grid-row: 2 / span 2; align-self: stretch; margin: 0; padding-top: clamp(40px, 4vw, 56px); }
     .plan-sticky { position: sticky; top: calc(var(--nav-h) + 32px); }
     .plan-caption { margin-bottom: 24px; }
     .plan { max-height: min(72vh, calc(100svh - var(--nav-h) - 96px)); }
@@ -468,8 +479,10 @@ const stools = Array.from({ length: 5 }, (_, i) => {
       };
       const arrive = () => {
         from = -(cell.getBoundingClientRect().right + window.innerWidth * 0.2);
-        // on page load wait for the prints and the notes; later, start almost at once
-        const delay = Math.max(120, 1000 - performance.now());
+        // on page load the chair comes in as the claim is finished, so it is in view when the
+        // underline is drawn (--hero-write, set by the hero); later it starts almost at once
+        const write = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--hero-write')) || 1;
+        const delay = Math.max(120, (write - 0.45) * 1000 - performance.now());
         let start = 0;
         const tick = (now: number) => {
           start ||= now + delay;

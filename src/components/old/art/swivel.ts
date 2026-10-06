@@ -1,11 +1,11 @@
 /**
- * The PantoMove's turn about its gas spring column, in the chair's viewBox units (0 0 400 560).
+ * The PantoMove's turn about its gas spring column, in the chair's viewBox units (0 0 400 490).
  * Shared by the server render (the front view) and the entrance on the page.
  */
 
-const HUB = { x: 200, y: 498 };
+const HUB = { x: 200, y: 428 };
 const REACH = 205; // arm length seen from the front: the outer tips land on x = 5 and 395
-const FLOOR = 540; // tip height of an arm pointing across; nearer arms sit lower
+const FLOOR = 470; // tip height of an arm pointing across; nearer arms sit lower
 const DEPTH = 10;
 
 export interface Arm {

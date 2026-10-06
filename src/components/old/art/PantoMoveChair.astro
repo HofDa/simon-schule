@@ -2,7 +2,7 @@
 /**
  * Flat front view of a VS PantoMove-LuPo swivel chair in ginstergelb: the PantoSwing shell
  * with its grip hole on a gas spring in a plastic sleeve and a five-star base with glides.
- * The outer arms end on the floor at x = 5 and x = 395 (viewBox 0 0 400 560), where the
+ * The outer arms end on the floor at x = 5 and x = 395 (viewBox 0 0 400 490), where the
  * Leistungen column continues the left one as its route line.
  *
  * The chair can swivel: it renders facing front, and `swivel()` (./swivel.ts) redraws the
@@ -21,7 +21,7 @@ const label = getLang(Astro.currentLocale) === 'it'
   : 'Ginstergelber PantoMove-Drehstuhl von VS, Vorderansicht';
 ---
 
-<svg class={`panto-move ${className}`} viewBox="0 0 400 560" role="img" aria-label={label} data-swivel>
+<svg class={`panto-move ${className}`} viewBox="0 0 400 490" role="img" aria-label={label} data-swivel>
   <g fill="#E2A300">
     <!-- five-star base: the arms are redrawn as the chair turns -->
     <g fill="none" stroke="#E2A300" stroke-width="11" stroke-linecap="round">
@@ -29,8 +29,8 @@ const label = getLang(Astro.currentLocale) === 'it'
     </g>
     {base.map((arm) => <rect x={arm.glide.x} y={arm.glide.y} width="18" height="14" rx="3" data-glide />)}
     <!-- hub, gas spring sleeve and the seat plate: round, so the same from every side -->
-    <ellipse cx="200" cy="500" rx="30" ry="12" />
-    <path d="M178 330 H222 L218 496 H182 Z" />
+    <ellipse cx="200" cy="430" rx="30" ry="12" />
+    <path d="M178 330 H222 L218 426 H182 Z" />
     <rect x="150" y="312" width="100" height="22" rx="6" />
 
     <g class="pm-shell" data-shell>

@@ -35,11 +35,11 @@ PAD = 24  # raster padding in pixels
 LINE = 1000  # line height in font units (CSS line-height: 1)
 
 # timing, in seconds: the pen is on the board for WRITE seconds, plus the short lifts below
-WRITE = 1.7
-LIFT = 0.035  # pen lifted between strokes of one letter
-NEXT_LETTER = 0.02
-NEXT_WORD = 0.12
-NEXT_LINE = 0.18
+WRITE = 1.4
+LIFT = 0.028  # pen lifted between strokes of one letter
+NEXT_LETTER = 0.012
+NEXT_WORD = 0.1
+NEXT_LINE = 0.15
 
 
 class FlattenPen(BasePen):
