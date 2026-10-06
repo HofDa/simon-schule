@@ -143,7 +143,7 @@ const timelineCss = Object.entries(timeline).map(([k, v]) => `--${k}:${v.toFixed
               )}
             </h1>
             <p class="rise mt-7 max-w-[38ch] text-body leading-[1.6] text-muted sm:text-lead" style="--d: 0s">
-              {t.hero.sub}
+              {t.hero.subShort}
             </p>
             <div class="rise mt-9 flex flex-wrap items-center gap-x-7 gap-y-4" style="--d: 0.08s">
               <a href="#projekte" class="btn btn-ink">
@@ -175,6 +175,16 @@ const timelineCss = Object.entries(timeline).map(([k, v]) => `--${k}:${v.toFixed
 <style>
   .board {
     --board-h: clamp(600px, calc(100svh - var(--nav-h) - 30px), 1000px);
+  }
+  /* desktop: the hero is exactly one screen at any height, the board centred in it, so only the
+     top of the chair's shell shows at the fold and scrolling reveals the rest */
+  @media (min-width: 1024px) {
+    .hero {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 100svh;
+    }
   }
   @media (min-width: 1024px) {
     .board {
