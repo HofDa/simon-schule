@@ -4,7 +4,7 @@ import { getLang, useTranslations } from '../../i18n/ui';
 
 const lang = getLang(Astro.currentLocale);
 const t = useTranslations(lang).services;
-const chairModels: ChairModel[] = ['pantoswing', 'jumper-air', 'pantomove', 'jumper-ply', 'bambino'];
+const chairModels: ChairModel[] = ['pantomove', 'pantoswing', 'jumper-air', 'jumper-ply', 'bambino'];
 const services = lang === 'de' ? [
   { title: 'Beratung', text: 'Wir kommen zu Ihnen, hören zu und schauen uns Ihre Räume und den Alltag vor Ort an.' },
   { title: 'Planung', text: 'Gemeinsam entwickeln wir die Raumaufteilung und Einrichtung für Ihre Schule oder Ihren Kindergarten.' },
@@ -14,16 +14,21 @@ const services = lang === 'de' ? [
 ] : t.items;
 ---
 
-<section id="leistungen" class="services relative z-20" aria-labelledby="services-title">
-  <div class="shell">
+<section id="leistungen" class="services relative z-20" aria-labelledby="services-title" data-service-chairs>
+  <script is:inline>
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.currentScript?.parentElement?.classList.add('has-chair-motion');
+    }
+  </script>
+  <div class="shell services-stage" data-service-stage>
     <h2 id="services-title" class="sr-only">{lang === 'de' ? 'Unsere Leistungen' : 'I nostri servizi'}</h2>
     <ol class="service-chairs">
       {services.map((service, index) => (
-        <li class="service">
-          <div class="service-chair" aria-hidden="true">
+        <li class="service" data-service-card>
+          <div class="service-chair" aria-hidden="true" data-service-chair>
             <ServiceChair model={chairModels[index]} />
           </div>
-          <div class="service-copy">
+          <div class="service-copy" data-service-copy>
             <span class="service-number" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
             <h3>{service.title}</h3>
             <p>{service.text}</p>
@@ -36,9 +41,15 @@ const services = lang === 'de' ? [
 
 <style>
   .services {
+    --services-space: clamp(80px, 9vw, 144px);
     margin-top: calc(-1 * var(--chair-peek));
-    padding-bottom: clamp(80px, 9vw, 144px);
+    padding-bottom: var(--services-space);
+    overflow-x: clip;
   }
+
+  .services-stage { position: relative; }
+  .services.is-sequence { height: calc(var(--service-stage-h) + var(--service-travel) + var(--services-space)); }
+  .services.is-sequence .services-stage { position: sticky; top: calc(var(--nav-h) + 32px); }
 
   .service-chairs {
     display: grid;
@@ -54,6 +65,26 @@ const services = lang === 'de' ? [
   .service-chair {
     width: min(100%, 200px);
     margin-inline: auto;
+  }
+
+  .has-chair-motion .service-chair {
+    opacity: var(--chair-opacity, 0);
+    transform: translate3d(var(--chair-x, 110vw), 0, 0);
+    animation: service-motion-fallback 1ms 8s forwards;
+  }
+  .has-chair-motion .service:first-child .service-chair { --chair-x: -110vw; }
+  .has-chair-motion .service-copy {
+    opacity: var(--copy-opacity, 0);
+    transform: translate3d(0, var(--copy-y, 16px), 0);
+    animation: service-motion-fallback 1ms 8s forwards;
+  }
+  .has-chair-motion.is-motion-ready .service-chair,
+  .has-chair-motion.is-motion-ready .service-copy { animation: none; }
+  @keyframes service-motion-fallback { to { opacity: 1; transform: none; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .has-chair-motion .service-chair,
+    .has-chair-motion .service-copy { opacity: 1; transform: none; animation: none; }
   }
 
   .service-chair :global(svg) {
@@ -106,3 +137,7 @@ const services = lang === 'de' ? [
     .service:last-child { grid-column: 1 / -1; width: calc((100% - 24px) / 2); justify-self: center; }
   }
 </style>
+
+<script>
+  import '../../scripts/service-chairs';
+</script>
