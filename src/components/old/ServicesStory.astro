@@ -2,499 +2,117 @@
 import PantoMoveChair from './art/PantoMoveChair.astro';
 import { getLang, useTranslations } from '../../i18n/ui';
 
-const t = useTranslations(getLang(Astro.currentLocale)).services;
-const services = t.items;
-
-// Four table groups develop into the final learning-space plan.
-const tables = [
-  [92, 96],
-  [196, 96],
-  [92, 212],
-  [196, 212],
-];
-const chairs = tables.flatMap(([x, y], tableIndex) =>
-  [
-    [x + 16, y - 11],
-    [x + 48, y - 11],
-  ].map(([cx, cy], chairIndex) => ({
-    cx,
-    cy,
-    k: ((tableIndex * 2 + chairIndex) / 7) * 2,
-  })),
-);
-const stools = Array.from({ length: 5 }, (_, i) => {
-  const angle = (i / 5) * Math.PI * 2 - Math.PI / 2;
-  return {
-    cx: +(430 + Math.cos(angle) * 36).toFixed(1),
-    cy: +(240 + Math.sin(angle) * 36).toFixed(1),
-    k: (i / 4) * 2,
-  };
-});
+const lang = getLang(Astro.currentLocale);
+const t = useTranslations(lang).services;
+const services = lang === 'de' ? [
+  { title: 'Beratung', text: 'Wir kommen zu Ihnen, hören zu und schauen uns Ihre Räume und den Alltag vor Ort an.' },
+  { title: 'Planung', text: 'Gemeinsam entwickeln wir die Raumaufteilung und Einrichtung für Ihre Schule oder Ihren Kindergarten.' },
+  { title: 'VS Möbel', text: 'Wir wählen passende Tische, Stühle und Stauraumlösungen aus dem Sortiment von VS.' },
+  { title: 'Lieferung & Montage', text: 'Wir kümmern uns um Bestellung, Lieferung und Montage – bis alles an seinem Platz steht.' },
+  { title: 'Betreuung', text: 'Auch danach sind wir für Fragen, Ergänzungen und neue Ideen für Sie da. Direkt hier in Südtirol.' },
+] : t.items;
 ---
 
-<section id="leistungen" class="services relative z-20" aria-labelledby="services-title" data-services>
+<section id="leistungen" class="services relative z-20" aria-labelledby="services-title">
   <div class="shell">
-    <div class="services-grid">
-      <span class="service-route" data-axis aria-hidden="true"></span>
-
-      <div class="chair-cell">
-        <div class="chair-mover" data-chair>
-          <PantoMoveChair class="chair block w-full" />
-        </div>
-      </div>
-
-      <header class="services-heading">
-        <h2 id="services-title">{t.title}</h2>
-      </header>
-      <p class="services-intro">{t.intro}</p>
-
-      <ol class="steps" data-steps>
-        {services.map((service, index) => (
-          <li
-            class={`step${index === 0 ? ' is-active' : ''}`}
-            data-step
-            aria-current={index === 0 ? 'step' : undefined}
-          >
-            <div class="step-heading">
-              <span class="step-node" aria-hidden="true"></span>
-              <span class="step-number">{String(index + 1).padStart(2, '0')}</span>
-              <h3 class="step-title">{service.title}</h3>
-            </div>
-            <p class="step-text">{service.text}</p>
-          </li>
-        ))}
-      </ol>
-
-      <figure class="plan-cell" aria-hidden="true">
-        <div class="plan-sticky">
-          <figcaption class="plan-caption">{t.plan.title}</figcaption>
-          <svg class="plan" viewBox="0 0 560 400" role="presentation" data-plan>
-            <g class="pl-layer" data-layer>
-              <path class="pl-draw pl-wall" pathLength="1" d="M130 330 H520 V40 H450 M370 40 H320 M240 40 H190 M110 40 H40 V270 M40 330 H70" />
-              <path class="pl-draw pl-thin pl-window" pathLength="1" d="M110 36 H190 M110 44 H190 M240 36 H320 M240 44 H320 M370 36 H450 M370 44 H450" />
-              <path class="pl-draw pl-thin" pathLength="1" d="M70 330 V270 A60 60 0 0 1 130 330" />
-              <path class="pl-draw pl-thin" pathLength="1" d="M40 360 H520 M40 353 V367 M520 353 V367" />
-              <path class="pl-draw pl-thin" pathLength="1" d="M24 40 V330 M17 40 H31 M17 330 H31" />
-              <text class="pl-fade pl-note" x="280" y="390" text-anchor="middle">7,20 m</text>
-            </g>
-
-            <g class="pl-layer" data-layer>
-              <rect class="pl-zone" x="64" y="64" width="236" height="242" />
-              <rect class="pl-zone" x="326" y="64" width="170" height="106" />
-              <rect class="pl-zone" x="326" y="192" width="170" height="114" />
-              <text class="pl-fade pl-label" x="292" y="298" text-anchor="end">{t.plan.zones[0]}</text>
-              <text class="pl-fade pl-label" x="336" y="160">{t.plan.zones[1]}</text>
-              <text class="pl-fade pl-label" x="336" y="298">{t.plan.zones[2]}</text>
-            </g>
-
-            <g class="pl-layer" data-layer>
-              {tables.map(([x, y]) => <path class="pl-draw pl-thin" pathLength="1" d={`M${x} ${y} h64 v40 h-64 Z`} />)}
-              <path class="pl-draw pl-thin" pathLength="1" d="M346 92 Q346 84 354 84 H468 Q476 84 476 92 V118 H346 Z M389 84 V118 M432 84 V118" />
-              {chairs.map((chair) => <circle class="pl-pop" cx={chair.cx} cy={chair.cy} r="4" style={`--k: ${chair.k.toFixed(2)}`} />)}
-              {stools.map((stool) => <circle class="pl-pop" cx={stool.cx} cy={stool.cy} r="5" style={`--k: ${stool.k.toFixed(2)}`} />)}
-            </g>
-
-            <g class="pl-layer" data-layer>
-              {tables.map(([x, y]) => <rect class="pl-fade pl-solid" x={x} y={y} width="64" height="40" />)}
-              <path class="pl-draw pl-cabinet" pathLength="1" d="M46 150 H58 V290 H46 Z M46 178 H58 M46 206 H58 M46 234 H58 M46 262 H58" />
-            </g>
-
-            <g class="pl-layer" data-layer>
-              <text class="pl-fade pl-note" x="300" y="22">{t.plan.later}</text>
-              <path class="pl-draw pl-marker" pathLength="1" d="M404 16 C446 10 470 26 468 64" />
-              <path class="pl-draw pl-marker" pathLength="1" d="M460 56 L468 68 L476 57" />
-            </g>
-          </svg>
-        </div>
-      </figure>
-    </div>
+    <h2 id="services-title" class="sr-only">{lang === 'de' ? 'Unsere Leistungen' : 'I nostri servizi'}</h2>
+    <ol class="service-chairs">
+      {services.map((service, index) => (
+        <li class="service" style={`--chair-angle:${[0, -0.12, 0.12, -0.08, 0.08][index]}`}>
+          <div class="service-chair" aria-hidden="true">
+            <PantoMoveChair class="chair" />
+          </div>
+          <div class="service-copy">
+            <span class="service-number" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+            <h3>{service.title}</h3>
+            <p>{service.text}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
   </div>
 </section>
 
 <style>
   .services {
-    --leg-w: calc(var(--chair-w) * 0.025);
-    --route-indent: calc(var(--leg-w) + 32px);
-    --route-center: calc(var(--chair-w) * 0.0125);
-    --services-space: clamp(112px, 11vw, 160px);
     margin-top: calc(-1 * var(--chair-peek));
-    padding-bottom: var(--services-space);
+    padding-bottom: clamp(80px, 9vw, 144px);
   }
 
-  .services-grid {
-    position: relative;
+  .service-chairs {
     display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    align-items: start;
-  }
-
-  .service-route {
-    position: absolute;
-    z-index: 0;
-    top: calc(var(--chair-w) * 1.2); /* under the left glide of the base (y 480 of 400 wide) */
-    bottom: calc(-1 * var(--services-space));
-    left: calc(var(--route-center) - var(--leg-w) / 2);
-    width: var(--leg-w);
-    background: var(--color-ginster);
-    pointer-events: none;
-  }
-
-  .chair-cell,
-  .services-heading,
-  .services-intro,
-  .steps,
-  .plan-cell {
-    position: relative;
-    z-index: 1;
-    min-width: 0;
-  }
-
-  .chair-cell {
-    grid-row: 1;
-    width: var(--chair-w);
-  }
-
-  .chair { display: block; overflow: visible; }
-
-  /* Before its entrance the chair waits off the left edge; if the script never runs, it arrives anyway. */
-  @media (prefers-reduced-motion: no-preference) {
-    :global(html.js) .chair-mover {
-      translate: -120vw 0;
-      animation: chair-fallback 1ms 4s forwards;
-    }
-  }
-  @keyframes chair-fallback { to { translate: 0 0; } }
-
-  .services-heading {
-    grid-row: 2;
-    max-width: 40rem;
-    padding: clamp(36px, 5vw, 56px) 0 0 var(--route-indent);
-  }
-
-  .services-intro {
-    grid-row: 3;
-    max-width: calc(40ch + var(--route-indent));
-    margin: 24px 0 0;
-    padding-left: var(--route-indent);
-    color: var(--color-muted);
-    font-size: var(--text-lead);
-    line-height: 1.55;
-  }
-
-  .services-heading h2 {
-    max-width: 15ch;
-    font-size: var(--text-headline);
-    line-height: 0.98;
-    letter-spacing: -0.03em;
-  }
-
-  .steps {
-    grid-row: 4;
-    margin: clamp(40px, 5vw, 64px) 0 0;
-    padding: 0 0 0 var(--route-indent);
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: clamp(20px, 2.8vw, 44px);
+    margin: 0;
+    padding: 0;
     list-style: none;
   }
 
-  .step {
-    position: relative;
-    padding: 26px 0 30px;
-    border-top: 1px solid var(--color-line);
+  .service { min-width: 0; }
+
+  .service-chair {
+    width: min(100%, 200px);
+    margin-inline: auto;
   }
 
-  .step:last-child { border-bottom: 1px solid var(--color-line); }
-
-  .step-heading {
-    position: relative;
-    display: flex;
-    align-items: baseline;
-    gap: clamp(14px, 1.6vw, 24px);
+  .service-chair :global(svg) {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
   }
 
-  .step-node {
-    position: absolute;
-    top: 50%;
-    left: calc(-1 * var(--route-indent) + var(--route-center));
-    width: 9px;
-    height: 9px;
-    border: 1px solid var(--color-line);
-    border-radius: 50%;
-    background: var(--color-paper);
-    transform: translate(-50%, -50%);
-    transition: background-color 220ms var(--ease-draw), border-color 220ms var(--ease-draw);
-  }
+  .service-copy { margin-top: clamp(24px, 3vw, 40px); }
 
-  .step-number {
-    flex: none;
-    width: 2.5ch;
+  .service-number {
+    display: block;
+    margin-bottom: 12px;
     color: var(--color-muted);
     font-size: var(--text-label);
     font-variant-numeric: tabular-nums;
     letter-spacing: 0.08em;
   }
 
-  .step-title {
-    min-width: 0;
-    color: var(--color-muted);
-    font-size: var(--text-service-title);
+  h3 {
+    font-size: clamp(1.4rem, 2vw, 1.9rem);
     font-weight: 600;
-    line-height: 1.04;
-    letter-spacing: -0.03em;
-    transition: color 220ms var(--ease-draw);
+    letter-spacing: -0.035em;
+    line-height: 1.12;
   }
 
-  .step-text {
-    max-width: 40ch;
-    margin: 12px 0 0 calc(2.5ch + clamp(14px, 1.6vw, 24px));
+  .service-copy p {
+    margin-top: 16px;
     color: var(--color-muted);
-    font-size: var(--text-lead);
-    line-height: 1.55;
-  }
-
-  .step.is-active .step-node {
-    border-color: var(--color-ginster);
-    background: var(--color-ginster);
-  }
-
-  .step.is-active .step-title { color: var(--color-ink); }
-
-  @media (prefers-reduced-motion: reduce) {
-    .step-node,
-    .step-title { transition: none; }
-  }
-
-  .plan-cell {
-    grid-row: 5;
-    margin: 52px 0 0 var(--route-indent);
-  }
-
-  .plan-sticky { min-width: 0; }
-
-  .plan-caption {
-    margin: 0 0 20px;
-    color: var(--color-muted);
-    font-size: var(--text-label);
-    font-weight: 500;
-    letter-spacing: 0.14em;
-    line-height: 1.4;
-    text-transform: uppercase;
-  }
-
-  .plan {
-    display: block;
-    width: 100%;
-    height: auto;
-    overflow: visible;
-    fill: none;
-    stroke: var(--color-ink);
-    stroke-linecap: round;
-    stroke-linejoin: round;
-  }
-
-  .plan :global(*) { vector-effect: non-scaling-stroke; }
-  .pl-wall { stroke-width: 2.5; stroke-linecap: square; }
-  .pl-thin { stroke-width: 1.2; }
-  .pl-window { stroke: var(--color-muted); }
-  .pl-cabinet { stroke-width: 1.5; }
-  .pl-marker { stroke-width: 1.8; }
-
-  .pl-draw {
-    stroke-dasharray: 1;
-    stroke-dashoffset: calc(1 - var(--p, 1));
-    opacity: var(--on, 1);
-  }
-
-  .pl-fade { opacity: var(--p, 1); }
-  .pl-zone {
-    stroke: var(--color-muted);
-    stroke-width: 1;
-    stroke-dasharray: 4 5;
-    opacity: calc(var(--p, 1) * (1 - 0.58 * var(--built, 0)));
-  }
-
-  .pl-solid { fill: var(--color-ink); stroke: none; }
-  .pl-pop {
-    --e: clamp(0, calc(var(--p, 1) * 3 - var(--k, 0)), 1);
-    fill: var(--color-ginster);
-    stroke: none;
-    opacity: var(--e);
-    transform: scale(calc(0.45 + 0.55 * var(--e)));
-    transform-box: fill-box;
-    transform-origin: center;
-  }
-
-  .pl-note,
-  .pl-label {
-    font-family: var(--font-marker);
-    font-weight: 600;
-    fill: var(--color-ink);
-    stroke: none;
-  }
-
-  .pl-note { font-size: 25px; }
-  .pl-label { font-size: 21px; fill: var(--color-muted); }
-
-  @media (min-width: 768px) and (max-width: 1023px) and (min-height: 960px) {
-    .services-grid { grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr); column-gap: clamp(32px, 5vw, 64px); }
-    .chair-cell { grid-column: 1; grid-row: 1; }
-    .services-heading { grid-column: 1; grid-row: 2; }
-    .services-intro { grid-column: 1; grid-row: 3; }
-    .steps { grid-column: 1; grid-row: 4; }
-    .plan-cell { grid-column: 2; grid-row: 2 / span 3; align-self: stretch; margin: 32px 0 0; }
+    font-size: var(--text-body);
+    line-height: 1.6;
   }
 
   @media (min-width: 1024px) {
-    .services {
-      --leg-w: calc(var(--chair-w) * 0.025);
-      --route-indent: calc(var(--leg-w) + 36px);
-      --services-space: clamp(128px, 11vw, 160px);
-    }
-
-    .services-grid {
-      grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
-      column-gap: clamp(48px, 7vw, 112px);
-    }
-    .chair-cell { grid-column: 1; grid-row: 1; }
-    /* the heading stands beside the chair, on the same floor as its glides */
-    .services-heading {
-      grid-column: 1 / -1;
-      grid-row: 1;
-      align-self: end;
-      max-width: none;
-      padding: 0 0 0 calc(var(--chair-w) + clamp(36px, 4vw, 64px));
-    }
-    .services-intro { grid-column: 1; grid-row: 2; margin-top: clamp(40px, 4vw, 56px); }
-    .steps { grid-column: 1; grid-row: 3; }
-    .steps { margin-top: clamp(40px, 4.5vw, 64px); }
-    .step { padding: 30px 0 34px; }
-    .step-text { margin-top: 14px; }
-    .plan-cell { grid-column: 2; grid-row: 2 / span 2; align-self: stretch; margin: 0; padding-top: clamp(40px, 4vw, 56px); }
-    .plan-sticky { position: sticky; top: calc(var(--nav-h) + 32px); }
-    .plan-caption { margin-bottom: 24px; }
-    .plan { max-height: min(72vh, calc(100svh - var(--nav-h) - 96px)); }
+    h3 { min-height: 2.24em; }
   }
 
-  @media (max-width: 767px), (min-width: 768px) and (max-width: 1023px) and (max-height: 959px) {
-    .services {
-      --leg-w: calc(var(--chair-w) * 0.025);
-      --route-indent: calc(var(--leg-w) + 28px);
-      --services-space: 112px;
-    }
+  @media (min-width: 640px) and (max-width: 1023px) {
+    .service-chairs { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 56px; }
+    .service-chair { width: min(100%, 180px); }
+  }
 
-    .services-heading { padding-top: 34px; }
-    .steps { margin-top: 42px; }
-    .step { padding: 23px 0 27px; }
-    .step-heading { gap: 14px; }
-    .step-node { width: 8px; height: 8px; }
-    .step-text { margin-top: 10px; margin-left: calc(2.5ch + 14px); }
-    .plan-cell { margin-top: 44px; }
-    .plan-caption { margin-bottom: 16px; }
+  @media (max-width: 639px) {
+    .service-chairs { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 44px 24px; }
+    .service-chair { width: min(100%, 160px); }
+    .service-copy { margin-top: 24px; }
+    h3 { font-size: 1.45rem; }
+    .service-copy p { margin-top: 12px; font-size: 0.95rem; }
+    .service:last-child { grid-column: 1 / -1; width: calc((100% - 24px) / 2); justify-self: center; }
   }
 </style>
 
 <script>
-  import { addScene, clamp, easeOut, isMotionAllowed } from '../../scripts/motion';
   import { swivel } from './art/swivel';
 
-  const section = document.querySelector<HTMLElement>('[data-services]');
-  const stepsList = section?.querySelector<HTMLOListElement>('[data-steps]');
-  const steps = Array.from(section?.querySelectorAll<HTMLElement>('[data-step]') ?? []);
-  const layers = Array.from(section?.querySelectorAll<SVGGElement>('[data-layer]') ?? []);
-  const plan = section?.querySelector<SVGSVGElement>('[data-plan]');
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-
-  if (section && stepsList && steps.length && layers.length) {
-    addScene({
-      el: stepsList,
-      progress: (rect, vh) => (vh * 0.54 - rect.top) / Math.max(1, rect.height),
-      render() {
-        const activationLine = window.innerHeight * 0.54;
-        let active = 0;
-        for (let i = 0; i < steps.length; i += 1) {
-          if (steps[i].getBoundingClientRect().top <= activationLine) active = i;
-        }
-
-        const activeRect = steps[active].getBoundingClientRect();
-        const activeProgress = clamp((activationLine - activeRect.top) / Math.max(1, activeRect.height));
-
-        steps.forEach((step, i) => {
-          const isActive = i === active;
-          step.classList.toggle('is-active', isActive);
-          if (isActive) step.setAttribute('aria-current', 'step');
-          else step.removeAttribute('aria-current');
-        });
-
-        if (reducedMotion.matches) {
-          layers.forEach((layer) => layer.style.setProperty('--p', '1'));
-          plan?.style.setProperty('--built', '1');
-          return;
-        }
-
-        layers.forEach((layer, i) => {
-          const phase = i < active ? 1 : i === active ? activeProgress : 0;
-          const progress = i === 0 ? 0.18 + phase * 0.82 : phase;
-          const eased = easeOut(progress);
-          layer.style.setProperty('--p', eased.toFixed(3));
-          layer.style.setProperty('--on', progress > 0.001 ? '1' : '0');
-          if (i === 3) plan?.style.setProperty('--built', eased.toFixed(3));
-        });
-      },
-    });
-  }
-
-  // The swivel chair rolls in from the left, spinning about its column, and rocks to a stop facing
-  // front, its left glide on the route. It arrives the first time it comes into view: on a tall
-  // screen right after the board is pinned up, on a short one when the visitor scrolls to it.
-  const mover = section?.querySelector<HTMLElement>('[data-chair]');
-  const chairSvg = mover?.querySelector<SVGSVGElement>('[data-swivel]');
-  const cell = mover?.parentElement;
-  if (mover && chairSvg && cell) {
-    const TURNS = 2.5;
-    const ROLL = 1.8; // seconds of rolling in and spinning down
-    const ROCK = 0.4; // the last swing past front and back, in radians
-    const settle = () => {
-      mover.style.translate = '0 0';
-      swivel(chairSvg, 0);
-    };
-    mover.style.animation = 'none';
-    if (!isMotionAllowed()) {
-      settle();
-    } else {
-      let from = 0;
-      const place = (t: number) => {
-        const p = clamp(t / ROLL);
-        // the roll runs out a little before the spin, as a chair glides to a halt still turning
-        const roll = Math.pow(1 - clamp(p * 1.12), 2.4);
-        const spin = Math.pow(1 - p, 2.6);
-        // the rock starts while the spin runs out, so the two motions join without a stop
-        const tr = Math.max(0, t - ROLL + 0.3);
-        const rock = ROCK * Math.exp(-3.4 * tr) * Math.sin(8.5 * tr);
-        mover.style.translate = `${(from * roll).toFixed(1)}px 0`;
-        swivel(chairSvg, -TURNS * 2 * Math.PI * spin + rock);
-      };
-      const arrive = () => {
-        from = -(cell.getBoundingClientRect().right + window.innerWidth * 0.2);
-        // on page load the chair comes last, after the claim and the picture wall (--t-chair, set
-        // by the hero's timeline); later it starts almost at once
-        const at = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--t-chair')) || 1;
-        const delay = Math.max(120, at * 1000 - performance.now());
-        let start = 0;
-        const tick = (now: number) => {
-          start ||= now + delay;
-          const t = Math.max(0, now - start) / 1000;
-          place(t);
-          if (t < ROLL + 1.3) requestAnimationFrame(tick);
-          else settle();
-        };
-        requestAnimationFrame(tick);
-      };
-      from = -(cell.getBoundingClientRect().right + window.innerWidth * 0.2);
-      place(0);
-      const io = new IntersectionObserver((entries) => {
-        if (!entries.some((e) => e.isIntersecting)) return;
-        io.disconnect();
-        arrive();
-      });
-      io.observe(cell);
-    }
-  }
+  // Small changes of direction make the row feel like five individual chairs.
+  document.querySelectorAll<HTMLElement>('.service-chairs .service').forEach((service) => {
+    const chair = service.querySelector<SVGSVGElement>('[data-swivel]');
+    const angle = Number(service.style.getPropertyValue('--chair-angle'));
+    if (chair) swivel(chair, angle);
+  });
 </script>
