@@ -78,8 +78,8 @@
 :root {
   --gutter: clamp(20px, 4vw, 64px);
   --nav-h: 72px;
-  /* the PantoSwing's width on desktop and the thickness of its tubes (10 of 400 units);
-     the drawn route uses the same thickness as the legs it continues */
+  /* the swivel chair's width and the thickness of its base arms (10 of 400 units);
+     the drawn route uses the same thickness as the arm it continues */
   --chair-w: min(72vw, 300px);
   /* how much of the chair shows at the bottom of the hero (mobile: just the upper shell) */
   --chair-peek: calc(var(--chair-w) * 0.34);

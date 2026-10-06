@@ -132,7 +132,7 @@ const writeDuration = (claim ? claim.duration : clock - WORD_GAP + LETTER).toFix
           </div>
 
           <!-- pinned photos -->
-          <div class="pins relative mb-[calc(var(--chair-peek)+20px)] h-[min(78vw,520px)] lg:absolute lg:inset-0 lg:m-0 lg:h-auto">
+          <div class="pins relative mb-[calc(var(--chair-peek)-24px)] h-[min(68vw,520px)] lg:absolute lg:inset-0 lg:m-0 lg:h-auto">
             <ProjectPhoto project={a} class="pin-a" sizes="(min-width: 1520px) 460px, (min-width: 1024px) 33vw, 62vw" priority />
             <ProjectPhoto project={b} class="pin-b" sizes="(min-width: 1520px) 176px, (min-width: 1024px) 13vw, 48vw" />
             <ProjectPhoto project={c} class="pin-c hidden lg:block" sizes="(min-width: 1520px) 284px, 21vw" />
