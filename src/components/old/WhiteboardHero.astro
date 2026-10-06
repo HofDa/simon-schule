@@ -50,15 +50,13 @@ const underlineD = claim && (() => {
 const writeDuration = claim ? claim.duration : clock - WORD_GAP + LETTER;
 
 // The board is prepared in the order it should be read: the claim is written alone, the offer rises
-// under its underline, the prints are pinned up one by one, the annotations are drawn on them, and the
-// chair (ServicesStory) rolls in last. All in seconds from page load; on :root so the chair shares it.
+// under its underline, the prints are pinned up one by one, and the chair (ServicesStory) rolls in last. All in seconds from page load; on :root so the chair shares it.
 const T_CLAIM = 0.1;
 const T_AFTER = T_CLAIM + writeDuration; // end of the writing: the underline is drawn
 const T_OFFER = T_AFTER; // subline and buttons
 const T_IMAGES = T_AFTER + 0.25; // first print; the next ones follow PIN_STEP apart
 const PIN_STEP = 0.16;
-const T_NOTES = T_IMAGES + 3 * PIN_STEP + 0.05; // first annotation
-const T_CHAIR = T_NOTES + 0.25; // the chair starts rolling; it comes into view about half a second later
+const T_CHAIR = T_IMAGES + 3 * PIN_STEP + 0.2; // the chair starts rolling; it comes into view about half a second later
 const timeline = {
   'hero-write': writeDuration,
   't-claim': T_CLAIM,
@@ -66,8 +64,6 @@ const timeline = {
   't-offer': T_OFFER,
   't-images': T_IMAGES,
   'pin-step': PIN_STEP,
-  // added to each note's own --d (0.95–1.3s)
-  't-notes': T_NOTES - 0.95,
   't-chair': T_CHAIR,
 };
 const timelineCss = Object.entries(timeline).map(([k, v]) => `--${k}:${v.toFixed(2)}s`).join(';');
@@ -78,27 +74,9 @@ const timelineCss = Object.entries(timeline).map(([k, v]) => `--${k}:${v.toFixed
   <div class="shell">
     <div class="board relative">
       <div class="board-surface relative h-full">
-        <!-- sketch layer (desktop) -->
-        <svg class="sketch pointer-events-none absolute inset-0 hidden h-full w-full lg:block" viewBox="0 0 1000 600" preserveAspectRatio="none" aria-hidden="true">
-          <g class="ink-lines" fill="none" stroke="#20201D" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke">
-            <path class="draw" style="--d: 1.05s" pathLength="1" d="M560 50 C585 46 598 64 602 98" vector-effect="non-scaling-stroke" />
-            <path class="draw" style="--d: 1.2s" pathLength="1" d="M595 92 L602 100 L609 92" vector-effect="non-scaling-stroke" />
-            <path class="draw" style="--d: 1.1s" pathLength="1" d="M648 386 C656 392 660 404 662 416" vector-effect="non-scaling-stroke" />
-            <path class="draw" style="--d: 1.25s" pathLength="1" d="M655 410 L662 418 L668 409" vector-effect="non-scaling-stroke" />
-            <path class="draw dashed" style="--d: 1.15s" pathLength="1" d="M562 390 C562 402 560 414 558 428" vector-effect="non-scaling-stroke" />
-            <path class="draw" style="--d: 1.3s" pathLength="1" d="M830 224 C850 220 880 222 902 220" vector-effect="non-scaling-stroke" />
-          </g>
-          <!-- floor-plan sketch -->
-          <g class="plan" fill="none" stroke="#20201D" stroke-linecap="round" vector-effect="non-scaling-stroke">
-            <path class="draw" style="--d: 0.95s" pathLength="1" stroke-width="2" d="M510 432 H610 V516 H510 Z" vector-effect="non-scaling-stroke" />
-            <path class="draw" style="--d: 1.1s" pathLength="1" stroke-width="1.2" d="M524 446 h18 v10 h-18 Z M552 446 h18 v10 h-18 Z M580 446 h18 v10 h-18 Z M524 480 h26 v14 h-26 Z M566 480 h32 v14 h-32 Z" vector-effect="non-scaling-stroke" />
-            <path class="draw" style="--d: 1.25s" pathLength="1" stroke-width="1.2" d="M510 532 H610 M510 527 V537 M610 527 V537" vector-effect="non-scaling-stroke" />
-          </g>
-        </svg>
-
         <div class="relative grid h-full lg:block">
           <!-- copy -->
-          <div class="hero-copy relative z-10 pt-7 pb-6 lg:absolute lg:left-0 lg:top-0 lg:w-[38.2%] lg:pt-[calc(var(--board-h)*0.146)]">
+          <div class="hero-copy relative z-10 pt-7 pb-6 lg:absolute lg:left-0 lg:top-0 lg:w-[38.2%] lg:pt-[calc(var(--board-h)*0.1)]">
             <h1 id="hero-title" class="hero-title">
               <span class="sr-only">{headline}</span>
               {claim && box ? (
@@ -159,22 +137,25 @@ const timelineCss = Object.entries(timeline).map(([k, v]) => `--${k}:${v.toFixed
             <ProjectPhoto project={a} class="pin-a" sizes="(min-width: 1520px) 460px, (min-width: 1024px) 33vw, 62vw" priority />
             <ProjectPhoto project={b} class="pin-b" sizes="(min-width: 1520px) 176px, (min-width: 1024px) 13vw, 48vw" />
             <ProjectPhoto project={c} class="pin-c hidden lg:block" sizes="(min-width: 1520px) 284px, 21vw" />
-
-            <span class="note note-flex marker" style="--d: 0.95s">{t.hero.notes.flex}</span>
-            <span class="note note-akustik marker hidden lg:block" style="--d: 1.1s">{t.hero.notes.acoustics}</span>
-            <span class="note note-gruppe marker hidden lg:block" style="--d: 1.2s">{t.hero.notes.groups}</span>
-            <span class="note note-dim marker hidden lg:block" style="--d: 1.3s">7,20 m</span>
           </div>
         </div>
       </div>
-
+      <!-- the marker tray, with the pen that wrote the claim -->
+      <div class="tray" aria-hidden="true">
+        <svg class="pen-marker" viewBox="0 0 96 14">
+          <rect x="0" y="2" width="70" height="10" rx="3" fill="var(--color-ginster)" />
+          <rect x="66" y="1" width="26" height="12" rx="4" fill="var(--color-ink)" />
+          <rect x="91" y="4.5" width="5" height="5" rx="1.5" fill="var(--color-ink)" />
+        </svg>
+      </div>
     </div>
   </div>
 </section>
 
 <style>
   .board {
-    --board-h: clamp(600px, calc(100svh - var(--nav-h) - 30px), 1000px);
+    /* one screen less the nav and room for the marker tray under the board */
+    --board-h: clamp(600px, calc(100svh - var(--nav-h) - 60px), 1000px);
   }
   /* The hero is exactly one screen at any size, so only the top of the chair's shell shows at the
      fold and scrolling reveals the rest. Desktop centres the board in it; on phones the picture wall
@@ -200,7 +181,7 @@ const timelineCss = Object.entries(timeline).map(([k, v]) => `--${k}:${v.toFixed
       /* a zero basis: with auto, Chrome resolves the container's cqh against its (empty) content */
       flex: 1 1 0;
       /* below this the prints get too small to read; short phones scroll to the chair instead */
-      min-height: 260px;
+      min-height: 236px;
       margin-bottom: calc(var(--chair-peek) + 16px);
       container-type: size;
       /* size containment lets the turned prints widen the page: clip sideways, with room for their edges */
@@ -211,29 +192,56 @@ const timelineCss = Object.entries(timeline).map(([k, v]) => `--${k}:${v.toFixed
   @media (min-width: 1024px) {
     .board {
       height: var(--board-h);
-      /* the prints and their sketch are composed for a board of about golden proportions: on wide,
+      /* the prints are composed for a board of about golden proportions: on wide,
          short screens they keep that shape, anchored right, instead of stretching into each other */
       --frame-w: min(100%, calc(var(--board-h) * 1.66));
     }
-    .sketch,
     .pins { left: auto; right: 0; width: var(--frame-w); }
   }
 
-  .dashed { stroke-dasharray: 0.02 0.025; }
-
-  .note {
-    position: absolute;
-    z-index: 3;
-    color: #2b2b27;
-    font-size: var(--text-marker);
-    white-space: nowrap;
+  /* The whiteboard: a slim aluminium frame around a white enamel surface with a faint sheen, and a
+     marker tray along the bottom edge. Nothing else: the claim, the offer and the prints are on it. */
+  .board {
+    --frame: 7px;
+    position: relative;
+    padding: var(--frame);
+    border-radius: 6px;
+    background: linear-gradient(180deg, #eceeef, #d3d6d8);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.9),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.06),
+      0 1px 2px rgba(32, 32, 29, 0.08),
+      0 24px 48px -36px rgba(32, 32, 29, 0.4);
   }
-  .note-flex { left: 52%; top: -2%; transform: rotate(-3deg); }
+  .board-surface {
+    padding: 4px 18px 0;
+    border-radius: 3px;
+    background:
+      linear-gradient(112deg, transparent 38%, rgba(255, 255, 255, 0.75) 46%, transparent 56%),
+      #f9faf9;
+    box-shadow: inset 0 0 0 1px rgba(32, 32, 29, 0.05), inset 0 2px 5px rgba(32, 32, 29, 0.05);
+  }
+  .tray {
+    position: absolute;
+    left: 6%;
+    right: 6%;
+    bottom: -12px;
+    height: 12px;
+    border-radius: 0 0 4px 4px;
+    background: linear-gradient(180deg, #e2e5e6, #c3c7ca);
+    box-shadow: 0 6px 10px -6px rgba(32, 32, 29, 0.35);
+  }
+  .pen-marker {
+    position: absolute;
+    right: 9%;
+    bottom: 7px;
+    width: 84px;
+    height: auto;
+    transform: rotate(-2deg);
+  }
   @media (min-width: 1024px) {
-    .note-flex { left: 47%; top: 6%; }
-    .note-akustik { left: 83%; top: 31%; transform: rotate(2deg); }
-    .note-gruppe { right: 35.5%; top: 61.5%; transform: rotate(-2deg); } /* right-anchored: ends at its arrow in any language */
-    .note-dim { left: 53%; top: 90.5%; font-size: var(--text-lead); }
+    .board { --frame: 9px; }
+    .board-surface { padding: clamp(24px, 2.4vw, 44px) clamp(28px, 3.2vw, 60px); }
   }
 
   /* pins: mobile */
@@ -327,23 +335,6 @@ const timelineCss = Object.entries(timeline).map(([k, v]) => `--${k}:${v.toFixed
       animation: magnet-in 220ms var(--ease-draw) both;
       animation-delay: calc(var(--pin-d, 0s) + 0.18s);
     }
-    :global(html.js) .note {
-      animation: note-in 500ms var(--ease-draw) both;
-      animation-delay: calc(var(--d, 1s) + var(--t-notes));
-    }
-    :global(html.js) .draw {
-      stroke-dasharray: 1;
-      stroke-dashoffset: 1;
-      animation: draw 500ms var(--ease-draw) both;
-      animation-delay: calc(var(--d, 1s) + var(--t-notes));
-    }
-    :global(html.js) .draw.dashed {
-      stroke-dasharray: 0.02 0.025;
-      stroke-dashoffset: 0;
-      animation: fade 400ms ease forwards;
-      animation-delay: calc(var(--d, 1s) + var(--t-notes));
-      opacity: 0;
-    }
   }
 
   @keyframes write-letter {
@@ -375,15 +366,4 @@ const timelineCss = Object.entries(timeline).map(([k, v]) => `--${k}:${v.toFixed
     from { opacity: 0; scale: 0.6; }
     to { opacity: 1; scale: 1; }
   }
-  @keyframes note-in {
-    from { opacity: 0; clip-path: inset(0 100% 0 0); }
-    to { opacity: 1; clip-path: inset(0 0 0 0); }
-  }
-  /* Hidden until its turn: dash rounding on non-scaling strokes would otherwise leave visible fragments. */
-  @keyframes draw {
-    from { stroke-dashoffset: 1; opacity: 0; }
-    2% { opacity: 1; }
-    to { stroke-dashoffset: 0; opacity: 1; }
-  }
-  @keyframes fade { to { opacity: 1; } }
 </style>
