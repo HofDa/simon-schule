@@ -1,0 +1,86 @@
+---
+/** Simplified illustrations based on VS chair families, sharing a floor line. */
+import PantoMoveChair from './PantoMoveChair.astro';
+
+export type ChairModel = 'pantoswing' | 'jumper-air' | 'pantomove' | 'jumper-ply' | 'bambino';
+interface Props { model: ChairModel; }
+const { model } = Astro.props;
+const names = {
+  pantoswing: 'VS PantoSwing-LuPo',
+  'jumper-air': 'VS JUMPER Air Four',
+  pantomove: 'VS PantoMove-LuPo',
+  'jumper-ply': 'VS JUMPER Ply Four',
+  bambino: 'VS Bambino',
+};
+const perforations = Array.from({ length: 9 }, (_, row) =>
+  Array.from({ length: 13 }, (_, col) => ({ x: 96 + col * 17, y: 102 + row * 16 })),
+).flat();
+---
+
+{model === 'pantomove' ? (
+  <div class="move"><PantoMoveChair /></div>
+) : (
+  <svg viewBox="0 0 400 490" role="img" aria-label={`${names[model]} · schematische Darstellung`}>
+    {model === 'pantoswing' && (
+      <>
+        <g class="frame">
+          <path d="M122 304 L112 466 Q112 480 130 480 H306 Q322 480 322 464 L304 310" />
+          <path d="M184 304 L170 450 Q169 462 184 462 H344" />
+        </g>
+        <path class="seat" fill-rule="evenodd" d="M104 20 Q100 8 124 10 L298 30 Q314 32 310 54 L283 226 Q280 249 291 264 L342 296 Q354 304 342 320 Q294 339 206 328 L123 302 Q109 298 112 281 Q130 244 124 209 Z M229 64 A25 25 0 1 0 179 64 A25 25 0 1 0 229 64 Z" />
+        <path class="seat-edge" d="M128 281 Q212 300 340 305" />
+        <g class="glides"><path d="M119 482 H145 M296 482 H324 M332 464 H350" /></g>
+      </>
+    )}
+    {model === 'jumper-air' && (
+      <>
+        <g class="frame">
+          <path d="M104 296 L75 480 M290 296 L319 480 M141 291 L131 442 M256 291 L269 442" />
+          <path d="M106 342 H290" />
+        </g>
+        <path class="seat" fill-rule="evenodd" d="M66 39 Q62 14 89 12 H307 Q334 14 330 39 L311 218 Q309 247 331 276 Q343 290 333 307 Q323 320 299 321 H97 Q72 320 63 306 Q56 292 69 274 Q90 246 87 218 Z M153 52 Q153 45 161 45 H237 Q245 45 245 52 V60 Q245 67 237 67 H161 Q153 67 153 60 Z" />
+        <g class="perforations">{perforations.map(({ x, y }) => <circle cx={x} cy={y} r="2.4" />)}</g>
+        <path class="seat-edge" d="M78 288 Q200 310 320 288" />
+        <g class="glides"><path d="M65 482 H87 M308 482 H330 M123 444 H141 M260 444 H279" /></g>
+      </>
+    )}
+    {model === 'jumper-ply' && (
+      <>
+        <g class="frame">
+          <path d="M108 288 L78 480 M296 288 L327 480 M157 294 L148 441 M274 293 L284 441" />
+          <path d="M108 342 H307" />
+        </g>
+        <path class="seat" fill-rule="evenodd" d="M89 29 Q85 12 110 12 L300 33 Q318 36 314 56 L294 211 Q290 241 308 261 L347 292 Q358 303 345 315 Q294 332 220 324 L105 307 Q86 304 94 285 Q118 245 109 206 Z M171 52 Q166 50 165 56 L164 65 Q164 71 170 72 L237 79 Q243 80 244 74 L245 65 Q245 59 239 58 Z" />
+        <path class="seat-edge" d="M110 288 Q204 304 345 302" />
+        <path class="ply-edge" d="M99 35 L117 211 Q126 248 106 284 M109 308 Q243 342 344 318" />
+        <g class="glides"><path d="M68 482 H90 M316 482 H338 M140 443 H158 M275 443 H293" /></g>
+      </>
+    )}
+    {model === 'bambino' && (
+      <>
+        <g class="wood-frame">
+          <path d="M111 257 L98 480 M292 258 L306 480 M153 292 L155 448 M258 291 L266 448" />
+          <path d="M109 390 H301 M151 371 H265" />
+          <path d="M114 124 L116 307 M291 127 L285 309" />
+        </g>
+        <path class="seat" fill-rule="evenodd" d="M92 98 Q88 84 106 83 H296 Q314 84 310 98 L302 183 Q302 195 286 195 H116 Q101 195 100 183 Z M169 114 Q161 114 161 122 V127 Q161 135 169 135 H231 Q239 135 239 127 V122 Q239 114 231 114 Z" />
+        <path class="seat" d="M95 285 Q200 265 304 285 L321 311 Q328 324 311 328 H91 Q74 324 81 311 Z" />
+        <path class="seat-edge" d="M85 314 H317" />
+        <g class="glides"><path d="M90 483 H107 M298 483 H315" /></g>
+      </>
+    )}
+  </svg>
+)}
+
+<style>
+  svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .seat { fill: var(--color-ginster); }
+  .frame { fill: none; stroke: #66665f; stroke-width: 11; stroke-linecap: round; stroke-linejoin: round; }
+  .wood-frame { fill: none; stroke: #c49a56; stroke-width: 18; stroke-linecap: round; stroke-linejoin: round; }
+  .glides { fill: none; stroke: var(--color-ink); stroke-width: 9; stroke-linecap: round; }
+  .seat-edge { fill: none; stroke: #c48e00; stroke-width: 4; stroke-linecap: round; }
+  .ply-edge { fill: none; stroke: #bb8d39; stroke-width: 3; stroke-linecap: round; }
+  .perforations { fill: #bd8900; opacity: 0.65; }
+  .move :global([data-arm]) { stroke: #66665f; }
+  .move :global([data-glide]), .move :global(ellipse), .move :global(svg > g > path), .move :global(svg > g > rect) { fill: #66665f; }
+</style>

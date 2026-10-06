@@ -1,9 +1,10 @@
 ---
-import PantoMoveChair from './art/PantoMoveChair.astro';
+import ServiceChair, { type ChairModel } from './art/ServiceChair.astro';
 import { getLang, useTranslations } from '../../i18n/ui';
 
 const lang = getLang(Astro.currentLocale);
 const t = useTranslations(lang).services;
+const chairModels: ChairModel[] = ['pantoswing', 'jumper-air', 'pantomove', 'jumper-ply', 'bambino'];
 const services = lang === 'de' ? [
   { title: 'Beratung', text: 'Wir kommen zu Ihnen, hören zu und schauen uns Ihre Räume und den Alltag vor Ort an.' },
   { title: 'Planung', text: 'Gemeinsam entwickeln wir die Raumaufteilung und Einrichtung für Ihre Schule oder Ihren Kindergarten.' },
@@ -18,9 +19,9 @@ const services = lang === 'de' ? [
     <h2 id="services-title" class="sr-only">{lang === 'de' ? 'Unsere Leistungen' : 'I nostri servizi'}</h2>
     <ol class="service-chairs">
       {services.map((service, index) => (
-        <li class="service" style={`--chair-angle:${[0, -0.12, 0.12, -0.08, 0.08][index]}`}>
+        <li class="service">
           <div class="service-chair" aria-hidden="true">
-            <PantoMoveChair class="chair" />
+            <ServiceChair model={chairModels[index]} />
           </div>
           <div class="service-copy">
             <span class="service-number" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
@@ -105,14 +106,3 @@ const services = lang === 'de' ? [
     .service:last-child { grid-column: 1 / -1; width: calc((100% - 24px) / 2); justify-self: center; }
   }
 </style>
-
-<script>
-  import { swivel } from './art/swivel';
-
-  // Small changes of direction make the row feel like five individual chairs.
-  document.querySelectorAll<HTMLElement>('.service-chairs .service').forEach((service) => {
-    const chair = service.querySelector<SVGSVGElement>('[data-swivel]');
-    const angle = Number(service.style.getPropertyValue('--chair-angle'));
-    if (chair) swivel(chair, angle);
-  });
-</script>
