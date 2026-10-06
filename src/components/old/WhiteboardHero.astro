@@ -2,6 +2,7 @@
 import { getProjects } from '../../data/projects';
 import { getLang, useTranslations } from '../../i18n/ui';
 import ProjectPhoto from './ProjectPhoto.astro';
+import claims from './art/claim-strokes.json';
 
 const lang = getLang(Astro.currentLocale);
 const t = useTranslations(lang);
@@ -27,7 +28,26 @@ const words = parts.map((word, wi) => {
   clock += WORD_GAP;
   return letters;
 });
-const writeDuration = (clock - WORD_GAP + LETTER).toFixed(2);
+
+// Where the claim has pen strokes (tools/handwriting/claim.py), it is written stroke by stroke: each
+// Kalam letter is revealed through a marker pen that follows its centreline, dots come after the word.
+type Claim = {
+  width: number; height: number; pen: number; duration: number;
+  underline: { x0: number; x1: number; line: number };
+  glyphs: { outline: string; x: number; baseline: number; pen: { d: string; delay: number; dur: number }[] }[];
+};
+const claim = (claims as Record<string, Claim>)[headline];
+// the drawing box, in font units (1000 = 1em), with room for the overhanging strokes and the underline
+const box = claim && { x: -120, y: -60, w: claim.width + 240, h: claim.height + 120 };
+const underlineD = claim && (() => {
+  const { x0, x1, line } = claim.underline;
+  const w = x1 - x0;
+  const top = (line + 1) * 1000 - 180;
+  const pt = (px: number, py: number) => `${(x0 - 0.02 * w + (px / 300) * w).toFixed(1)} ${(top + (py / 16) * 160).toFixed(1)}`;
+  return `M${pt(4, 10)} C${pt(60, 5)} ${pt(130, 12)} ${pt(190, 8)} S${pt(270, 6)} ${pt(296, 9)}`;
+})();
+
+const writeDuration = (claim ? claim.duration : clock - WORD_GAP + LETTER).toFixed(2);
 ---
 
 <Fragment set:html={`<style>:root{--hero-write:${writeDuration}s}</style>`} />
@@ -58,6 +78,31 @@ const writeDuration = (clock - WORD_GAP + LETTER).toFixed(2);
           <div class="hero-copy relative z-10 pt-10 pb-8 lg:absolute lg:left-0 lg:top-0 lg:w-[38.2%] lg:pt-[calc(var(--board-h)*0.146)]">
             <h1 id="hero-title" class="hero-title">
               <span class="sr-only">{headline}</span>
+              {claim && box ? (
+              <span class="handwriting" aria-hidden="true">
+                <svg
+                  class="claim"
+                  viewBox={`${box.x} ${box.y} ${box.w} ${box.h}`}
+                  style={`--w: ${box.w / 1000}em; --h: ${box.h / 1000}em; --x: ${box.x / 1000}em; --y: ${box.y / 1000}em`}
+                >
+                  <defs>
+                    {claim.glyphs.map((g, i) => (
+                      <mask id={`claim-pen-${i}`} maskUnits="userSpaceOnUse" x={box.x} y={box.y} width={box.w} height={box.h}>
+                        {g.pen.map((s) => (
+                          <path class="pen" d={s.d} pathLength="1" stroke-width={claim.pen} style={`--pd: ${s.delay}s; --pt: ${s.dur}s`} />
+                        ))}
+                      </mask>
+                    ))}
+                  </defs>
+                  {claim.glyphs.map((g, i) => (
+                    <g mask={`url(#claim-pen-${i})`}>
+                      <path d={g.outline} transform={`translate(${g.x} ${g.baseline}) scale(1 -1)`} />
+                    </g>
+                  ))}
+                  <path class="claim-underline" d={underlineD} pathLength="1" />
+                </svg>
+              </span>
+              ) : (
               <span class="handwriting" aria-hidden="true">
                 {words.map((letters, wi) => (
                   <>
@@ -72,6 +117,7 @@ const writeDuration = (clock - WORD_GAP + LETTER).toFixed(2);
                   </>
                 ))}
               </span>
+              )}
             </h1>
             <p class="rise mt-7 max-w-[38ch] text-body leading-[1.6] text-muted sm:text-lead" style="--d: 0s">
               {t.hero.sub}
@@ -170,6 +216,28 @@ const writeDuration = (clock - WORD_GAP + LETTER).toFixed(2);
   .handwriting { display: block; transform: rotate(-1.5deg); transform-origin: 0 100%; }
   .word { display: inline-block; white-space: nowrap; position: relative; }
   .ch { display: inline-block; }
+  .claim {
+    display: block;
+    width: var(--w);
+    height: var(--h);
+    /* the overhang around the two 1em lines stays outside the layout */
+    margin: var(--y) 0 var(--y) var(--x);
+    overflow: visible;
+    fill: currentColor;
+  }
+  .claim .pen {
+    fill: none;
+    stroke: #fff;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .claim-underline {
+    fill: none;
+    stroke: var(--color-ginster);
+    stroke-width: 7;
+    stroke-linecap: round;
+    vector-effect: non-scaling-stroke;
+  }
   .hand-underline {
     position: absolute;
     left: -2%;
@@ -194,6 +262,13 @@ const writeDuration = (clock - WORD_GAP + LETTER).toFixed(2);
       animation: write-letter 80ms linear both;
       animation-delay: calc(var(--t-claim) + var(--cd));
     }
+    /* the marker on the board: each stroke drawn at pen speed, a little slower into the turns */
+    :global(html.js) .claim .pen {
+      stroke-dasharray: 1 1;
+      animation: pen-write var(--pt) cubic-bezier(0.35, 0.1, 0.55, 1) both;
+      animation-delay: calc(var(--t-claim) + var(--pd));
+    }
+    :global(html.js) .claim-underline,
     :global(html.js) .hand-underline path {
       animation: underline 400ms var(--ease-draw) both;
       animation-delay: calc(var(--t-after) - 0.05s);
@@ -231,6 +306,12 @@ const writeDuration = (clock - WORD_GAP + LETTER).toFixed(2);
   @keyframes write-letter {
     from { clip-path: inset(-0.3em 100% -0.3em -0.2em); }
     to { clip-path: inset(-0.3em -0.2em -0.3em -0.2em); }
+  }
+  /* hidden before its turn: a round cap would otherwise show as a dot at the stroke's start */
+  @keyframes pen-write {
+    from { stroke-dashoffset: 1; opacity: 0; }
+    1% { opacity: 1; }
+    to { stroke-dashoffset: 0; opacity: 1; }
   }
   @keyframes underline {
     from { stroke-dasharray: 1; stroke-dashoffset: 1; opacity: 0; }

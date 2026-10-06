@@ -1,0 +1,170 @@
+{
+ "title": "Choose the page structure",
+ "question": "The plan/drawing world stays, now bold with Ginstergelb as a colour field and full scroll choreography. Lock the structure the page is built on.",
+ "options": [
+  {
+   "id": "section",
+   "label": "Schnitt durch die Schule",
+   "kicker": "THE ROLL",
+   "lineage": "architectural building section drawings",
+   "thesis": "The page is one section cut through a school; scrolling descends through its rooms, and each room is a chapter.",
+   "palette": [
+    "#e2a300",
+    "#20201d",
+    "#ffffff",
+    "#f2f1ec"
+   ],
+   "materials": [
+    "ink section drawing",
+    "Ginstergelb colour field",
+    "real room photography in the cut"
+   ],
+   "viewport": "Full-bleed Ginstergelb field; a giant ink section of a two-storey school cut open across the lower 60%, headline 'Lernr\u00e4ume f\u00fcr S\u00fcdtirol.' set huge in Archivo top-left, ink CTA 'Projekt anfragen'.",
+   "risk": "Section drawing must stay legible at phone width; it re-flows to one room per screen there.",
+   "wireframe": {
+    "cols": 12,
+    "rows": 10,
+    "regions": [
+     {
+      "label": "nav",
+      "x": 0,
+      "y": 0,
+      "w": 12,
+      "h": 1
+     },
+     {
+      "label": "headline + CTA",
+      "x": 0,
+      "y": 1,
+      "w": 6,
+      "h": 3,
+      "accent": true
+     },
+     {
+      "label": "school section drawing (rooms open)",
+      "x": 0,
+      "y": 4,
+      "w": 12,
+      "h": 6,
+      "accent": true
+     }
+    ]
+   }
+  },
+  {
+   "id": "chain",
+   "label": "Die Ma\u00dfkette",
+   "lineage": "dimension chains on construction plans",
+   "thesis": "One giant dimension chain carries the page: each segment is a step, and the room plan builds beneath it as you scroll sideways.",
+   "palette": [
+    "#e2a300",
+    "#20201d",
+    "#ffffff",
+    "#dddad1"
+   ],
+   "materials": [
+    "dimension lines with ticks",
+    "Ginstergelb plan sheet",
+    "pinned horizontal scroll"
+   ],
+   "viewport": "Ginstergelb sheet; a full-width room plan in ink with a 7,20 m chain along its base; headline stacked left, the chain's first tick lit as 'Beraten'.",
+   "risk": "Horizontal pinned scroll must degrade to a vertical chain on phones and under reduced motion.",
+   "wireframe": {
+    "cols": 12,
+    "rows": 10,
+    "regions": [
+     {
+      "label": "nav",
+      "x": 0,
+      "y": 0,
+      "w": 12,
+      "h": 1
+     },
+     {
+      "label": "headline",
+      "x": 0,
+      "y": 1,
+      "w": 5,
+      "h": 4,
+      "accent": true
+     },
+     {
+      "label": "room plan",
+      "x": 5,
+      "y": 1,
+      "w": 7,
+      "h": 6
+     },
+     {
+      "label": "dimension chain: Beraten \u00b7 Planen \u00b7 Ausstatten \u00b7 Umsetzen \u00b7 Begleiten",
+      "x": 0,
+      "y": 8,
+      "w": 12,
+      "h": 1,
+      "accent": true
+     }
+    ]
+   }
+  },
+  {
+   "id": "dossier",
+   "label": "Das Leistungsverzeichnis",
+   "lineage": "municipal tender dossiers and plan title blocks",
+   "thesis": "The page reads as a project dossier a Gemeinde knows: numbered positions, title blocks, annexed plan sheets, and a blank position the visitor fills in.",
+   "palette": [
+    "#e2a300",
+    "#20201d",
+    "#ffffff",
+    "#f6f5f0"
+   ],
+   "materials": [
+    "title-block grid",
+    "numbered positions",
+    "sheets stacking on scroll"
+   ],
+   "viewport": "A Ginstergelb cover sheet with a ruled title block (Projekt, Ort, Phase, Ansprechpartner), 'Lernr\u00e4ume f\u00fcr S\u00fcdtirol.' as the project title, CTA as 'Pos. 06 \u2014 Ihr Projekt'.",
+   "risk": "Can read bureaucratic if type and colour are set timidly.",
+   "wireframe": {
+    "cols": 12,
+    "rows": 10,
+    "regions": [
+     {
+      "label": "nav",
+      "x": 0,
+      "y": 0,
+      "w": 12,
+      "h": 1
+     },
+     {
+      "label": "cover title",
+      "x": 0,
+      "y": 1,
+      "w": 8,
+      "h": 5,
+      "accent": true
+     },
+     {
+      "label": "title block",
+      "x": 8,
+      "y": 6,
+      "w": 4,
+      "h": 4
+     },
+     {
+      "label": "positions 01\u201305",
+      "x": 0,
+      "y": 6,
+      "w": 8,
+      "h": 4
+     }
+    ]
+   }
+  }
+ ],
+ "reroll": true,
+ "steer": true,
+ "buildPath": {
+  "value": "code",
+  "toggle": false
+ }
+}

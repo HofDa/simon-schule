@@ -91,8 +91,9 @@ const [simon, rene] = people;
   .c-person { position: relative; }
   .c-chat { display: none; }
 
-  .c-title { font-size: var(--text-headline); line-height: 0.98; letter-spacing: -0.045em; }
+  .c-title { font-size: var(--text-headline); line-height: 0.98; letter-spacing: -0.03em; }
   .c-lead { margin-top: 20px; max-width: 42ch; color: var(--color-muted); font-size: var(--text-body); }
+  @media (min-width: 1024px) { .c-lead { font-size: var(--text-lead); } }
   .c-actions { margin-top: 32px; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 28px; }
 
   /* The form slides into the free space when requested (always visible without JS). */

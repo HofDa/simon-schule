@@ -16,13 +16,13 @@ const openFacts = (p: Person) =>
 const sharedMail = people.some((p) => !p.email);
 ---
 
-<section id="menschen" class="people relative bg-paper py-28 lg:py-40" aria-labelledby="people-title" data-people>
+<section id="menschen" class="people relative bg-paper pt-12 pb-28 lg:pt-16 lg:pb-40" aria-labelledby="people-title" data-people>
   <div class="shell">
     <div class="people-intro max-w-[60rem]">
-      <h2 id="people-title" class="text-headline leading-[0.98] tracking-[-0.045em]">
+      <h2 id="people-title" class="text-headline leading-[0.98] tracking-[-0.03em]">
         {t.title}
       </h2>
-      <p class="mt-7 max-w-[52ch] text-body leading-[1.65] text-muted">
+      <p class="mt-7 max-w-[52ch] text-body leading-[1.65] text-muted lg:text-lead">
         {t.intro}
       </p>
     </div>
@@ -79,10 +79,12 @@ const sharedMail = people.some((p) => !p.email);
 <style>
   .people-grid { display: grid; gap: 64px; }
   .persons-list { display: grid; gap: 32px; }
+  /* each contact sits on its own hairline, like an entry in a title block */
+  .person { border-top: 1px solid var(--color-line); padding-top: 22px; }
   .person-name {
     font-size: var(--text-title);
     line-height: 1.05;
-    letter-spacing: -0.035em;
+    letter-spacing: -0.03em;
   }
   .portrait {
     display: block;

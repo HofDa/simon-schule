@@ -10,12 +10,12 @@ const t = ui.phases;
 const phases = ui.form.phases.map((name, i) => ({ name, hint: t.hints[i] }));
 ---
 
-<section class="phases py-28 lg:py-36" aria-labelledby="phases-title" data-phases>
+<section class="phases pb-28 lg:pb-36" aria-labelledby="phases-title" data-phases>
   <div class="shell">
-    <h2 id="phases-title" class="max-w-[16ch] text-headline leading-[0.98] tracking-[-0.045em]">
+    <h2 id="phases-title" class="max-w-[16ch] text-headline leading-[0.98] tracking-[-0.03em]">
       {t.title}
     </h2>
-    <p class="mt-6 max-w-[44ch] text-body leading-[1.65] text-muted">{t.lead}</p>
+    <p class="mt-6 max-w-[44ch] text-body leading-[1.65] text-muted lg:text-lead">{t.lead}</p>
 
     <div class="ruler mt-14 lg:mt-20">
       <span class="rule" aria-hidden="true"></span>
