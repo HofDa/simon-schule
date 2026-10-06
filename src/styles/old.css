@@ -80,15 +80,17 @@
   --nav-h: 72px;
   /* the swivel chair's width and the thickness of its base arms (10 of 400 units);
      the drawn route uses the same thickness as the arm it continues */
-  --chair-w: min(72vw, 300px);
-  /* how much of the chair shows at the bottom of the hero (mobile: just the upper shell) */
-  --chair-peek: calc(var(--chair-w) * 0.34);
+  --chair-w: clamp(180px, 17vw, 240px);
+  /* how much of the chair shows at the bottom of the hero: the top of the shell, past the grip hole.
+     Shared by the hero (which ends one screen down) and the Leistungen section (which pulls the chair up). */
+  --chair-peek: calc(var(--chair-w) * 0.44);
   --leg-w: calc(var(--chair-w) * 0.025);
   color-scheme: light;
 }
 
-@media (min-width: 1024px) {
-  :root { --chair-w: clamp(250px, 21vw, 330px); --chair-peek: calc(var(--chair-w) * 0.44); }
+/* phones and short tablets: the chair stacks above the steps, larger, and shows a little less */
+@media (max-width: 767px), (min-width: 768px) and (max-width: 1023px) and (max-height: 959px) {
+  :root { --chair-w: clamp(180px, 56vw, 240px); --chair-peek: calc(var(--chair-w) * 0.34); }
 }
 
 @layer base {

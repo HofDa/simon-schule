@@ -113,8 +113,6 @@ const stools = Array.from({ length: 5 }, (_, i) => {
 
 <style>
   .services {
-    --chair-w: clamp(180px, 17vw, 240px);
-    --chair-peek: calc(var(--chair-w) * 0.44);
     --leg-w: calc(var(--chair-w) * 0.025);
     --route-indent: calc(var(--leg-w) + 32px);
     --route-center: calc(var(--chair-w) * 0.0125);
@@ -346,8 +344,6 @@ const stools = Array.from({ length: 5 }, (_, i) => {
 
   @media (min-width: 1024px) {
     .services {
-      --chair-w: clamp(180px, 17vw, 240px);
-      --chair-peek: calc(var(--chair-w) * 0.44);
       --leg-w: calc(var(--chair-w) * 0.025);
       --route-indent: calc(var(--leg-w) + 36px);
       --services-space: clamp(128px, 11vw, 160px);
@@ -379,8 +375,6 @@ const stools = Array.from({ length: 5 }, (_, i) => {
 
   @media (max-width: 767px), (min-width: 768px) and (max-width: 1023px) and (max-height: 959px) {
     .services {
-      --chair-w: clamp(180px, 56vw, 240px);
-      --chair-peek: calc(var(--chair-w) * 0.34);
       --leg-w: calc(var(--chair-w) * 0.025);
       --route-indent: calc(var(--leg-w) + 28px);
       --services-space: 112px;
