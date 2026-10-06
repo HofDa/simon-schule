@@ -1,7 +1,9 @@
 ---
-/** Simplified illustrations based on VS chair families, sharing a floor line. */
-import PantoMoveChair from './PantoMoveChair.astro';
-
+/**
+ * Front elevations traced from VS's product-sheet photographs. The silhouettes,
+ * openings and frames follow the references; colour and shading follow the site.
+ * References and the tracing choices are recorded in service-chair-references.md.
+ */
 export type ChairModel = 'pantoswing' | 'jumper-air' | 'pantomove' | 'jumper-ply' | 'bambino';
 interface Props { model: ChairModel; }
 const { model } = Astro.props;
@@ -12,75 +14,110 @@ const names = {
   'jumper-ply': 'VS JUMPER Ply Four',
   bambino: 'VS Bambino',
 };
-const perforations = Array.from({ length: 9 }, (_, row) =>
-  Array.from({ length: 13 }, (_, col) => ({ x: 96 + col * 17, y: 102 + row * 16 })),
-).flat();
+const panto = model === 'pantoswing' || model === 'pantomove';
+const backId = `service-${model}-back`;
+const pantoBack = 'M92 30 C92 18 112 14 200 14 C288 14 308 18 308 30 C312 84 302 119 278 154 C250 192 242 216 248 249 Q250 258 264 265 H136 Q150 258 152 249 C158 216 150 192 122 154 C98 119 88 84 92 30 Z';
 ---
 
-{model === 'pantomove' ? (
-  <div class="move"><PantoMoveChair /></div>
-) : (
-  <svg viewBox="0 0 400 490" role="img" aria-label={`${names[model]} · schematische Darstellung`}>
-    {model === 'pantoswing' && (
-      <>
-        <g class="frame">
-          <path d="M122 304 L112 466 Q112 480 130 480 H306 Q322 480 322 464 L304 310" />
-          <path d="M184 304 L170 450 Q169 462 184 462 H344" />
-        </g>
-        <path class="seat" fill-rule="evenodd" d="M104 20 Q100 8 124 10 L298 30 Q314 32 310 54 L283 226 Q280 249 291 264 L342 296 Q354 304 342 320 Q294 339 206 328 L123 302 Q109 298 112 281 Q130 244 124 209 Z M229 64 A25 25 0 1 0 179 64 A25 25 0 1 0 229 64 Z" />
-        <path class="seat-edge" d="M128 281 Q212 300 340 305" />
-        <g class="glides"><path d="M119 482 H145 M296 482 H324 M332 464 H350" /></g>
-      </>
-    )}
-    {model === 'jumper-air' && (
-      <>
-        <g class="frame">
-          <path d="M104 296 L75 480 M290 296 L319 480 M141 291 L131 442 M256 291 L269 442" />
-          <path d="M106 342 H290" />
-        </g>
-        <path class="seat" fill-rule="evenodd" d="M66 39 Q62 14 89 12 H307 Q334 14 330 39 L311 218 Q309 247 331 276 Q343 290 333 307 Q323 320 299 321 H97 Q72 320 63 306 Q56 292 69 274 Q90 246 87 218 Z M153 52 Q153 45 161 45 H237 Q245 45 245 52 V60 Q245 67 237 67 H161 Q153 67 153 60 Z" />
-        <g class="perforations">{perforations.map(({ x, y }) => <circle cx={x} cy={y} r="2.4" />)}</g>
-        <path class="seat-edge" d="M78 288 Q200 310 320 288" />
-        <g class="glides"><path d="M65 482 H87 M308 482 H330 M123 444 H141 M260 444 H279" /></g>
-      </>
-    )}
-    {model === 'jumper-ply' && (
-      <>
-        <g class="frame">
-          <path d="M108 288 L78 480 M296 288 L327 480 M157 294 L148 441 M274 293 L284 441" />
-          <path d="M108 342 H307" />
-        </g>
-        <path class="seat" fill-rule="evenodd" d="M89 29 Q85 12 110 12 L300 33 Q318 36 314 56 L294 211 Q290 241 308 261 L347 292 Q358 303 345 315 Q294 332 220 324 L105 307 Q86 304 94 285 Q118 245 109 206 Z M171 52 Q166 50 165 56 L164 65 Q164 71 170 72 L237 79 Q243 80 244 74 L245 65 Q245 59 239 58 Z" />
-        <path class="seat-edge" d="M110 288 Q204 304 345 302" />
-        <path class="ply-edge" d="M99 35 L117 211 Q126 248 106 284 M109 308 Q243 342 344 318" />
-        <g class="glides"><path d="M68 482 H90 M316 482 H338 M140 443 H158 M275 443 H293" /></g>
-      </>
-    )}
-    {model === 'bambino' && (
-      <>
-        <g class="wood-frame">
-          <path d="M111 257 L98 480 M292 258 L306 480 M153 292 L155 448 M258 291 L266 448" />
-          <path d="M109 390 H301 M151 371 H265" />
-          <path d="M114 124 L116 307 M291 127 L285 309" />
-        </g>
-        <path class="seat" fill-rule="evenodd" d="M92 98 Q88 84 106 83 H296 Q314 84 310 98 L302 183 Q302 195 286 195 H116 Q101 195 100 183 Z M169 114 Q161 114 161 122 V127 Q161 135 169 135 H231 Q239 135 239 127 V122 Q239 114 231 114 Z" />
-        <path class="seat" d="M95 285 Q200 265 304 285 L321 311 Q328 324 311 328 H91 Q74 324 81 311 Z" />
-        <path class="seat-edge" d="M85 314 H317" />
-        <g class="glides"><path d="M90 483 H107 M298 483 H315" /></g>
-      </>
-    )}
-  </svg>
-)}
+<svg viewBox="0 0 400 500" role="img" aria-label={`${names[model]} · Vorderansicht, Illustration`}>
+  {panto && (
+    <>
+      {model === 'pantoswing' ? (
+        <>
+          <g class="steel">
+            <path d="M69 483 V293 Q69 274 88 274 H117 M331 483 V293 Q331 274 312 274 H283" />
+            <path d="M72 478 H328" />
+          </g>
+          <g class="steel-highlight"><path d="M67 465 V295 Q67 273 88 273 M333 465 V295 Q333 273 312 273" /></g>
+          <g class="glides"><path d="M69 477 V489 M331 477 V489" /></g>
+        </>
+      ) : (
+        <>
+          <path class="mechanism" d="M158 283 H242 L234 319 Q200 328 166 319 Z" />
+          <path class="steel-solid" d="M191 316 H209 V350 H191 Z" />
+          <path class="mechanism" d="M187 344 H213 V444 H187 Z" />
+          <path class="steel-solid" d="M191 438 L73 455 L72 473 L190 456 L200 476 L210 456 L328 473 L327 455 L209 438 Z" />
+          <path class="steel-solid" d="M197 438 L133 447 V458 L191 451 H209 L267 458 V447 L203 438 Z" />
+          <path class="steel-highlight" d="M76 455 L190 440 M210 440 L324 455" />
+          <g class="casters">
+            <circle cx="72" cy="481" r="12" /><circle cx="328" cy="481" r="12" />
+            <circle cx="138" cy="464" r="10" /><circle cx="262" cy="464" r="10" />
+            <circle cx="200" cy="488" r="12" />
+          </g>
+          <path class="lever" d="M160 307 L131 313" /><path class="glides" d="M120 315 L133 313" />
+        </>
+      )}
+      <defs><clipPath id={backId}><path d={pantoBack} /></clipPath></defs>
+      <path class="seat" fill-rule="evenodd" d={`${pantoBack} M220 66 A20 20 0 1 0 180 66 A20 20 0 1 0 220 66 Z`} />
+      <g class="shell-grid" clip-path={`url(#${backId})`}>
+        <path d="M237 24 V239 M267 24 V210 M297 24 V155 M221 42 H310 M223 74 H311 M223 106 H304 M223 138 H291 M222 170 H268 M222 202 H249" />
+      </g>
+      <path class="seat" d="M87 263 Q94 255 112 262 Q200 277 288 262 Q306 255 313 263 Q317 271 304 279 L291 294 Q200 314 109 294 L96 279 Q83 271 87 263 Z" />
+      <path class="seat-shadow" d="M96 279 Q200 299 304 279 L291 294 Q200 314 109 294 Z" />
+      <path class="seat-edge" d="M90 269 Q200 294 310 269" />
+    </>
+  )}
+
+  {model === 'jumper-air' && (
+    <>
+      <g class="steel">
+        <path d="M58 485 L62 290 Q62 270 82 270 H115 M342 485 L338 290 Q338 270 318 270 H285" />
+        <path d="M78 474 L81 297 M322 474 L319 297" />
+      </g>
+      <g class="steel-highlight"><path d="M60 478 L64 291 M340 478 L336 291" /></g>
+      <g class="glides"><path d="M55 488 H63 M337 488 H345 M75 477 H83 M317 477 H325" /></g>
+      <path class="seat" fill-rule="evenodd" d="M93 45 Q95 24 126 20 Q200 9 274 20 Q305 24 307 45 L328 158 Q332 179 314 194 L275 218 Q262 227 259 247 L256 276 H144 L141 247 Q138 227 125 218 L86 194 Q68 179 72 158 Z M161 227 Q200 238 239 227 Q243 230 238 235 L212 252 Q200 261 188 252 L162 235 Q157 230 161 227 Z" />
+      <path class="seat-shadow" d="M90 234 Q100 242 112 244 L137 259 L144 276 H256 L263 259 L288 244 Q300 242 310 234 L294 281 Q200 313 106 281 Z" />
+      <path class="seat" d="M90 264 Q100 282 132 286 Q200 299 268 286 Q300 282 310 264 L311 279 Q310 291 289 297 Q200 317 111 297 Q90 291 89 279 Z" />
+      <path class="seat-edge" d="M107 282 Q200 309 293 282" />
+      <ellipse class="brand-mark" cx="200" cy="212" rx="5" ry="2" />
+    </>
+  )}
+
+  {model === 'jumper-ply' && (
+    <>
+      <g class="steel">
+        <path d="M58 485 L65 290 Q66 272 85 272 H120 M342 485 L335 290 Q334 272 315 272 H280" />
+        <path d="M77 474 L86 303 M323 474 L314 303" />
+      </g>
+      <g class="steel-highlight"><path d="M60 478 L67 292 M340 478 L333 292" /></g>
+      <g class="glides"><path d="M54 488 H64 M336 488 H346 M73 477 H81 M319 477 H327" /></g>
+      <path class="seat" fill-rule="evenodd" d="M92 42 Q94 30 111 26 Q200 4 289 26 Q306 30 308 42 L331 180 Q334 195 320 205 L276 230 Q263 238 261 258 L261 278 H139 L139 258 Q137 238 124 230 L80 205 Q66 195 69 180 Z M162 48 Q200 61 238 48 Q242 52 235 59 L214 73 Q200 82 186 73 L165 59 Q158 52 162 48 Z" />
+      <path class="seat" d="M87 267 Q108 263 127 268 Q200 283 273 268 Q292 263 313 267 L313 282 Q310 292 291 295 Q200 306 109 295 Q90 292 87 282 Z" />
+      <path class="ply-edge" d="M72 183 Q69 196 83 205 L126 230 Q140 239 142 257 M313 282 Q200 304 87 282" />
+      <path class="seat-shadow" d="M139 257 Q200 268 261 257 V278 Q200 289 139 278 Z" />
+      <ellipse class="brand-mark" cx="200" cy="94" rx="4" ry="2" />
+    </>
+  )}
+
+  {model === 'bambino' && (
+    <>
+      <path class="wood" d="M88 91 Q88 84 98 84 H107 L111 114 L119 327 L107 489 H91 L98 327 Z M312 91 Q312 84 302 84 H293 L289 114 L281 327 L293 489 H309 L302 327 Z" />
+      <path class="wood-dark" d="M111 321 H289 V345 H111 Z M110 326 H122 L119 479 H110 Z M278 326 H290 V479 H281 Z" />
+      <path class="wood" d="M105 98 Q200 67 295 98 L292 151 H108 Z" />
+      <path class="wood-highlight" d="M108 99 Q200 73 292 99" />
+      <path class="wood" d="M104 299 Q200 294 296 299 L302 317 Q200 323 98 317 Z" />
+      <path class="wood-dark" d="M98 317 Q200 323 302 317 V331 H98 Z" />
+      <path class="wood-highlight" d="M100 317 H300" />
+    </>
+  )}
+</svg>
 
 <style>
   svg { display: block; width: 100%; height: auto; overflow: visible; }
   .seat { fill: var(--color-ginster); }
-  .frame { fill: none; stroke: #66665f; stroke-width: 11; stroke-linecap: round; stroke-linejoin: round; }
-  .wood-frame { fill: none; stroke: #c49a56; stroke-width: 18; stroke-linecap: round; stroke-linejoin: round; }
-  .glides { fill: none; stroke: var(--color-ink); stroke-width: 9; stroke-linecap: round; }
-  .seat-edge { fill: none; stroke: #c48e00; stroke-width: 4; stroke-linecap: round; }
-  .ply-edge { fill: none; stroke: #bb8d39; stroke-width: 3; stroke-linecap: round; }
-  .perforations { fill: #bd8900; opacity: 0.65; }
-  .move :global([data-arm]) { stroke: #66665f; }
-  .move :global([data-glide]), .move :global(ellipse), .move :global(svg > g > path), .move :global(svg > g > rect) { fill: #66665f; }
+  .seat-shadow { fill: #cb9400; }
+  .seat-edge { fill: none; stroke: #bd8900; stroke-width: 2.5; stroke-linecap: round; }
+  .steel { fill: none; stroke: #969b99; stroke-width: 11; stroke-linecap: round; stroke-linejoin: round; }
+  .steel-solid { fill: #a4aaa7; }
+  .steel-highlight { fill: none; stroke: #d1d5d2; stroke-width: 3; stroke-linecap: round; }
+  .mechanism { fill: #393a37; }
+  .glides, .lever { fill: none; stroke: #393a37; stroke-width: 7; stroke-linecap: round; }
+  .casters { fill: #393a37; stroke: #777d78; stroke-width: 3; }
+  .shell-grid { fill: none; stroke: #f0bd48; stroke-width: 1.5; opacity: 0.42; }
+  .ply-edge { fill: none; stroke: #bd8a31; stroke-width: 3; stroke-linecap: round; }
+  .brand-mark { fill: #fae4a9; }
+  .wood { fill: #cda06b; }
+  .wood-dark { fill: #bc8a56; }
+  .wood-highlight { fill: none; stroke: #e2ba88; stroke-width: 3; }
 </style>
