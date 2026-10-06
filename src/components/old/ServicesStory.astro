@@ -479,10 +479,10 @@ const stools = Array.from({ length: 5 }, (_, i) => {
       };
       const arrive = () => {
         from = -(cell.getBoundingClientRect().right + window.innerWidth * 0.2);
-        // on page load the chair comes in as the claim is finished, so it is in view when the
-        // underline is drawn (--hero-write, set by the hero); later it starts almost at once
-        const write = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--hero-write')) || 1;
-        const delay = Math.max(120, (write - 0.45) * 1000 - performance.now());
+        // on page load the chair comes last, after the claim and the picture wall (--t-chair, set
+        // by the hero's timeline); later it starts almost at once
+        const at = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--t-chair')) || 1;
+        const delay = Math.max(120, at * 1000 - performance.now());
         let start = 0;
         const tick = (now: number) => {
           start ||= now + delay;

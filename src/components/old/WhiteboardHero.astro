@@ -47,10 +47,33 @@ const underlineD = claim && (() => {
   return `M${pt(4, 10)} C${pt(60, 5)} ${pt(130, 12)} ${pt(190, 8)} S${pt(270, 6)} ${pt(296, 9)}`;
 })();
 
-const writeDuration = (claim ? claim.duration : clock - WORD_GAP + LETTER).toFixed(2);
+const writeDuration = claim ? claim.duration : clock - WORD_GAP + LETTER;
+
+// The board is prepared in the order it should be read: the claim is written alone, the offer rises
+// under its underline, the prints are pinned up one by one, the annotations are drawn on them, and the
+// chair (ServicesStory) rolls in last. All in seconds from page load; on :root so the chair shares it.
+const T_CLAIM = 0.1;
+const T_AFTER = T_CLAIM + writeDuration; // end of the writing: the underline is drawn
+const T_OFFER = T_AFTER; // subline and buttons
+const T_IMAGES = T_AFTER + 0.25; // first print; the next ones follow PIN_STEP apart
+const PIN_STEP = 0.16;
+const T_NOTES = T_IMAGES + 3 * PIN_STEP + 0.05; // first annotation
+const T_CHAIR = T_NOTES + 0.25; // the chair starts rolling; it comes into view about half a second later
+const timeline = {
+  'hero-write': writeDuration,
+  't-claim': T_CLAIM,
+  't-after': T_AFTER,
+  't-offer': T_OFFER,
+  't-images': T_IMAGES,
+  'pin-step': PIN_STEP,
+  // added to each note's own --d (0.95–1.3s)
+  't-notes': T_NOTES - 0.95,
+  't-chair': T_CHAIR,
+};
+const timelineCss = Object.entries(timeline).map(([k, v]) => `--${k}:${v.toFixed(2)}s`).join(';');
 ---
 
-<Fragment set:html={`<style>:root{--hero-write:${writeDuration}s}</style>`} />
+<Fragment set:html={`<style>:root{${timelineCss}}</style>`} />
 <section id="top" class="hero relative pt-[calc(var(--nav-h)+8px)]" aria-labelledby="hero-title">
   <div class="shell">
     <div class="board relative">
@@ -193,18 +216,6 @@ const writeDuration = (claim ? claim.duration : clock - WORD_GAP + LETTER).toFix
     .pins :global(.pin-c) { left: 66.2%; top: 63.7%; width: 20.4%; transform: rotate(1.2deg); }
   }
 
-  /* Board preparation, about a second in all: the claim is written while the offer is already readable
-     and the prints are pinned up; the annotations follow, the chair (ServicesStory) comes last.
-     Defined on :root so the chair in the next section shares the timeline. */
-  :global(:root) {
-    --t-claim: 0.1s;
-    --t-after: calc(var(--t-claim) + var(--hero-write, 0.85s)); /* end of the writing: the underline */
-    --t-offer: 0.04s; /* subline and buttons, readable within ~0.3s */
-    --t-images: 0s;
-    --t-notes: -0.3s; /* added to each note's own --d (0.95–1.3s): annotations draw from 0.65s */
-    --t-chair: 0.9s;
-  }
-
   .hero-title {
     font-family: var(--font-hand);
     font-weight: 700;
@@ -274,10 +285,10 @@ const writeDuration = (claim ? claim.duration : clock - WORD_GAP + LETTER).toFix
       animation-delay: calc(var(--t-after) - 0.05s);
     }
     .pins :global(.pin-a) { --pin-d: var(--t-images); }
-    .pins :global(.pin-b) { --pin-d: calc(var(--t-images) + 0.04s); }
-    .pins :global(.pin-c) { --pin-d: calc(var(--t-images) + 0.08s); }
+    .pins :global(.pin-b) { --pin-d: calc(var(--t-images) + var(--pin-step)); }
+    .pins :global(.pin-c) { --pin-d: calc(var(--t-images) + 2 * var(--pin-step)); }
     :global(html.js) .pins :global(.pin) {
-      animation: pin-in 240ms var(--ease-draw) both;
+      animation: pin-in 380ms var(--ease-draw) both;
       animation-delay: var(--pin-d, 0.35s);
     }
     :global(html.js) .pins :global(.magnet) {
@@ -322,9 +333,11 @@ const writeDuration = (claim ? claim.duration : clock - WORD_GAP + LETTER).toFix
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: none; }
   }
+  /* a print laid onto the board: it comes down a little, settles flat, then the magnet holds it */
   @keyframes pin-in {
-    from { opacity: 0; translate: 0 8px; }
-    to { opacity: 1; translate: 0 0; }
+    from { opacity: 0; translate: 0 -14px; scale: 1.035; }
+    40% { opacity: 1; }
+    to { opacity: 1; translate: 0 0; scale: 1; }
   }
   @keyframes magnet-in {
     from { opacity: 0; scale: 0.6; }
