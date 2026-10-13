@@ -1,6 +1,6 @@
 ---
-/** The previous design (before the Maßkette redesign), served at /old/ as a German-only variant. */
-import Layout from '../../layouts/OldLayout.astro';
+/** "Das Whiteboard": the claim is written on a board, project prints are pinned up, chairs roll in and a ruled line leads through the projects. German-only variant at /whiteboard/. */
+import Layout from '../../layouts/WhiteboardLayout.astro';
 import Navbar from './shared/Navbar.astro';
 import Footer from './shared/Footer.astro';
 import WhiteboardHero from './WhiteboardHero.astro';
@@ -14,10 +14,10 @@ import ProjectPhases from './ProjectPhases.astro';
 import ContactScene from './ContactScene.astro';
 import { asset, homeFor } from '../../lib/paths';
 
-const alternates = { de: asset('old/'), it: homeFor('it') };
+const alternates = { de: asset('whiteboard/'), it: homeFor('it') };
 ---
 
-<Layout title="Trias Schule | Bisherige Version" canonical={asset('old/')} alternates={alternates} noindex variantSwitcher>
+<Layout title="Trias Schule | Das Whiteboard" canonical={asset('whiteboard/')} alternates={alternates} noindex variantSwitcher>
   <Navbar alternates={alternates} />
   <main id="inhalt">
     <WhiteboardHero />

@@ -7,7 +7,7 @@
   font-style: normal;
   font-weight: 400 700;
   font-display: swap;
-  src: url("../assets/fonts/old/archivo-latin-var.woff2") format("woff2");
+  src: url("../assets/fonts/whiteboard/archivo-latin-var.woff2") format("woff2");
 }
 /* the hero claim, written on the plan: one weight only */
 @font-face {
@@ -15,14 +15,14 @@
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url("../assets/fonts/old/kalam-700-latin.woff2") format("woff2");
+  src: url("../assets/fonts/whiteboard/kalam-700-latin.woff2") format("woff2");
 }
 @font-face {
   font-family: "Caveat";
   font-style: normal;
   font-weight: 500 700;
   font-display: swap;
-  src: url("../assets/fonts/old/caveat-latin-var.woff2") format("woff2");
+  src: url("../assets/fonts/whiteboard/caveat-latin-var.woff2") format("woff2");
 }
 /* Arial scaled to Archivo's width and vertical metrics, so the swap does not move the layout */
 @font-face {

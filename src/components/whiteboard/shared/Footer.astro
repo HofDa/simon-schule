@@ -7,7 +7,7 @@ const lang = getLang(Astro.currentLocale);
 const t = useTranslations(lang);
 const f = t.footer;
 const year = new Date().getFullYear();
-// the previous design is one page: its section links stay in-page
+// the Whiteboard pages are single pages: its section links stay in-page
 const home = '';
 const openContact = [!contact.phone && t.pendingFields.phone, !contact.address && t.pendingFields.address].filter(
   (f): f is string => Boolean(f),

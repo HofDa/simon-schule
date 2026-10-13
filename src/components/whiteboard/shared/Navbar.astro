@@ -10,7 +10,7 @@ interface Props {
 const lang = getLang(Astro.currentLocale);
 const t = useTranslations(lang);
 const alternates = Astro.props.alternates ?? { de: homeFor('de'), it: homeFor('it') };
-// the previous design is one page: its section links and the inquiry stay in-page
+// the Whiteboard pages are single pages: its section links and the inquiry stay in-page
 const onHome = true;
 const home = onHome ? '' : homeFor(lang);
 const nav = t.nav.items.map((item) => ({ ...item, href: `${home}${item.href}` }));

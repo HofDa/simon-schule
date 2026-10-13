@@ -1,4 +1,4 @@
-"""Pen strokes for the handwritten hero claim of the previous design (/old/).
+"""Pen strokes for the handwritten hero claim of the Whiteboard design (/whiteboard/).
 
 The claim is drawn as Kalam glyph outlines, revealed through a mask of thick pen strokes that
 follow each letter's centreline, so the page can write it like a marker on a whiteboard.
@@ -10,7 +10,7 @@ and the i dot are set after their word, as people do.
 
     python3 tools/handwriting/claim.py
 
-writes src/components/old/art/claim-strokes.json (read by WhiteboardHero.astro).
+writes src/components/whiteboard/art/claim-strokes.json (read by WhiteboardHero.astro).
 """
 
 import json
@@ -24,8 +24,8 @@ from fontTools.pens.svgPathPen import SVGPathPen
 from fontTools.ttLib import TTFont
 
 ROOT = Path(__file__).resolve().parents[2]
-FONT = ROOT / 'src/assets/fonts/old/kalam-700-latin.woff2'
-OUT = ROOT / 'src/components/old/art/claim-strokes.json'
+FONT = ROOT / 'src/assets/fonts/whiteboard/kalam-700-latin.woff2'
+OUT = ROOT / 'src/components/whiteboard/art/claim-strokes.json'
 
 # the claim and its line breaks, as it is set in the hero
 CLAIMS = {'Lernräume für Südtirol.': ['Lernräume', 'für Südtirol.']}

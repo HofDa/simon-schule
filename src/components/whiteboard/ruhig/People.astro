@@ -1,0 +1,108 @@
+---
+import { contact, fullName, people, type Person } from '../../../data/site';
+import { asset } from '../../../lib/paths';
+import { getLang, useTranslations } from '../../../i18n/ui';
+
+/** The two contacts and the planning questions, set plainly: no handwriting, no reveal. */
+const ui = useTranslations(getLang(Astro.currentLocale));
+const t = ui.people;
+
+const openFacts = (p: Person) =>
+  [!p.lastName && ui.pendingFields.lastName, !p.role && ui.pendingFields.role, !p.phone && ui.pendingFields.phone].filter(
+    (f): f is string => Boolean(f),
+  );
+const sharedMail = people.some((p) => !p.email);
+---
+
+<section id="menschen" class="quiet-people pb-28 lg:pb-40" aria-labelledby="people-title">
+  <div class="shell">
+    <div class="max-w-[60rem]">
+      <h2 id="people-title" class="text-headline leading-[0.98] tracking-[-0.03em]">{t.title}</h2>
+      <p class="mt-7 max-w-[52ch] text-body leading-[1.65] text-muted lg:text-lead">{t.intro}</p>
+    </div>
+
+    <div class="q-grid mt-16 lg:mt-24">
+      <div>
+        <div class="q-persons">
+          {people.map((person) => {
+            const open = openFacts(person);
+            return (
+              <article class="q-person">
+                {person.photo && (
+                  <img
+                    class="q-portrait"
+                    src={asset(`images/team/${person.photo}.webp`)}
+                    alt={t.portraitAlt(fullName(person))}
+                    width="800"
+                    height="1000"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                )}
+                <h3 class="q-name">{fullName(person)}</h3>
+                {person.role && <p class="mt-1.5 text-muted">{person.role}</p>}
+                {open.length > 0 && <p class="open-fact mt-2 text-meta">{ui.pending(open)}</p>}
+                {(person.phone || person.email) && (
+                  <ul class="mt-4 space-y-1.5 text-meta">
+                    {person.phone && <li><a class="link-line" href={`tel:${person.phone.replace(/\s/g, '')}`}>{person.phone}</a></li>}
+                    {person.email && <li><a class="link-line" href={`mailto:${person.email}`}>{person.email}</a></li>}
+                  </ul>
+                )}
+              </article>
+            );
+          })}
+        </div>
+        {sharedMail && (
+          <p class="q-mail">
+            {t.reachBoth} <a class="link-line font-semibold text-ink" href={`mailto:${contact.email}`}>{contact.email}</a>
+          </p>
+        )}
+      </div>
+
+      <div class="q-questions">
+        <p class="q-label">{t.questionsLabel}</p>
+        <ul>
+          {t.questions.map((q) => <li>{q}</li>)}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .q-grid { display: grid; gap: 64px; }
+  .q-persons { display: grid; gap: 32px; }
+  .q-person { border-top: 1px solid var(--color-line); padding-top: 22px; }
+  .q-name { font-size: var(--text-title); line-height: 1.05; letter-spacing: -0.03em; }
+  .q-portrait { display: block; width: 100%; max-width: 20rem; aspect-ratio: 4 / 5; object-fit: cover; margin-bottom: 20px; background: var(--color-surface); }
+  .q-mail { margin-top: 28px; font-size: var(--text-meta); color: var(--color-muted); }
+
+  .q-label { color: var(--color-muted); font-size: var(--text-label); letter-spacing: 0.08em; text-transform: uppercase; }
+  .q-questions ul { list-style: none; margin: 16px 0 0; padding: 0; }
+  .q-questions li {
+    display: grid;
+    grid-template-columns: 14px minmax(0, 1fr);
+    gap: 14px;
+    padding: 14px 0;
+    border-top: 1px solid var(--color-line);
+    font-size: var(--text-lead);
+    line-height: 1.4;
+  }
+  .q-questions li::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    margin-top: 0.55em;
+    border-radius: 50%;
+    background: var(--color-ginster);
+  }
+
+  @media (min-width: 640px) {
+    .q-persons { grid-template-columns: 1fr 1fr; column-gap: 40px; }
+  }
+  @media (min-width: 1024px) {
+    .q-grid { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(24px, 2.6vw, 44px); align-items: end; }
+    .q-grid > div:first-child { grid-column: 1 / 8; }
+    .q-questions { grid-column: 9 / 13; }
+  }
+</style>

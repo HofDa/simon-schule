@@ -44,7 +44,7 @@ const de = {
   hero: {
     headline: 'Lernräume für Südtirol.',
     sub: 'Trias Schule ist der Geschäftsbereich der Trias OHG für die Einrichtung von Schulen und Kindergärten in Südtirol. Wir begleiten Ihr Projekt von der Beratung bis zur Montage mit Möbeln von VS.',
-    /** the short line under the handwritten claim (previous design) */
+    /** the short line under the handwritten claim (Whiteboard) */
     subShort: 'Wir sind Ihr verlässlicher Ansprechpartner für die Einrichtung Ihrer Schule oder Ihres Kindergartens in Südtirol – von der Beratung bis zur Montage, mit Möbeln von VS.',
     primary: 'Beispiele ansehen',
     secondary: 'Projekt besprechen',
@@ -210,7 +210,7 @@ const it: UI = {
   hero: {
     headline: 'Spazi per imparare in Alto Adige.',
     sub: 'Trias Schule è la divisione di Trias OHG per l’arredo di scuole e scuole dell’infanzia in Alto Adige. Seguiamo il progetto dalla consulenza alla consegna e al montaggio, con i mobili di VS.',
-    /** the short line under the handwritten claim (previous design) */
+    /** the short line under the handwritten claim (Whiteboard) */
     subShort: 'Arrediamo scuole e scuole dell’infanzia in Alto Adige, dalla consulenza al montaggio, con i mobili di VS.',
     primary: 'Vedi gli esempi',
     secondary: 'Parliamo del progetto',

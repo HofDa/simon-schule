@@ -3,21 +3,20 @@ import Layout from '../layouts/Layout.astro';
 import { asset } from '../lib/paths';
 
 const variants = [
-  { number: '01', name: 'Die Maßkette', detail: 'Der neue Entwurf', href: asset('masskette/') },
-  { number: '02', name: 'Schnitt durch die Schule', detail: 'Ein Rundgang durch die Räume', href: asset('schnitt/') },
-  { number: '03', name: 'Bisherige Version', detail: 'Der vorherige Entwurf', href: asset('old/') },
-  { number: '04', name: 'Der Raumplaner', detail: 'Einen Klassenraum selbst einrichten', href: asset('leistungsverzeichnis/') },
+  { number: '01', name: 'Das Whiteboard', detail: 'Handschrift, angepinnte Bilder, rollende Stühle', href: asset('whiteboard/') },
+  { number: '02', name: 'Das Whiteboard, ruhig', detail: 'Dasselbe Board, ruhige Abschnitte darunter', href: asset('whiteboard-ruhig/') },
+  { number: '03', name: 'Das Klassenzimmer', detail: 'Vorne das Board, darunter eine Sitzordnung pro Abschnitt', href: asset('klassenzimmer/') },
 ];
 ---
 
-<Layout title="Trias Schule | Entwürfe auswählen" description="Vier Entwürfe für die Website von Trias Schule ansehen." canonical={asset('')} variantSwitcher>
+<Layout title="Trias Schule | Entwürfe auswählen" description="Entwürfe für die Website von Trias Schule ansehen." canonical={asset('')} variantSwitcher>
   <main id="inhalt" class="entry">
     <div class="entry-inner">
       <p class="brand"><strong>Trias</strong> Schule</p>
       <div class="intro">
         <p class="eyebrow">Website-Entwürfe <span aria-hidden="true">/</span> Trias Schule</p>
         <h1>Wählen Sie eine Variante.</h1>
-        <p class="lead">Vier Wege, Lernräume für Südtirol zu zeigen.</p>
+        <p class="lead">Ein Konzept, verschiedene Fassungen: Lernräume für Südtirol auf dem Whiteboard.</p>
       </div>
 
       <nav aria-label="Website-Varianten" class="variant-list">

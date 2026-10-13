@@ -1,0 +1,98 @@
+---
+import { getProjects } from '../../../data/projects';
+import { asset } from '../../../lib/paths';
+import { getLang, useTranslations } from '../../../i18n/ui';
+import ProjectTestimonial from '../ProjectTestimonial.astro';
+
+/** The projects as a plain, numbered register: one hairline per project, no route and no pinned stage. */
+const lang = getLang(Astro.currentLocale);
+const t = useTranslations(lang).projects;
+const projects = getProjects(lang);
+const src = (file: string, w: number) => asset(`images/projects/${file}-${w}.webp`);
+const widths = [320, 480, 640, 720, 900, 960, 1800];
+---
+
+<section id="projekte" class="quiet-projects pt-24 pb-24 lg:pt-36 lg:pb-36" aria-labelledby="projects-title">
+  <div class="shell">
+    <div class="q-head">
+      <h2 id="projects-title" class="text-headline leading-[0.98] tracking-[-0.03em]">{t.title}</h2>
+      <p class="q-sub">{t.sub}</p>
+    </div>
+
+    <ol class="q-list">
+      {projects.map((project, i) => {
+        const [main] = project.images;
+        return (
+          <li>
+            <article class="q-project" aria-labelledby={`q-${project.id}`}>
+              <span class="q-number" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+              <img
+                class="q-image"
+                src={src(main.file, 900)}
+                srcset={widths.map((width) => `${src(main.file, width)} ${width}w`).join(', ')}
+                sizes="(min-width: 1520px) 760px, (min-width: 1024px) 50vw, calc(100vw - 40px)"
+                alt={main.alt}
+                width="1800"
+                height="1200"
+                loading="lazy"
+                decoding="async"
+              />
+              <div class="q-info">
+                {project.placeholder && <p class="tag-placeholder mb-4">{t.placeholder}</p>}
+                <h3 id={`q-${project.id}`} class="q-title">{project.title}</h3>
+                <dl class="q-meta">
+                  {project.location && <div><dt>{t.meta.location}</dt><dd>{project.location}</dd></div>}
+                  <div><dt>{t.meta.type}</dt><dd>{project.type}</dd></div>
+                  <div><dt>{t.meta.services}</dt><dd>{project.services.join(' · ')}</dd></div>
+                  {project.year && <div><dt>{t.meta.year}</dt><dd>{project.year}</dd></div>}
+                  {project.architect && <div><dt>{t.meta.architect}</dt><dd>{project.architect}</dd></div>}
+                  {project.client && <div><dt>{t.meta.client}</dt><dd>{project.client}</dd></div>}
+                </dl>
+                <p class="q-desc">{project.description}</p>
+              </div>
+            </article>
+            {project.testimonial && <div class="q-quote"><ProjectTestimonial testimonial={project.testimonial} /></div>}
+          </li>
+        );
+      })}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .q-head { display: grid; gap: 24px; }
+  .q-sub { max-width: 48ch; color: var(--color-muted); font-size: var(--text-body); line-height: 1.65; }
+
+  .q-list { list-style: none; margin: 56px 0 0; padding: 0; border-bottom: 1px solid var(--color-line); }
+  .q-project {
+    display: grid;
+    gap: 20px;
+    padding-block: 32px 40px;
+    border-top: 1px solid var(--color-line);
+  }
+  .q-number { color: var(--color-muted); font-size: var(--text-label); font-variant-numeric: tabular-nums; letter-spacing: 0.08em; }
+  .q-image { display: block; width: 100%; aspect-ratio: 3 / 2; object-fit: cover; background: var(--color-surface); }
+  .q-title { font-size: var(--text-title); line-height: 1.02; letter-spacing: -0.03em; max-width: 18ch; }
+  .q-meta { margin: 20px 0 0; }
+  .q-meta div { display: grid; grid-template-columns: 7.5rem 1fr; gap: 12px; padding: 4px 0; font-size: var(--text-meta); }
+  .q-meta dt { color: var(--color-muted); }
+  .q-meta dd { margin: 0; }
+  .q-desc { margin-top: 18px; max-width: 46ch; color: var(--color-muted); line-height: 1.65; }
+  .q-quote { padding-block: 16px 56px; }
+
+  @media (min-width: 1024px) {
+    .q-head { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(24px, 2.6vw, 44px); align-items: end; }
+    .q-head h2 { grid-column: 1 / 7; }
+    .q-sub { grid-column: 8 / 13; }
+    .q-list { margin-top: 88px; }
+    .q-project {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: clamp(24px, 2.6vw, 44px);
+      align-items: start;
+      padding-block: 40px 48px;
+    }
+    .q-number { grid-column: 1; padding-top: 4px; }
+    .q-image { grid-column: 2 / 8; }
+    .q-info { grid-column: 9 / 13; }
+  }
+</style>

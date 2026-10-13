@@ -1,0 +1,95 @@
+---
+import { contact, fullName, people } from '../../../data/site';
+import { getLang, useTranslations } from '../../../i18n/ui';
+import ContactForm from '../ContactForm.astro';
+import Lesson from './Lesson.astro';
+
+/** Einzelgespräch: one desk, two chairs facing each other. The form is the desk top, always open. */
+const t = useTranslations(getLang(Astro.currentLocale)).contact;
+const names = people.map((p) => fullName(p).split(' ')[0]).join(' oder ');
+---
+
+<section id="kontakt" class="talk" aria-labelledby="contact-title">
+  <div class="shell grid-wrap">
+    <div class="copy">
+      <Lesson n="06" name="Einzelgespräch" note="direkt, persönlich, vor Ort" layout="talk" from="stations" />
+      <h2 id="contact-title" class="text-headline leading-[0.98] tracking-[-0.03em]">{t.title}</h2>
+      <p class="mt-6 max-w-[40ch] text-body leading-[1.65] text-muted lg:text-lead">{t.lead}</p>
+      <p class="mt-8 text-meta">
+        {contact.phone ? (
+          <a class="link-line font-semibold" href={`tel:${contact.phone.replace(/\s/g, '')}`}>{t.call}</a>
+        ) : (
+          <a class="link-line font-semibold" href={`mailto:${contact.email}`}>{t.mail(contact.email)}</a>
+        )}
+      </p>
+    </div>
+
+    <div class="setting">
+      <p class="chair-row" aria-hidden="true">
+        <svg class="chair chair-them" viewBox="-12 -12 24 24"><use href="#kz-chair" x="-12" y="-12" width="24" height="24" transform="rotate(180)" /></svg>
+        <span class="chair-label">{names}</span>
+      </p>
+      <div id="anfrage" class="desk" tabindex="-1">
+        <ContactForm />
+      </div>
+      <p class="chair-row" aria-hidden="true">
+        <svg class="chair chair-you" viewBox="-12 -12 24 24"><use href="#kz-chair" x="-12" y="-12" width="24" height="24" /></svg>
+        <span class="chair-label marker">Ihr Platz</span>
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .talk { padding-block: clamp(88px, 10vw, 160px); }
+  .grid-wrap { display: grid; gap: 48px; }
+
+  .setting { display: flex; flex-direction: column; align-items: center; }
+  .chair-row { display: flex; align-items: center; gap: 14px; }
+  .chair { width: 64px; height: 64px; overflow: visible; }
+  .chair-them { --seat: var(--color-ink); }
+  .chair-row:first-child { margin-bottom: -14px; }
+  .chair-row:last-child { margin-top: -14px; }
+  .chair-label { font-size: var(--text-meta); font-weight: 600; }
+  .chair-label.marker { font-size: var(--text-marker); font-weight: 600; }
+
+  .desk {
+    position: relative;
+    width: 100%;
+    padding: clamp(24px, 3vw, 44px);
+    border: 1.5px solid var(--color-ink);
+    border-radius: 3px;
+    background: var(--color-paper);
+    box-shadow: 0 24px 48px -36px rgba(32, 32, 29, 0.55);
+    outline: none;
+  }
+
+  @media (min-width: 1024px) {
+    .grid-wrap { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(24px, 2.6vw, 44px); align-items: start; }
+    .copy { position: sticky; top: calc(var(--nav-h) + 48px); }
+    .copy { grid-column: 1 / 6; }
+    .setting { grid-column: 6 / 13; }
+  }
+</style>
+
+<script>
+  // The form is always on the desk: links that ask for it scroll to it, a station's phase arrives pre-selected.
+  const desk = document.getElementById('anfrage');
+  if (desk) {
+    document.querySelectorAll<HTMLElement>('[data-open-form]').forEach((el) =>
+      el.addEventListener('click', (event) => {
+        event.preventDefault();
+        const phase = el.dataset.phase;
+        if (phase) {
+          desk.querySelectorAll<HTMLInputElement>('input[type="radio"]').forEach((radio) => {
+            radio.checked = radio.value === phase;
+          });
+        }
+        const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+        desk.scrollIntoView({ behavior, block: 'start' });
+        window.setTimeout(() => desk.querySelector<HTMLInputElement>('input')?.focus({ preventScroll: true }), behavior === 'smooth' ? 600 : 0);
+        history.replaceState(null, '', '#anfrage');
+      }),
+    );
+  }
+</script>

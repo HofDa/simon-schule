@@ -2,6 +2,11 @@
 import ServiceChair, { type ChairModel } from './art/ServiceChair.astro';
 import { getLang, useTranslations } from '../../i18n/ui';
 
+interface Props {
+  /** The chairs already stand in place: no roll-in, no pinned sequence (Whiteboard, ruhig). */
+  still?: boolean;
+}
+const { still = false } = Astro.props;
 const lang = getLang(Astro.currentLocale);
 const t = useTranslations(lang).services;
 const chairModels: ChairModel[] = ['pantomove', 'pantoswing', 'jumper-air', 'jumper-ply', 'bambino'];
@@ -14,12 +19,14 @@ const services = lang === 'de' ? [
 ] : t.items;
 ---
 
-<section id="leistungen" class="services relative z-20" aria-labelledby="services-title" data-service-chairs>
-  <script is:inline>
-    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      document.currentScript?.parentElement?.classList.add('has-chair-motion');
-    }
-  </script>
+<section id="leistungen" class="services relative z-20" aria-labelledby="services-title" data-service-chairs={still ? undefined : ''}>
+  {!still && (
+    <script is:inline>
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.currentScript?.parentElement?.classList.add('has-chair-motion');
+      }
+    </script>
+  )}
   <div class="shell services-stage" data-service-stage>
     <h2 id="services-title" class="sr-only">{lang === 'de' ? 'Unsere Leistungen' : 'I nostri servizi'}</h2>
     <ol class="service-chairs">

@@ -1,0 +1,146 @@
+---
+import { getProjects } from '../../../data/projects';
+import { asset } from '../../../lib/paths';
+import { getLang, useTranslations } from '../../../i18n/ui';
+import ProjectTestimonial from '../ProjectTestimonial.astro';
+import Lesson from './Lesson.astro';
+
+/** Gruppentische: every project is a table island, its photo the table top, six chairs around it. */
+const lang = getLang(Astro.currentLocale);
+const t = useTranslations(lang).projects;
+const projects = getProjects(lang);
+const src = (file: string, w: number) => asset(`images/projects/${file}-${w}.webp`);
+const widths = [320, 480, 640, 720, 900, 960];
+// around the table: position, rotation (facing the table) and the direction a chair moves when pulled in
+const chairs = [
+  { x: '30%', y: '0%', r: 180, dx: 0, dy: 1 },
+  { x: '70%', y: '0%', r: 180, dx: 0, dy: 1 },
+  { x: '100%', y: '50%', r: -90, dx: -1, dy: 0 },
+  { x: '70%', y: '100%', r: 0, dx: 0, dy: -1 },
+  { x: '30%', y: '100%', r: 0, dx: 0, dy: -1 },
+  { x: '0%', y: '50%', r: 90, dx: 1, dy: 0 },
+];
+---
+
+<section id="projekte" class="groups" aria-labelledby="projects-title">
+  <div class="shell">
+    <Lesson n="02" name="Gruppentische" note="gemeinsam an einem Beispiel arbeiten" layout="groups" from="frontal" />
+    <div class="head">
+      <h2 id="projects-title" class="text-headline leading-[0.98] tracking-[-0.03em]">{t.title}</h2>
+      <p class="sub">{t.sub}</p>
+    </div>
+
+    <ol class="islands">
+      {projects.map((project, i) => {
+        const [main] = project.images;
+        return (
+          <li class="island" style={`--i: ${i}`}>
+            <article aria-labelledby={`g-${project.id}`}>
+              <div class="tabletop">
+                {chairs.map((c) => (
+                  <svg class="g-chair" viewBox="-12 -12 24 24" aria-hidden="true" style={`left: ${c.x}; top: ${c.y}; --r: ${c.r}deg; --dx: ${c.dx}; --dy: ${c.dy}`}>
+                    <use href="#kz-chair" x="-12" y="-12" width="24" height="24" />
+                  </svg>
+                ))}
+                <img
+                  src={src(main.file, 900)}
+                  srcset={widths.map((width) => `${src(main.file, width)} ${width}w`).join(', ')}
+                  sizes="(min-width: 1520px) 400px, (min-width: 1024px) 26vw, calc(100vw - 120px)"
+                  alt={main.alt}
+                  width="900"
+                  height="600"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+              <div class="info">
+                <p class="table-n">Tisch {i + 1}</p>
+                {project.placeholder && <p class="tag-placeholder mt-2">{t.placeholder}</p>}
+                <h3 id={`g-${project.id}`} class="title">{project.title}</h3>
+                <dl class="meta">
+                  {project.location && <div><dt>{t.meta.location}</dt><dd>{project.location}</dd></div>}
+                  <div><dt>{t.meta.type}</dt><dd>{project.type}</dd></div>
+                  <div><dt>{t.meta.services}</dt><dd>{project.services.join(' · ')}</dd></div>
+                  {project.year && <div><dt>{t.meta.year}</dt><dd>{project.year}</dd></div>}
+                </dl>
+                <p class="desc">{project.description}</p>
+              </div>
+            </article>
+            {project.testimonial && <div class="mt-16"><ProjectTestimonial testimonial={project.testimonial} /></div>}
+          </li>
+        );
+      })}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .groups { padding-block: clamp(80px, 9vw, 144px); background: var(--color-warm); }
+  .head { display: grid; gap: 24px; }
+  .sub { max-width: 48ch; color: var(--color-muted); font-size: var(--text-body); line-height: 1.65; }
+
+  .islands { list-style: none; margin: clamp(56px, 7vw, 104px) 0 0; padding: 0; display: grid; gap: 72px; }
+
+  /* the island: the photo is the table top, the chairs stand half outside its edges */
+  .tabletop { --chair: clamp(40px, 4vw, 52px); --pull: 0px; position: relative; margin: calc(var(--chair) * 0.62); }
+  .tabletop img {
+    position: relative;
+    display: block;
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    border: 6px solid var(--color-paper);
+    border-radius: 4px;
+    box-shadow: 0 1px 1px rgba(32, 32, 29, 0.08), 0 16px 30px -20px rgba(32, 32, 29, 0.5);
+  }
+  .g-chair {
+    position: absolute;
+    width: var(--chair);
+    height: var(--chair);
+    overflow: visible;
+    /* the chair's centre sits a little outside the edge, pulled in towards the table on hover */
+    transform:
+      translate(-50%, -50%)
+      translate(calc(var(--dx) * (var(--pull) - var(--chair) * 0.28)), calc(var(--dy) * (var(--pull) - var(--chair) * 0.28)))
+      rotate(var(--r));
+    transition: transform 500ms var(--ease-draw);
+  }
+  .island:hover .tabletop, .island:focus-within .tabletop { --pull: 9px; }
+
+  .table-n { color: var(--color-muted); font-size: var(--text-label); letter-spacing: 0.08em; text-transform: uppercase; }
+  .info { margin-top: 8px; }
+  .title { margin-top: 10px; font-size: clamp(1.5rem, 2vw, 2rem); line-height: 1.05; letter-spacing: -0.03em; }
+  .meta { margin: 18px 0 0; }
+  .meta div { display: grid; grid-template-columns: 6.5rem 1fr; gap: 10px; padding: 3px 0; font-size: var(--text-meta); }
+  .meta dt { color: var(--color-muted); }
+  .meta dd { margin: 0; }
+  .desc { margin-top: 14px; color: var(--color-muted); font-size: var(--text-meta); line-height: 1.6; }
+
+  @media (min-width: 768px) and (max-width: 1023px) {
+    .islands { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 40px; }
+  }
+  @media (min-width: 1024px) {
+    .head { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(24px, 2.6vw, 44px); align-items: end; }
+    .head h2 { grid-column: 1 / 7; }
+    .sub { grid-column: 8 / 13; }
+    /* three tables spread through the room, not lined up */
+    .islands { grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: clamp(32px, 4vw, 72px); }
+    .island:nth-child(3n + 2) { margin-top: 120px; }
+    .island:nth-child(3n + 3) { margin-top: 40px; }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    /* the chairs are pulled up to the table when it comes into view */
+    :global(html.js) .island .tabletop { --pull: -18px; }
+    :global(html.js) .island .g-chair { opacity: 0; transition: transform 900ms var(--ease-draw), opacity 400ms; transition-delay: calc(var(--i) * 140ms); }
+    :global(html.js) .island.is-in .tabletop { --pull: 0px; }
+    :global(html.js) .island.is-in .g-chair { opacity: 1; }
+    :global(html.js) .island.is-in:hover .tabletop, :global(html.js) .island.is-in:focus-within .tabletop { --pull: 9px; }
+    :global(html.js) .island.is-in .g-chair { transition-delay: 0ms; }
+  }
+</style>
+
+<script>
+  import { revealOnce } from '../../../scripts/motion';
+  revealOnce(document.querySelectorAll('.island'), '0px 0px -20% 0px');
+</script>

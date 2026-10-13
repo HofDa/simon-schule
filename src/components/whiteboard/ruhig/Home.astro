@@ -1,0 +1,36 @@
+---
+/**
+ * "Das Whiteboard, ruhig": the same board as Das Whiteboard (claim written, prints pinned up),
+ * with every section below set plainly: chairs standing in place, the projects as a register,
+ * no drawn route, no seated scene. German-only variant at /whiteboard-ruhig/.
+ */
+import Layout from '../../../layouts/WhiteboardLayout.astro';
+import Navbar from '../shared/Navbar.astro';
+import Footer from '../shared/Footer.astro';
+import WhiteboardHero from '../WhiteboardHero.astro';
+import ServicesStory from '../ServicesStory.astro';
+import ClosingTestimonial from '../../ClosingTestimonial.astro';
+import ProjectPhases from '../ProjectPhases.astro';
+import Projects from './Projects.astro';
+import People from './People.astro';
+import VSProducts from './VSProducts.astro';
+import Contact from './Contact.astro';
+import { asset, homeFor } from '../../../lib/paths';
+
+const alternates = { de: asset('whiteboard-ruhig/'), it: homeFor('it') };
+---
+
+<Layout title="Trias Schule | Das Whiteboard, ruhig" canonical={asset('whiteboard-ruhig/')} alternates={alternates} noindex variantSwitcher>
+  <Navbar alternates={alternates} />
+  <main id="inhalt">
+    <WhiteboardHero />
+    <ServicesStory still />
+    <Projects />
+    <People />
+    <VSProducts />
+    <ClosingTestimonial />
+    <ProjectPhases still />
+    <Contact />
+  </main>
+  <Footer />
+</Layout>

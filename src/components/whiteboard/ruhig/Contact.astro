@@ -1,0 +1,65 @@
+---
+import { contact, fullName, people } from '../../../data/site';
+import { getLang, useTranslations } from '../../../i18n/ui';
+import ContactForm from '../ContactForm.astro';
+
+/** The invitation and the inquiry form side by side, the form always open: no seated scene. */
+const t = useTranslations(getLang(Astro.currentLocale)).contact;
+---
+
+<section id="kontakt" class="quiet-contact" aria-labelledby="contact-title">
+  <div class="shell q-grid">
+    <div class="q-cta">
+      <h2 id="contact-title" class="text-headline leading-[0.98] tracking-[-0.03em]">{t.title}</h2>
+      <p class="mt-6 max-w-[40ch] text-body leading-[1.65] text-muted lg:text-lead">{t.lead}</p>
+      <p class="q-names">{people.map((p) => fullName(p)).join(' · ')}</p>
+      <p class="mt-3 text-meta">
+        {contact.phone ? (
+          <a class="link-line font-semibold" href={`tel:${contact.phone.replace(/\s/g, '')}`}>{t.call}</a>
+        ) : (
+          <a class="link-line font-semibold" href={`mailto:${contact.email}`}>{t.mail(contact.email)}</a>
+        )}
+      </p>
+    </div>
+
+    <div id="anfrage" class="q-form" tabindex="-1">
+      <ContactForm />
+    </div>
+  </div>
+</section>
+
+<style>
+  .quiet-contact { padding-block: 96px 112px; border-top: 1px solid var(--color-line); }
+  .q-grid { display: grid; gap: 56px; }
+  .q-names { margin-top: 32px; font-size: var(--text-meta); font-weight: 600; }
+  .q-form { outline: none; }
+
+  @media (min-width: 1024px) {
+    .quiet-contact { padding-block: 140px 160px; }
+    .q-grid { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(24px, 2.6vw, 44px); align-items: start; }
+    .q-cta { grid-column: 1 / 6; position: sticky; top: calc(var(--nav-h) + 40px); }
+    .q-form { grid-column: 7 / 13; }
+  }
+</style>
+
+<script>
+  // The form is always open here: links that ask for it only scroll to it, a phase chosen above arrives pre-selected.
+  const formWrap = document.getElementById('anfrage');
+  if (formWrap) {
+    document.querySelectorAll<HTMLElement>('[data-open-form]').forEach((el) =>
+      el.addEventListener('click', (event) => {
+        event.preventDefault();
+        const phase = el.dataset.phase;
+        if (phase) {
+          formWrap.querySelectorAll<HTMLInputElement>('input[type="radio"]').forEach((radio) => {
+            radio.checked = radio.value === phase;
+          });
+        }
+        const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+        formWrap.scrollIntoView({ behavior, block: 'start' });
+        window.setTimeout(() => formWrap.querySelector<HTMLInputElement>('input')?.focus({ preventScroll: true }), behavior === 'smooth' ? 600 : 0);
+        history.replaceState(null, '', '#anfrage');
+      }),
+    );
+  }
+</script>

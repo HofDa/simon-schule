@@ -4,10 +4,9 @@
 
   const base = new URL(script.src, location.href).pathname.replace(/variant-switcher\.js$/, '');
   const variants = [
-    { key: 'masskette', number: '01', title: 'Die Maßkette', description: 'Der neue Entwurf' },
-    { key: 'schnitt', number: '02', title: 'Schnitt durch die Schule', description: 'Ein Rundgang durch die Räume' },
-    { key: 'old', number: '03', title: 'Bisherige Version', description: 'Der vorherige Entwurf' },
-    { key: 'leistungsverzeichnis', number: '04', title: 'Der Raumplaner', description: 'Einen Klassenraum selbst einrichten' },
+    { key: 'whiteboard', number: '01', title: 'Das Whiteboard', description: 'Handschrift, angepinnte Bilder, rollende Stühle' },
+    { key: 'whiteboard-ruhig', number: '02', title: 'Das Whiteboard, ruhig', description: 'Dasselbe Board, ruhige Abschnitte darunter' },
+    { key: 'klassenzimmer', number: '03', title: 'Das Klassenzimmer', description: 'Vorne das Board, darunter eine Sitzordnung pro Abschnitt' },
   ];
   const current = location.pathname.slice(base.length).split('/')[0];
   const root = document.createElement('div');

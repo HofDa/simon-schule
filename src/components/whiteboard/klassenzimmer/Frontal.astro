@@ -1,0 +1,93 @@
+---
+import { getLang, useTranslations } from '../../../i18n/ui';
+import Lesson from './Lesson.astro';
+
+/** Frontal: the five services as desks in rows, every chair facing the board. */
+const t = useTranslations(getLang(Astro.currentLocale)).services;
+---
+
+<section id="leistungen" class="frontal" aria-labelledby="services-title">
+  <div class="shell">
+    <Lesson n="01" name="Frontal" note="zuhören, mitschreiben, nachfragen" layout="frontal" from="talk" />
+    <div class="head">
+      <h2 id="services-title" class="text-headline leading-[0.98] tracking-[-0.03em]">{t.title}</h2>
+      <p class="intro">{t.intro}</p>
+    </div>
+
+    <div class="room">
+      <p class="board-edge" aria-hidden="true"><span>Tafel</span></p>
+      <ol class="desks" data-desks>
+        {t.items.map((item, i) => (
+          <li class="desk" style={`--i: ${i}`}>
+            <div class="desk-top">
+              <span class="desk-n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+              <h3>{item.title}</h3>
+              <p>{item.text}</p>
+            </div>
+            <svg class="desk-chair" viewBox="-12 -12 24 24" aria-hidden="true"><use href="#kz-chair" x="-12" y="-12" width="24" height="24" /></svg>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </div>
+</section>
+
+<style>
+  .frontal { padding-block: clamp(80px, 9vw, 144px); }
+  .head { display: grid; gap: 24px; }
+  .intro { max-width: 50ch; color: var(--color-muted); font-size: var(--text-body); line-height: 1.65; }
+
+  .room { margin-top: clamp(48px, 6vw, 88px); }
+  /* the edge of the board the room faces */
+  .board-edge { position: relative; height: 10px; margin: 0 8% clamp(40px, 5vw, 72px); border-radius: 2px; background: linear-gradient(180deg, #e2e5e6, #c3c7ca); }
+  .board-edge span {
+    position: absolute;
+    left: 50%;
+    top: 16px;
+    transform: translateX(-50%);
+    color: var(--color-muted);
+    font-size: var(--text-label);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .desks { list-style: none; margin: 0; padding: 0; display: grid; gap: 40px 24px; }
+  .desk { display: flex; flex-direction: column; align-items: center; }
+  .desk-top {
+    width: 100%;
+    padding: 22px 22px 26px;
+    border: 1.5px solid var(--color-ink);
+    border-radius: 3px;
+    background: var(--color-paper);
+    box-shadow: 0 10px 24px -20px rgba(32, 32, 29, 0.5);
+  }
+  .desk-n { display: block; color: var(--color-muted); font-size: var(--text-label); letter-spacing: 0.08em; font-variant-numeric: tabular-nums; }
+  .desk h3 { margin-top: 10px; font-size: clamp(1.4rem, 2vw, 1.9rem); letter-spacing: -0.035em; line-height: 1.1; }
+  .desk p { margin-top: 12px; color: var(--color-muted); font-size: var(--text-meta); line-height: 1.55; }
+  .desk-chair { width: 56px; height: 56px; margin-top: -2px; overflow: visible; }
+
+  @media (min-width: 640px) {
+    .desks { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .desk:last-child { grid-column: 1 / -1; width: calc(50% - 12px); justify-self: center; }
+  }
+  @media (min-width: 1024px) {
+    .head { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(24px, 2.6vw, 44px); align-items: end; }
+    .head h2 { grid-column: 1 / 7; }
+    .intro { grid-column: 8 / 13; }
+    /* rows of three and two, centred on the board like a classroom */
+    .desks { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 56px clamp(24px, 3vw, 48px); padding-inline: 4%; }
+    .desk { grid-column: span 2; }
+    .desk:nth-child(4) { grid-column: 2 / 4; }
+    .desk:last-child { grid-column: 4 / 6; width: auto; }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    :global(html.js) .desk-chair { opacity: 0; translate: 0 26px; transition: opacity 500ms var(--ease-draw), translate 900ms var(--ease-draw); transition-delay: calc(var(--i) * 110ms + 150ms); }
+    :global(html.js) .desks.is-in .desk-chair { opacity: 1; translate: 0 0; }
+  }
+</style>
+
+<script>
+  import { revealOnce } from '../../../scripts/motion';
+  revealOnce(document.querySelectorAll('[data-desks]'), '0px 0px -25% 0px');
+</script>

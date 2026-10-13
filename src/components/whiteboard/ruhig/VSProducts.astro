@@ -1,0 +1,73 @@
+---
+import { vs } from '../../../data/site';
+import { getLang, useTranslations } from '../../../i18n/ui';
+
+/** VS Möbel as a plain category list beside the heading: no drawn chair, no scroll effects. */
+const lang = getLang(Astro.currentLocale);
+const t = useTranslations(lang).vs;
+const categories: { name: string; text: string; url?: string }[] = t.categories;
+const catalogUrl = vs.catalogUrl[lang];
+---
+
+<section id="vs-moebel" class="quiet-vs pb-28 lg:pb-40" aria-labelledby="vs-title">
+  <div class="shell q-grid">
+    <div class="q-head">
+      <h2 id="vs-title" class="text-headline leading-[0.98] tracking-[-0.03em]">{t.title}</h2>
+      <p class="mt-7 max-w-[44ch] text-body leading-[1.65] text-muted lg:text-lead">{t.intro}</p>
+      <p class="q-exclusive">{t.exclusive}</p>
+    </div>
+
+    <div class="q-list">
+      <ul>
+        {categories.map((c) => (
+          <li>
+            {c.url ? (
+              <a class="q-cat" href={c.url} target="_blank" rel="noopener">
+                <span class="q-cat-name">{c.name}</span>
+                <span class="q-cat-text">{c.text}</span>
+                <span class="sr-only">{t.newTab}</span>
+              </a>
+            ) : (
+              <div class="q-cat">
+                <span class="q-cat-name">{c.name}</span>
+                <span class="q-cat-text">{c.text}</span>
+              </div>
+            )}
+          </li>
+        ))}
+      </ul>
+      <a class="btn btn-ink mt-12" href={catalogUrl} target="_blank" rel="noopener">
+        {t.all}
+        <svg class="btn-arrow h-3.5 w-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" /></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .q-grid { display: grid; gap: 48px; }
+  .q-exclusive {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6em;
+    margin-top: 28px;
+    font-size: var(--text-meta);
+    font-weight: 600;
+  }
+  .q-exclusive::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--color-ginster); }
+
+  .q-list ul { list-style: none; margin: 0; padding: 0; border-bottom: 1px solid var(--color-line); }
+  .q-cat { display: grid; gap: 6px; padding: 20px 0; border-top: 1px solid var(--color-line); }
+  .q-cat-name { font-size: var(--text-lead); font-weight: 600; letter-spacing: -0.02em; }
+  .q-cat-text { font-size: var(--text-meta); color: var(--color-muted); }
+  a.q-cat:hover .q-cat-name { text-decoration: underline; text-underline-offset: 4px; }
+
+  @media (min-width: 768px) {
+    .q-cat { grid-template-columns: minmax(10rem, 1fr) minmax(0, 1.6fr); column-gap: 32px; align-items: baseline; }
+  }
+  @media (min-width: 1024px) {
+    .q-grid { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(24px, 2.6vw, 44px); }
+    .q-head { grid-column: 1 / 6; }
+    .q-list { grid-column: 7 / 13; padding-top: 12px; }
+  }
+</style>

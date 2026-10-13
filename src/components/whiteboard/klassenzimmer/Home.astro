@@ -1,0 +1,44 @@
+---
+/**
+ * "Das Klassenzimmer": the site as a classroom. The Whiteboard is at the front; every section
+ * below is the room in another seating order, one per way of learning: Frontal (services),
+ * Gruppentische (projects), Sitzkreis (people), Lernlandschaft (VS), Stationen (phases) and
+ * Einzelgespräch (contact). German-only variant at /klassenzimmer/.
+ */
+import Layout from '../../../layouts/WhiteboardLayout.astro';
+import Navbar from '../shared/Navbar.astro';
+import Footer from '../shared/Footer.astro';
+import WhiteboardHero from '../WhiteboardHero.astro';
+import ClosingTestimonial from '../../ClosingTestimonial.astro';
+import ChairSprite from './ChairSprite.astro';
+import Frontal from './Frontal.astro';
+import Groups from './Groups.astro';
+import Circle from './Circle.astro';
+import Landscape from './Landscape.astro';
+import Stations from './Stations.astro';
+import Talk from './Talk.astro';
+import { asset, homeFor } from '../../../lib/paths';
+
+const alternates = { de: asset('klassenzimmer/'), it: homeFor('it') };
+---
+
+<Layout title="Trias Schule | Das Klassenzimmer" canonical={asset('klassenzimmer/')} alternates={alternates} noindex variantSwitcher>
+  <ChairSprite />
+  <Navbar alternates={alternates} />
+  <main id="inhalt">
+    <WhiteboardHero />
+    <Frontal />
+    <Groups />
+    <Circle />
+    <Landscape />
+    <ClosingTestimonial />
+    <Stations />
+    <Talk />
+  </main>
+  <Footer />
+</Layout>
+
+<style is:global>
+  /* no chair rolls in under the board here: the hero keeps no room for it */
+  html:root { --chair-peek: 0px; }
+</style>
