@@ -29,22 +29,22 @@ Zitate erscheinen erst, wenn sie eingetragen sind: `testimonial` pro Projekt, da
 ## Fotos
 Projektfotos liegen als WebP-Varianten mit 320, 480, 640, 720, 900, 960 und 1800 Pixel Breite unter `public/images/projects/`. `srcset` wählt je nach Darstellungsgröße die passende Datei. Das Vorschaubild für geteilte Links ist `public/images/social-preview.jpg` (1200 × 630) und basiert auf dem Lernlandschaft-Foto.
 
-Aktuelle **temporäre** Fotos aus den VS-Katalogen (Nutzungsrechte liegen vor). Quelle sind die Archiv-PDFs, deren Bilder stark verkleinert sind (ca. 540–1085 px breit); die 900er- und 1800er-Varianten sind hochskaliert und unscharf. **Vor dem Livegang durch die Originaldateien von VS ersetzen**, gleiche Dateinamen behalten, dann einfach neu exportieren.
+Aktuelle **temporäre** Fotos aus den VS-Katalogen (Nutzungsrechte liegen vor). Quelle sind die Archiv-PDFs, deren Bilder verkleinert sind. Die Fotos aus dem Basiskatalog stammen aus der höher aufgelösten Archivfassung (`45-057-49_VXX_DE_Basics--Der-Katalog-fuer-die-Schule.archiv.pdf`, ca. 1180–1730 px breit); nur die 1800er-Variante ist dort noch hochskaliert. Das Foto aus dem Digital-Katalog (1085 px) ist ab der 1800er-Variante unscharf. **Vor dem Livegang durch die Originaldateien von VS ersetzen**, gleiche Dateinamen behalten, dann einfach neu exportieren.
 
 | Datei | Projekt-Slot | Quelle | Originalgröße im PDF |
 |---|---|---|---|
 | vs-klassenzimmer-gelb | Schule | Digital-Katalog 2026, S. 25 (Rendering) | 1085 × 641 |
-| vs-lernraum-boden | Kindergarten (1. Bild) | Basiskatalog Schule 2026, S. 12 | 740 × 402 |
-| vs-lernraum-flur | Kindergarten (2. Bild) | Basiskatalog Schule 2026, S. 11 | 737 × 401 |
-| vs-lernlandschaft-halle | Lernlandschaft + `social-preview.jpg` | Basiskatalog Schule 2026, S. 13 | 738 × 402 |
+| vs-lernraum-boden | Kindergarten (1. Bild) | Basiskatalog Schule 2026, S. 12 | 1515 × 823 |
+| vs-lernraum-flur | Kindergarten (2. Bild) | Basiskatalog Schule 2026, S. 11 | 1179 × 641 |
+| vs-lernlandschaft-halle | Lernlandschaft + `social-preview.jpg` | Basiskatalog Schule 2026, S. 13 | 1726 × 939 |
 
 Hinweis: Die beiden „Kindergarten“-Fotos zeigen Grundschulkinder, nicht einen Kindergarten. Für den Slot passende VS-Kindergartenfotos anfragen.
 
-Die früheren Wikimedia-Fotos (`classroom-blue-chairs`, `kindergarten-cave`, `kindergarten-kitchen`, `learning-commons`) liegen noch unter `public/images/projects/`, werden aber nicht mehr verwendet.
+Die Herkunft der Fotos steht nur in dieser Tabelle; unter `public/` liegen keine Begleitdateien, damit nichts davon öffentlich ausgeliefert wird.
 
 Lernformen-Szenen („Whiteboard, ruhig“, Abschnitt „Ein Raum, viele Arten zu lernen“) sind gezeichnet, keine Fotos: VS-Möbel modelliert in `src/components/whiteboard/art/vs-models.ts` (PantoSwing-LuPo S. 37, Hokki S. 46, Tano S. 74, Puzzle S. 95, Shift+ Landscape S. 21–22, Vancouver S. 178, Farben aus den Katalogfotos), angeordnet in `learning-scenes.ts`. Beim Build entstehen daraus die Dateien `/scenes/<name>.svg`.
 
-Produktfreisteller: `public/images/products/vs-pantomove-lupo-gelb.webp` (PantoMove-LuPo gelb, Basiskatalog S. 36). Nur grob freigestellt aus einem ca. 120 px hohen Bild, noch nicht eingebunden. Einen ginstergelben PantoSwing gibt es in den Katalogen nicht.
+Produktfreisteller: `public/images/products/vs-pantomove-lupo-gelb.webp` (PantoMove-LuPo gelb, Basiskatalog S. 36). Nur grob freigestellt aus einem ca. 190 px hohen Bild, noch nicht eingebunden. Einen ginstergelben PantoSwing gibt es in den Katalogen nicht.
 
 ## Zeichnungen, die durch Fotos ersetzt werden können
 - [ ] **VS-Stuhl ginstergelb** (VS-Sektion): `src/components/art/VSChair.astro` ist eine schematische Seitenansicht, die beim Scrollen schwingt. Ideal: freigestelltes PNG/WebP `public/images/products/vs-pantoswing-ginstergelb.webp` (offizielles VS-Material mit Nutzungsrechten).

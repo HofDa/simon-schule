@@ -59,7 +59,7 @@ const de: Record<'imprint' | 'privacy', LegalDoc> = {
       {
         title: 'Bilder und Zeichnungen',
         paragraphs: [
-          'Die Projektfotos sind vorläufige Platzhalter von Wikimedia Commons. Die Zeichnungen von Stühlen, Hockern und Personen sind schematische Darstellungen.',
+          'Die Projektfotos sind vorläufige Platzhalter aus den Katalogen der VS Vereinigte Spezialmöbelfabriken, mit deren Genehmigung verwendet. Die Zeichnungen von Stühlen, Hockern und Personen sind schematische Darstellungen.',
         ],
         links: credits,
       },
@@ -145,7 +145,7 @@ const it: Record<'imprint' | 'privacy', LegalDoc> = {
       {
         title: 'Immagini e disegni',
         paragraphs: [
-          'Le foto dei progetti sono segnaposto provvisori da Wikimedia Commons. I disegni di sedie, sgabelli e persone sono rappresentazioni schematiche.',
+          'Le foto dei progetti sono segnaposto provvisori tratti dai cataloghi di VS Vereinigte Spezialmöbelfabriken, utilizzati con la loro autorizzazione. I disegni di sedie, sgabelli e persone sono rappresentazioni schematiche.',
         ],
         links: credits,
       },
