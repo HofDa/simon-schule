@@ -1,0 +1,76 @@
+---
+/**
+ * The services as a frontal classroom in front of the board above: two rows of desks,
+ * every chair facing the board, seen from the back of the room. The front row stands
+ * further away and is drawn a little smaller. Nothing moves (Whiteboard, ruhig).
+ */
+import DeskBack, { type DeskItem } from '../art/DeskBack.astro';
+import { getLang } from '../../../i18n/ui';
+import { servicesFor } from '../../../data/services';
+
+const lang = getLang(Astro.currentLocale);
+const services = servicesFor(lang);
+// one thing on each desk, after its service: talk, plan, catalogue, assembly, care
+const items: DeskItem[] = ['mug', 'plan', 'catalogue', 'toolbox', 'plant'];
+---
+
+<section id="leistungen" class="classroom" aria-labelledby="services-title">
+  <div class="shell">
+    <h2 id="services-title" class="sr-only">{lang === 'de' ? 'Unsere Leistungen' : 'I nostri servizi'}</h2>
+    <ol class="desks">
+      {services.map((service, index) => (
+        <li class={`desk ${index < 3 ? 'is-front' : 'is-back'}`}>
+          <div class="desk-art">
+            <DeskBack item={items[index]} />
+          </div>
+          <div class="desk-copy">
+            <span class="desk-n" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+            <h3>{service.title}</h3>
+            <p>{service.text}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .classroom { padding-block: clamp(40px, 5vw, 72px) clamp(80px, 9vw, 144px); }
+
+  .desks { list-style: none; margin: 0; padding: 0; display: grid; gap: 56px 24px; }
+  .desk { min-width: 0; }
+  .desk-art { width: min(100%, 280px); margin-inline: auto; }
+  .desk-copy { margin-top: clamp(20px, 2.4vw, 32px); }
+  .desk-n {
+    display: block;
+    margin-bottom: 12px;
+    color: var(--color-muted);
+    font-size: var(--text-label);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.08em;
+  }
+  h3 { font-size: clamp(1.4rem, 2vw, 1.9rem); font-weight: 600; letter-spacing: -0.035em; line-height: 1.12; }
+  .desk-copy p { margin-top: 14px; max-width: 36ch; color: var(--color-muted); font-size: var(--text-body); line-height: 1.6; }
+
+  @media (max-width: 639px) {
+    .desks { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 44px 24px; }
+    .desk:last-child { grid-column: 1 / -1; width: calc((100% - 24px) / 2); justify-self: center; }
+    h3 { font-size: 1.45rem; }
+    .desk-copy p { margin-top: 10px; font-size: 0.95rem; }
+  }
+
+  @media (min-width: 640px) {
+    /* two rows on a six-column floor: three desks at the front, two behind them in the gaps */
+    .desks { grid-template-columns: repeat(6, minmax(0, 1fr)); column-gap: clamp(24px, 3vw, 56px); row-gap: clamp(56px, 6vw, 96px); }
+    .desk { grid-column: span 2; }
+    .desk:nth-child(4) { grid-column: 2 / 4; }
+    .desk:nth-child(5) { grid-column: 4 / 6; }
+    /* the front row is further from the viewer */
+    .is-front .desk-art { width: min(86%, 260px); }
+    .is-back .desk-art { width: min(100%, 310px); }
+  }
+
+  @media (min-width: 1024px) {
+    .desks { padding-inline: 4%; }
+  }
+</style>

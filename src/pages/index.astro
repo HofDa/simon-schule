@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { asset } from '../lib/paths';
+import Logo from '../components/shared/Logo.astro';
 
 const variants = [
   { number: '01', name: 'Das Whiteboard', detail: 'Handschrift, angepinnte Bilder, rollende Stühle', href: asset('whiteboard/') },
@@ -12,7 +13,7 @@ const variants = [
 <Layout title="Trias Schule | Entwürfe auswählen" description="Entwürfe für die Website von Trias Schule ansehen." canonical={asset('')} variantSwitcher>
   <main id="inhalt" class="entry">
     <div class="entry-inner">
-      <p class="brand"><strong>Trias</strong> Schule</p>
+      <p class="brand"><Logo mono label="Trias Schule" /></p>
       <div class="intro">
         <p class="eyebrow">Website-Entwürfe <span aria-hidden="true">/</span> Trias Schule</p>
         <h1>Wählen Sie eine Variante.</h1>
@@ -39,8 +40,7 @@ const variants = [
 <style>
   .entry { min-height: 100svh; background: var(--color-ginster); color: var(--color-ink); }
   .entry-inner { width: min(100% - 2 * var(--gutter), 1120px); min-height: 100svh; margin-inline: auto; display: flex; flex-direction: column; padding-block: clamp(28px, 5vh, 60px); }
-  .brand { font-size: .92rem; text-transform: uppercase; letter-spacing: .14em; }
-  .brand strong { font-weight: 800; }
+  .brand :global(.logo) { height: 30px; }
   .intro { margin-top: auto; padding-block: clamp(48px, 8vh, 100px) 40px; }
   .eyebrow, .number, .variant-detail, .note { font-size: .82rem; font-weight: 600; letter-spacing: .06em; }
   .eyebrow { text-transform: uppercase; }

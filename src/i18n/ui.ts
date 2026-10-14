@@ -38,6 +38,8 @@ const de = {
     main: 'Hauptnavigation',
     mobile: 'Mobile Navigation',
     menu: 'Menü',
+    family: 'Ein Bereich von Trias',
+    familyNewTab: '(öffnet trias.it in neuem Tab)',
     close: 'Schließen',
     switchLabel: 'Sprache',
   },
@@ -111,11 +113,12 @@ const de = {
     newTab: '(öffnet vs.de in neuem Tab)',
     all: 'Gesamtes VS Sortiment entdecken',
     exclusive: 'Exklusivvertretung VS Möbel in Südtirol',
+    // deep links into VS (checked 14.10.2026); VS has no kindergarten page, so that category stays without one
     categories: [
-      { name: 'Sitzen', text: 'Stühle und Hocker, auf denen man sich bewegen kann.' },
-      { name: 'Tische', text: 'Einzel- und Gruppentische, die sich schnell umstellen lassen.' },
-      { name: 'Stauraum', text: 'Schränke und Regale, die auch als Raumteiler dienen.' },
-      { name: 'Flexible Lernlandschaften', text: 'Möbel für offene Bereiche, die im Laufe des Tages unterschiedlich genutzt werden.' },
+      { name: 'Sitzen', text: 'Stühle und Hocker, auf denen man sich bewegen kann.', url: 'https://www.vs.de/de/cb/Bildung/Produkte-Bildung/Sitzmoebel-Bildung' },
+      { name: 'Tische', text: 'Einzel- und Gruppentische, die sich schnell umstellen lassen.', url: 'https://www.vs.de/de/cb/Bildung/Produkte-Bildung/Tische-Bildung' },
+      { name: 'Stauraum', text: 'Schränke und Regale, die auch als Raumteiler dienen.', url: 'https://www.vs.de/de/cb/Bildung/Produkte-Bildung/Stauraum-Bildung' },
+      { name: 'Flexible Lernlandschaften', text: 'Möbel für offene Bereiche, die im Laufe des Tages unterschiedlich genutzt werden.', url: 'https://www.vs.de/de/roomconcepts/Bildung/Raumkonzepte/LernenEntdecken/FlexiblerLernraum' },
       { name: 'Kindergarten', text: 'Möbel und Stauraum in Kinderhöhe.' },
     ],
   },
@@ -169,7 +172,7 @@ const de = {
     privacy: 'Datenschutz',
     company: 'ein Geschäftsbereich der Trias OHG',
     partner: 'Partner von VS Möbel',
-    credits: 'Platzhalterfotos von Wikimedia Commons:',
+    credits: 'Platzhalterfotos:',
   },
 };
 
@@ -204,6 +207,8 @@ const it: UI = {
     main: 'Navigazione principale',
     mobile: 'Navigazione mobile',
     menu: 'Menu',
+    family: 'Una divisione di Trias',
+    familyNewTab: '(apre trias.it in una nuova scheda)',
     close: 'Chiudi',
     switchLabel: 'Lingua',
   },
@@ -277,10 +282,10 @@ const it: UI = {
     all: 'Scopri l’assortimento VS completo',
     exclusive: 'Rappresentanza esclusiva VS Möbel in Alto Adige',
     categories: [
-      { name: 'Sedute', text: 'Sedie e sgabelli su cui ci si può muovere.' },
-      { name: 'Tavoli', text: 'Tavoli singoli e di gruppo, facili da riorganizzare.' },
-      { name: 'Contenitori', text: 'Armadi e scaffali che fanno anche da divisori.' },
-      { name: 'Spazi di apprendimento flessibili', text: 'Mobili per aree aperte, usate in modi diversi nel corso della giornata.' },
+      { name: 'Sedute', text: 'Sedie e sgabelli su cui ci si può muovere.', url: 'https://www.vs.de/en/cb/Bildung/Produkte-Bildung/Sitzmoebel-Bildung' },
+      { name: 'Tavoli', text: 'Tavoli singoli e di gruppo, facili da riorganizzare.', url: 'https://www.vs.de/en/cb/Bildung/Produkte-Bildung/Tische-Bildung' },
+      { name: 'Contenitori', text: 'Armadi e scaffali che fanno anche da divisori.', url: 'https://www.vs.de/en/cb/Bildung/Produkte-Bildung/Stauraum-Bildung' },
+      { name: 'Spazi di apprendimento flessibili', text: 'Mobili per aree aperte, usate in modi diversi nel corso della giornata.', url: 'https://www.vs.de/en/roomconcepts/Bildung/Raumkonzepte/LernenEntdecken/FlexiblerLernraum' },
       { name: 'Scuola dell’infanzia', text: 'Mobili e contenitori all’altezza dei bambini.' },
     ],
   },
@@ -334,7 +339,7 @@ const it: UI = {
     privacy: 'Privacy',
     company: 'un settore di Trias OHG',
     partner: 'Partner di VS Möbel',
-    credits: 'Foto segnaposto da Wikimedia Commons:',
+    credits: 'Foto segnaposto:',
   },
 };
 

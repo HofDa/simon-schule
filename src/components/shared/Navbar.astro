@@ -1,5 +1,7 @@
 ---
 import { homeFor, isHome } from '../../lib/paths';
+import Logo from './Logo.astro';
+import { trias } from '../../data/site';
 import { getLang, langs, useTranslations, type Lang } from '../../i18n/ui';
 
 interface Props {
@@ -20,14 +22,20 @@ const nav = t.nav.items.map((item) => ({ ...item, href: `${home}${item.href}` })
 
 <header class="site-nav fixed inset-x-0 top-0 z-[100] h-[var(--nav-h)]" data-nav>
   <div class="shell flex h-full items-center justify-between gap-8 max-[359px]:gap-3">
-    <a href={onHome ? '#top' : homeFor(lang)} class="wordmark flex items-baseline gap-[0.4em] text-meta uppercase tracking-[0.14em] max-[359px]:tracking-[0.08em]" aria-label={t.nav.home}>
-      <span class="font-bold">Trias</span>
-      <span class="font-normal">Schule</span>
-    </a>
+    <div class="flex items-center gap-6">
+      <a href={onHome ? '#top' : homeFor(lang)} class="wordmark flex items-center text-ink" aria-label={t.nav.home}>
+        <Logo class="logo-nav" />
+      </a>
+      <a class="family hidden items-center gap-2 border-l border-line pl-6 text-label font-medium text-muted transition-colors duration-200 hover:text-ink xl:inline-flex" href={trias.url[lang]} target="_blank" rel="noopener">
+        {t.nav.family}
+        <svg class="h-3 w-3" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5 11L11 5M6 5h5v5" /></svg>
+        <span class="sr-only">{t.nav.familyNewTab}</span>
+      </a>
+    </div>
 
     <nav class="hidden items-center gap-9 lg:flex" aria-label={t.nav.main}>
       {nav.map((item) => (
-        <a class="nav-link relative py-2 text-meta font-medium" href={item.href} data-nav-link>
+        <a class="nav-link relative whitespace-nowrap py-2 text-meta font-medium" href={item.href} data-nav-link>
           {item.label}
         </a>
       ))}
@@ -53,15 +61,15 @@ const nav = t.nav.items.map((item) => ({ ...item, href: `${home}${item.href}` })
       </a>
       <button
         type="button"
-        class="menu-toggle inline-flex h-11 items-center gap-2 px-1 text-meta font-medium lg:hidden"
+        class="menu-toggle inline-flex h-11 min-w-11 items-center justify-center gap-2 px-1 text-meta font-medium lg:hidden"
         aria-expanded="false"
         aria-controls="mobile-menu"
         data-menu-toggle
         data-label-open={t.nav.menu}
         data-label-close={t.nav.close}
       >
-        <span class="menu-icon relative block h-3 w-5" aria-hidden="true"><span></span><span></span></span>
-        <span class="max-[374px]:sr-only" data-menu-label>{t.nav.menu}</span>
+        <span class="menu-icon relative block h-3.5 w-6" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span class="max-sm:sr-only" data-menu-label>{t.nav.menu}</span>
       </button>
     </div>
   </div>
@@ -94,6 +102,9 @@ const nav = t.nav.items.map((item) => ({ ...item, href: `${home}${item.href}` })
 </header>
 
 <style>
+  .wordmark :global(.logo-nav) { height: 30px; }
+  @media (min-width: 1280px) { .wordmark :global(.logo-nav) { height: 36px; } }
+  @media (max-width: 359px) { .wordmark :global(.logo-nav) { height: 24px; } }
   .site-nav { color: var(--color-ink); transition: background-color 300ms var(--ease-draw); }
   .site-nav.is-scrolled,
   .site-nav.is-open,
@@ -125,18 +136,22 @@ const nav = t.nav.items.map((item) => ({ ...item, href: `${home}${item.href}` })
   .lang-other { opacity: 0.6; transition: opacity 200ms; }
   .lang-other:hover { opacity: 1; }
 
+  /* three left-aligned bars getting shorter, the last one ginstergelb (after trias.it); open: an ink X */
   .menu-icon span {
     position: absolute;
     left: 0;
-    right: 0;
-    height: 1.5px;
+    height: 2px;
+    border-radius: 2px;
     background: currentColor;
-    transition: transform 250ms var(--ease-draw), top 250ms var(--ease-draw);
+    transition: transform 250ms var(--ease-draw), top 250ms var(--ease-draw), width 250ms var(--ease-draw),
+      opacity 150ms linear, background-color 250ms var(--ease-draw);
   }
-  .menu-icon span:first-child { top: 1px; }
-  .menu-icon span:last-child { top: 9px; }
-  [aria-expanded='true'] .menu-icon span:first-child { top: 5px; transform: rotate(45deg); }
-  [aria-expanded='true'] .menu-icon span:last-child { top: 5px; transform: rotate(-45deg); }
+  .menu-icon span:nth-child(1) { top: 0; width: 100%; }
+  .menu-icon span:nth-child(2) { top: 6px; width: 80%; }
+  .menu-icon span:nth-child(3) { top: 12px; width: 60%; background: var(--color-ginster); }
+  [aria-expanded='true'] .menu-icon span:nth-child(1) { top: 6px; transform: rotate(45deg); }
+  [aria-expanded='true'] .menu-icon span:nth-child(2) { opacity: 0; }
+  [aria-expanded='true'] .menu-icon span:nth-child(3) { top: 6px; width: 100%; transform: rotate(-45deg); background: currentColor; }
 </style>
 
 <script>

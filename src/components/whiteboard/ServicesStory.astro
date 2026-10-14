@@ -1,6 +1,7 @@
 ---
 import ServiceChair, { type ChairModel } from './art/ServiceChair.astro';
-import { getLang, useTranslations } from '../../i18n/ui';
+import { getLang } from '../../i18n/ui';
+import { servicesFor } from '../../data/services';
 
 interface Props {
   /** The chairs already stand in place: no roll-in, no pinned sequence (Whiteboard, ruhig). */
@@ -8,15 +9,8 @@ interface Props {
 }
 const { still = false } = Astro.props;
 const lang = getLang(Astro.currentLocale);
-const t = useTranslations(lang).services;
 const chairModels: ChairModel[] = ['pantomove', 'pantoswing', 'jumper-air', 'jumper-ply', 'bambino'];
-const services = lang === 'de' ? [
-  { title: 'Beratung', text: 'Wir kommen zu Ihnen, hören zu und schauen uns Ihre Räume und den Alltag vor Ort an.' },
-  { title: 'Planung', text: 'Gemeinsam entwickeln wir die Raumaufteilung und Einrichtung für Ihre Schule oder Ihren Kindergarten.' },
-  { title: 'VS Möbel', text: 'Wir wählen passende Tische, Stühle und Stauraumlösungen aus dem Sortiment von VS.' },
-  { title: 'Lieferung & Montage', text: 'Wir kümmern uns um Bestellung, Lieferung und Montage – bis alles an seinem Platz steht.' },
-  { title: 'Betreuung', text: 'Auch danach sind wir für Fragen, Ergänzungen und neue Ideen für Sie da. Direkt hier in Südtirol.' },
-] : t.items;
+const services = servicesFor(lang);
 ---
 
 <section id="leistungen" class="services relative z-20" aria-labelledby="services-title" data-service-chairs={still ? undefined : ''}>

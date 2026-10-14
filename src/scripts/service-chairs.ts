@@ -37,14 +37,18 @@ if (section) {
     return animation;
   };
 
-  const rollFirst = () => {
+  let firstRollsAt = 0;
+  const rollFirst = (delayOverride?: number) => {
     if (firstStarted || reduced.matches) return;
     firstStarted = true;
     firstObserver?.disconnect();
     const rect = cards[0].getBoundingClientRect();
     const distance = rect.left + (rect.width + chairs[0].offsetWidth) / 2 + 48;
+    // the chair is the last step of the hero's intro (--t-chair), unless the visitor skipped it
     const heroCue = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--t-chair')) || 1;
-    const delay = Math.max(0, heroCue * 1000 - performance.now());
+    const skipped = document.documentElement.classList.contains('hero-skip');
+    const delay = delayOverride ?? (skipped ? 0 : Math.max(0, heroCue * 1000 - performance.now()));
+    firstRollsAt = performance.now() + delay;
     finalChair(0);
     firstAnimation = animate(chairs[0], [
       { opacity: 1, transform: `translate3d(${-distance}px, 0, 0)`, offset: 0 },
@@ -74,6 +78,15 @@ if (section) {
       { opacity: 1, transform: 'translate3d(0, 0, 0)' },
     ], { duration: 700, delay: delay + (i === 0 ? 100 : 350), easing: 'cubic-bezier(.22,1,.36,1)', fill: 'both' });
   };
+
+  // The visitor skipped the hero's intro: a chair still waiting for its cue rolls in now.
+  window.addEventListener('hero:skip', () => {
+    if (!firstAnimation || performance.now() >= firstRollsAt) return;
+    firstAnimation.cancel();
+    animations.delete(firstAnimation);
+    firstStarted = false;
+    rollFirst(0);
+  });
 
   section.classList.add('is-motion-ready');
   firstObserver = new IntersectionObserver((entries) => {

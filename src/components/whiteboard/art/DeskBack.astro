@@ -1,0 +1,112 @@
+---
+/**
+ * A pupil's place seen from the back of the room: a desk with a ginstergelb
+ * VS PantoSwing-LuPo pushed in, its backrest towards the viewer, facing the board.
+ * Drawn on the grid of ServiceChair (chair centred on x = 200, floor at y ≈ 488):
+ * the shell outline is the PantoSwing back from there, seen from behind, so the seat
+ * sits under the shell and only its sides show. Desk and seat height keep the ratio
+ * of a 76 cm desk to a 46 cm seat. One small thing lies on the desk, beside the chair.
+ */
+export type DeskItem = 'mug' | 'plan' | 'catalogue' | 'toolbox' | 'plant';
+interface Props { item?: DeskItem; }
+const { item } = Astro.props;
+const shell = 'M92 30 C92 18 112 14 200 14 C288 14 308 18 308 30 C312 84 302 119 278 154 C250 192 242 216 248 249 Q250 258 264 265 H136 Q150 258 152 249 C158 216 150 192 122 154 C98 119 88 84 92 30 Z';
+const grip = 'M220 66 A20 20 0 1 0 180 66 A20 20 0 1 0 220 66 Z';
+---
+
+<svg viewBox="-84 0 568 500" aria-hidden="true">
+  <!-- desk: the top seen just from above, its edge, the apron rail and two legs -->
+  <path class="desk-surface" d="M-16 86 H416 L428 116 H-28 Z" />
+  <rect class="desk-top" x="-32" y="115" width="464" height="16" rx="2" />
+  <rect class="desk-under" x="-26" y="131" width="452" height="5" />
+  <path class="desk-rail" d="M-4 150 H404" />
+  <g class="steel"><path d="M-4 136 V483 M404 136 V483" /></g>
+  <g class="steel-highlight"><path d="M-7 142 V470 M401 142 V470" /></g>
+  <g class="glides"><path d="M-4 482 V490 M404 482 V490" /></g>
+
+  <!-- on the desk, right of the chair -->
+  {item === 'mug' && (
+    <g>
+      <path class="item-ink" d="M376 66 Q394 66 394 80 Q394 92 376 92" fill="none" stroke-width="5" />
+      <path class="item-white" d="M340 58 H378 L375 98 Q374 104 368 104 H350 Q344 104 343 98 Z" />
+      <path class="item-ginster" d="M341 68 H377 L376 78 H342 Z" />
+      <path class="item-steam" d="M352 48 Q346 40 352 32 Q358 24 352 16 M366 48 Q360 40 366 32" />
+    </g>
+  )}
+  {item === 'plan' && (
+    <g>
+      <rect class="item-paper" x="318" y="80" width="100" height="22" rx="11" />
+      <path class="item-plan-line" d="M332 80 V102 M404 80 V102" />
+      <ellipse class="item-paper-end" cx="418" cy="91" rx="6" ry="11" />
+      <path class="item-ink" d="M323 72 H386" fill="none" stroke-width="4" />
+    </g>
+  )}
+  {item === 'catalogue' && (
+    <g>
+      <rect class="item-ginster" x="322" y="88" width="88" height="14" rx="1.5" />
+      <rect class="item-white" x="324" y="92" width="84" height="6" />
+      <rect class="item-ink-fill" x="330" y="72" width="78" height="16" rx="1.5" />
+      <rect class="item-white" x="332" y="76" width="74" height="7" />
+    </g>
+  )}
+  {item === 'toolbox' && (
+    <g>
+      <path class="item-ink" d="M348 70 V58 H392 V70" fill="none" stroke-width="6" />
+      <rect class="item-ginster" x="328" y="68" width="84" height="34" rx="4" />
+      <rect class="item-ink-fill" x="328" y="80" width="84" height="5" />
+      <rect class="item-white" x="364" y="77" width="12" height="10" rx="2" />
+    </g>
+  )}
+  {item === 'plant' && (
+    <g>
+      <path class="item-leaf" d="M368 64 Q344 46 334 20 Q362 30 370 60 Z M372 62 Q376 34 396 14 Q402 44 378 64 Z M370 66 Q392 52 414 52 Q402 72 374 70 Z" />
+      <path class="item-pot" d="M346 66 H398 L392 102 H352 Z" />
+      <rect class="item-pot-rim" x="342" y="62" width="60" height="10" rx="2" />
+    </g>
+  )}
+
+  <!-- chair frame: the cantilever's uprights and the crossbar on the floor -->
+  <g class="steel">
+    <path d="M69 483 V293 Q69 274 88 274 H117 M331 483 V293 Q331 274 312 274 H283" />
+    <path d="M72 478 H328" />
+  </g>
+  <g class="glides"><path d="M69 477 V489 M331 477 V489" /></g>
+
+  <!-- seat under the shell: from behind only its sides and the underside show -->
+  <path class="seat-under" d="M87 263 Q94 255 112 262 Q200 277 288 262 Q306 255 313 263 Q317 271 304 279 L291 294 Q200 314 109 294 L96 279 Q83 271 87 263 Z" />
+  <path class="seat-bracket" d="M150 279 H250 L244 296 Q200 304 156 296 Z" />
+
+  <!-- the backrest, rear face -->
+  <path class="shell" fill-rule="evenodd" d={`${shell} ${grip}`} />
+  <path class="shell-rim" d="M96 30 C96 21 116 18 200 18 C284 18 304 21 304 30" />
+  <path class="shell-shade" d="M152 249 C158 216 150 192 122 154 Q200 176 278 154 C250 192 242 216 248 249 Q250 258 264 265 H136 Q150 258 152 249 Z" />
+</svg>
+
+<style>
+  svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .desk-surface { fill: #f1eee6; }
+  .desk-top { fill: #e0dbcf; }
+  .desk-under { fill: #c6c0b0; }
+  .desk-rail { fill: none; stroke: #a4aaa7; stroke-width: 7; stroke-linecap: round; }
+  .steel { fill: none; stroke: #969b99; stroke-width: 11; stroke-linecap: round; stroke-linejoin: round; }
+  .steel-highlight { fill: none; stroke: #d1d5d2; stroke-width: 3; stroke-linecap: round; }
+  .glides { fill: none; stroke: #393a37; stroke-width: 7; stroke-linecap: round; }
+  .seat-under { fill: #cb9400; }
+  .seat-bracket { fill: #393a37; }
+  .shell { fill: var(--color-ginster); }
+  .shell-rim { fill: none; stroke: #f1c23b; stroke-width: 3; stroke-linecap: round; }
+  .shell-shade { fill: #000; opacity: 0.07; }
+
+  .item-ink { stroke: var(--color-ink); stroke-linecap: round; stroke-linejoin: round; }
+  .item-ink-fill { fill: var(--color-ink); }
+  .item-white { fill: #fff; }
+  .item-ginster { fill: var(--color-ginster); }
+  .item-paper { fill: #dfe9ef; }
+  .item-paper-end { fill: #c5d5de; }
+  .item-plan-line { fill: none; stroke: #9fb6c3; stroke-width: 2; }
+  .item-steam { fill: none; stroke: #c9ccc9; stroke-width: 3; stroke-linecap: round; }
+  .item-leaf { fill: #7d9a62; }
+  .item-pot { fill: #c9805a; }
+  .item-pot-rim { fill: #b56f4b; }
+  .item-white, .item-paper, .item-pot { stroke: #c6c0b0; stroke-width: 1.5; }
+</style>

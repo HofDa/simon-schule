@@ -4,7 +4,7 @@
  * (image left, image right, full width).
  *
  * All current entries are placeholders (`placeholder: true`): the photos are
- * temporary Wikimedia Commons images and no project facts are confirmed.
+ * low-resolution previews from the VS catalogues and no project facts are confirmed.
  * Optional fields (`location`, `year`, `architect`, `client`) render only when set.
  * A testimonial stays `null` until the quote and its author are approved; it then
  * appears after its project. Nothing stands in for a missing quote.
@@ -88,10 +88,10 @@ const sources: ProjectSource[] = [
     },
     images: [
       {
-        file: 'classroom-blue-chairs',
+        file: 'vs-klassenzimmer-gelb',
         alt: {
-          de: 'Klassenzimmer mit blauen Schalenstühlen, die auf hellen Holztischen hochgestellt sind',
-          it: 'Aula con sedie blu a scocca capovolte su tavoli in legno chiaro',
+          de: 'Klassenzimmer mit gelben Schalenstühlen an weißen Einzeltischen und einem Display an der Wand',
+          it: 'Aula con sedie a scocca gialle, banchi singoli bianchi e un display a parete',
         },
       },
     ],
@@ -111,17 +111,17 @@ const sources: ProjectSource[] = [
     },
     images: [
       {
-        file: 'kindergarten-cave',
+        file: 'vs-lernraum-boden',
         alt: {
-          de: 'Kindergartenraum mit eingebauter Höhle, Sitzkissen und Holzregalen',
-          it: 'Sezione di scuola dell’infanzia con tana integrata, cuscini e scaffali in legno',
+          de: 'Kinder spielen auf blauen Bodenmatten und Sitzpolstern, daneben Wackelhocker und offene Regale',
+          it: 'Bambini che giocano su materassini e cuscini blu, accanto sgabelli oscillanti e scaffali aperti',
         },
       },
       {
-        file: 'kindergarten-kitchen',
+        file: 'vs-lernraum-flur',
         alt: {
-          de: 'Spielküche aus Holz in einem hellen Kindergartenraum',
-          it: 'Cucina giocattolo in legno in una sezione luminosa',
+          de: 'Heller Lernflur mit blauen Sitzelementen, runden Tischen und Garderobenregalen',
+          it: 'Corridoio di apprendimento luminoso con sedute blu, tavoli rotondi e scaffali guardaroba',
         },
       },
     ],
@@ -141,10 +141,10 @@ const sources: ProjectSource[] = [
     },
     images: [
       {
-        file: 'learning-commons',
+        file: 'vs-lernlandschaft-halle',
         alt: {
-          de: 'Offene Lernlandschaft mit Tischgruppen, Stühlen und Stellwänden',
-          it: 'Spazio di apprendimento aperto con gruppi di tavoli, sedie e pannelli',
+          de: 'Offene Lernhalle unter einem Oberlicht, Jugendliche arbeiten an Stehtischen',
+          it: 'Atrio di apprendimento aperto sotto un lucernario, ragazzi al lavoro su tavoli alti',
         },
       },
     ],

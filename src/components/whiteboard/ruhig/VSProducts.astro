@@ -25,6 +25,7 @@ const catalogUrl = vs.catalogUrl[lang];
               <a class="q-cat" href={c.url} target="_blank" rel="noopener">
                 <span class="q-cat-name">{c.name}</span>
                 <span class="q-cat-text">{c.text}</span>
+                <svg class="q-cat-arrow" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 14L14 6M7 6h7v7" /></svg>
                 <span class="sr-only">{t.newTab}</span>
               </a>
             ) : (
@@ -60,7 +61,11 @@ const catalogUrl = vs.catalogUrl[lang];
   .q-cat { display: grid; gap: 6px; padding: 20px 0; border-top: 1px solid var(--color-line); }
   .q-cat-name { font-size: var(--text-lead); font-weight: 600; letter-spacing: -0.02em; }
   .q-cat-text { font-size: var(--text-meta); color: var(--color-muted); }
+  /* a linked category carries an outward arrow at the row's end; every row keeps its room, so the columns line up */
+  .q-cat { position: relative; padding-right: 40px; }
+  .q-cat-arrow { position: absolute; right: 0; top: 24px; width: 20px; height: 20px; transition: transform 250ms var(--ease-draw), color 250ms var(--ease-draw); }
   a.q-cat:hover .q-cat-name { text-decoration: underline; text-underline-offset: 4px; }
+  a.q-cat:hover .q-cat-arrow { transform: translate(3px, -3px); color: var(--color-ginster-deep); }
 
   @media (min-width: 768px) {
     .q-cat { grid-template-columns: minmax(10rem, 1fr) minmax(0, 1.6fr); column-gap: 32px; align-items: baseline; }

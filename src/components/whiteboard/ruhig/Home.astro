@@ -1,14 +1,16 @@
 ---
 /**
  * "Das Whiteboard, ruhig": the same board as Das Whiteboard (claim written, prints pinned up),
- * with every section below set plainly: chairs standing in place, the projects as a register,
+ * with every section below set plainly: the services as a frontal classroom facing the board,
+ * then the room rearranged for other ways of learning (VS catalogue arrangements), the projects as a register,
  * no drawn route, no seated scene. German-only variant at /whiteboard-ruhig/.
  */
 import Layout from '../../../layouts/WhiteboardLayout.astro';
 import Navbar from '../shared/Navbar.astro';
 import Footer from '../shared/Footer.astro';
 import WhiteboardHero from '../WhiteboardHero.astro';
-import ServicesStory from '../ServicesStory.astro';
+import Classroom from './Classroom.astro';
+import LearningScenes from './LearningScenes.astro';
 import ClosingTestimonial from '../../ClosingTestimonial.astro';
 import ProjectPhases from '../ProjectPhases.astro';
 import Projects from './Projects.astro';
@@ -24,7 +26,8 @@ const alternates = { de: asset('whiteboard-ruhig/'), it: homeFor('it') };
   <Navbar alternates={alternates} />
   <main id="inhalt">
     <WhiteboardHero />
-    <ServicesStory still />
+    <Classroom />
+    <LearningScenes />
     <Projects />
     <People />
     <VSProducts />
@@ -34,3 +37,8 @@ const alternates = { de: asset('whiteboard-ruhig/'), it: homeFor('it') };
   </main>
   <Footer />
 </Layout>
+
+<style is:global>
+  /* the classroom starts below the board: no chair peeks under it */
+  html:root { --chair-peek: 0px; }
+</style>

@@ -7,7 +7,8 @@ Alles hier ist auf der Seite sichtbar als Platzhalter markiert (gestrichelt unte
 - [ ] Adresse (`contact.address`)
 - [ ] Rene: Nachname, Rolle/Zuständigkeit, Telefon, E-Mail (`people[1]`)
 - [ ] Simon Brugger: Rolle/Zuständigkeit, Telefon, E-Mail (`people[0]`)
-- [ ] VS-Deep-Links pro Produktkategorie (derzeit alle auf `vs.catalogUrl`)
+- [x] VS-Deep-Links pro Produktkategorie (`src/i18n/ui.ts`, geprüft 14.10.2026): Sitzen, Tische, Stauraum, Flexible Lernlandschaften. Italienisch verlinkt die englischen VS-Seiten.
+- [ ] Kindergarten: VS hat keine eigene Kindergarten-Seite (`/de/LP-Kita`, `/de/LP-Kindergarten` gibt es nicht). Ziel mit VS klären, bis dahin ohne Link
 - [ ] Impressum- und Datenschutz-Seiten (Footer verlinkt `#impressum` / `#datenschutz`)
 - [ ] Formspree-Formular für `beratung@trias.it` anlegen, Empfängeradresse bestätigen und die Formular-URL als GitHub-Actions-Variable `PUBLIC_INQUIRY_ENDPOINT` setzen (lokal: `.env`). Ohne URL bleibt der vorbereitete E-Mail-Fallback aktiv. Danach Datenschutzhinweis rechtlich prüfen.
 - [ ] Finaler Web-Farbwert für VS Ginstergelb (RAL 1032) – aktuell `#E2A300` in `src/styles/global.css`
@@ -28,16 +29,22 @@ Zitate erscheinen erst, wenn sie eingetragen sind: `testimonial` pro Projekt, da
 ## Fotos
 Projektfotos liegen als WebP-Varianten mit 320, 480, 640, 720, 900, 960 und 1800 Pixel Breite unter `public/images/projects/`. `srcset` wählt je nach Darstellungsgröße die passende Datei. Das Vorschaubild für geteilte Links ist `public/images/social-preview.jpg` (1200 × 630) und basiert auf dem Lernlandschaft-Foto.
 
-Aktuelle **temporäre** Fotos von Wikimedia Commons (Namensnennung im Footer, bitte ersetzen):
+Aktuelle **temporäre** Fotos aus den VS-Katalogen (Nutzungsrechte liegen vor). Quelle sind die Archiv-PDFs, deren Bilder stark verkleinert sind (ca. 540–1085 px breit); die 900er- und 1800er-Varianten sind hochskaliert und unscharf. **Vor dem Livegang durch die Originaldateien von VS ersetzen**, gleiche Dateinamen behalten, dann einfach neu exportieren.
 
-| Datei | Quelle | Urheber | Lizenz |
+| Datei | Projekt-Slot | Quelle | Originalgröße im PDF |
 |---|---|---|---|
-| classroom-blue-chairs | [JCRG – Klassenzimmer](https://commons.wikimedia.org/wiki/File:JCRG_%E2%80%93_Klassenzimmer_HOF5022-HDR_RAW-Export.jpg) | PantheraLeo1359531 | CC BY 4.0 |
-| kindergarten-cave | [Neuer Kindergarten Rotenturm](https://commons.wikimedia.org/wiki/File:Neuer_Kindergarten_Rotenturm_H%C3%B6hle_und_Spielk%C3%BCche.jpg) | MaxMustermannFoto | CC BY-SA 4.0 |
-| kindergarten-kitchen | [Spielküche Rotenturm](https://commons.wikimedia.org/wiki/File:Spielk%C3%BCche_im_neuen_Kindergarten_Rotenturm.jpg) | MaxMustermannFoto | CC BY-SA 4.0 |
-| learning-commons | [Ashs learning common](https://commons.wikimedia.org/wiki/File:Ashs-learning-common-kauri.jpg) | Mosborne01 | CC BY-SA 3.0 |
+| vs-klassenzimmer-gelb | Schule | Digital-Katalog 2026, S. 25 (Rendering) | 1085 × 641 |
+| vs-lernraum-boden | Kindergarten (1. Bild) | Basiskatalog Schule 2026, S. 12 | 740 × 402 |
+| vs-lernraum-flur | Kindergarten (2. Bild) | Basiskatalog Schule 2026, S. 11 | 737 × 401 |
+| vs-lernlandschaft-halle | Lernlandschaft + `social-preview.jpg` | Basiskatalog Schule 2026, S. 13 | 738 × 402 |
 
-Wenn alle ersetzt sind: `photoCredits` in `site.ts` leeren (die Zeile im Footer verschwindet dann nicht automatisch – Absatz in `Footer.astro` entfernen).
+Hinweis: Die beiden „Kindergarten“-Fotos zeigen Grundschulkinder, nicht einen Kindergarten. Für den Slot passende VS-Kindergartenfotos anfragen.
+
+Die früheren Wikimedia-Fotos (`classroom-blue-chairs`, `kindergarten-cave`, `kindergarten-kitchen`, `learning-commons`) liegen noch unter `public/images/projects/`, werden aber nicht mehr verwendet.
+
+Lernformen-Szenen („Whiteboard, ruhig“, Abschnitt „Ein Raum, viele Arten zu lernen“) sind gezeichnet, keine Fotos: VS-Möbel modelliert in `src/components/whiteboard/art/vs-models.ts` (PantoSwing-LuPo S. 37, Hokki S. 46, Tano S. 74, Puzzle S. 95, Shift+ Landscape S. 21–22, Vancouver S. 178, Farben aus den Katalogfotos), angeordnet in `learning-scenes.ts`. Beim Build entstehen daraus die Dateien `/scenes/<name>.svg`.
+
+Produktfreisteller: `public/images/products/vs-pantomove-lupo-gelb.webp` (PantoMove-LuPo gelb, Basiskatalog S. 36). Nur grob freigestellt aus einem ca. 120 px hohen Bild, noch nicht eingebunden. Einen ginstergelben PantoSwing gibt es in den Katalogen nicht.
 
 ## Zeichnungen, die durch Fotos ersetzt werden können
 - [ ] **VS-Stuhl ginstergelb** (VS-Sektion): `src/components/art/VSChair.astro` ist eine schematische Seitenansicht, die beim Scrollen schwingt. Ideal: freigestelltes PNG/WebP `public/images/products/vs-pantoswing-ginstergelb.webp` (offizielles VS-Material mit Nutzungsrechten).

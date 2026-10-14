@@ -1,0 +1,268 @@
+---
+/**
+ * After the frontal classroom, the room changes: the same space set up for other ways of learning,
+ * each drawn as an isometric arrangement of furniture, after VS catalogue arrangements
+ * (see art/learning-scenes.ts), served as cached SVG files from /scenes/. Desktop with motion: the arrangements change piece by piece
+ * in a pinned stage while scrolling, a rail shows where you are.
+ * Otherwise (phones, reduced motion, no JS): the scenes stand one below the other.
+ * German only, like the rest of /whiteboard-ruhig/.
+ */
+import { sceneSize, type SceneName } from '../art/learning-scenes';
+import { asset } from '../../../lib/paths';
+
+const scenes = [
+  {
+    id: 'scenes-gruppen' as const,
+    scene: 'gruppen' as SceneName,
+    name: 'Gruppenarbeit',
+    text: 'Mehrecktische lassen sich zu Inseln für vier bis sechs Kinder zusammenstellen und schnell wieder trennen.',
+    product: 'VS Tano',
+  },
+  {
+    id: 'scenes-bewegung' as const,
+    scene: 'bewegung' as SceneName,
+    name: 'Bewegtes Lernen',
+    text: 'Freiformtische und Wackelhocker: Sitzen, Stehen und Wippen wechseln sich ab.',
+    product: 'VS Puzzle',
+  },
+  {
+    id: 'scenes-landschaft' as const,
+    scene: 'landschaft' as SceneName,
+    name: 'Lernlandschaft',
+    text: 'Weiche Sitzelemente bilden offene Zonen, in denen gelesen, besprochen und gearbeitet wird.',
+    product: 'VS Shift+ Landscape',
+  },
+  {
+    id: 'scenes-rueckzug' as const,
+    scene: 'rueckzug' as SceneName,
+    name: 'Rückzug',
+    text: 'Gepolsterte Wände schirmen ab: ein ruhiger Platz für Einzelarbeit oder ein Gespräch zu zweit.',
+    product: 'VS Vancouver',
+  },
+  {
+    id: 'scenes-boden' as const,
+    scene: 'boden' as SceneName,
+    name: 'Spielen am Boden',
+    text: 'Polstermatten, Teppiche und Rückenrollen machen den Boden zum Lernort, im Kindergarten wie in der Grundschule.',
+    product: 'VS Shift+ Landscape',
+  },
+];
+const size = sceneSize();
+---
+
+<section id="lernformen" class="scenes" aria-labelledby="scenes-title" data-scenes>
+  <div class="shell">
+    <div class="scenes-head">
+      <p class="marker scenes-note" aria-hidden="true">und morgen?</p>
+      <h2 id="scenes-title" class="text-headline leading-[0.98] tracking-[-0.03em]">Ein Raum, viele Arten zu lernen.</h2>
+      <p class="scenes-intro">
+        Frontalunterricht ist nur eine Möglichkeit. Mit beweglichen Möbeln stellt sich derselbe Raum auf Gruppenarbeit,
+        Bewegung, Rückzug oder das Spiel am Boden um.
+      </p>
+    </div>
+  </div>
+
+  <div class="scenes-track" data-scenes-track>
+    <div class="scenes-frame shell">
+      <ol class="scenes-rail" aria-hidden="true">
+        {scenes.map((s, i) => (
+          <li data-rail={i}><span class="rail-n">{String(i + 1).padStart(2, '0')}</span> {s.name}</li>
+        ))}
+      </ol>
+
+      <ol class="scenes-list">
+        {scenes.map((s, i) => (
+          <li class="scene" data-scene={i}>
+            <figure class="scene-figure">
+              <img class="iso" src={asset(`scenes/${s.scene}.svg`)} width={size.width} height={size.height} alt="" loading="lazy" decoding="async" data-scene-src />
+            </figure>
+            <div class="scene-copy">
+              <span class="scene-n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+              <h3>{s.name}</h3>
+              <p>{s.text}</p>
+              <p class="scene-product">{s.product}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </div>
+</section>
+
+<style>
+  .scenes { padding-block: clamp(56px, 7vw, 112px) clamp(80px, 9vw, 144px); }
+  .scenes-head { display: grid; gap: 20px; max-width: 760px; }
+  .scenes-note { color: var(--color-muted); font-size: var(--text-marker); transform: rotate(-2deg); transform-origin: left; }
+  .scenes-intro { max-width: 52ch; color: var(--color-muted); font-size: var(--text-body); line-height: 1.65; }
+
+  /* the stacked version: phones, reduced motion, no JS */
+  .scenes-rail { display: none; }
+  .scenes-list { list-style: none; margin: clamp(48px, 6vw, 80px) 0 0; padding: 0; display: grid; gap: clamp(56px, 7vw, 96px); }
+  .scene { display: grid; gap: 20px; align-items: center; }
+  .scene-figure { margin: 0; }
+  .scene-figure :global(.iso) { display: block; width: 100%; height: auto; max-width: 640px; margin-inline: auto; }
+
+  .scene-n { display: block; margin-bottom: 10px; color: var(--color-muted); font-size: var(--text-label); font-variant-numeric: tabular-nums; letter-spacing: 0.08em; }
+  h3 { font-size: clamp(1.6rem, 2.6vw, 2.4rem); font-weight: 600; letter-spacing: -0.035em; line-height: 1.08; }
+  .scene-copy p { margin-top: 14px; max-width: 40ch; color: var(--color-muted); font-size: var(--text-body); line-height: 1.6; }
+  .scene-copy .scene-product { margin-top: 18px; color: var(--color-ink); font-family: var(--font-marker); font-size: var(--text-marker); }
+
+  @media (min-width: 768px) {
+    .scene { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(32px, 4vw, 64px); }
+    .scene-copy { grid-column: 1; grid-row: 1; }
+    .scene-figure { grid-column: 2; }
+  }
+
+  /* the pinned stage: the room changes while the track scrolls past */
+  .scenes.is-scrub .scenes-track { height: calc(var(--scene-count) * 70vh + 100vh); }
+  .scenes.is-scrub .scenes-frame {
+    position: sticky;
+    top: var(--nav-h);
+    height: calc(100vh - var(--nav-h));
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    padding-block: 24px 32px;
+  }
+  .scenes.is-scrub .scenes-rail {
+    display: flex;
+    gap: clamp(16px, 2.4vw, 40px);
+    list-style: none;
+    margin: 0;
+    padding: 0 0 18px;
+    border-bottom: 1px solid var(--color-line);
+    color: var(--color-muted);
+    font-size: var(--text-meta);
+    white-space: nowrap;
+  }
+  .scenes-rail li { position: relative; transition: color 300ms var(--ease-draw); }
+  .scenes-rail li::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -19px;
+    height: 3px;
+    border-radius: 2px;
+    background: var(--color-ginster);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 400ms var(--ease-draw);
+  }
+  .scenes-rail li.is-active { color: var(--color-ink); }
+  .scenes-rail li.is-active::after { transform: scaleX(1); }
+  .rail-n { font-variant-numeric: tabular-nums; letter-spacing: 0.06em; }
+
+  .scenes.is-scrub .scenes-list { position: relative; margin: 0; display: block; }
+  .scenes.is-scrub .scene {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  /* each scene brings its furniture piece by piece */
+  .scenes.is-scrub .scene :global(.iso) { max-width: none; max-height: calc(100vh - var(--nav-h) - 140px); object-fit: contain; }
+  /* the scene as a whole fades; once the file is inlined its pieces also come in one after another */
+  .scenes.is-scrub .scene-figure { opacity: 0; transition: opacity 400ms var(--ease-draw); }
+  .scenes.is-scrub .scene.is-active .scene-figure { opacity: 1; }
+  /*
+   * Furniture motion, quick and small (SVG user units: 1px is a decimetre):
+   * pieces land back to front with a slight overshoot, chairs slide up to their tables,
+   * poufs settle, Hokkis rock while their scene is shown. Leaving is faster still.
+   */
+  .scenes.is-scrub .scene :global(.iso-piece) {
+    opacity: 0;
+    translate: 0 -2px;
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+    transition: opacity 120ms linear, translate 120ms ease-in, scale 120ms ease-in;
+  }
+  .scenes.is-scrub .scene :global(.iso-piece[data-kind='chair']) { translate: var(--dx) var(--dy); }
+  .scenes.is-scrub .scene :global(.iso-piece[data-kind='pouf']) { scale: 1 0.88; }
+  .scenes.is-scrub .scene.is-active :global(.iso-piece) {
+    opacity: 1;
+    translate: 0 0;
+    scale: 1;
+    transition: opacity 160ms linear, translate 300ms cubic-bezier(0.34, 1.5, 0.64, 1), scale 300ms cubic-bezier(0.34, 1.6, 0.64, 1);
+    transition-delay: calc(min(var(--k), 40) * 9ms);
+  }
+  .scenes.is-scrub .scene.is-active :global(.iso-piece[data-kind='hokki']) {
+    animation: hokki-rock 0.9s ease-in-out calc(var(--phase) * -0.9s) infinite alternate;
+  }
+  @keyframes hokki-rock {
+    from { rotate: -2.5deg; }
+    to { rotate: 2.5deg; }
+  }
+  .scenes.is-scrub .scene-copy > * {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+    transition: opacity 400ms var(--ease-draw), transform 500ms var(--ease-draw);
+  }
+  .scenes.is-scrub .scene.is-active { pointer-events: auto; }
+  .scenes.is-scrub .scene.is-active .scene-copy > * { opacity: 1; transform: none; }
+  .scenes.is-scrub .scene.is-active .scene-copy > :nth-child(2) { transition-delay: 60ms; }
+  .scenes.is-scrub .scene.is-active .scene-copy > :nth-child(3) { transition-delay: 120ms; }
+  .scenes.is-scrub .scene.is-active .scene-copy > :nth-child(4) { transition-delay: 180ms; }
+</style>
+
+<script>
+  import { addScene, stickyProgress } from '../../../scripts/motion';
+
+  const section = document.querySelector<HTMLElement>('[data-scenes]');
+  const track = section?.querySelector<HTMLElement>('[data-scenes-track]');
+  if (section && track) {
+    const scenes = Array.from(section.querySelectorAll<HTMLElement>('[data-scene]'));
+    const rail = Array.from(section.querySelectorAll<HTMLElement>('[data-rail]'));
+    const n = scenes.length;
+    section.style.setProperty('--scene-count', String(n));
+    const navH = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) || 72;
+    let current = -1;
+
+    // swap each scene's image for the file's own SVG, so its pieces can be animated
+    let inlined = false;
+    const inline = () => {
+      if (inlined) return;
+      inlined = true;
+      section.querySelectorAll<HTMLImageElement>('img[data-scene-src]').forEach(async (img) => {
+        try {
+          const res = await fetch(img.currentSrc || img.src);
+          if (!res.ok) return;
+          const svg = new DOMParser().parseFromString(await res.text(), 'image/svg+xml').documentElement;
+          if (svg.nodeName !== 'svg') return;
+          svg.setAttribute('class', 'iso');
+          svg.setAttribute('aria-hidden', 'true');
+          img.replaceWith(document.importNode(svg, true));
+        } catch {
+          // the image stays: the scene still shows, only without the piece-by-piece entrance
+        }
+      });
+    };
+    const near = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((e) => e.isIntersecting) || !section.classList.contains('is-scrub')) return;
+        near.disconnect();
+        inline();
+      },
+      { rootMargin: '800px 0px' },
+    );
+
+    addScene({
+      el: track,
+      media: '(min-width: 1024px)',
+      measure: (active) => {
+        section.classList.toggle('is-scrub', active);
+        current = -1;
+        if (active) near.observe(section);
+      },
+      progress: stickyProgress(navH, () => window.innerHeight - navH()),
+      render: (p) => {
+        const index = Math.min(n - 1, Math.floor(p * n));
+        if (index === current) return;
+        current = index;
+        scenes.forEach((s, i) => {
+          s.classList.toggle('is-active', i === index);
+          s.classList.toggle('is-past', i < index);
+        });
+        rail.forEach((r, i) => r.classList.toggle('is-active', i === index));
+      },
+    });
+  }
+</script>

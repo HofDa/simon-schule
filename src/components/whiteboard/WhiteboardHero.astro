@@ -12,7 +12,7 @@ const [a, b, c] = getProjects(lang);
 // line takes about WRITE seconds in any language. Delays are computed here so the pacing is
 // slightly uneven (like a hand) but identical on every load.
 const headline = t.hero.headline;
-const WRITE = 0.48;
+const WRITE = 1.1;
 const LETTER = 0.08; // each letter's own wipe
 const WORD_GAP = 0.035;
 const parts = headline.split(' ');
@@ -47,29 +47,46 @@ const underlineD = claim && (() => {
   return `M${pt(4, 10)} C${pt(60, 5)} ${pt(130, 12)} ${pt(190, 8)} S${pt(270, 6)} ${pt(296, 9)}`;
 })();
 
-const writeDuration = claim ? claim.duration : clock - WORD_GAP + LETTER;
+// The recorded pen is a little slow to watch twice; play it at this rate (1 = as recorded).
+const PEN_RATE = 0.85;
+const writeDuration = claim ? claim.duration * PEN_RATE : clock - WORD_GAP + LETTER;
 
-// The board is prepared in the order it should be read: the claim is written alone, the offer rises
-// under its underline, the prints are pinned up one by one, and the chair (ServicesStory) rolls in last. All in seconds from page load; on :root so the chair shares it.
-const T_CLAIM = 0.1;
-const T_AFTER = T_CLAIM + writeDuration; // end of the writing: the underline is drawn
-const T_OFFER = T_AFTER; // subline and buttons
-const T_IMAGES = T_AFTER + 0.25; // first print; the next ones follow PIN_STEP apart
-const PIN_STEP = 0.16;
-const T_CHAIR = T_IMAGES + 3 * PIN_STEP + 0.2; // the chair starts rolling; it comes into view about half a second later
-const timeline = {
-  'hero-write': writeDuration,
-  't-claim': T_CLAIM,
-  't-after': T_AFTER,
-  't-offer': T_OFFER,
-  't-images': T_IMAGES,
-  'pin-step': PIN_STEP,
-  't-chair': T_CHAIR,
-};
-const timelineCss = Object.entries(timeline).map(([k, v]) => `--${k}:${v.toFixed(2)}s`).join(';');
+// Guided attention: one thing moves at a time, in the order the eye should travel, with enough
+// time between events for each to be seen (onsets closer than ~300ms read as a single event).
+// Whatever moves while the visitor reads would pull the eye away, so the text arrives only after
+// everything around it has settled, and the call to action is the last still point before the
+// chair rolls in as a cue to scroll. All in seconds from page load; on :root so the chair shares it.
+const PIN = 0.42; // one print laid onto the board (pin-in)
+const RISE = 0.32; // one block of text rising (hero-rise)
+const T_CLAIM = 0.3; // a beat for the page to settle before the pen starts
+const T_AFTER = T_CLAIM + writeDuration; // the claim is written: the underline is drawn
+const T_SETTLE = T_AFTER + 0.45; // underline done, a breath to read the claim as a whole
+const PIN_STEP = 0.35;
+
+// Desktop: the prints sit right of the claim, so the eye goes claim → prints → back to the offer on
+// the left → buttons. Phones stack copy above prints: claim → offer → buttons → prints, top to bottom.
+const wide = (() => {
+  const images = T_SETTLE;
+  const offer = images + 2 * PIN_STEP + PIN + 0.15;
+  const actions = offer + 0.4;
+  return { 't-images': images, 't-offer': offer, 't-actions': actions, 't-chair': actions + RISE + 0.6 };
+})();
+const narrow = (() => {
+  const offer = T_SETTLE;
+  const actions = offer + 0.4;
+  const images = actions + RISE + 0.4;
+  return { 't-images': images, 't-offer': offer, 't-actions': actions, 't-chair': images + PIN_STEP + PIN + 0.4 };
+})();
+const css = (vars: Record<string, number>) => Object.entries(vars).map(([k, v]) => `--${k}:${v.toFixed(2)}s`).join(';');
+const timelineCss = `:root{${css({ 'hero-write': writeDuration, 't-claim': T_CLAIM, 't-after': T_AFTER, 'pin-step': PIN_STEP, ...wide })}}`
+  + `@media (max-width: 1023px){:root{${css(narrow)}}}`;
 ---
 
-<Fragment set:html={`<style>:root{${timelineCss}}</style>`} />
+<Fragment set:html={`<style>${timelineCss}</style>`} />
+<script is:inline>
+  // Arriving at a place further down the page (a link with an anchor): no intro to wait for.
+  if (location.hash && location.hash !== '#top') document.documentElement.classList.add('hero-skip');
+</script>
 <section id="top" class="hero relative pt-[calc(var(--nav-h)+8px)]" aria-labelledby="hero-title">
   <div class="shell">
     <div class="board relative">
@@ -90,7 +107,7 @@ const timelineCss = Object.entries(timeline).map(([k, v]) => `--${k}:${v.toFixed
                     {claim.glyphs.map((g, i) => (
                       <mask id={`claim-pen-${i}`} maskUnits="userSpaceOnUse" x={box.x} y={box.y} width={box.w} height={box.h}>
                         {g.pen.map((s) => (
-                          <path class="pen" d={s.d} pathLength="1" stroke-width={claim.pen} style={`--pd: ${s.delay}s; --pt: ${s.dur}s`} />
+                          <path class="pen" d={s.d} pathLength="1" stroke-width={claim.pen} style={`--pd: ${(s.delay * PEN_RATE).toFixed(3)}s; --pt: ${(s.dur * PEN_RATE).toFixed(3)}s`} />
                         ))}
                       </mask>
                     ))}
@@ -120,10 +137,10 @@ const timelineCss = Object.entries(timeline).map(([k, v]) => `--${k}:${v.toFixed
               </span>
               )}
             </h1>
-            <p class="rise mt-7 max-w-[38ch] text-body leading-[1.6] text-muted sm:text-lead" style="--d: 0s">
+            <p class="rise mt-7 max-w-[38ch] text-body leading-[1.6] text-muted sm:text-lead" style="--rise-at: var(--t-offer)">
               {t.hero.subShort}
             </p>
-            <div class="rise mt-8 flex flex-wrap items-center gap-x-6 gap-y-4" style="--d: 0.08s">
+            <div class="rise mt-8 flex flex-wrap items-center gap-x-6 gap-y-4" style="--rise-at: var(--t-actions)">
               <a href="#projekte" class="btn btn-ink">
                 {t.hero.primary}
                 <svg class="btn-arrow h-3.5 w-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M8 2v11M4 9l4 4 4-4" /></svg>
@@ -306,7 +323,7 @@ const timelineCss = Object.entries(timeline).map(([k, v]) => `--${k}:${v.toFixed
   @media (prefers-reduced-motion: no-preference) {
     :global(html.js) .rise {
       animation: hero-rise 320ms var(--ease-draw) both;
-      animation-delay: calc(var(--d, 0s) + var(--t-offer));
+      animation-delay: var(--rise-at);
     }
     /* each letter is wiped in left to right, like a marker stroke */
     :global(html.js) .ch {
@@ -328,13 +345,20 @@ const timelineCss = Object.entries(timeline).map(([k, v]) => `--${k}:${v.toFixed
     .pins :global(.pin-b) { --pin-d: calc(var(--t-images) + var(--pin-step)); }
     .pins :global(.pin-c) { --pin-d: calc(var(--t-images) + 2 * var(--pin-step)); }
     :global(html.js) .pins :global(.pin) {
-      animation: pin-in 380ms var(--ease-draw) both;
+      animation: pin-in 420ms var(--ease-draw) both;
       animation-delay: var(--pin-d, 0.35s);
     }
     :global(html.js) .pins :global(.magnet) {
       animation: magnet-in 220ms var(--ease-draw) both;
       animation-delay: calc(var(--pin-d, 0s) + 0.18s);
     }
+  }
+
+  /* The visitor takes over (scrolls, types, taps) or arrived via an anchor: everything is in place at once. */
+  :global(html.hero-skip) .hero,
+  :global(html.hero-skip) .hero :global(*) {
+    animation-delay: 0s !important;
+    animation-duration: 1ms !important;
   }
 
   @keyframes write-letter {
@@ -367,3 +391,20 @@ const timelineCss = Object.entries(timeline).map(([k, v]) => `--${k}:${v.toFixed
     to { opacity: 1; scale: 1; }
   }
 </style>
+
+<script>
+  // The intro never holds anyone back: the first scroll, key, tap or wheel finishes it at once.
+  // (Moving the mouse does not: looking is not taking over.) The chair hears it too (service-chairs).
+  const root = document.documentElement;
+  const events = ['scroll', 'wheel', 'touchstart', 'pointerdown', 'keydown'] as const;
+  const end = parseFloat(getComputedStyle(root).getPropertyValue('--t-chair')) || 0;
+  const skip = () => {
+    events.forEach((type) => window.removeEventListener(type, skip));
+    if (performance.now() / 1000 >= end || root.classList.contains('hero-skip')) return;
+    root.classList.add('hero-skip');
+    window.dispatchEvent(new Event('hero:skip'));
+  };
+  if (!root.classList.contains('hero-skip')) {
+    events.forEach((type) => window.addEventListener(type, skip, { passive: true }));
+  }
+</script>
