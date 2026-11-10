@@ -82,7 +82,7 @@ const openLabel = (c: (typeof collages)[number]) => `Galerie öffnen: ${c.name},
     <div class="collage-stack" data-collage-stack>
       {g.items.map((c, i) => (
         <figure class="print" data-collage-print data-slug={c.slug} data-name={c.name} data-open-label={openLabel(c)} data-depth={i < 3 ? String(i) : 'deep'} style={`--pos: ${i}; --tilt: ${tilts[i % tilts.length]}deg`} aria-hidden={i === 0 ? undefined : 'true'}>
-          <Image src={c.collage} alt={c.alt} widths={[360, 540, 720, 960]} sizes="(max-height: 800px) 260px, 22vw" format="webp" quality={82} loading={i < 3 ? 'eager' : 'lazy'} fetchpriority={i === 0 && gi === 0 ? 'high' : undefined} draggable="false" />
+          <Image src={c.collage} alt={c.alt} width={960} widths={[360, 540, 720, 960]} sizes="(max-height: 800px) 260px, 22vw" format="webp" quality={82} loading={i < 3 ? 'eager' : 'lazy'} fetchpriority={i === 0 && gi === 0 ? 'high' : undefined} draggable="false" />
           <figcaption><span>{c.name}</span><span class="print-number">{i + 1}/{g.items.length}</span></figcaption>
         </figure>
       ))}
@@ -139,7 +139,7 @@ const openLabel = (c: (typeof collages)[number]) => `Galerie öffnen: ${c.name},
       <div class="gallery-thumbs" data-thumb-set={c.slug} hidden>
         {c.photos.map((p, k) => (
           <button type="button" class="thumb" data-thumb={k} aria-label={`Foto ${k + 1}: ${p.alt}`}>
-            <Image src={p.image} alt="" widths={[120, 240]} sizes="120px" format="webp" quality={70} loading="lazy" draggable="false" />
+            <Image src={p.image} alt="" width={240} widths={[120, 240]} sizes="120px" format="webp" quality={70} loading="lazy" draggable="false" />
           </button>
         ))}
       </div>
@@ -147,7 +147,7 @@ const openLabel = (c: (typeof collages)[number]) => `Galerie öffnen: ${c.name},
     <nav class="gallery-projects" aria-label="Projekte">
       {ordered.map((c) => (
         <button type="button" class="project" data-project={c.slug} aria-label={`${c.name}, ${c.photos.length} Fotos`} title={c.name}>
-          <Image src={c.collage} alt="" widths={[160, 320]} sizes="112px" format="webp" quality={70} loading="lazy" draggable="false" />
+          <Image src={c.collage} alt="" width={320} widths={[160, 320]} sizes="112px" format="webp" quality={70} loading="lazy" draggable="false" />
           <span>{c.name}</span>
         </button>
       ))}

@@ -4,8 +4,8 @@
 - Original vector: [vs-logo-original.svg](vs-logo-original.svg), viewBox 106 × 57, retained without modifying its paths.
 - Download URL: https://api.vs.de//medias/vs-logo-2.svg?context=bWFzdGVyfHJvb3R8MjI3MnxpbWFnZS9zdmcreG1sfGFHTTVMMmhpT1M4NE56azVPRE01TkRnMU9UZ3lMM1p6WDJ4dloyOWZNaTV6ZG1jfGZkMDg5YmRkODMxZDdjOGQwOGZjMzUyMmIzN2QwNDJlMDAxOTQ0MGY2YzM1ZDUxMTRlZTFhYmYyNDc0NzEzYWQ
 - Material reference: the project's [yellow VS PantoMove chair photograph](../../public/images/products/vs-pantomove-lupo-gelb.webp).
-- Current asset: [vs-logo-kitchen-magnet.png](../../src/assets/whiteboard/vs-logo-kitchen-magnet.png), transparent PNG with a solid ivory plastic body, raised yellow logo and a thin dark backing. Astro serves responsive WebP versions.
-- Earlier logo-only version: [vs-logo-magnet-plastic.png](../../src/assets/whiteboard/vs-logo-magnet-plastic.png), retained as the edit reference.
+- Current asset: [vs-logo-kitchen-magnet.webp](../../src/assets/whiteboard/vs-logo-kitchen-magnet.webp), losslessly compressed transparent WebP with a solid ivory plastic body, raised yellow logo and a thin dark backing. Astro serves responsive WebP versions.
+- Earlier logo-only version: [vs-logo-magnet-plastic.webp](../../src/assets/whiteboard/vs-logo-magnet-plastic.webp), retained as the edit reference.
 - Created with the built-in image generation tool using a raster rendering of the official vector and the chair photograph as inputs. The yellow finish is the requested chair-inspired material treatment of the logo.
 
 The magnet overlaps the top edge of the catalog's original cover and acts as the drag handle for the magnet and page together. It uses the same movement, keyboard and sponge-reset behavior as the HOUSE70 magnet. Clicking the cover opens the official catalog PDF in a new tab; the caption opens the site's VS furniture section.
@@ -14,11 +14,11 @@ The magnet overlaps the top edge of the catalog's original cover and acts as the
 
 - Source page: https://www.vs.de/de/ProspektdownloadBildung/
 - Original first page: https://web-media.vs.de/file/p1/png/45-057-49_V2026-01_DE_Der-Basiskatalog-fuer-die-Schule_VS.png
-- Local source: [vs-school-catalog-cover-2026.png](../../src/assets/whiteboard/vs-school-catalog-cover-2026.png), 1230 × 1744 pixels, kept unchanged.
+- Local source: [vs-school-catalog-cover-2026.webp](../../src/assets/whiteboard/vs-school-catalog-cover-2026.webp), 1230 × 1744 pixels, losslessly converted from the original PNG with all visible pixels unchanged.
 - Official PDF: https://web-media.vs.de/file/p1/pdf/45-057-49_V2026-01_DE_Basics--Der-Katalog-fuer-die-Schule.archiv.pdf
 - Hover or keyboard focus lifts the loose lower part of the cover in a progressive paper curl, revealing the original contents page. The top 12% stays clamped beneath the stationary magnet. A single continuous WebGL mesh carries the complete cover texture, with a continuous circular bend and interpolated lighting. The closed state always uses the unmodified cover image, eliminating the compositing seams of separate CSS strips. Rendering runs only during opening and closing. The back of the cover is the yellow PDF page 2; the contents page is PDF page 3. Both were rendered directly from the official PDF with `pdftoppm` at a 1400-pixel maximum edge.
-- Inside cover: [vs-school-catalog-inside-cover-2026.png](../../src/assets/whiteboard/vs-school-catalog-inside-cover-2026.png).
-- Contents page: [vs-school-catalog-first-page-2026.png](../../src/assets/whiteboard/vs-school-catalog-first-page-2026.png).
+- Inside cover: [vs-school-catalog-inside-cover-2026.webp](../../src/assets/whiteboard/vs-school-catalog-inside-cover-2026.webp).
+- Contents page: [vs-school-catalog-first-page-2026.webp](../../src/assets/whiteboard/vs-school-catalog-first-page-2026.webp).
 - Reduced-motion mode reveals the contents without a 3D curl. Touch devices keep the direct PDF link. Dragging keeps the cover flat so the magnet and catalog move together.
 
 ## Kitchen-magnet refinement prompt

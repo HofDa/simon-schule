@@ -1,6 +1,6 @@
 /**
  * The project collages on the whiteboard and the single photos behind each one (the gallery that
- * opens from a collage). Collages: src/assets/whiteboard/collages/<slug>.png. Photos:
+ * opens from a collage). Collages: src/assets/whiteboard/collages/<slug>.webp. Photos:
  * src/assets/whiteboard/gallery/<slug>/NN.jpg, web-sized copies (2000 px max) of the originals in
  * the Trias project folders, numbered in the order given here.
  */
@@ -21,10 +21,10 @@ export interface Collage {
   credit?: string;
 }
 
-const collageFiles = import.meta.glob<{ default: ImageMetadata }>('../assets/whiteboard/collages/*.png', { eager: true });
+const collageFiles = import.meta.glob<{ default: ImageMetadata }>('../assets/whiteboard/collages/*.webp', { eager: true });
 const photoFiles = import.meta.glob<{ default: ImageMetadata }>('../assets/whiteboard/gallery/*/*.jpg', { eager: true });
 
-const collageOf = (slug: string) => collageFiles[`../assets/whiteboard/collages/${slug}.png`].default;
+const collageOf = (slug: string) => collageFiles[`../assets/whiteboard/collages/${slug}.webp`].default;
 const photosOf = (slug: string, alts: string[]): CollagePhoto[] =>
   alts.map((alt, i) => ({ image: photoFiles[`../assets/whiteboard/gallery/${slug}/${String(i + 1).padStart(2, '0')}.jpg`].default, alt }));
 
