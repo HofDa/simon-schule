@@ -4,20 +4,39 @@
  * open, visibly marked field instead of inventing a value.
  */
 
+import type { Lang } from '../i18n/ui';
+
 export interface Person {
   firstName: string;
   lastName: string | null;
-  role: string | null;
+  role: Record<Lang, string> | null;
   phone: string | null;
   email: string | null;
   /** Portrait in public/images/team/ (base name, 4:5 .webp); nothing stands in for it until it exists. */
   photo: string | null;
 }
 
+export interface Location {
+  city: Record<Lang, string>;
+  street: Record<Lang, string>;
+}
+
+export const locations: Location[] = [
+  {
+    city: { de: 'Meran', it: 'Merano' },
+    street: { de: 'Romstraße 48a', it: 'Via Roma 48a' },
+  },
+  {
+    city: { de: 'Brixen', it: 'Bressanone' },
+    street: { de: 'Vittorio-Veneto-Str. 73', it: 'Via Vittorio Veneto 73' },
+  },
+];
+
 export const contact = {
   email: 'beratung@trias.it',
+  directEmail: 'simon.brugger@trias.it',
   phone: null as string | null,
-  address: null as string | null,
+  address: 'Meran · Brixen' as string | null,
 };
 
 /**
@@ -44,15 +63,25 @@ if (inquiryEndpoint) {
 export const inquiry = {
   endpoint: inquiryEndpoint,
   privacyUrl: inquiryPrivacyUrl,
-  mailto: contact.email,
+  mailto: contact.directEmail,
 };
 
 export const people: Person[] = [
-  { firstName: 'Simon', lastName: 'Brugger', role: null, phone: null, email: null, photo: null },
-  { firstName: 'Rene', lastName: null, role: null, phone: null, email: null, photo: null },
+  {
+    firstName: 'Simon',
+    lastName: 'Brugger',
+    role: {
+      de: 'Projektleitung Schule & Kindergarten · Südtirol',
+      it: 'Responsabile progetti scuola e infanzia · Alto Adige',
+    },
+    phone: null,
+    email: 'simon.brugger@trias.it',
+    photo: null,
+  },
 ];
 
 export const fullName = (p: Person) => [p.firstName, p.lastName].filter(Boolean).join(' ');
+export const roleFor = (p: Person, lang: Lang) => (p.role ? p.role[lang] : null);
 
 /** The Trias umbrella brand, linked from the header on desktop. */
 export const trias = {

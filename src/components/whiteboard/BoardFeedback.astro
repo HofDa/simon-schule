@@ -1,0 +1,301 @@
+---
+/**
+ * "Feedback" on the whiteboard: customers' answers as letters on lined paper, folded in thirds and
+ * held by a magnet (drag like every board object). A click takes the top letter off the board into
+ * the middle and unfolds it (top flap, then bottom flap); arrows page through the letters.
+ * Behaviour: src/scripts/board-feedback.ts; data: src/data/feedback.ts.
+ *
+ * The letter is drawn as three folds. Each fold shows its third of the same page (the page is
+ * rendered once per fold and shifted), so the text runs across the creases when it is unfolded.
+ */
+import { feedback } from '../../data/feedback';
+
+const entries = feedback;
+const slices = [0, 1, 2] as const;
+// the custom magnet: a speech bubble with its tail at the lower left
+const bubble = 'M24 4H96Q114 4 114 22V50Q114 68 96 68H52L27 88L33 68H24Q6 68 6 50V22Q6 4 24 4Z';
+---
+
+<span class="feedback-backdrop" data-feedback-backdrop aria-hidden="true"></span>
+<div class="board-object object-feedback" data-board-object data-feedback data-path-node="4">
+  <button class="feedback-magnet" type="button" data-board-handle data-label="Feedback" aria-label="Feedback-Magnet verschieben" aria-describedby="board-drag-hint" title="Magnet greifen und das Feedback verschieben">
+    <svg viewBox="0 0 120 96" aria-hidden="true">
+      <defs>
+        <linearGradient id="fb-face" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#f6cc4c" />
+          <stop offset="1" stop-color="#e2a300" />
+        </linearGradient>
+        <linearGradient id="fb-gloss" x1="0" y1="0" x2="1" y2="1">
+          <stop offset=".25" stop-color="#fff" stop-opacity="0" />
+          <stop offset=".4" stop-color="#fff" stop-opacity=".55" />
+          <stop offset=".5" stop-color="#fff" stop-opacity="0" />
+        </linearGradient>
+        <clipPath id="fb-clip"><path d={bubble} /></clipPath>
+      </defs>
+      <!-- the magnet's thickness: dark magnetic backing, then the ivory edge -->
+      <path d={bubble} fill="#34332f" transform="translate(.6 3.2)" />
+      <path d={bubble} fill="#d6cfbd" transform="translate(0 1.6)" />
+      <!-- the face with its ivory rim -->
+      <path class="fm-face" d={bubble} fill="url(#fb-face)" stroke="#fbf7ec" stroke-width="3.2" stroke-linejoin="round" />
+      <path d={bubble} fill="none" stroke="#fff" stroke-opacity=".45" stroke-width="1" transform="translate(60 36) scale(.93) translate(-60 -36)" />
+      <!-- raised quotation marks: a dark relief with a light edge above -->
+      <g class="fm-quotes" style="font-family: Georgia, 'Times New Roman', serif; font-weight: 700" font-size="78" text-anchor="middle" letter-spacing="2">
+        <text x="61" y="88" fill="#fff6d6" fill-opacity=".75">&#8220;&#8221;</text>
+        <text x="60" y="89.6" fill="#20201d">&#8220;&#8221;</text>
+      </g>
+      <g clip-path="url(#fb-clip)">
+        <rect class="fm-gloss" x="-120" y="0" width="240" height="96" fill="url(#fb-gloss)" />
+      </g>
+    </svg>
+  </button>
+  <div class="feedback-anchor" data-feedback-anchor>
+    {entries.length > 1 && <span class="letter-under" aria-hidden="true"></span>}
+    <div class="letter" data-feedback-letter>
+      {slices.map((k) => (
+        <div class={`fold fold-${k}`}>
+          <div class="face face-in" aria-hidden={k === 1 ? undefined : 'true'}>
+            <div class="page" style={`--slice: ${k}`}>
+              {entries.map((e, i) => (
+                <article class="entry" data-feedback-panel={i} hidden={i !== 0} aria-label={k === 1 ? `Feedback von ${e.name}, ${e.role}, ${e.organisation}` : undefined}>
+                  <header class="entry-head"><span>Feedback</span><time>{e.date}</time></header>
+                  <blockquote class="entry-quote"><p>{e.quote}</p></blockquote>
+                  <footer class="entry-from">
+                    <span class="entry-name">{e.name}</span>
+                    <span class="entry-role">{e.role}, {e.organisation}</span>
+                  </footer>
+                </article>
+              ))}
+            </div>
+          </div>
+          {k === 0 && (
+            <div class="face face-out" aria-hidden="true">
+              <span class="out-title">Feedback</span>
+              <span class="out-from">von <span data-feedback-from>{entries[0].name}</span></span>
+            </div>
+          )}
+          {k === 2 && <div class="face face-out face-blank" aria-hidden="true"></div>}
+        </div>
+      ))}
+
+      <div class="letter-controls" data-feedback-controls inert>
+        <button type="button" class="letter-close" data-feedback-close aria-label="Feedback schließen und zurück an das Whiteboard">×</button>
+        {entries.length > 1 && (
+          <div class="letter-pager">
+            <button type="button" data-feedback-step="-1" aria-label="Vorheriges Feedback">‹</button>
+            <span data-feedback-count aria-live="polite">1 / {entries.length}</span>
+            <button type="button" data-feedback-step="1" aria-label="Nächstes Feedback">›</button>
+          </div>
+        )}
+      </div>
+
+
+    </div>
+    <button type="button" class="letter-open" data-feedback-open aria-expanded="false" aria-describedby="feedback-hint">
+      <span class="sr-only">Feedback lesen: {entries.length} Rückmeldungen von Kundinnen und Kunden</span>
+    </button>
+  </div>
+  <span class="object-caption feedback-caption" aria-hidden="true">Feedback <span>↗</span></span>
+  <p id="feedback-hint" class="sr-only">Escape schließt das Feedback wieder.</p>
+</div>
+
+<style>
+  /* the board only exists from 1024px; everything here lives inside it */
+  .feedback-backdrop {
+    position: absolute;
+    inset: 0;
+    z-index: 4999;
+    background: #fafbf9d0;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 400ms ease;
+  }
+  :global(.is-feedback-open) .feedback-backdrop { opacity: 1; pointer-events: auto; cursor: zoom-out; }
+
+  .object-feedback {
+    --letter-w: 21cqh;
+    --tilt: -3deg;
+    left: 64%;
+    top: 41%;
+  }
+  .object-feedback.is-open { z-index: 5000; }
+  /* the magnet stays grabbable above the letter's open button */
+  .feedback-magnet {
+    position: absolute;
+    top: -48px;
+    left: calc(50% - 36px);
+    z-index: 20;
+    width: 72px;
+    min-height: 44px;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: grab;
+    touch-action: none;
+    rotate: -6deg;
+    filter: drop-shadow(1px 5px 4px #20201d40);
+    transition: translate 160ms ease, filter 160ms ease;
+  }
+  .feedback-magnet svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .fm-gloss { transition: transform 700ms cubic-bezier(.2, .8, .2, 1); }
+  .feedback-magnet:hover, .feedback-magnet:focus-visible { translate: 0 -2px; filter: drop-shadow(2px 8px 5px #20201d4d); }
+  .feedback-magnet:hover .fm-gloss, .feedback-magnet:focus-visible .fm-gloss { transform: translateX(120px); }
+  .feedback-magnet:focus-visible { outline: 2px dashed var(--color-ginster-deep); outline-offset: 4px; }
+  .object-feedback.is-dragging .feedback-magnet { translate: 0 -4px; }
+
+  /* the folded letter on the board: a third of an A4 page */
+  .feedback-anchor { position: relative; width: var(--letter-w); height: calc(var(--letter-w) * 1.414 / 3); }
+
+  .letter-under {
+    position: absolute;
+    inset: 0;
+    background: #fbfaf4;
+    box-shadow: 1px 2px 0 #dcd8cc, 2px 8px 12px -8px #20201d55;
+    rotate: 5deg;
+    translate: 6% 10%;
+  }
+
+  /* the whole page, laid out at --up times its board size (so its text is drawn at reading size
+     when opened) and scaled down; its middle third sits on the anchor */
+  .letter {
+    --up: 4;
+    position: absolute;
+    left: 0;
+    top: -100%;
+    width: calc(100% * var(--up));
+    height: calc(300% * var(--up));
+    container-type: inline-size;
+    transform-origin: 0 0;
+    transform: rotate(var(--tilt)) scale(calc(1 / var(--up)));
+    transform-style: preserve-3d;
+    perspective: 2600px;
+    transition: transform 650ms cubic-bezier(.2, .8, .2, 1) 650ms;
+  }
+  .is-open .letter {
+    transform: translate(var(--open-x, 0px), var(--open-y, 0px)) scale(calc(var(--open-s, 1) / var(--up)));
+    transition-delay: 0ms;
+  }
+
+  .fold { position: absolute; left: 0; right: 0; height: calc(100% / 3); transform-style: preserve-3d; }
+  .fold-0 { top: 0; transform-origin: 50% 100%; transform: translateZ(3px) rotateX(-180deg); transition: transform 600ms cubic-bezier(.4, .1, .2, 1) 350ms; }
+  .fold-1 { top: calc(100% / 3); }
+  .fold-2 { top: calc(200% / 3); transform-origin: 50% 0; transform: translateZ(1.5px) rotateX(180deg); transition: transform 600ms cubic-bezier(.4, .1, .2, 1) 0ms; }
+  /* opening: the outer (top) flap first, then the bottom one; closing in reverse */
+  .is-open .fold-0 { transform: none; transition-delay: 450ms; }
+  .is-open .fold-2 { transform: none; transition-delay: 800ms; }
+
+  .face { position: absolute; inset: 0; overflow: hidden; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+  .face-out { transform: rotateX(180deg); }
+
+  /* lined paper with a margin; folds darken a little at the creases */
+  .page {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(var(--slice) * -100%);
+    height: 300%;
+    padding: 3.6cqi 9cqi 0 13cqi;
+    color: #22305f;
+    text-align: left;
+    background:
+      linear-gradient(90deg, transparent 10.2cqi, #e3a3a5 10.2cqi, #e3a3a5 10.5cqi, transparent 10.5cqi),
+      repeating-linear-gradient(180deg, transparent 0 calc(6.4cqi - 1px), #c9d6e8 calc(6.4cqi - 1px) 6.4cqi) 0 .7cqi / 100% 100% no-repeat,
+      #fffef9;
+  }
+  .face-in { box-shadow: inset 0 0 0 1px #e6e1d3; }
+  .face-in::after { content: ''; position: absolute; inset: 0; pointer-events: none; }
+  .fold-0 .face-in::after { background: linear-gradient(0deg, #20201d14, transparent 7%); }
+  .fold-1 .face-in::after { background: linear-gradient(180deg, #20201d10, transparent 6%, transparent 94%, #20201d10); }
+  .fold-2 .face-in::after { background: linear-gradient(180deg, #20201d14, transparent 7%); }
+
+  .entry[hidden] { display: none; }
+  .entry { display: flex; flex-direction: column; height: calc(100cqi * 1.414 - 3.6cqi); }
+  .entry-head { height: 4.1cqi; padding-right: 9cqi; display: flex; align-items: baseline; justify-content: space-between; color: #6e6c65; font-size: 3.4cqi; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+  .entry-head span { color: var(--color-ginster-deep); }
+  .entry-head time { letter-spacing: .04em; font-weight: 600; }
+  .entry-quote { margin: 7cqi 0 0; } /* keeps the handwriting's baselines on the ruled lines */
+  .entry-quote p { font-family: var(--font-hand); font-size: 5.3cqi; line-height: 6.4cqi; }
+  .entry-from { display: flex; flex-direction: column; gap: 1cqi; margin-top: 6.4cqi; }
+  .entry-name { font-family: var(--font-hand); font-size: 7cqi; font-weight: 700; line-height: 1; rotate: -2deg; transform-origin: left; }
+  .entry-role { color: #4d4b45; font-family: var(--font-sans); font-size: 3.4cqi; font-weight: 600; }
+
+  /* outside of the folded letter */
+  .face-out { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2cqi; background: #fbfaf4; box-shadow: inset 0 0 0 1px #e6e1d3, 1px 2px 0 #dcd8cc; }
+  .out-title { font-family: var(--font-marker); font-size: 13cqi; font-weight: 700; line-height: 1; color: var(--color-ink); rotate: -3deg; }
+  .out-title::after { content: ''; display: block; height: 1.4cqi; margin-top: .6cqi; background: var(--color-ginster); border-radius: 1cqi; rotate: -1deg; }
+  .out-from { font-family: var(--font-hand); font-size: 9cqi; font-weight: 700; line-height: 1.1; color: #22305f; }
+  .out-from [data-feedback-from] { display: inline-block; transition: opacity 320ms ease, translate 320ms ease; }
+  .out-from [data-feedback-from].is-changing { opacity: 0; translate: 0 1.5cqi; }
+  .face-blank { background: #fbfaf4; box-shadow: 1px 6px 10px -6px #20201d66; }
+
+  /* the folded letter casts a shadow on the board */
+  .fold-1::before { content: ''; position: absolute; inset: 0; box-shadow: 4px 30px 40px -24px #20201d70; }
+
+  .letter-controls {
+    position: absolute;
+    inset: 0;
+    transform: translateZ(4px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 250ms ease;
+  }
+  .is-open .letter-controls { opacity: 1; pointer-events: auto; transition-delay: 1100ms; }
+  .letter-close, .letter-pager button {
+    display: grid;
+    place-items: center;
+    width: 11cqi;
+    height: 11cqi;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: none;
+    color: var(--color-ink);
+    font: inherit;
+    font-size: 8cqi;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .letter-close:hover, .letter-pager button:hover { background: #20201d10; }
+  .letter-close:focus-visible, .letter-pager button:focus-visible { outline: .6cqi solid var(--color-ginster-deep); outline-offset: .4cqi; }
+  .letter-close { position: absolute; top: 2cqi; right: 2cqi; }
+  .letter-pager { position: absolute; left: 12cqi; right: 8cqi; bottom: 1.5cqi; display: flex; align-items: center; justify-content: space-between; color: #6e6c65; font-size: 4cqi; font-weight: 600; }
+
+  .letter-open { position: absolute; inset: 0; z-index: 10; padding: 0; border: 0; background: none; cursor: zoom-in; }
+  .letter-open:focus-visible { outline: 3px solid var(--color-ginster-deep); outline-offset: 6px; }
+  .is-open .letter-open { display: none; }
+
+  .feedback-caption { margin-top: 2.6cqh; font-size: clamp(18px, 1.6cqw, 25px); white-space: nowrap; rotate: 2deg; transition: opacity 300ms; }
+  .is-open .feedback-caption { opacity: 0; }
+
+  /* hover: the top flap lifts, as if someone is about to open the letter */
+  @media (hover: hover) and (pointer: fine) {
+    .object-feedback:not(.is-open):not(.is-dragging) .feedback-anchor:has(.letter-open:hover) .fold-0 { transform: translateZ(3px) rotateX(-150deg); transition-delay: 0ms; }
+  }
+  .object-feedback:not(.is-open) .feedback-anchor:has(.letter-open:focus-visible) .fold-0 { transform: translateZ(3px) rotateX(-150deg); transition-delay: 0ms; }
+
+  /* a letter being shown: the words appear as if written, then the name */
+  .is-live .entry:not([hidden]) .entry-quote p { animation: write-down 1500ms cubic-bezier(.45, .05, .55, .95) both; animation-delay: 1250ms; }
+  .is-live .entry:not([hidden]) .entry-name { animation: write-across 700ms ease-out both; animation-delay: 2650ms; }
+  .is-live.is-paging .entry:not([hidden]) .entry-quote p { animation-delay: 0ms; }
+  .is-live.is-paging .entry:not([hidden]) .entry-name { animation-delay: 1350ms; }
+  @keyframes write-down { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0 0 0 0); } }
+  @keyframes write-across { from { clip-path: inset(-20% 100% -20% 0); } to { clip-path: inset(-20% 0 -20% 0); } }
+
+  /* narrow boards: further right, clear of the collage stack */
+  @container (max-width: 1050px) {
+    .object-feedback { left: 64%; top: 33%; --letter-w: 17cqh; }
+  }
+
+  @media (max-height: 800px) {
+    .object-feedback { --letter-w: 19cqh; top: 43%; left: 57%; }
+    .feedback-caption { font-size: clamp(17px, min(1.6cqw, 3.4cqh), 22px); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .letter, .fold-0, .fold-2, .letter-controls, .feedback-backdrop, .feedback-caption, .feedback-magnet, .fm-gloss { transition: none !important; }
+    .is-live .entry .entry-quote p, .is-live .entry .entry-name { animation: none; }
+  }
+</style>
+
+<script>
+  import '../../scripts/board-feedback';
+</script>

@@ -1,0 +1,438 @@
+---
+/**
+ * The project collages on the whiteboard: three stacks of prints (Grundschulen, Mittel- & Musikschulen,
+ * Kindergarten & Bibliothek), each held by a round magnet with an icon for its kind of building (pencil, music note, book), in the board's upper right corner. A click on the top
+ * print opens the gallery at that project, and the gallery browses all projects. While nobody
+ * points at it, the stack shuffles by itself now and then: the top print slips under the stack. The caption still leads to the projects
+ * section. Data: src/data/collages.ts; behaviour: src/scripts/board-collages.ts.
+ */
+import { Image } from 'astro:assets';
+import { collages } from '../../data/collages';
+
+// each print keeps its own slight tilt, so the stack looks handled, not aligned
+const tilts = [-2.4, 1.6, -1.1, 2.3, -1.8, 0.9, -2.8, 1.9, -0.6, 2.7];
+// three stacks by kind of building, side by side in the board's upper right corner
+const groupOf: Record<string, string> = {
+  'gs-gais': 'gs', 'gs-deflorian-meran': 'gs', 'gs-sarnthein': 'gs', 'gs-st-jakob': 'gs', 'gs-st-martin-gsies': 'gs',
+  'ms-lana': 'ms', 'ms-sterzing': 'ms', 'musikschule-brixen': 'ms',
+  'kiga-tisens': 'kb', 'bibliothek-terlan': 'kb',
+};
+const groups = [
+  { key: 'gs', name: 'Grundschulen' },
+  { key: 'ms', name: 'Mittel- & Musikschulen' },
+  { key: 'kb', name: 'Kindergarten & Bibliothek' },
+].map((g) => ({ ...g, items: collages.filter((c) => (groupOf[c.slug] ?? 'gs') === g.key) }));
+// the gallery runs through the projects in the same order, stack by stack
+const ordered = groups.flatMap((g) => g.items);
+const openLabel = (c: (typeof collages)[number]) => `Galerie öffnen: ${c.name}, ${c.photos.length} Fotos`;
+---
+
+{groups.map((g, gi) => (
+  <div class={`board-object object-projects object-projects-${g.key}`} data-board-object data-collages data-path-node={gi === 0 ? '2' : undefined}>
+    <button class="stack-magnet" type="button" data-board-handle data-label={g.name} aria-label={`Magnet ${g.name} greifen und verschieben`} aria-describedby="board-drag-hint" title="Magnet greifen und den Stapel verschieben">
+      <svg viewBox="0 0 60 60" aria-hidden="true">
+        <defs>
+          <radialGradient id={`sm-face-${g.key}`} cx=".4" cy=".35" r=".7">
+            <stop offset="0" stop-color="#f8d362" />
+            <stop offset="1" stop-color="#e2a300" />
+          </radialGradient>
+          <linearGradient id={`sm-gloss-${g.key}`} x1="0" y1="0" x2="1" y2="1">
+            <stop offset=".25" stop-color="#fff" stop-opacity="0" />
+            <stop offset=".4" stop-color="#fff" stop-opacity=".55" />
+            <stop offset=".5" stop-color="#fff" stop-opacity="0" />
+          </linearGradient>
+          <clipPath id={`sm-clip-${g.key}`}><circle cx="30" cy="30" r="26" /></clipPath>
+        </defs>
+        <!-- the magnet's thickness: dark magnetic backing, then the ivory edge -->
+        <circle cx="30.6" cy="33.2" r="27.6" fill="#34332f" />
+        <circle cx="30" cy="31.6" r="27.6" fill="#d6cfbd" />
+        <!-- the face with its ivory rim -->
+        <circle cx="30" cy="30" r="26" fill={`url(#sm-face-${g.key})`} stroke="#fbf7ec" stroke-width="3.2" />
+        <g class="sm-icon" fill="none" stroke="#2c2b28" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+          {g.key === 'gs' && (
+            <>
+              <!-- a pencil -->
+              <path d="M19 41L21 34L37 18L42 23L26 39Z" fill="#fbf7ec" />
+              <path d="M33 22L38 27M19 41L21 34L26 39Z" />
+              <path d="M19 41L21 34L26 39Z" fill="#2c2b28" />
+            </>
+          )}
+          {g.key === 'ms' && (
+            <>
+              <!-- two joined music notes -->
+              <path d="M25 39V19L40 16V36" />
+              <ellipse cx="21.5" cy="39.5" rx="4.2" ry="3.2" fill="#2c2b28" transform="rotate(-18 21.5 39.5)" />
+              <ellipse cx="36.5" cy="36.5" rx="4.2" ry="3.2" fill="#2c2b28" transform="rotate(-18 36.5 36.5)" />
+              <path d="M25 24L40 21" />
+            </>
+          )}
+          {g.key === 'kb' && (
+            <>
+              <!-- an open book -->
+              <path d="M30 22Q24 18 16 19V39Q24 38 30 42Q36 38 44 39V19Q36 18 30 22Z" fill="#fbf7ec" />
+              <path d="M30 22V42M20 25Q24 25 27 27M20 30Q24 30 27 32M33 27Q36 25 40 25M33 32Q36 30 40 30" stroke-width="1.6" />
+            </>
+          )}
+        </g>
+        <g clip-path={`url(#sm-clip-${g.key})`}>
+          <rect class="sm-gloss" x="-60" y="0" width="120" height="60" fill={`url(#sm-gloss-${g.key})`} />
+        </g>
+      </svg>
+    </button>
+    <div class="collage-stack" data-collage-stack>
+      {g.items.map((c, i) => (
+        <figure class="print" data-collage-print data-slug={c.slug} data-name={c.name} data-open-label={openLabel(c)} data-depth={i < 3 ? String(i) : 'deep'} style={`--pos: ${i}; --tilt: ${tilts[i % tilts.length]}deg`} aria-hidden={i === 0 ? undefined : 'true'}>
+          <Image src={c.collage} alt={c.alt} widths={[360, 540, 720, 960]} sizes="(max-height: 800px) 260px, 22vw" format="webp" quality={82} loading={i < 3 ? 'eager' : 'lazy'} fetchpriority={i === 0 && gi === 0 ? 'high' : undefined} draggable="false" />
+          <figcaption><span>{c.name}</span><span class="print-number">{i + 1}/{g.items.length}</span></figcaption>
+        </figure>
+      ))}
+      <button type="button" class="collage-open" data-collage-open aria-haspopup="dialog" aria-label={openLabel(g.items[0])}>
+        <span class="collage-open-hint" aria-hidden="true" data-collage-open-hint>{g.items[0].photos.length} Fotos ansehen</span>
+      </button>
+    </div>
+    <div class="collage-actions">
+      <a class="board-object-link collage-link" href="#projekte" data-board-topic="projekte" draggable="false">
+        <span class="object-caption">{g.name} <span aria-hidden="true">↗</span></span>
+      </a>
+    </div>
+    <p class="sr-only" aria-live="polite" data-collage-status></p>
+  </div>
+))}
+
+<!-- Lift shadows and midtones without pushing white walls/windows past white. -->
+<svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute;pointer-events:none">
+  <defs>
+    <filter id="gallery-photo-finish" color-interpolation-filters="sRGB">
+      <feComponentTransfer>
+        <feFuncR type="gamma" amplitude="1" exponent=".86" offset="0" />
+        <feFuncG type="gamma" amplitude="1" exponent=".86" offset="0" />
+        <feFuncB type="gamma" amplitude="1" exponent=".86" offset="0" />
+      </feComponentTransfer>
+      <feColorMatrix type="saturate" values="1.24" />
+    </filter>
+  </defs>
+</svg>
+
+<dialog class="gallery" aria-labelledby="gallery-title" data-gallery>
+  <header class="gallery-header">
+    <p id="gallery-title" class="gallery-title" data-gallery-title></p>
+    <span class="gallery-count" data-gallery-count aria-live="polite"></span>
+    <span class="gallery-credit" data-gallery-credit></span>
+    <button type="button" class="gallery-close" data-gallery-close aria-label="Galerie schließen">×</button>
+  </header>
+  <div class="gallery-stage" data-gallery-stage>
+    {ordered.map((c) => (
+      <div class="gallery-set" data-gallery-set={c.slug} data-name={c.name} data-credit={c.credit ?? ''} hidden>
+        {c.photos.map((p, k) => (
+          <figure class="slide" data-slide hidden={k !== 0}>
+            <Image src={p.image} alt="" widths={[640, 960, 1280, 1600, 2000]} sizes="(min-width: 1024px) 82vw, 100vw" format="webp" quality={82} loading="lazy" draggable="false" />
+            <figcaption>{p.alt}</figcaption>
+          </figure>
+        ))}
+      </div>
+    ))}
+    <button type="button" class="gallery-step gallery-prev" data-gallery-step="-1" aria-label="Vorheriges Foto"><span class="step-arrow" aria-hidden="true">‹</span><span class="step-project" data-step-project aria-hidden="true"></span></button>
+    <button type="button" class="gallery-step gallery-next" data-gallery-step="1" aria-label="Nächstes Foto"><span class="step-project" data-step-project aria-hidden="true"></span><span class="step-arrow" aria-hidden="true">›</span></button>
+  </div>
+  <footer class="gallery-footer">
+    {ordered.map((c) => (
+      <div class="gallery-thumbs" data-thumb-set={c.slug} hidden>
+        {c.photos.map((p, k) => (
+          <button type="button" class="thumb" data-thumb={k} aria-label={`Foto ${k + 1}: ${p.alt}`}>
+            <Image src={p.image} alt="" widths={[120, 240]} sizes="120px" format="webp" quality={70} loading="lazy" draggable="false" />
+          </button>
+        ))}
+      </div>
+    ))}
+    <nav class="gallery-projects" aria-label="Projekte">
+      {ordered.map((c) => (
+        <button type="button" class="project" data-project={c.slug} aria-label={`${c.name}, ${c.photos.length} Fotos`} title={c.name}>
+          <Image src={c.collage} alt="" widths={[160, 320]} sizes="112px" format="webp" quality={70} loading="lazy" draggable="false" />
+          <span>{c.name}</span>
+        </button>
+      ))}
+    </nav>
+  </footer>
+</dialog>
+
+<style>
+  .object-projects { --print-h: min(18cqh, 12.6cqw); width: auto; }
+  /* the three stacks, fanned out a little in the upper right corner */
+  .object-projects-gs { left: 46%; top: 8%; rotate: -2.5deg; }
+  .object-projects-ms { left: 63.5%; top: 5%; rotate: 1.5deg; }
+  .object-projects-kb { left: 81%; top: 9%; rotate: -1deg; }
+  /* narrow boards: a little smaller, so the three stay apart and on the board */
+  @container (max-width: 1050px) {
+    .object-projects { --print-h: min(16cqh, 11.2cqw); }
+    .object-projects-gs { left: 45%; }
+    .object-projects-ms { left: 62%; }
+    .object-projects-kb { left: 79%; }
+  }
+  /* the magnet holds the whole stack, so it sits above every print */
+  /* a round button magnet holds each stack; its icon names the kind of building. It is the drag handle. */
+  .stack-magnet {
+    position: absolute;
+    top: -24px;
+    left: calc(50% - 23px);
+    z-index: 300;
+    width: 46px;
+    min-height: 44px;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: grab;
+    touch-action: none;
+    filter: drop-shadow(1px 5px 4px #20201d40);
+    transition: translate 160ms ease, filter 160ms ease;
+  }
+  .object-projects-gs .stack-magnet { rotate: -8deg; }
+  .object-projects-ms .stack-magnet { rotate: 6deg; }
+  .object-projects-kb .stack-magnet { rotate: -3deg; }
+  .stack-magnet svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .sm-gloss { transition: transform 700ms cubic-bezier(.2, .8, .2, 1); }
+  .stack-magnet:hover, .stack-magnet:focus-visible { translate: 0 -2px; filter: drop-shadow(2px 8px 5px #20201d4d); }
+  .stack-magnet:hover .sm-gloss, .stack-magnet:focus-visible .sm-gloss { transform: translateX(60px); }
+  .stack-magnet:focus-visible { outline: 2px dashed var(--color-ginster-deep); outline-offset: 4px; }
+  .object-projects.is-dragging .stack-magnet { translate: 0 -4px; }
+
+  .collage-stack {
+    position: relative;
+    height: calc(var(--print-h) + 34px);
+    width: calc(var(--print-h) * 1.5 + 14px);
+  }
+
+  /* one print: the collage on white photo paper with a strip for the hand-written label */
+  .print {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    padding: 5px 5px 0;
+    background: #fff;
+    box-shadow: 0 3px 6px #20201d0a, 2px 12px 18px -12px #20201d70;
+    z-index: calc(100 - var(--pos));
+    transform: translate(var(--dx, 0), var(--dy, 0)) rotate(var(--tilt)) scale(var(--lift, 1));
+    transition: transform 380ms cubic-bezier(.2, .8, .2, 1), opacity 300ms ease, box-shadow 300ms ease;
+  }
+  .print :global(img) { display: block; width: 100%; height: var(--print-h); object-fit: cover; -webkit-user-drag: none; user-select: none; }
+  .print figcaption {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 5px 2px 0;
+    font-family: var(--font-marker);
+    font-size: clamp(13px, min(1.05cqw, 2.2cqh), 17px);
+    font-weight: 600;
+    line-height: 1.1;
+    white-space: nowrap;
+  }
+  .print figcaption span:first-child { overflow: hidden; text-overflow: ellipsis; }
+  .print-number { color: #8a887e; font-size: .8em; }
+
+  /* the stack: the two prints under the top one peek out, everything further down hides under them */
+  .collage-stack :global(.print[data-depth='1']) { --dx: 2.5%; --dy: 2.5%; }
+  .collage-stack :global(.print[data-depth='2']) { --dx: -2%; --dy: 4.5%; }
+  .collage-stack :global(.print[data-depth='deep']) { --dx: -2%; --dy: 4.5%; box-shadow: none; opacity: 0; }
+
+  /* hover on the top print: it lifts towards the viewer, ready to be picked up */
+  .collage-stack:has(.collage-open:hover) :global(.print[data-depth='0']),
+  .collage-stack:has(.collage-open:focus-visible) :global(.print[data-depth='0']) { --dy: -2%; --lift: 1.025; box-shadow: 0 3px 6px #20201d10, 4px 22px 26px -14px #20201d80; }
+
+  /* hover / focus: the prints underneath fan out a little, showing there is more to see */
+  .collage-stack:has(.collage-open:hover) :global(.print[data-depth='1']),
+  .collage-stack:has(.collage-open:focus-visible) :global(.print[data-depth='1']) { --dx: 6%; --dy: 3%; }
+  .collage-stack:has(.collage-open:hover) :global(.print[data-depth='2']),
+  .collage-stack:has(.collage-open:focus-visible) :global(.print[data-depth='2']) { --dx: -5%; --dy: 6%; }
+
+
+  .collage-open {
+    position: absolute;
+    inset: 0;
+    z-index: 200;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: zoom-in;
+  }
+  .collage-open:focus-visible { outline: 3px solid var(--color-ginster-deep); outline-offset: 10px; }
+  .collage-open-hint {
+    position: absolute;
+    left: 50%;
+    top: calc(7px + var(--print-h) - 14px);
+    translate: -50% -100%;
+    padding: 7px 14px;
+    border-radius: 999px;
+    background: #1d1d1be6;
+    color: #fff;
+    font-size: clamp(11px, .95cqw, 14px);
+    font-weight: 600;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 200ms ease, translate 200ms ease;
+    pointer-events: none;
+  }
+  .collage-open:hover .collage-open-hint, .collage-open:focus-visible .collage-open-hint { opacity: 1; translate: -50% calc(-100% - 6px); }
+
+  .collage-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    width: 100%;
+    margin-top: calc(1.4cqh + 6px);
+  }
+  .collage-link { width: auto; }
+  .collage-link .object-caption { font-family: var(--font-sans); font-size: clamp(11px, 1cqw, 15px); font-weight: 500; }
+
+  /* the gallery: the photos on a dark wall, framed like the board */
+  .gallery {
+    position: fixed;
+    inset: calc(var(--nav-h, 72px) + 8px) 28px 28px;
+    width: auto;
+    max-width: none;
+    height: auto;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 8px solid #d5d9d7;
+    border-radius: 7px;
+    background: #1b1b19;
+    color: #f4f3ee;
+    overflow: hidden;
+  }
+  .gallery[open] { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; }
+  .gallery::backdrop { background: #f3f2edf2; }
+  .gallery-header { display: flex; align-items: center; gap: 20px; min-height: 64px; padding: 8px 12px 8px 24px; }
+  .gallery-title { font-family: var(--font-marker); font-size: 30px; font-weight: 600; line-height: 1; color: #fff; }
+  .gallery-count { font-size: 13px; font-weight: 600; letter-spacing: .06em; color: #a9a79e; font-variant-numeric: tabular-nums; }
+  .gallery-close { display: grid; place-items: center; width: 44px; height: 44px; margin-left: auto; padding: 0; border: 0; border-radius: 50%; background: none; color: #fff; font-size: 30px; line-height: 1; cursor: pointer; }
+  .gallery-close:hover { background: #ffffff1a; }
+
+  .gallery-stage { position: relative; min-height: 0; overflow: hidden; touch-action: pan-y; }
+  .gallery-set { position: absolute; inset: 0; }
+  .gallery-set[hidden], .slide[hidden], .gallery-thumbs[hidden] { display: none; }
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    justify-items: center;
+    gap: 12px;
+    margin: 0;
+    padding: 4px 210px 0;
+  }
+  .slide :global(img) { width: 100%; height: 100%; object-fit: contain; -webkit-user-drag: none; user-select: none; }
+  /* Match the bright, colorful collage finish in full-size photos and their previews. */
+  .slide :global(img), .thumb :global(img) { filter: url('#gallery-photo-finish'); }
+  .slide figcaption { max-width: 70ch; font-size: 14px; line-height: 1.45; text-align: center; color: #c9c7be; }
+
+  .gallery-step {
+    position: absolute;
+    top: 50%;
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    width: 56px;
+    height: 56px;
+    translate: 0 -50%;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: #ffffff14;
+    color: #fff;
+    font-size: 34px;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color 150ms ease;
+  }
+  .gallery-step:hover { background: #ffffff2e; }
+  .gallery-prev { left: 16px; }
+  .gallery-next { right: 16px; }
+  .gallery-step span { translate: 0 -2px; }
+  .gallery-close:focus-visible, .gallery-step:focus-visible, .thumb:focus-visible { outline: 2px solid var(--color-ginster-light); outline-offset: 3px; }
+
+  .gallery-footer { display: flex; flex-direction: column; align-items: center; gap: 12px; min-width: 0; padding: 10px 24px 14px; }
+  .gallery-thumbs { display: flex; gap: 8px; }
+  .thumb {
+    width: 76px;
+    height: 54px;
+    padding: 0;
+    border: 0;
+    border-radius: 3px;
+    overflow: hidden;
+    background: #2a2a27;
+    opacity: .5;
+    cursor: pointer;
+    transition: opacity 150ms ease, translate 150ms ease;
+  }
+  .thumb :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .thumb:hover { opacity: .85; }
+  .thumb[aria-current='true'] { opacity: 1; translate: 0 -3px; box-shadow: 0 0 0 2px var(--color-ginster); }
+  .gallery-credit { font-size: 11px; color: #8e8c83; }
+  .gallery-credit:empty { display: none; }
+
+  /* all projects: the collages as a strip; the current one is lit */
+  .gallery-projects {
+    display: flex;
+    gap: 10px;
+    max-width: 100%;
+    padding: 10px 2px 2px;
+    overflow-x: auto;
+    border-top: 1px solid #ffffff1a;
+    scrollbar-width: thin;
+  }
+  .project {
+    flex: none;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 112px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: #a9a79e;
+    font: inherit;
+    font-size: 11px;
+    text-align: left;
+    opacity: .55;
+    cursor: pointer;
+    transition: opacity 150ms ease, color 150ms ease;
+  }
+  .project :global(img) { width: 112px; height: 75px; border-radius: 3px; object-fit: cover; }
+  .project span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .project:hover { opacity: .9; }
+  .project[aria-current='true'] { opacity: 1; color: #fff; }
+  .project[aria-current='true'] :global(img) { box-shadow: 0 0 0 2px var(--color-ginster); }
+  .project:focus-visible { outline: 2px solid var(--color-ginster-light); outline-offset: 3px; }
+
+  /* at the end of a project the arrow leads into the next one and says so */
+  .step-project {
+    display: none;
+    max-width: 150px;
+    font-family: var(--font-marker);
+    font-size: 19px;
+    font-weight: 600;
+    line-height: 1.05;
+    white-space: normal;
+  }
+  .gallery-step[data-crossing] { display: flex; align-items: center; gap: 10px; width: auto; height: auto; min-height: 56px; padding: 8px 18px; border-radius: 30px; }
+  .gallery-step[data-crossing] .step-project { display: block; }
+  .gallery-prev .step-project { text-align: left; }
+  .gallery-next .step-project { text-align: right; }
+
+  @media (max-width: 1023px) {
+    .gallery { inset: 0; border: 0; border-radius: 0; }
+    .slide { padding-inline: 12px; }
+    .gallery-step { top: auto; bottom: 8px; translate: none; width: 48px; height: 48px; }
+    .gallery-credit { position: static; }
+    .gallery-footer { flex-direction: column; gap: 8px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .print, .collage-open-hint, .thumb, .project, .stack-magnet, .sm-gloss { transition: none; }
+  }
+</style>
+
+<script>
+  import '../../scripts/board-collages';
+</script>

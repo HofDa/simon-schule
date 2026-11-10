@@ -1,0 +1,286 @@
+---
+/**
+ * "Der Lernraum" – Section 5: VS Möbel Floor Plan & Rocking PantoSwing Chair.
+ * Combines the architectural floor plan zones from "Das Klassenzimmer" with the
+ * signature Ginstergelb VS chair illustration and a direct inquiry hook for kindergarten.
+ */
+import { vs } from '../../../data/site';
+import { getLang, useTranslations } from '../../../i18n/ui';
+import Lesson from '../klassenzimmer/Lesson.astro';
+import VSChair from '../art/VSChair.astro';
+
+const lang = getLang(Astro.currentLocale);
+const t = useTranslations(lang).vs;
+const categories: { name: string; text: string; url?: string }[] = t.categories;
+const catalogUrl = vs.catalogUrl[lang];
+const areas = ['sit', 'tab', 'store', 'flex', 'kg'];
+---
+
+<section id="vs-moebel" class="lr-vs" aria-labelledby="vs-title" data-lr-vs>
+  <div class="shell">
+    <Lesson n="04" name="Lernlandschaft" note="der Systembaukasten von VS Möbel in einem Grundriss" layout="landscape" from="circle" />
+
+    <div class="head">
+      <div class="head-copy">
+        <p class="exclusive-badge">{t.exclusive}</p>
+        <h2 id="vs-title" class="mt-3 text-headline leading-[0.98] tracking-[-0.03em]">{t.title}</h2>
+        <p class="intro mt-6">{t.intro}</p>
+      </div>
+
+      <figure class="chair-card m-0">
+        <div class="chair-art" data-lr-vs-chair>
+          <VSChair id="lr-vs-chair" class="block w-full" />
+        </div>
+        <figcaption class="chair-caption">{t.caption}</figcaption>
+      </figure>
+    </div>
+
+    <ul class="floor">
+      {categories.map((c, i) => {
+        const area = areas[i] ?? 'flex';
+        const body = (
+          <>
+            <svg class="glyph" viewBox="0 0 160 70" aria-hidden="true">
+              {area === 'sit' && (
+                <>
+                  <circle cx="34" cy="38" r="12" class="soft" />
+                  <circle cx="66" cy="26" r="10" class="soft" />
+                  <circle cx="64" cy="54" r="9" class="soft" />
+                  <use href="#kz-chair" x="96" y="22" width="26" height="26" transform="rotate(-20 109 35)" />
+                  <use href="#kz-chair" x="122" y="30" width="26" height="26" transform="rotate(25 135 43)" />
+                </>
+              )}
+              {area === 'tab' && (
+                <>
+                  <rect x="44" y="20" width="72" height="30" rx="2" class="top" />
+                  <use href="#kz-chair" x="50" y="0" width="22" height="22" transform="rotate(180 61 11)" />
+                  <use href="#kz-chair" x="88" y="0" width="22" height="22" transform="rotate(180 99 11)" />
+                  <use href="#kz-chair" x="50" y="48" width="22" height="22" />
+                  <use href="#kz-chair" x="88" y="48" width="22" height="22" />
+                  <use href="#kz-chair" x="20" y="24" width="22" height="22" transform="rotate(90 31 35)" />
+                  <use href="#kz-chair" x="118" y="24" width="22" height="22" transform="rotate(-90 129 35)" />
+                </>
+              )}
+              {area === 'store' && (
+                <>
+                  <rect x="10" y="12" width="140" height="20" rx="1.5" class="top" />
+                  {[0, 1, 2, 3, 4, 5, 6].map((k) => <line x1={10 + k * 20} y1="12" x2={10 + k * 20} y2="32" class="rule" />)}
+                  <rect x="60" y="44" width="40" height="16" rx="1.5" class="top" />
+                  <line x1="80" y1="44" x2="80" y2="60" class="rule" />
+                </>
+              )}
+              {area === 'flex' && (
+                <>
+                  <rect x="12" y="14" width="64" height="44" rx="2" class="top" />
+                  <rect x="12" y="28" width="64" height="30" rx="2" class="top" />
+                  <rect x="12" y="42" width="64" height="16" rx="2" class="top" />
+                  <circle cx="104" cy="36" r="15" class="soft" />
+                  <circle cx="138" cy="44" r="11" class="soft" />
+                </>
+              )}
+              {area === 'kg' && (
+                <>
+                  <circle cx="80" cy="35" r="17" class="top" />
+                  <use href="#kz-chair" x="71" y="0" width="18" height="18" transform="rotate(180 80 9)" />
+                  <use href="#kz-chair" x="71" y="52" width="18" height="18" />
+                  <use href="#kz-chair" x="45" y="26" width="18" height="18" transform="rotate(90 54 35)" />
+                  <use href="#kz-chair" x="97" y="26" width="18" height="18" transform="rotate(-90 106 35)" />
+                  <rect x="126" y="16" width="22" height="38" rx="2" class="top" />
+                </>
+              )}
+            </svg>
+            <div class="zone-header">
+              <span class="zone-name">{c.name}</span>
+              {c.url ? (
+                <span class="zone-action" aria-hidden="true">VS.de ↗</span>
+              ) : (
+                <span class="zone-action" aria-hidden="true">Direkt anfragen →</span>
+              )}
+            </div>
+            <span class="zone-text">{c.text}</span>
+          </>
+        );
+        return (
+          <li class={`zone zone-${area}`}>
+            {c.url ? (
+              <a class="zone-inner" href={c.url} target="_blank" rel="noopener">
+                {body}
+                <span class="sr-only">{t.newTab}</span>
+              </a>
+            ) : (
+              <a class="zone-inner" href="#anfrage" data-open-form data-topic="Kindergarten-Ausstattung">
+                {body}
+              </a>
+            )}
+          </li>
+        );
+      })}
+    </ul>
+
+    <div class="actions">
+      <a class="btn btn-ink" href={catalogUrl} target="_blank" rel="noopener">
+        {t.all}
+        <svg class="btn-arrow h-3.5 w-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" /></svg>
+      </a>
+      <a href="#anfrage" class="link-line text-meta font-semibold" data-open-form data-topic="VS Möbel / Produktauswahl">
+        Musterstuhl oder Beratung vor Ort anfragen →
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .lr-vs { padding-block: clamp(80px, 9vw, 144px); }
+  .head { display: grid; gap: 36px; align-items: end; }
+  .exclusive-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: var(--text-label);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-ink);
+  }
+  .exclusive-badge::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--color-ginster);
+  }
+  .intro { max-width: 48ch; color: var(--color-muted); font-size: var(--text-body); line-height: 1.65; }
+
+  .chair-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 24px;
+    background: var(--color-warm);
+    border: 1px solid var(--color-line);
+  }
+  .chair-art {
+    width: min(52vw, 210px);
+    transform: translateX(var(--shift, 0px));
+  }
+  .chair-caption {
+    margin-top: 10px;
+    font-size: var(--text-label);
+    color: var(--color-muted);
+    text-align: center;
+  }
+
+  /* Floor plan container */
+  .floor {
+    position: relative;
+    list-style: none;
+    margin: clamp(44px, 5vw, 72px) 0 0;
+    padding: clamp(14px, 1.6vw, 24px);
+    display: grid;
+    gap: clamp(12px, 1.4vw, 20px);
+    border: 3px solid var(--color-ink);
+    border-radius: 2px;
+    background: var(--color-warm);
+  }
+  .floor::after {
+    content: '';
+    position: absolute;
+    right: 12%;
+    bottom: -3px;
+    width: 72px;
+    height: 3px;
+    background: var(--color-warm);
+  }
+  .zone-inner {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 18px 20px 22px;
+    border: 1.5px dashed #c3bfb3;
+    border-radius: 3px;
+    transition: background-color 250ms var(--ease-draw), border-color 250ms var(--ease-draw), transform 250ms var(--ease-draw);
+  }
+  .zone:hover .zone-inner,
+  .zone:focus-within .zone-inner {
+    background: var(--color-paper);
+    border-style: solid;
+    border-color: var(--color-ink);
+  }
+  .glyph { width: 100%; max-width: 220px; height: auto; margin-bottom: 16px; overflow: visible; }
+  .glyph .top { fill: var(--color-paper); stroke: var(--color-ink); stroke-width: 1.5; }
+  .glyph .soft { fill: var(--color-ginster-light); stroke: var(--color-ink); stroke-width: 1.2; }
+  .glyph .rule { stroke: var(--color-ink); stroke-width: 1.2; }
+
+  .zone-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .zone-name { font-size: var(--text-title); font-weight: 600; letter-spacing: -0.03em; line-height: 1.05; }
+  .zone-action {
+    font-size: var(--text-label);
+    font-weight: 600;
+    color: var(--color-muted);
+    white-space: nowrap;
+    transition: color 200ms var(--ease-draw);
+  }
+  .zone:hover .zone-action { color: var(--color-ink); }
+  .zone-text { margin-top: 8px; color: var(--color-muted); font-size: var(--text-meta); }
+
+  .actions {
+    margin-top: 36px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+  }
+
+  @media (min-width: 768px) {
+    .floor {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      grid-template-areas:
+        'sit sit tab tab tab tab'
+        'store store store flex flex flex'
+        'kg kg kg kg kg kg';
+    }
+    .zone-sit { grid-area: sit; }
+    .zone-tab { grid-area: tab; }
+    .zone-store { grid-area: store; }
+    .zone-flex { grid-area: flex; }
+    .zone-kg { grid-area: kg; }
+  }
+
+  @media (min-width: 1024px) {
+    .head {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: clamp(24px, 2.6vw, 44px);
+      align-items: center;
+    }
+    .head-copy { grid-column: 1 / 8; }
+    .chair-card { grid-column: 9 / 13; }
+    .floor {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      grid-template-areas:
+        'store store store store store store store store kg kg kg kg'
+        'sit sit sit sit tab tab tab tab kg kg kg kg'
+        'sit sit sit sit flex flex flex flex flex flex flex flex';
+    }
+  }
+</style>
+
+<script>
+  import { addScene, viewProgress } from '../../../scripts/motion';
+
+  const section = document.querySelector<HTMLElement>('[data-lr-vs]');
+  const chair = section?.querySelector<HTMLElement>('[data-lr-vs-chair]');
+  if (section && chair) {
+    addScene({
+      el: section,
+      media: '(min-width: 1024px)',
+      progress: viewProgress(1, -0.6),
+      render: (p) => chair.style.setProperty('--shift', `${((p - 0.5) * 28).toFixed(1)}px`),
+    });
+  }
+</script>

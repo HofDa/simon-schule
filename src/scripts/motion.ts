@@ -54,7 +54,7 @@ export function requestFrame() {
 
 function refresh() {
   for (const s of entries) {
-    s.active = !reduced.matches && (!s.media || window.matchMedia(s.media).matches);
+    s.active = !s.el.closest('[data-board-reader]') && !reduced.matches && (!s.media || window.matchMedia(s.media).matches);
     s.measure?.(s.active);
     s.last = undefined;
     if (!s.active) s.render(1);
@@ -75,7 +75,7 @@ export function isMotionAllowed() {
 export function addScene(scene: Scene) {
   const entry: Entry = { ...scene, active: false };
   entries.push(entry);
-  entry.active = !reduced.matches && (!scene.media || window.matchMedia(scene.media).matches);
+  entry.active = !scene.el.closest('[data-board-reader]') && !reduced.matches && (!scene.media || window.matchMedia(scene.media).matches);
   entry.measure?.(entry.active);
   if (!entry.active) entry.render(1);
 
@@ -83,6 +83,7 @@ export function addScene(scene: Scene) {
     started = true;
     window.addEventListener('scroll', requestFrame, { passive: true });
     window.addEventListener('resize', onResize);
+    window.addEventListener('whiteboard:content', refresh);
     reduced.addEventListener('change', refresh);
     // Fonts and images change layout after first paint.
     document.fonts?.ready.then(refresh);

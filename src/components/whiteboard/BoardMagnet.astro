@@ -1,0 +1,10 @@
+---
+import Magnet from './Magnet.astro';
+
+interface Props { label: string }
+const { label } = Astro.props;
+---
+
+<button class="board-magnet" type="button" data-board-handle data-label={label} aria-label={`${label} verschieben`} aria-describedby="board-drag-hint" title="Magnet greifen und verschieben · Pfeiltasten zum Bewegen">
+  <Magnet />
+</button>

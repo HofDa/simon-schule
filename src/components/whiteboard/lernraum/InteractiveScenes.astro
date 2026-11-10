@@ -1,0 +1,512 @@
+---
+/**
+ * "Der Lernraum" – Section 2: Interactive Room Transformation ("Ein Raum, viele Arten zu lernen").
+ * Combines the isometric VS catalogue SVG arrangements with instant interactive magnetic tabs
+ * (no 400vh scroll-hijacking required), spatial planning facts, and a 1-click "Vormerken" hook
+ * that pre-selects the room arrangement in the inquiry form.
+ */
+import { sceneSize, type SceneName } from '../art/learning-scenes';
+import { asset } from '../../../lib/paths';
+
+const scenes = [
+  {
+    id: 'lr-scene-gruppen',
+    scene: 'gruppen' as SceneName,
+    name: 'Gruppenarbeit',
+    short: 'Tischinseln für 4–6 Kinder',
+    text: 'Mehrecktische lassen sich auf Rollen in wenigen Augenblicken zu großen Arbeitsinseln zusammenschieben und für Einzelarbeit wieder trennen.',
+    benefit: 'Schneller Wechsel zwischen Plenums- und Teamphasen ohne Lärm.',
+    setup: 'Umbau in ca. 2 Minuten',
+    product: 'VS Tano & PantoSwing-LuPo',
+    topic: 'Gruppenarbeit (VS Tano)',
+  },
+  {
+    id: 'lr-scene-bewegung',
+    scene: 'bewegung' as SceneName,
+    name: 'Bewegtes Lernen',
+    short: 'Sitzen, Stehen & Wippen',
+    text: 'Freiformtische und bewegliche Wackelhocker fördern den natürlichen Haltungswechsel – Kinder bleiben wacher und konzentrierter.',
+    benefit: 'Körperliche Aktivität wird Teil des Unterrichts, statt ihn zu stören.',
+    setup: 'Frei kombinierbare Kurvenform',
+    product: 'VS Puzzle & Hokki',
+    topic: 'Bewegtes Lernen (VS Puzzle / Hokki)',
+  },
+  {
+    id: 'lr-scene-landschaft',
+    scene: 'landschaft' as SceneName,
+    name: 'Lernlandschaft',
+    short: 'Offene Polster- & Lesezonen',
+    text: 'Weiche Sitzelemente gliedern offene Flure oder große Räume in geschützte Inseln, in denen gelesen, besprochen und gemeinsam gearbeitet wird.',
+    benefit: 'Macht Erschließungsflächen und Nebenräume zu vollwertigen Lernorten.',
+    setup: 'Modular erweiterbar',
+    product: 'VS Shift+ Landscape',
+    topic: 'Flexible Lernlandschaft (Shift+)',
+  },
+  {
+    id: 'lr-scene-rueckzug',
+    scene: 'rueckzug' as SceneName,
+    name: 'Rückzug & Fokus',
+    short: 'Akustisch abgeschirmte Nischen',
+    text: 'Gepolsterte Stellwände und Sofas dämpfen den Schall im Raum und schaffen einen ruhigen Ort für konzentrierte Einzelarbeit oder Gespräche zu zweit.',
+    benefit: 'Senkt den Geräuschpegel im gesamten Raum spürbar.',
+    setup: 'Raum-in-Raum ohne Umbau',
+    product: 'VS Vancouver',
+    topic: 'Rückzug & Akustik (VS Vancouver)',
+  },
+  {
+    id: 'lr-scene-boden',
+    scene: 'boden' as SceneName,
+    name: 'Lernen am Boden',
+    short: 'Matten, Teppiche & Sitzrollen',
+    text: 'Polstermatten, Teppiche und Rückenrollen machen den Boden zum vollwertigen Lern- und Spielort – im Kindergarten ebenso wie in der Grundschule.',
+    benefit: 'Auf Augenhöhe mit den Kindern, schnell verstaut wenn Platz gebraucht wird.',
+    setup: 'Stapel- & rollbar',
+    product: 'VS Shift+ Landscape Boden',
+    topic: 'Kindergarten / Lernen am Boden',
+  },
+];
+
+const size = sceneSize();
+---
+
+<section id="lernformen" class="lr-scenes" aria-labelledby="lr-scenes-title" data-lr-scenes>
+  <div class="shell">
+    <div class="scenes-board">
+      <div class="scenes-head">
+        <div>
+          <p class="marker scenes-note" aria-hidden="true">… und in der nächsten Stunde?</p>
+          <h2 id="lr-scenes-title" class="mt-2 text-headline leading-[0.98] tracking-[-0.03em]">
+            Ein Raum, viele Arten zu lernen.
+          </h2>
+        </div>
+        <p class="scenes-intro">
+          Frontalunterricht ist nur eine Einstellung. Klicken Sie durch die fünf Aufstellungen, um zu sehen, wie derselbe Raum mit beweglichen VS-Möbeln auf Gruppenarbeit, Rückzug oder Bewegung reagiert.
+        </p>
+      </div>
+
+      <!-- Interactive magnetic switcher rail -->
+      <div class="scenes-tabs" role="tablist" aria-label="Raumaufstellungen auswählen">
+        {scenes.map((s, i) => (
+          <button
+            type="button"
+            role="tab"
+            id={`tab-${s.id}`}
+            aria-controls={`panel-${s.id}`}
+            aria-selected={i === 0 ? 'true' : 'false'}
+            tabindex={i === 0 ? 0 : -1}
+            class={`scene-tab ${i === 0 ? 'is-active' : ''}`}
+            data-scene-tab={i}
+          >
+            <span class="tab-magnet" aria-hidden="true"></span>
+            <span class="tab-num">{String(i + 1).padStart(2, '0')}</span>
+            <span class="tab-copy">
+              <span class="tab-name">{s.name}</span>
+              <span class="tab-short">{s.short}</span>
+            </span>
+          </button>
+        ))}
+      </div>
+
+      <!-- Stage with the 5 scenes -->
+      <div class="scenes-stage">
+        {scenes.map((s, i) => (
+          <div
+            role="tabpanel"
+            id={`panel-${s.id}`}
+            aria-labelledby={`tab-${s.id}`}
+            class={`scene-panel ${i === 0 ? 'is-active' : ''}`}
+            data-scene-panel={i}
+          >
+            <div class="scene-copy">
+              <div class="scene-badge">
+                <span class="scene-step">Aufstellung {String(i + 1).padStart(2, '0')} / 05</span>
+                <span class="scene-setup">{s.setup}</span>
+              </div>
+              <h3>{s.name}</h3>
+              <p class="scene-text">{s.text}</p>
+
+              <dl class="scene-specs">
+                <div>
+                  <dt>Mehrwert im Alltag</dt>
+                  <dd>{s.benefit}</dd>
+                </div>
+                <div>
+                  <dt>VS-Systembaukasten</dt>
+                  <dd class="marker scene-product">{s.product}</dd>
+                </div>
+              </dl>
+
+              <div class="scene-actions">
+                <a
+                  href="#anfrage"
+                  class="btn btn-ink"
+                  data-open-form
+                  data-topic={s.topic}
+                >
+                  Für Ihr Projekt vormerken
+                  <svg class="btn-arrow h-3.5 w-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" /></svg>
+                </a>
+                <button type="button" class="next-scene link-line" data-scene-next>
+                  Nächste Aufstellung ({scenes[(i + 1) % scenes.length].name}) →
+                </button>
+              </div>
+            </div>
+
+            <figure class="scene-figure">
+              <img
+                class="iso"
+                src={asset(`scenes/${s.scene}.svg`)}
+                width={size.width}
+                height={size.height}
+                alt={`Isometrische Darstellung: ${s.name} mit ${s.product}`}
+                loading={i === 0 ? 'eager' : 'lazy'}
+                decoding="async"
+                data-lr-scene-src
+              />
+            </figure>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .lr-scenes {
+    padding-block: clamp(56px, 7vw, 104px);
+    background: var(--color-warm);
+    border-top: 1px solid var(--color-line);
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .scenes-board {
+    background: var(--color-paper);
+    border: 1.5px solid var(--color-ink);
+    padding: clamp(24px, 3.6vw, 52px);
+    box-shadow: 0 20px 44px -32px rgba(32, 32, 29, 0.35);
+  }
+
+  .scenes-head {
+    display: grid;
+    gap: 20px;
+    padding-bottom: clamp(28px, 3.5vw, 44px);
+    border-bottom: 1px solid var(--color-line);
+  }
+  .scenes-note {
+    display: inline-block;
+    color: var(--color-ink);
+    font-size: var(--text-marker);
+    transform: rotate(-1.5deg);
+  }
+  .scenes-intro {
+    max-width: 50ch;
+    color: var(--color-muted);
+    font-size: var(--text-body);
+    line-height: 1.62;
+  }
+
+  /* Magnetic switcher rail */
+  .scenes-tabs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+    gap: 10px;
+    margin-top: clamp(24px, 3vw, 36px);
+  }
+  .scene-tab {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 14px 14px 14px 16px;
+    border: 1px solid var(--color-line);
+    background: var(--color-warm);
+    color: var(--color-ink);
+    text-align: left;
+    font: inherit;
+    cursor: pointer;
+    transition: background-color 200ms var(--ease-draw), border-color 200ms var(--ease-draw), transform 200ms var(--ease-draw);
+  }
+  .scene-tab:hover {
+    border-color: var(--color-ink);
+    background: var(--color-paper);
+  }
+  .scene-tab.is-active {
+    background: var(--color-ink);
+    border-color: var(--color-ink);
+    color: var(--color-paper);
+  }
+  .tab-magnet {
+    width: 8px;
+    height: 8px;
+    margin-top: 5px;
+    border-radius: 50%;
+    flex: none;
+    border: 1.5px solid currentColor;
+    transition: background-color 200ms var(--ease-draw), border-color 200ms var(--ease-draw);
+  }
+  .scene-tab.is-active .tab-magnet {
+    background: var(--color-ginster);
+    border-color: var(--color-ginster);
+  }
+  .tab-num {
+    font-size: var(--text-label);
+    font-variant-numeric: tabular-nums;
+    opacity: 0.65;
+    padding-top: 1px;
+  }
+  .tab-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+  .tab-name {
+    font-size: var(--text-meta);
+    font-weight: 600;
+    line-height: 1.2;
+  }
+  .tab-short {
+    font-size: 0.76rem;
+    opacity: 0.72;
+    line-height: 1.3;
+  }
+
+  /* Panels */
+  .scenes-stage {
+    position: relative;
+    margin-top: clamp(28px, 4vw, 48px);
+  }
+  .scene-panel {
+    display: grid;
+    gap: 32px;
+    align-items: center;
+  }
+  :global(html.js) .scene-panel:not(.is-active) {
+    display: none;
+  }
+  :global(html:not(.js)) .scene-panel + .scene-panel {
+    margin-top: 56px;
+    padding-top: 40px;
+    border-top: 1px solid var(--color-line);
+  }
+
+  .scene-badge {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .scene-step {
+    font-size: var(--text-label);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+    font-weight: 600;
+  }
+  .scene-setup {
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 3px 10px;
+    background: var(--color-ginster);
+    color: var(--color-ink);
+  }
+  .scene-copy h3 {
+    font-size: clamp(1.75rem, 2.8vw, 2.55rem);
+    font-weight: 600;
+    letter-spacing: -0.035em;
+    line-height: 1.05;
+  }
+  .scene-text {
+    margin-top: 14px;
+    max-width: 44ch;
+    color: var(--color-muted);
+    font-size: var(--text-body);
+    line-height: 1.62;
+  }
+
+  .scene-specs {
+    margin: 22px 0 0;
+    padding-top: 18px;
+    border-top: 1px solid var(--color-line);
+    display: grid;
+    gap: 12px;
+  }
+  .scene-specs div {
+    display: grid;
+    grid-template-columns: 9.5rem 1fr;
+    gap: 12px;
+    align-items: baseline;
+    font-size: var(--text-meta);
+  }
+  .scene-specs dt {
+    color: var(--color-muted);
+    font-size: var(--text-label);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .scene-specs dd {
+    margin: 0;
+    color: var(--color-ink);
+  }
+  .scene-product {
+    font-size: var(--text-marker);
+    color: var(--color-ink);
+  }
+
+  .scene-actions {
+    margin-top: 28px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px 24px;
+  }
+  .next-scene {
+    border: 0;
+    background: none;
+    padding: 0 0 2px;
+    font: inherit;
+    font-size: var(--text-meta);
+    font-weight: 600;
+    color: var(--color-ink);
+    cursor: pointer;
+  }
+
+  .scene-figure {
+    margin: 0;
+    background: var(--color-warm);
+    border: 1px solid var(--color-line);
+    padding: clamp(16px, 2.5vw, 32px);
+  }
+  .scene-figure :global(.iso) {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 460px;
+    object-fit: contain;
+    margin-inline: auto;
+  }
+
+  /* Furniture piece animation when switching tabs */
+  @media (prefers-reduced-motion: no-preference) {
+    .scene-panel.is-active :global(.iso-piece) {
+      animation: lr-piece-in 340ms cubic-bezier(0.34, 1.45, 0.64, 1) both;
+      animation-delay: calc(min(var(--k, 0), 35) * 8ms);
+      transform-box: fill-box;
+      transform-origin: 50% 100%;
+    }
+    .scene-panel.is-active :global(.iso-piece[data-kind='hokki']) {
+      animation:
+        lr-piece-in 340ms cubic-bezier(0.34, 1.45, 0.64, 1) both,
+        lr-hokki-rock 0.9s ease-in-out 0.35s infinite alternate;
+    }
+    @keyframes lr-piece-in {
+      from {
+        opacity: 0;
+        translate: 0 -6px;
+        scale: 0.96;
+      }
+      to {
+        opacity: 1;
+        translate: 0 0;
+        scale: 1;
+      }
+    }
+    @keyframes lr-hokki-rock {
+      from { rotate: -2.4deg; }
+      to { rotate: 2.4deg; }
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .scenes-head {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: clamp(24px, 2.6vw, 44px);
+      align-items: end;
+    }
+    .scenes-head > div { grid-column: 1 / 7; }
+    .scenes-intro { grid-column: 7 / 13; }
+
+    .scene-panel {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      gap: clamp(32px, 4vw, 56px);
+    }
+  }
+</style>
+
+<script>
+  const section = document.querySelector<HTMLElement>('[data-lr-scenes]');
+  if (section) {
+    const tabs = Array.from(section.querySelectorAll<HTMLButtonElement>('[data-scene-tab]'));
+    const panels = Array.from(section.querySelectorAll<HTMLElement>('[data-scene-panel]'));
+    const nextButtons = Array.from(section.querySelectorAll<HTMLButtonElement>('[data-scene-next]'));
+    let current = 0;
+
+    // Inline the SVG files once near the viewport so individual furniture pieces animate cleanly
+    let inlined = false;
+    const inlineSvgs = () => {
+      if (inlined) return;
+      inlined = true;
+      section.querySelectorAll<HTMLImageElement>('img[data-lr-scene-src]').forEach(async (img) => {
+        try {
+          const res = await fetch(img.currentSrc || img.src);
+          if (!res.ok) return;
+          const svg = new DOMParser().parseFromString(await res.text(), 'image/svg+xml').documentElement;
+          if (svg.nodeName !== 'svg') return;
+          svg.setAttribute('class', 'iso');
+          svg.setAttribute('role', 'img');
+          svg.setAttribute('aria-label', img.alt || '');
+          img.replaceWith(document.importNode(svg, true));
+        } catch {
+          // Keep <img> fallback if fetch fails
+        }
+      });
+    };
+
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver(
+        (entries) => {
+          if (entries.some((e) => e.isIntersecting)) {
+            io.disconnect();
+            inlineSvgs();
+          }
+        },
+        { rootMargin: '600px 0px' },
+      );
+      io.observe(section);
+    }
+
+    const selectScene = (index: number, focusTab = false) => {
+      current = (index + tabs.length) % tabs.length;
+      inlineSvgs();
+      tabs.forEach((tab, i) => {
+        const active = i === current;
+        tab.classList.toggle('is-active', active);
+        tab.setAttribute('aria-selected', String(active));
+        tab.tabIndex = active ? 0 : -1;
+        if (active && focusTab) tab.focus();
+      });
+      panels.forEach((panel, i) => {
+        panel.classList.toggle('is-active', i === current);
+      });
+    };
+
+    tabs.forEach((tab, i) => {
+      tab.addEventListener('click', () => selectScene(i));
+      tab.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+          e.preventDefault();
+          selectScene(i + 1, true);
+        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+          e.preventDefault();
+          selectScene(i - 1, true);
+        }
+      });
+    });
+
+    nextButtons.forEach((btn) => {
+      btn.addEventListener('click', () => selectScene(current + 1));
+    });
+  }
+</script>

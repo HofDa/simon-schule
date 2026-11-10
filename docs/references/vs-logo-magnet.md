@@ -1,0 +1,32 @@
+# VS molded-plastic logo magnet
+
+- Reference: the current official VS logo from [VS's own website](https://www.vs.de/de/).
+- Original vector: [vs-logo-original.svg](vs-logo-original.svg), viewBox 106 × 57, retained without modifying its paths.
+- Download URL: https://api.vs.de//medias/vs-logo-2.svg?context=bWFzdGVyfHJvb3R8MjI3MnxpbWFnZS9zdmcreG1sfGFHTTVMMmhpT1M4NE56azVPRE01TkRnMU9UZ3lMM1p6WDJ4dloyOWZNaTV6ZG1jfGZkMDg5YmRkODMxZDdjOGQwOGZjMzUyMmIzN2QwNDJlMDAxOTQ0MGY2YzM1ZDUxMTRlZTFhYmYyNDc0NzEzYWQ
+- Material reference: the project's [yellow VS PantoMove chair photograph](../../public/images/products/vs-pantomove-lupo-gelb.webp).
+- Current asset: [vs-logo-kitchen-magnet.png](../../src/assets/whiteboard/vs-logo-kitchen-magnet.png), transparent PNG with a solid ivory plastic body, raised yellow logo and a thin dark backing. Astro serves responsive WebP versions.
+- Earlier logo-only version: [vs-logo-magnet-plastic.png](../../src/assets/whiteboard/vs-logo-magnet-plastic.png), retained as the edit reference.
+- Created with the built-in image generation tool using a raster rendering of the official vector and the chair photograph as inputs. The yellow finish is the requested chair-inspired material treatment of the logo.
+
+The magnet overlaps the top edge of the catalog's original cover and acts as the drag handle for the magnet and page together. It uses the same movement, keyboard and sponge-reset behavior as the HOUSE70 magnet. Clicking the cover opens the official catalog PDF in a new tab; the caption opens the site's VS furniture section.
+
+## Catalog cover
+
+- Source page: https://www.vs.de/de/ProspektdownloadBildung/
+- Original first page: https://web-media.vs.de/file/p1/png/45-057-49_V2026-01_DE_Der-Basiskatalog-fuer-die-Schule_VS.png
+- Local source: [vs-school-catalog-cover-2026.png](../../src/assets/whiteboard/vs-school-catalog-cover-2026.png), 1230 × 1744 pixels, kept unchanged.
+- Official PDF: https://web-media.vs.de/file/p1/pdf/45-057-49_V2026-01_DE_Basics--Der-Katalog-fuer-die-Schule.archiv.pdf
+- Hover or keyboard focus lifts the loose lower part of the cover in a progressive paper curl, revealing the original contents page. The top 12% stays clamped beneath the stationary magnet. A single continuous WebGL mesh carries the complete cover texture, with a continuous circular bend and interpolated lighting. The closed state always uses the unmodified cover image, eliminating the compositing seams of separate CSS strips. Rendering runs only during opening and closing. The back of the cover is the yellow PDF page 2; the contents page is PDF page 3. Both were rendered directly from the official PDF with `pdftoppm` at a 1400-pixel maximum edge.
+- Inside cover: [vs-school-catalog-inside-cover-2026.png](../../src/assets/whiteboard/vs-school-catalog-inside-cover-2026.png).
+- Contents page: [vs-school-catalog-first-page-2026.png](../../src/assets/whiteboard/vs-school-catalog-first-page-2026.png).
+- Reduced-motion mode reveals the contents without a 3D curl. Touch devices keep the direct PDF link. Dragging keeps the cover flat so the magnet and catalog move together.
+
+## Kitchen-magnet refinement prompt
+
+Created with the built-in image generation tool using the earlier magnet and the official VS logo as references.
+
+Use case: precise-object-edit / product-mockup. Image 1 is the current yellow plastic VS-logo magnet; image 2 is the exact official logo geometry. Make this look unmistakably like a real small kitchen refrigerator magnet, one connected physical product. Mount the same raised yellow V/slash/S logo onto a compact rounded-rectangle body made of warm ivory plastic. The raised logo retains its exact official shapes, spacing and proportions and the satin warm yellow molded-plastic finish from image 1. The ivory carrier is only a modest rim around the logo, about 12% padding; overall body about 2:1 width-to-height, corners gently rounded, about 4 mm thick. A thin dark charcoal magnetic backing is just visible along the lower/right edge. Softly beveled corners, convincing contact depth, restrained plastic highlights, subtle polymer grain. Premium and tactile, everyday kitchen fridge magnet, no metallic material, no loose floating individual letters, no toy-like chunky thickness, no excessive shine. Perfectly frontal face, almost orthographic, so it can later be placed over the upper edge of an actual catalog page in a website. Keep the official V / S monogram exact, do not add any extra words. Transparent background and open space outside the single magnet, entire object visible with a little margin. Do not include a catalog, paper, hand, refrigerator, scenery, wall, extra logo, or cast ground shadow in the output. One isolated real-looking plastic fridge magnet only.
+
+## Prompt
+
+Use case: precise-object-edit / product-mockup. Asset: one small premium VS logo fridge magnet, genuine transparent background. Image 1 is the EXACT official VS logo geometry reference, downloaded from VS's website; image 2 is ONLY the material/color reference, a yellow molded VS chair shell. Turn the black V / S logo shapes in Image 1 into a sleek injection-molded plastic magnet with the same warm ginstergelb yellow polypropylene finish as the chair. Preserve the precise V shape, the narrow diagonal slash, the S letterform, all original contours, relative sizes, angles, openings and letter spacing. Do not invent a new logo or typeset different letters. Keep the face perfectly frontal and straight-on, no rotation, no change in logo perspective. The ONLY change to the logo is giving its shapes physical plastic material and slight 3–4 mm relief: gently softened molded edges, tiny satin highlights, smooth surfaces with a very fine polymer grain, slightly darker yellow sidewalls, realistic subtle depth. Warm golden yellow chair plastic, not bronze, not metallic gold, not resin glass, not chrome, not neon. The V, slash and S remain clearly separated by the original transparent gaps; no white background or plaque behind the logo, no rectangular badge, no border or backing extending beyond the logo, no extra text or tagline (do not add 'Schulmöbel'). Keep all counters and all surrounding space genuinely transparent. One isolated logo-shaped fridge magnet only, centered, about 4% safe transparent margin, preserving the reference logo's approximately 1.86:1 width-to-height ratio. Refined realistic product appearance, recognizable official logo, thin construction like a real fridge magnet. No chair in the output, no other objects, no backdrop, no baked ground shadow.

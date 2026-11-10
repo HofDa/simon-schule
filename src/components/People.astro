@@ -1,20 +1,15 @@
 ---
 /**
- * The two people, on a Ginstergelb sheet: their names at the scale of a title block,
- * what is still open about them said once, and the questions they ask first.
+ * Simon Brugger on a Ginstergelb sheet, backed by the Meran & Brixen locations,
+ * and the four questions from an on-site planning visit.
  */
-import { contact, fullName, people, type Person } from '../data/site';
+import { contact, fullName, locations, people, roleFor } from '../data/site';
 import { asset } from '../lib/paths';
 import { getLang, useTranslations } from '../i18n/ui';
 
-const ui = useTranslations(getLang(Astro.currentLocale));
+const lang = getLang(Astro.currentLocale);
+const ui = useTranslations(lang);
 const t = ui.people;
-
-const openFacts = (p: Person) =>
-  [!p.lastName && ui.pendingFields.lastName, !p.role && ui.pendingFields.role, !p.phone && ui.pendingFields.phone].filter(
-    (f): f is string => Boolean(f),
-  );
-const sharedMail = people.some((p) => !p.email);
 ---
 
 <section id="menschen" class="people sheet-ginster" aria-labelledby="people-title" data-people>
@@ -26,7 +21,7 @@ const sharedMail = people.some((p) => !p.email);
 
     <div class="pe-names">
       {people.map((person, i) => {
-        const open = openFacts(person);
+        const role = roleFor(person, lang);
         return (
           <article class="pe-person" data-person style={`--dir:${i % 2 ? -1 : 1}`}>
             {person.photo && (
@@ -42,10 +37,9 @@ const sharedMail = people.some((p) => !p.email);
             )}
             <h3 class="pe-name display">{fullName(person)}</h3>
             <div class="pe-facts">
-              {person.role && <p>{person.role}</p>}
-              {open.length > 0 && <p class="open-fact">{ui.pending(open)}</p>}
-              {person.phone && <p><a class="link-line" href={`tel:${person.phone.replace(/\s/g, '')}`}>{person.phone}</a></p>}
-              {person.email && <p><a class="link-line" href={`mailto:${person.email}`}>{person.email}</a></p>}
+              {role && <p>{role}</p>}
+              {person.phone && <p><a class="link-line font-semibold" href={`tel:${person.phone.replace(/\s/g, '')}`}>{person.phone}</a></p>}
+              {person.email && <p><a class="link-line font-semibold" href={`mailto:${person.email}`}>{person.email}</a></p>}
             </div>
           </article>
         );
@@ -53,11 +47,13 @@ const sharedMail = people.some((p) => !p.email);
     </div>
 
     <div class="pe-foot">
-      {sharedMail && (
-        <p class="pe-mail">
+      <div class="pe-mail space-y-2">
+        <p class="font-semibold">{t.teamTitle}</p>
+        <p class="text-meta">{locations.map((l) => `${l.city[lang]} · ${l.street[lang]}`).join(' | ')}</p>
+        <p class="text-meta">
           {t.reachBoth} <a class="link-line font-semibold" href={`mailto:${contact.email}`}>{contact.email}</a>
         </p>
-      )}
+      </div>
       <div class="pe-questions">
         <h3 class="pe-q-label">{t.questionsLabel}</h3>
         <ul>

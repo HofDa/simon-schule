@@ -1,10 +1,12 @@
 ---
-import { contact, fullName, people } from '../../../data/site';
+import { contact, fullName, locations, people, roleFor } from '../../../data/site';
 import { getLang, useTranslations } from '../../../i18n/ui';
 import ContactForm from '../ContactForm.astro';
 
 /** The invitation and the inquiry form side by side, the form always open: no seated scene. */
-const t = useTranslations(getLang(Astro.currentLocale)).contact;
+const lang = getLang(Astro.currentLocale);
+const t = useTranslations(lang).contact;
+const [lead] = people;
 ---
 
 <section id="kontakt" class="quiet-contact" aria-labelledby="contact-title">
@@ -12,13 +14,21 @@ const t = useTranslations(getLang(Astro.currentLocale)).contact;
     <div class="q-cta">
       <h2 id="contact-title" class="text-headline leading-[0.98] tracking-[-0.03em]">{t.title}</h2>
       <p class="mt-6 max-w-[40ch] text-body leading-[1.65] text-muted lg:text-lead">{t.lead}</p>
-      <p class="q-names">{people.map((p) => fullName(p)).join(' · ')}</p>
-      <p class="mt-3 text-meta">
+      {lead && (
+        <div class="mt-8">
+          <p class="text-meta font-semibold text-ink">{fullName(lead)}</p>
+          {roleFor(lead, lang) && <p class="mt-0.5 text-meta text-muted">{roleFor(lead, lang)}</p>}
+        </div>
+      )}
+      <p class="mt-4 text-meta">
         {contact.phone ? (
           <a class="link-line font-semibold" href={`tel:${contact.phone.replace(/\s/g, '')}`}>{t.call}</a>
         ) : (
-          <a class="link-line font-semibold" href={`mailto:${contact.email}`}>{t.mail(contact.email)}</a>
+          <a class="link-line font-semibold" href={`mailto:${contact.directEmail}`}>{contact.directEmail}</a>
         )}
+      </p>
+      <p class="mt-2 text-label text-muted">
+        {locations.map((l) => l.city[lang]).join(' · ')} · <a class="link-line text-ink" href={`mailto:${contact.email}`}>{contact.email}</a>
       </p>
     </div>
 

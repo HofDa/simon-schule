@@ -1,0 +1,54 @@
+---
+/**
+ * "Der Lernraum" (Variant 04 – Best-of):
+ * Merges the strongest visual metaphors and conversion mechanics across all variants:
+ * - WhiteboardHero (stroke-by-stroke marker claim + pinned prints)
+ * - Showroom (framed turntable with spinning 3D VS furniture: PantoSwing, Hokki, Tano, Puzzle)
+ * - Services (5 desks facing the board + 3 decision-maker perspective cards for Schule, Gemeinde, Architektur)
+ * - InteractiveScenes ("Ein Raum, viele Arten zu lernen" with clickable magnetic tabs + isometric VS furniture)
+ * - AnnotatedProjects (room concepts with interactive numbered "Planner's Eye" pins instead of "Platzhalter" apologies)
+ * - PeopleCircle (Simon & Rene + interactive Sitzkreis planning questions with "Why we ask" + 1-click form transfer)
+ * - VSFloorplan (architectural floor plan zones + rocking Ginstergelb VS chair)
+ * - StationsPhases (5 interactive project phase stations)
+ * - TalkContact (always-open Einzelgespräch desk with topic chips, prompt starters, and next-step transparency)
+ */
+import Layout from '../../../layouts/WhiteboardLayout.astro';
+import Navbar from '../shared/Navbar.astro';
+import Footer from '../shared/Footer.astro';
+import WhiteboardHero from '../WhiteboardHero.astro';
+import ClosingTestimonial from '../../ClosingTestimonial.astro';
+import ChairSprite from '../klassenzimmer/ChairSprite.astro';
+import Showroom from '../Showroom.astro';
+import Services from './Services.astro';
+import InteractiveScenes from './InteractiveScenes.astro';
+import AnnotatedProjects from './AnnotatedProjects.astro';
+import PeopleCircle from './PeopleCircle.astro';
+import VSFloorplan from './VSFloorplan.astro';
+import StationsPhases from './StationsPhases.astro';
+import TalkContact from './TalkContact.astro';
+import { asset, homeFor } from '../../../lib/paths';
+
+const alternates = { de: asset('lernraum/'), it: homeFor('it') };
+---
+
+<Layout title="Trias Schule | Der Lernraum (Best-of)" canonical={asset('lernraum/')} alternates={alternates} noindex variantSwitcher>
+  <ChairSprite />
+  <Navbar alternates={alternates} />
+  <main id="inhalt">
+    <WhiteboardHero />
+    <Showroom />
+    <Services />
+    <InteractiveScenes />
+    <AnnotatedProjects />
+    <PeopleCircle />
+    <VSFloorplan />
+    <ClosingTestimonial />
+    <StationsPhases />
+    <TalkContact />
+  </main>
+  <Footer />
+</Layout>
+
+<style is:global>
+  html:root { --chair-peek: 0px; }
+</style>

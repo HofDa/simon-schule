@@ -7,6 +7,7 @@
     { key: 'whiteboard', number: '01', title: 'Das Whiteboard', description: 'Handschrift, angepinnte Bilder, rollende Stühle' },
     { key: 'whiteboard-ruhig', number: '02', title: 'Das Whiteboard, ruhig', description: 'Dasselbe Board, ruhige Abschnitte darunter' },
     { key: 'klassenzimmer', number: '03', title: 'Das Klassenzimmer', description: 'Vorne das Board, darunter eine Sitzordnung pro Abschnitt' },
+    { key: 'lernraum', number: '04', title: 'Der Lernraum · Best-of', description: 'Interaktive Raumwechsel, Planungsblick & offener Gesprächstisch' },
   ];
   const current = location.pathname.slice(base.length).split('/')[0];
   const root = document.createElement('div');

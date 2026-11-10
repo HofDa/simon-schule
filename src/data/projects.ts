@@ -70,6 +70,7 @@ interface ProjectSource {
 const service = {
   consulting: { de: 'Beratung', it: 'Consulenza' },
   planning: { de: 'Planung', it: 'Progettazione' },
+  sampling: { de: 'Bemusterung', it: 'Campionatura' },
   furnishing: { de: 'Ausstattung', it: 'Arredamento' },
   assembly: { de: 'Montage', it: 'Montaggio' },
   concept: { de: 'Raumkonzept', it: 'Concetto spaziale' },
@@ -83,8 +84,8 @@ const sources: ProjectSource[] = [
     type: { de: 'Schule', it: 'Scuola' },
     services: [service.consulting, service.planning, service.furnishing, service.assembly],
     description: {
-      de: 'Bewegliche Stühle und Tische, die sich schnell von Frontalunterricht auf Gruppenarbeit umstellen lassen. Der Stauraum steht an den Wänden, die Mitte des Raums bleibt frei.',
-      it: 'Sedie e tavoli mobili che passano in fretta dalla lezione frontale al lavoro di gruppo. Gli armadi stanno lungo le pareti, il centro dell’aula resta libero.',
+      de: 'Bewegliche Stühle und leichte Tische, die sich im Alltag schnell von Frontalunterricht auf Gruppenarbeit umstellen lassen. Der Stauraum steht ruhig an den Wänden, die Mitte bleibt frei.',
+      it: 'Sedie e tavoli leggeri che passano in fretta dalla lezione frontale al lavoro di gruppo. Gli armadi restano lungo le pareti, il centro dell’aula rimane libero.',
     },
     images: [
       {
@@ -95,19 +96,19 @@ const sources: ProjectSource[] = [
         },
       },
     ],
-    boardLabel: { de: 'Klassenraum', it: 'Aula' },
+    boardLabel: { de: 'Schule', it: 'Scuola' },
     testimonial: null,
-    placeholder: true,
+    placeholder: false,
   },
   {
     id: 'kindergarten-spielraum',
-    title: { de: 'Ein Gruppenraum mit Höhle und Spielküche', it: 'Una sezione con tana e cucina giocattolo' },
+    title: { de: 'Gruppen- und Spielräume auf Kinderhöhe', it: 'Sezioni e spazi gioco a misura di bambino' },
     location: null,
     type: { de: 'Kindergarten', it: 'Scuola dell’infanzia' },
-    services: [service.concept, service.furnishing, service.assembly],
+    services: [service.concept, service.sampling, service.furnishing, service.assembly],
     description: {
-      de: 'Eine Höhle zum Zurückziehen, eine Spielküche und Sitzkissen auf Kinderhöhe, eingebaut in einen hellen Gruppenraum.',
-      it: 'Una tana in cui ritirarsi, una cucina giocattolo e cuscini all’altezza dei bambini, integrati in una sezione luminosa.',
+      de: 'Geschützte Bodeninseln, kippsichere Sitzmöbel und offene Regale, die Kinder selbstständig erreichen – für Morgenkreis, Freispiel und ruhige Rückzugsorte im Kindergarten.',
+      it: 'Isole morbide a pavimento, sedute antiribaltamento e scaffali aperti a portata di bambino, per il cerchio del mattino, il gioco libero e i momenti di quiete.',
     },
     images: [
       {
@@ -127,17 +128,17 @@ const sources: ProjectSource[] = [
     ],
     boardLabel: { de: 'Kindergarten', it: 'Infanzia' },
     testimonial: null,
-    placeholder: true,
+    placeholder: false,
   },
   {
     id: 'lernlandschaft',
-    title: { de: 'Offene Lernlandschaft', it: 'Spazio di apprendimento aperto' },
+    title: { de: 'Offene Lernlandschaft & Ganztag', it: 'Spazio di apprendimento aperto' },
     location: null,
-    type: { de: 'Lernlandschaft', it: 'Spazio di apprendimento' },
-    services: [service.consulting, service.planning, service.furnishing],
+    type: { de: 'Schule & Ganztag', it: 'Scuola e tempo pieno' },
+    services: [service.consulting, service.planning, service.furnishing, service.assembly],
     description: {
-      de: 'Tischinseln für Gruppenarbeit, ruhige Plätze für Einzelarbeit und genug Platz, um sich zwischen beiden zu bewegen.',
-      it: 'Isole di tavoli per il lavoro di gruppo, posti tranquilli per lo studio individuale e spazio per muoversi tra le due zone.',
+      de: 'Tischinseln für gemeinsames Arbeiten, abgeschirmte Plätze für konzentrierte Phasen und klare Laufwege – damit offene Flächen ruhig und strukturiert funktionieren.',
+      it: 'Isole di tavoli per lavorare insieme, zone schermate per la concentrazione e percorsi chiari per far funzionare gli spazi aperti con ordine e tranquillità.',
     },
     images: [
       {
@@ -150,7 +151,7 @@ const sources: ProjectSource[] = [
     ],
     boardLabel: { de: 'Lernlandschaft', it: 'Spazio aperto' },
     testimonial: null,
-    placeholder: true,
+    placeholder: false,
   },
 ];
 

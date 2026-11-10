@@ -1,10 +1,11 @@
 ---
 /** The close: a Ginstergelb sheet with the invitation and the inquiry laid on it as a white drawing sheet. */
-import { contact, fullName, people } from '../data/site';
+import { contact, fullName, locations, people } from '../data/site';
 import { getLang, useTranslations } from '../i18n/ui';
 import ContactForm from './ContactForm.astro';
 
-const t = useTranslations(getLang(Astro.currentLocale)).contact;
+const lang = getLang(Astro.currentLocale);
+const t = useTranslations(lang).contact;
 ---
 
 <section id="kontakt" class="contact sheet-ginster" aria-labelledby="contact-title" data-contact>
@@ -14,12 +15,13 @@ const t = useTranslations(getLang(Astro.currentLocale)).contact;
       <p class="co-lead">{t.lead}</p>
       <ul class="co-people">
         {people.map((p) => <li>{fullName(p)}</li>)}
+        <li>{locations.map((l) => l.city[lang]).join(' · ')}</li>
       </ul>
       <p class="co-direct">
         {contact.phone ? (
           <a class="link-line font-semibold" href={`tel:${contact.phone.replace(/\s/g, '')}`}>{t.call}</a>
         ) : (
-          <a class="link-line font-semibold" href={`mailto:${contact.email}`}>{t.mail(contact.email)}</a>
+          <a class="link-line font-semibold" href={`mailto:${contact.directEmail}`}>{t.mail(contact.directEmail)}</a>
         )}
       </p>
     </div>

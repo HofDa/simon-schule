@@ -6,7 +6,7 @@ import Lesson from './Lesson.astro';
 
 /** Einzelgespräch: one desk, two chairs facing each other. The form is the desk top, always open. */
 const t = useTranslations(getLang(Astro.currentLocale)).contact;
-const names = people.map((p) => fullName(p).split(' ')[0]).join(' oder ');
+const names = people.map((p) => fullName(p)).join(' · ');
 ---
 
 <section id="kontakt" class="talk" aria-labelledby="contact-title">

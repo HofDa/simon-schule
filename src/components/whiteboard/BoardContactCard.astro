@@ -1,0 +1,114 @@
+---
+/**
+ * The contact corner of the whiteboard: Simon's business card, held by a magnet (drag like every
+ * board object). Name, role, e-mail and phone come from src/data/site.ts; a missing phone number
+ * or portrait is simply left out (the portrait gives way to a hand-written initials stamp).
+ * "Termin vereinbaren" opens the same enquiry form as the board's main call to action.
+ */
+import BoardMagnet from './BoardMagnet.astro';
+import { people, fullName } from '../../data/site';
+import { asset } from '../../lib/paths';
+
+const person = people[0];
+const name = fullName(person);
+const initials = [person.firstName, person.lastName].filter(Boolean).map((n) => n![0]).join('');
+const role = person.role?.de;
+const phoneHref = person.phone ? `tel:${person.phone.replace(/[^\d+]/g, '')}` : null;
+---
+
+<div class="board-object object-card" data-board-object>
+  <BoardMagnet label="Ansprechpartner" />
+  <div class="business-card" data-path-node="5">
+    <p class="card-eyebrow">Ihr Ansprechpartner</p>
+    <div class="card-person">
+      {person.photo ? (
+        <img class="card-photo" src={asset(`images/team/${person.photo}.webp`)} alt={`Porträt von ${name}`} width="80" height="100" loading="eager" draggable="false" />
+      ) : (
+        <span class="card-stamp" aria-hidden="true">{initials}</span>
+      )}
+      <div>
+        <p class="card-name">{name}</p>
+        {role && <p class="card-role">{role}</p>}
+        <p class="card-note">Persönlich für Sie da.</p>
+      </div>
+    </div>
+    <div class="card-actions">
+      <div class="card-lines">
+        {person.email && <a href={`mailto:${person.email}`} draggable="false"><span aria-hidden="true">✉</span> {person.email}</a>}
+        {phoneHref && <a href={phoneHref} draggable="false"><span aria-hidden="true">☏</span> {person.phone}</a>}
+      </div>
+      <a class="card-cta" href="#anfrage" data-open-form draggable="false">Termin vereinbaren <span aria-hidden="true">→</span></a>
+    </div>
+  </div>
+</div>
+
+<style>
+  .object-card { left: 75%; top: 64%; width: min(22%, 42cqh); rotate: 2deg; }
+
+  /* a business card: white card stock, a Ginstergelb edge on the left, a soft shadow */
+  .business-card {
+    position: relative;
+    width: 100%;
+    padding: 1.9cqh 1.3cqw 1.7cqh 1.6cqw;
+    background: #fffefb;
+    box-shadow: inset 4px 0 0 var(--color-ginster), 0 1px 0 #e3dfd3, 2px 12px 18px -10px #20201d66;
+    color: var(--color-ink);
+    text-align: left;
+  }
+  .card-eyebrow { font-size: clamp(9px, .72cqw, 11px); font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--color-ginster-deep); }
+  .card-person { display: flex; align-items: center; gap: 1cqw; margin-top: 1cqh; }
+  .card-stamp {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: clamp(46px, 4.4cqw, 66px);
+    aspect-ratio: 1;
+    border: 2px solid var(--color-ginster);
+    border-radius: 50%;
+    color: var(--color-ink);
+    font-family: var(--font-hand);
+    font-size: clamp(20px, 1.9cqw, 30px);
+    font-weight: 700;
+    rotate: -8deg;
+  }
+  .card-photo { flex: none; width: clamp(46px, 4.4cqw, 66px); aspect-ratio: 4 / 5; height: auto; object-fit: cover; border-radius: 2px; }
+  .card-name { font-size: clamp(16px, min(1.45cqw, 2.9cqh), 23px); font-weight: 800; letter-spacing: -.02em; line-height: 1.1; }
+  .card-role { margin-top: 3px; font-size: clamp(10px, .78cqw, 12px); line-height: 1.35; color: #6e6c65; }
+  .card-note { margin-top: 4px; font-family: var(--font-marker); font-size: clamp(17px, min(1.4cqw, 2.8cqh), 22px); font-weight: 600; line-height: 1; color: #22305f; }
+
+  .card-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 14px; margin-top: 1.2cqh; padding-top: 1cqh; border-top: 1px dashed #d9d5c9; }
+  .card-lines { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .card-lines a { display: inline-flex; align-items: center; gap: 6px; min-height: 28px; font-size: clamp(11px, .85cqw, 13px); font-weight: 600; color: var(--color-ink); text-decoration: underline; text-decoration-color: #d9d5c9; text-underline-offset: 3px; overflow-wrap: anywhere; }
+  .card-lines a:hover { text-decoration-color: var(--color-ginster); }
+  .card-lines a span { color: var(--color-ginster-deep); text-decoration: none; }
+  .card-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 40px;
+    padding: 0 14px;
+    border-radius: 2px;
+    background: var(--color-ink);
+    color: #fff;
+    font-size: clamp(11px, .9cqw, 14px);
+    font-weight: 700;
+    white-space: nowrap;
+    transition: background-color 150ms ease;
+  }
+  .card-cta span { display: inline-block; color: var(--color-ginster-light); transition: translate 200ms ease; }
+  .card-cta:hover { background: #000; }
+  .card-cta:hover span { translate: 3px 0; }
+  .card-lines a:focus-visible, .card-cta:focus-visible { outline: 2px dashed var(--color-ginster-deep); outline-offset: 3px; }
+
+  /* narrow boards: a little lower, leaving room for the arrow from the feedback */
+  @container (max-width: 1050px) {
+    .object-card { top: 64%; }
+  }
+
+  @media (max-height: 800px) {
+    .object-card { top: 64%; left: 76%; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .card-cta, .card-cta span { transition: none; }
+  }
+</style>

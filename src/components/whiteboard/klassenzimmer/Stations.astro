@@ -11,7 +11,7 @@ const t = ui.phases;
 const phases = ui.form.phases.map((name, i) => ({ name, hint: t.hints[i] }));
 ---
 
-<section class="stations" aria-labelledby="phases-title">
+<section id="phasen" class="stations" aria-labelledby="phases-title">
   <div class="shell">
     <Lesson n="05" name="Stationenlernen" note="dort einsteigen, wo man gerade steht" layout="stations" from="landscape" />
     <h2 id="phases-title" class="max-w-[16ch] text-headline leading-[0.98] tracking-[-0.03em]">{t.title}</h2>

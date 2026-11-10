@@ -4,8 +4,10 @@ import { getLang, useTranslations } from '../../i18n/ui';
 import SeatedPerson from './art/SeatedPerson.astro';
 import ContactForm from './ContactForm.astro';
 
-const t = useTranslations(getLang(Astro.currentLocale)).contact;
-const [simon, rene] = people;
+const ui = useTranslations(getLang(Astro.currentLocale));
+const t = ui.contact;
+const [simon] = people;
+const teamLabel = ui.people.teamTitle;
 ---
 
 <section id="kontakt" class="contact relative" aria-labelledby="contact-title" data-contact>
@@ -21,9 +23,9 @@ const [simon, rene] = people;
         <p class="c-chat marker" aria-hidden="true" data-chat>{t.chat}</p>
         <figure class="c-person c-b m-0">
           <div class="c-figure" data-figure data-dir="-1">
-            <SeatedPerson id="sit-b" mirror class="block h-full w-auto" label={t.seated(fullName(rene))} />
+            <SeatedPerson id="sit-b" mirror class="block h-full w-auto" label={t.seated(teamLabel)} />
           </div>
-          <figcaption class="c-name">{fullName(rene)}</figcaption>
+          <figcaption class="c-name">{teamLabel}</figcaption>
         </figure>
       </div>
 
@@ -39,7 +41,7 @@ const [simon, rene] = people;
             {contact.phone ? (
               <a class="link-line text-meta font-semibold" href={`tel:${contact.phone.replace(/\s/g, '')}`}>{t.call}</a>
             ) : (
-              <a class="link-line text-meta font-semibold" href={`mailto:${contact.email}`}>{t.mail(contact.email)}</a>
+              <a class="link-line text-meta font-semibold" href={`mailto:${contact.directEmail}`}>{t.mail(contact.directEmail)}</a>
             )}
           </div>
         </div>
@@ -197,7 +199,9 @@ const [simon, rene] = people;
       section.classList.add('is-form');
       if (scrub) cta.setAttribute('inert', '');
       const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
-      if (scrub) {
+      if (section.closest('[data-board-reader]')) {
+        formWrap.scrollIntoView({ behavior, block: 'start' });
+      } else if (scrub) {
         const end = section.getBoundingClientRect().top + window.scrollY + section.offsetHeight - window.innerHeight;
         window.scrollTo({ top: end, behavior });
       } else {

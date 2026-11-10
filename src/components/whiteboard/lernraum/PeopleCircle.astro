@@ -1,0 +1,410 @@
+---
+/**
+ * "Der Lernraum" – Section 4: Simon & Rene in the Sitzkreis.
+ * Combines personal local contact cards with the interactive 10-chair Sitzkreis.
+ * Clicking a question chair shows why Simon & Rene ask that question during an on-site visit
+ * and lets the visitor take that exact question into the inquiry form.
+ */
+import { contact, fullName, locations, people, roleFor } from '../../../data/site';
+import { asset } from '../../../lib/paths';
+import { getLang, useTranslations } from '../../../i18n/ui';
+import Lesson from '../klassenzimmer/Lesson.astro';
+
+const lang = getLang(Astro.currentLocale);
+const ui = useTranslations(lang);
+const t = ui.people;
+const [simon] = people;
+
+const questionAnswers = [
+  'Damit Tischgrößen, Sitzhöhen und Laufwege vom ersten Tag an zum tatsächlichen Gruppenalltag passen.',
+  'Ob schneller Wechsel zwischen Frontal- und Gruppenarbeit oder ruhige Nischen: Rollen, Gewicht und Stapelbarkeit entscheiden.',
+  'Gute Planung integriert vorhandene Einrichtung sinnvoll, statt alles pauschal auszutauschen.',
+  'Damit zum ersten Öffnungstag alles bereitsteht, stimmen wir Lieferung und unser Montageteam frühzeitig mit Ihnen ab.',
+];
+
+type Seat = { kind: 'empty' } | { kind: 'person'; label: string } | { kind: 'question'; q: number } | { kind: 'you' };
+const seats: Seat[] = [
+  { kind: 'empty' },
+  { kind: 'question', q: 1 },
+  { kind: 'empty' },
+  { kind: 'person', label: simon.firstName },
+  { kind: 'question', q: 2 },
+  { kind: 'you' },
+  { kind: 'question', q: 3 },
+  { kind: 'person', label: 'Trias' },
+  { kind: 'empty' },
+  { kind: 'question', q: 0 },
+];
+
+const placed = seats.map((seat, i) => {
+  const a = -90 + i * (360 / seats.length);
+  const rad = (a * Math.PI) / 180;
+  return {
+    seat,
+    x: (50 + 40 * Math.cos(rad)).toFixed(2),
+    y: (50 + 40 * Math.sin(rad)).toFixed(2),
+    r: a - 90,
+    ox: Math.cos(rad).toFixed(3),
+    oy: Math.sin(rad).toFixed(3),
+  };
+});
+---
+
+<section id="menschen" class="lr-people" aria-labelledby="people-title">
+  <div class="shell grid-wrap">
+    <div class="copy">
+      <Lesson n="03" name="Sitzkreis" note="miteinander reden, vor Ort zuhören" layout="circle" from="groups" />
+      <h2 id="people-title" class="text-headline leading-[0.98] tracking-[-0.03em]">{t.title}</h2>
+      <p class="mt-6 max-w-[46ch] text-body leading-[1.65] text-muted lg:text-lead">{t.intro}</p>
+
+      <div class="persons">
+        {people.map((person) => {
+          const role = roleFor(person, lang);
+          return (
+            <article class="person">
+              {person.photo && (
+                <img
+                  class="portrait"
+                  src={asset(`images/team/${person.photo}.webp`)}
+                  alt={t.portraitAlt(fullName(person))}
+                  width="800"
+                  height="1000"
+                  loading="lazy"
+                  decoding="async"
+                />
+              )}
+              <h3 class="name">{fullName(person)}</h3>
+              {role && <p class="mt-1 text-muted">{role}</p>}
+              {person.email && <p class="mt-3 text-meta"><a class="link-line font-semibold" href={`mailto:${person.email}`}>{person.email}</a></p>}
+            </article>
+          );
+        })}
+        <article class="person">
+          <h3 class="name">{t.teamTitle}</h3>
+          <p class="mt-1 text-muted">{locations.map((l) => l.city[lang]).join(' · ')}</p>
+          <p class="mt-3 text-meta"><a class="link-line" href={`mailto:${contact.email}`}>{contact.email}</a></p>
+        </article>
+      </div>
+
+      <!-- Interactive list of the 4 planning questions synced with the circle -->
+      <div class="question-picker" aria-label={t.questionsLabel}>
+        <p class="picker-label">{t.questionsLabel} (Stuhl oder Frage anklicken):</p>
+        <div class="picker-list">
+          {t.questions.map((q, i) => (
+            <button
+              type="button"
+              class={`picker-btn ${i === 0 ? 'is-asking' : ''}`}
+              data-lr-ask={i}
+              aria-pressed={i === 0 ? 'true' : 'false'}
+            >
+              <span class="picker-q">?</span>
+              <span>{q}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <div class="ring-wrap">
+      <div class="kz-ring" data-lr-ring>
+        <span class="rug" aria-hidden="true"></span>
+        <div class="middle">
+          <p class="middle-label">{t.questionsLabel}</p>
+          <ul class="questions" id="lr-questions">
+            {t.questions.map((q, i) => (
+              <li class={`question-card ${i === 0 ? 'is-asked' : ''}`} data-lr-question={i}>
+                <p class="question marker">{q}</p>
+                <p class="question-why">{questionAnswers[i]}</p>
+                <a
+                  href="#anfrage"
+                  class="question-cta link-line"
+                  data-open-form
+                  data-question={q}
+                >
+                  Antwort in Anfrage übernehmen →
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+        {placed.map(({ seat, x, y, r, ox, oy }) => {
+          const style = `left: ${x}%; top: ${y}%; --r: ${r}deg; --ox: ${ox}; --oy: ${oy}`;
+          const chair = <svg class="chair" viewBox="-12 -12 24 24" aria-hidden="true"><use href="#kz-chair" x="-12" y="-12" width="24" height="24" /></svg>;
+          if (seat.kind === 'person') return (
+            <span class="seat seat-person" style={style}>{chair}<span class="seat-label">{seat.label}</span></span>
+          );
+          if (seat.kind === 'question') return (
+            <button
+              class={`seat seat-question ${seat.q === 0 ? 'is-asking' : ''}`}
+              type="button"
+              style={style}
+              data-lr-ask={seat.q}
+              aria-controls="lr-questions"
+              aria-label={t.questions[seat.q]}
+              aria-pressed={seat.q === 0 ? 'true' : 'false'}
+            >
+              {chair}<span class="seat-q" aria-hidden="true">?</span>
+            </button>
+          );
+          if (seat.kind === 'you') return (
+            <a class="seat seat-you" href="#anfrage" data-open-form style={style}>{chair}<span class="seat-label">Ihr Platz</span></a>
+          );
+          return <span class="seat" style={style} aria-hidden="true">{chair}</span>;
+        })}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .lr-people {
+    padding-block: clamp(80px, 9vw, 144px);
+    background: var(--color-warm);
+    border-top: 1px solid var(--color-line);
+    border-bottom: 1px solid var(--color-line);
+  }
+  .grid-wrap { display: grid; gap: 56px; }
+  .persons { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 32px; }
+  .person { border-top: 1.5px solid var(--color-ink); padding-top: 16px; }
+  .portrait {
+    display: block;
+    width: 100%;
+    max-width: 16rem;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    margin-bottom: 16px;
+    background: var(--color-surface);
+  }
+  .name { font-size: var(--text-title); letter-spacing: -0.03em; line-height: 1.05; }
+  .mail { margin-top: 20px; font-size: var(--text-meta); color: var(--color-muted); }
+
+  .question-picker {
+    margin-top: 32px;
+    padding-top: 20px;
+    border-top: 1px solid var(--color-line);
+  }
+  .picker-label {
+    font-size: var(--text-label);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+    margin-bottom: 12px;
+  }
+  .picker-list {
+    display: grid;
+    gap: 8px;
+  }
+  .picker-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border: 1px solid var(--color-line);
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font: inherit;
+    font-size: var(--text-meta);
+    text-align: left;
+    cursor: pointer;
+    transition: border-color 180ms var(--ease-draw), background-color 180ms var(--ease-draw);
+  }
+  .picker-btn:hover { border-color: var(--color-ink); }
+  .picker-btn.is-asking {
+    border-color: var(--color-ink);
+    background: var(--color-ink);
+    color: var(--color-paper);
+  }
+  .picker-q {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--color-ginster);
+    color: var(--color-ink);
+    font-size: 0.78rem;
+    font-weight: 700;
+    display: grid;
+    place-items: center;
+    flex: none;
+  }
+
+  .ring-wrap { display: grid; place-items: center; }
+  .kz-ring {
+    --chair: clamp(38px, 9vw, 58px);
+    position: relative;
+    width: min(100%, 560px);
+    aspect-ratio: 1;
+    margin: calc(var(--chair) * 0.7);
+  }
+  .rug {
+    position: absolute;
+    inset: 18%;
+    border-radius: 50%;
+    background: var(--color-paper);
+    border: 1.5px solid var(--color-ink);
+  }
+
+  .middle {
+    position: absolute;
+    inset: 22%;
+    display: grid;
+    place-content: center;
+    text-align: center;
+    padding: 12px;
+  }
+  .middle-label {
+    color: var(--color-muted);
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .questions { list-style: none; margin: 8px 0 0; padding: 0; }
+  :global(html.js) .kz-ring.is-live .questions { display: grid; grid-template-areas: 'q'; }
+  :global(html.js) .kz-ring.is-live .question-card {
+    grid-area: q;
+    opacity: 0;
+    pointer-events: none;
+    translate: 0 8px;
+    transition: opacity 300ms var(--ease-draw), translate 400ms var(--ease-draw);
+  }
+  :global(html.js) .kz-ring.is-live .question-card.is-asked {
+    opacity: 1;
+    pointer-events: auto;
+    translate: 0 0;
+  }
+  .question {
+    font-size: clamp(1.25rem, 2.2vw, 1.85rem);
+    line-height: 1.08;
+    color: var(--color-ink);
+  }
+  .question-why {
+    margin-top: 8px;
+    font-size: 0.82rem;
+    line-height: 1.45;
+    color: var(--color-muted);
+    max-width: 28ch;
+    margin-inline: auto;
+  }
+  .question-cta {
+    display: inline-block;
+    margin-top: 10px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+
+  .seat {
+    position: absolute;
+    width: var(--chair);
+    height: var(--chair);
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    transform: translate(-50%, -50%);
+  }
+  .chair {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    transform: rotate(var(--r));
+    transition: transform 400ms var(--ease-draw);
+  }
+  .seat-person { --seat: var(--color-ink); --back: var(--color-ink); }
+  .seat-you { --seat: var(--color-paper); --seat-line: var(--color-ink); --seat-dash: 3 2.5; --back: var(--color-muted); }
+  .seat-you:hover, .seat-you:focus-visible { --seat: var(--color-ginster-light); }
+
+  .seat-label {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) translate(calc(var(--ox) * var(--chair) * 1.05), calc(var(--oy) * var(--chair) * 0.95));
+    white-space: nowrap;
+    font-size: var(--text-meta);
+    font-weight: 600;
+  }
+  .seat-you .seat-label {
+    font-family: var(--font-marker);
+    font-size: var(--text-marker);
+    font-weight: 600;
+  }
+  .seat-q {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -58%);
+    font-size: 0.95rem;
+    font-weight: 700;
+    pointer-events: none;
+  }
+  .seat-question { cursor: pointer; }
+  .seat-question:hover .chair,
+  .seat-question.is-asking .chair { transform: rotate(var(--r)) scale(1.12); }
+  .seat-question.is-asking { --seat: var(--color-ink); }
+  .seat-question.is-asking .seat-q { color: var(--color-paper); }
+
+  @media (min-width: 1024px) {
+    .grid-wrap {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: clamp(24px, 2.6vw, 44px);
+      align-items: center;
+    }
+    .copy { grid-column: 1 / 6; }
+    .ring-wrap { grid-column: 6 / 13; }
+  }
+  @media (max-width: 539px) {
+    .persons { grid-template-columns: 1fr; }
+    .middle-label, .question-why { display: none; }
+  }
+</style>
+
+<script>
+  const section = document.querySelector<HTMLElement>('#menschen');
+  const ring = section?.querySelector<HTMLElement>('[data-lr-ring]');
+  if (section && ring) {
+    const questions = Array.from(ring.querySelectorAll<HTMLElement>('[data-lr-question]'));
+    const triggers = Array.from(section.querySelectorAll<HTMLButtonElement>('[data-lr-ask]'));
+    let current = 0;
+    let timer: number | undefined;
+
+    const ask = (q: number) => {
+      current = q;
+      questions.forEach((el, i) => {
+        el.classList.toggle('is-asked', i === q);
+        el.setAttribute('aria-hidden', String(i !== q));
+      });
+      triggers.forEach((btn) => {
+        const on = Number(btn.dataset.lrAsk) === q;
+        btn.classList.toggle('is-asking', on);
+        btn.setAttribute('aria-pressed', String(on));
+      });
+    };
+
+    ring.classList.add('is-live');
+    ask(0);
+    const stop = () => window.clearInterval(timer);
+
+    triggers.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        stop();
+        ask(Number(btn.dataset.lrAsk));
+      });
+    });
+
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window) {
+      let stopped = false;
+      triggers.forEach((btn) => btn.addEventListener('click', () => { stopped = true; }));
+      new IntersectionObserver(
+        ([entry]) => {
+          stop();
+          if (entry.isIntersecting && !stopped) {
+            timer = window.setInterval(() => ask((current + 1) % questions.length), 4200);
+          }
+        },
+        { threshold: 0.4 },
+      ).observe(ring);
+    }
+  }
+</script>

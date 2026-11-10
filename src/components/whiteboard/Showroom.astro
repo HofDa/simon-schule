@@ -1,0 +1,215 @@
+---
+/**
+ * Showroom: a framed display niche under the whiteboard with spinning 3D models of VS furniture
+ * on a turntable (PantoSwing-LuPo, Hokki, a Tano island, a Puzzle table), switched with the
+ * buttons below the frame. Models are procedural (src/scripts/showroom-models.ts, no asset
+ * files); three.js loads lazily when the frame nears the viewport (src/scripts/showroom.ts).
+ */
+import { getLang } from '../../i18n/ui';
+
+const lang = getLang(Astro.currentLocale);
+const de = lang === 'de';
+const copy = de
+  ? { eyebrow: 'Showroom', title: 'Möbel, die mitlernen.', text: 'Ein paar Stücke aus dem VS-Programm zum Drehen und Ansehen: vom Schwingstuhl über den Wackelhocker bis zur Gruppeninsel.', hint: 'Ziehen zum Drehen', pick: 'Möbelstück wählen', drag: 'Zum Drehen ziehen.' }
+  : { eyebrow: 'Showroom', title: 'Arredi che imparano con te.', text: 'Alcuni pezzi del programma VS da girare e osservare: dalla sedia oscillante allo sgabello dinamico fino all’isola di gruppo.', hint: 'Trascina per ruotare', pick: 'Scegli un pezzo', drag: 'Trascinare per ruotare.' };
+
+const pieces = [
+  {
+    id: 'pantoswing',
+    tab: de ? 'Stuhl' : 'Sedia',
+    name: 'VS PantoSwing-LuPo',
+    spec: de ? 'Schwingstuhl · Ginstergelb · Sitzhöhe 46 cm' : 'Sedia oscillante · giallo ginestra · altezza seduta 46 cm',
+    swatch: '#e2a300',
+  },
+  {
+    id: 'hokki',
+    tab: de ? 'Hocker' : 'Sgabello',
+    name: 'VS Hokki',
+    spec: de ? 'Wackelhocker für bewegtes Sitzen' : 'Sgabello oscillante per una seduta dinamica',
+    swatch: '#3b5bd6',
+  },
+  {
+    id: 'tano',
+    tab: de ? 'Gruppentisch' : 'Tavolo di gruppo',
+    name: 'VS Tano',
+    spec: de ? 'Gruppeninsel aus drei Tischen · mit sechs PantoSwing' : 'Isola di gruppo con tre tavoli · con sei PantoSwing',
+    swatch: '#dec196',
+  },
+  {
+    id: 'puzzle',
+    tab: de ? 'Freiform' : 'Forma libera',
+    name: 'VS Puzzle',
+    spec: de ? 'Freiform-Tisch · mit sechs Hokki' : 'Tavolo a forma libera · con sei Hokki',
+    swatch: '#f6f5f1',
+  },
+].map((p) => ({ ...p, label: `${de ? '3D-Modell' : 'Modello 3D'}: ${p.name}, ${p.spec}. ${copy.drag}` }));
+const first = pieces[0];
+---
+
+<section class="showroom" aria-labelledby="showroom-title">
+  <div class="shell showroom-grid">
+    <div class="showroom-copy">
+      <p class="marker eyebrow">{copy.eyebrow}</p>
+      <h2 id="showroom-title">{copy.title}</h2>
+      <p>{copy.text}</p>
+    </div>
+
+    <figure class="showroom-frame" data-showroom>
+      <div class="frame-inner">
+        <span class="spot" aria-hidden="true"></span>
+        <canvas data-showroom-canvas role="img" aria-label={first.label}></canvas>
+        <p class="fallback">{pieces.map((p) => p.name).join(' · ')}</p>
+      </div>
+      <figcaption>
+        <span class="plate" aria-live="polite">
+          <strong data-piece-name>{first.name}</strong>
+          <span data-piece-spec>{first.spec}</span>
+        </span>
+        <span class="hint" aria-hidden="true">{copy.hint}</span>
+      </figcaption>
+      <div class="pieces" role="group" aria-label={copy.pick}>
+        {pieces.map((p, i) => (
+          <button
+            type="button"
+            class="piece"
+            data-piece={p.id}
+            data-name={p.name}
+            data-spec={p.spec}
+            data-label={p.label}
+            aria-pressed={i === 0 ? 'true' : 'false'}
+          >
+            <span class="swatch" style={`--swatch: ${p.swatch}`} aria-hidden="true"></span>
+            {p.tab}
+          </button>
+        ))}
+      </div>
+    </figure>
+  </div>
+</section>
+
+<style>
+  .showroom { padding-block: clamp(64px, 8vw, 128px); }
+
+  .showroom-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    align-items: center;
+    gap: clamp(32px, 5vw, 88px);
+  }
+
+  .eyebrow { font-size: 1.6rem; color: var(--color-ginster-deep); }
+  h2 {
+    margin-top: 6px;
+    font-size: clamp(2rem, 4vw, 3.4rem);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.045em;
+  }
+  .showroom-copy > p:last-child { margin-top: 20px; max-width: 42ch; color: var(--color-muted); font-size: 1.08rem; }
+
+  /* the frame: a deep display niche with an ink border, a lit back wall and a floor */
+  .showroom-frame {
+    margin: 0;
+    padding: clamp(10px, 1.2vw, 16px);
+    background: var(--color-ink);
+    border-radius: 6px;
+    box-shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.45);
+  }
+  .frame-inner {
+    position: relative;
+    aspect-ratio: 4 / 3.4;
+    overflow: hidden;
+    border-radius: 2px;
+    background:
+      linear-gradient(to bottom, transparent 68%, rgba(0, 0, 0, 0.06) 68%, rgba(0, 0, 0, 0.02) 100%),
+      linear-gradient(to bottom, #fbfaf6, var(--color-surface));
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08), inset 0 18px 40px -20px rgba(0, 0, 0, 0.35);
+  }
+  .spot {
+    position: absolute;
+    inset: -20% 15% 20%;
+    background: radial-gradient(closest-side, rgba(255, 244, 214, 0.9), transparent);
+    pointer-events: none;
+  }
+  canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    cursor: grab;
+    touch-action: pan-y;
+    opacity: 0;
+    transition: opacity 0.8s var(--ease-draw);
+  }
+  .is-ready canvas { opacity: 1; }
+  .is-dragging canvas { cursor: grabbing; }
+  .fallback {
+    position: absolute;
+    inset: auto 16px 12%;
+    text-align: center;
+    font-weight: 700;
+    display: none;
+  }
+  .is-fallback .fallback { display: block; }
+
+  figcaption {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 4px 2px;
+    color: var(--color-paper);
+  }
+  .plate { display: flex; flex-direction: column; gap: 2px; min-width: 0; font-size: 0.9rem; }
+  .plate span { opacity: 0.65; }
+  .hint { flex: none; white-space: nowrap; font-family: var(--font-marker); font-size: 1.3rem; color: var(--color-ginster-light); }
+
+  /* piece switcher: small labels on the frame's sill */
+  .pieces {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--color-ink-line, #3b3a36);
+  }
+  .piece {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 40px;
+    padding: 0 14px 0 10px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--color-paper);
+    font: inherit;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+  }
+  .piece:hover { border-color: rgba(255, 255, 255, 0.45); }
+  .piece[aria-pressed='true'] { background: var(--color-paper); border-color: var(--color-paper); color: var(--color-ink); }
+  .piece:focus-visible { outline: 2px solid var(--color-ginster-light); outline-offset: 2px; }
+  .swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--swatch);
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.25);
+  }
+
+  @media (max-width: 860px) {
+    .showroom-grid { grid-template-columns: 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    canvas, .piece { transition: none; }
+  }
+</style>
+
+<script>
+  import { setupShowrooms } from '../../scripts/showroom';
+  setupShowrooms();
+</script>

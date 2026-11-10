@@ -1,5 +1,5 @@
 ---
-import { contact, photoCredits, vs } from '../../data/site';
+import { contact, locations, photoCredits, vs } from '../../data/site';
 import { homeFor, isHome, legalFor } from '../../lib/paths';
 import Logo from './Logo.astro';
 import { getLang, useTranslations } from '../../i18n/ui';
@@ -14,9 +14,6 @@ const t = useTranslations(lang);
 const f = t.footer;
 const year = new Date().getFullYear();
 const home = Astro.props.inPage || isHome(Astro.url.pathname, lang) ? '' : homeFor(lang);
-const openContact = [!contact.phone && t.pendingFields.phone, !contact.address && t.pendingFields.address].filter(
-  (f): f is string => Boolean(f),
-);
 ---
 
 <footer class="sheet-ink footer pt-24 pb-10 text-meta">
@@ -34,10 +31,13 @@ const openContact = [!contact.phone && t.pendingFields.phone, !contact.address &
       <div class="md:col-span-3">
         <h2 class="mb-4 text-meta font-semibold tracking-normal">{f.contact}</h2>
         <ul class="touch-list space-y-2 text-on-ink">
+          <li class="text-paper font-medium">Simon Brugger</li>
+          <li><a class="link-line text-paper" href={`mailto:${contact.directEmail}`}>{contact.directEmail}</a></li>
           <li><a class="link-line text-paper" href={`mailto:${contact.email}`}>{contact.email}</a></li>
           {contact.phone && <li><a href={`tel:${contact.phone.replace(/\s/g, '')}`}>{contact.phone}</a></li>}
-          {contact.address && <li>{contact.address}</li>}
-          {openContact.length > 0 && <li class="open-fact">{t.pending(openContact)}</li>}
+          {locations.map((loc) => (
+            <li>{loc.city[lang]} · {loc.street[lang]}</li>
+          ))}
         </ul>
       </div>
 

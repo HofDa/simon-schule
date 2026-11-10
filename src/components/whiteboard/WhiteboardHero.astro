@@ -3,6 +3,7 @@ import { getProjects } from '../../data/projects';
 import { getLang, useTranslations } from '../../i18n/ui';
 import ProjectPhoto from './ProjectPhoto.astro';
 import claims from './art/claim-strokes.json';
+import BoardNavigation from './BoardNavigation.astro';
 
 const lang = getLang(Astro.currentLocale);
 const t = useTranslations(lang);
@@ -87,7 +88,9 @@ const timelineCss = `:root{${css({ 'hero-write': writeDuration, 't-claim': T_CLA
   // Arriving at a place further down the page (a link with an anchor): no intro to wait for.
   if (location.hash && location.hash !== '#top') document.documentElement.classList.add('hero-skip');
 </script>
-<section id="top" class="hero relative pt-[calc(var(--nav-h)+8px)]" aria-labelledby="hero-title">
+<div id="top"></div>
+<BoardNavigation />
+<section class="hero relative pt-[calc(var(--nav-h)+8px)]" aria-labelledby="hero-title">
   <div class="shell">
     <div class="board relative">
       <div class="board-surface relative h-full">
