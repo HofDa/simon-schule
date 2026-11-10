@@ -26,6 +26,15 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # AVIF encoding is expensive; reuse transforms whose source and options are unchanged.
+      - name: Cache optimized images
+        uses: actions/cache@v5
+        with:
+          path: node_modules/.astro/assets
+          key: ${{ runner.os }}-astro-images-v1-${{ hashFiles('package-lock.json') }}-${{ hashFiles('src/**', 'astro.config.mjs') }}
+          restore-keys: |
+            ${{ runner.os }}-astro-images-v1-${{ hashFiles('package-lock.json') }}-
+
       # Served by GitHub Pages at hofda.github.io/simon-schule/ until trias-schule.it points here.
       # For the custom domain: SITE_URL=https://trias-schule.it and BASE_PATH=/.
       - name: Configure site address

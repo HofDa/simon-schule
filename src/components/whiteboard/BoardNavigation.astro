@@ -4,7 +4,8 @@ import BoardFeedback from './BoardFeedback.astro';
 import BoardCollages from './BoardCollages.astro';
 import BoardContactCard from './BoardContactCard.astro';
 import Logo from '../shared/Logo.astro';
-import { Image, getImage } from 'astro:assets';
+import { getImage } from 'astro:assets';
+import ResponsiveImage from './ResponsiveImage.astro';
 import { trias } from '../../data/site';
 import house70Magnet from '../../assets/whiteboard/house70-fridge-magnet-natural.webp';
 import vsLogoMagnet from '../../assets/whiteboard/vs-logo-kitchen-magnet.webp';
@@ -59,7 +60,7 @@ const topics = [
         <div class="board-object object-house70" data-board-object>
           <button class="house70-magnet" type="button" data-board-handle data-label="HOUSE70" aria-label="HOUSE70-Magnet verschieben" aria-describedby="board-drag-hint" title="HOUSE70 · Trias in Brixen · Magnet greifen und verschieben">
             <span class="magnet-body">
-              <Image src={house70Magnet} alt="HOUSE70-Kühlschrankmagnet mit naturgetreuer grauer Fassade, farbigen Fensterreflexionen, goldenen Schildern und schmalem elfenbeinfarbenem Rand, nach dem Originalfoto von Trias" width={320} widths={[160, 240, 320, 480, 640]} sizes="(max-height: 800px) 135px, (min-width: 1600px) 210px, 13.5vw" format="webp" quality={90} loading="eager" draggable="false" />
+              <ResponsiveImage desktopOnly avif={false} src={house70Magnet} alt="HOUSE70-Kühlschrankmagnet mit naturgetreuer grauer Fassade, farbigen Fensterreflexionen, goldenen Schildern und schmalem elfenbeinfarbenem Rand, nach dem Originalfoto von Trias" width={320} widths={[160, 240, 320, 480, 640]} sizes="(max-height: 800px) 135px, (min-width: 1600px) 210px, 13.5vw" quality={90} loading="eager" draggable="false" />
               <span class="magnet-gloss" style={`--magnet-mask: url(${house70Mask.src})`} aria-hidden="true"></span>
             </span>
           </button>
@@ -103,18 +104,18 @@ const topics = [
         <div class="board-object object-furniture" data-board-object>
           <a class="board-object-link board-catalog-link" href={vsSchoolCatalog} target="_blank" rel="noopener" aria-label="VS-Schulkatalog 2026 als PDF öffnen (neuer Tab)" draggable="false">
             <span class="board-catalog-sheet" data-path-node="3">
-              <Image class="catalog-first-page" src={vsCatalogFirstPage} alt="Erste Inhaltsseite des VS-Schulkatalogs mit Inhaltsverzeichnis" width={240} widths={[120, 180, 240, 360, 480]} sizes="(max-height: 800px) 100px, 180px" format="webp" quality={90} loading="eager" draggable="false" />
+              <ResponsiveImage desktopOnly avif={false} class="catalog-first-page" src={vsCatalogFirstPage} alt="Erste Inhaltsseite des VS-Schulkatalogs mit Inhaltsverzeichnis" width={240} widths={[120, 180, 240, 360, 480]} sizes="(max-height: 800px) 100px, 180px" quality={90} loading="eager" draggable="false" />
               <span class="catalog-cover-flat" aria-hidden="true">
-                <Image src={vsCatalogCover} alt="" data-catalog-front width={240} widths={[120, 180, 240, 360, 480]} sizes="(max-height: 800px) 100px, 180px" format="webp" quality={90} loading="eager" draggable="false" />
+                <ResponsiveImage desktopOnly avif={false} src={vsCatalogCover} alt="" data-catalog-front width={240} widths={[120, 180, 240, 360, 480]} sizes="(max-height: 800px) 100px, 180px" quality={90} loading="eager" draggable="false" />
               </span>
-              <Image class="catalog-inside-texture" src={vsCatalogInsideCover} alt="" data-catalog-back width={360} format="webp" loading="eager" hidden />
+              <ResponsiveImage desktopOnly avif={false} class="catalog-inside-texture" src={vsCatalogInsideCover} alt="" data-catalog-back width={360} loading="eager" hidden />
               <canvas class="catalog-curl-canvas" data-catalog-curl-canvas aria-hidden="true"></canvas>
             </span>
           </a>
           <span class="vs-plaque"><strong>Exklusivvertretung</strong> von VS in Südtirol</span>
           <a class="object-caption catalog-caption" href="#vs-moebel" data-board-topic="vs-moebel">VS Möbel entdecken <span aria-hidden="true">↗</span></a>
           <button class="vs-logo-magnet catalog-magnet" type="button" data-board-handle data-label="VS-Katalog" aria-label="VS-Magnet mit Katalog verschieben" aria-describedby="board-drag-hint" title="Magnet greifen und den Katalog verschieben">
-            <Image src={vsLogoMagnet} alt="Küchenmagnet aus elfenbeinfarbenem Kunststoff mit erhabenem gelbem VS-Logo, der die Titelseite am oberen Rand festhält" width={180} widths={[90, 135, 180, 270]} sizes="90px" format="webp" quality={90} loading="eager" draggable="false" />
+            <ResponsiveImage desktopOnly avif={false} src={vsLogoMagnet} alt="Küchenmagnet aus elfenbeinfarbenem Kunststoff mit erhabenem gelbem VS-Logo, der die Titelseite am oberen Rand festhält" width={180} widths={[90, 135, 180, 270]} sizes="90px" quality={90} loading="eager" draggable="false" />
           </button>
         </div>
 

@@ -1,7 +1,7 @@
 /**
  * Showroom turntable: VS furniture (see showroom-models.ts) spinning slowly inside the showroom
- * frame, switched with the piece buttons below it. Three.js is only loaded once the frame comes
- * near the viewport; rendering pauses while it is off-screen. Drag rotates the piece by hand;
+ * frame, switched with the piece buttons below it. Three.js loads when the visitor activates
+ * the viewer; rendering pauses while it is off-screen. Drag rotates the piece by hand;
  * reduced motion keeps it still (drag still works) and swaps pieces without the transition.
  */
 import type * as THREE_NS from 'three';
@@ -17,7 +17,7 @@ const STAGING: Record<PieceId, { rise: number; margin: number; start: number }> 
 
 async function initShowroom(root: HTMLElement) {
   const canvas = root.querySelector<HTMLCanvasElement>('[data-showroom-canvas]');
-  if (!canvas) return;
+  if (!canvas) return false;
   const buttons = [...root.querySelectorAll<HTMLButtonElement>('[data-piece]')];
   const nameEl = root.querySelector<HTMLElement>('[data-piece-name]');
   const specEl = root.querySelector<HTMLElement>('[data-piece-spec]');
@@ -30,7 +30,7 @@ async function initShowroom(root: HTMLElement) {
     renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
   } catch {
     root.classList.add('is-fallback');
-    return;
+    return false;
   }
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -243,18 +243,38 @@ async function initShowroom(root: HTMLElement) {
     start();
   }).observe(root);
   root.classList.add('is-ready');
+  return true;
 }
 
 export function setupShowrooms() {
   document.querySelectorAll<HTMLElement>('[data-showroom]').forEach((root) => {
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry.isIntersecting) return;
-        io.disconnect();
-        void initShowroom(root);
-      },
-      { rootMargin: '400px 0px' },
-    );
-    io.observe(root);
+    const activate = root.querySelector<HTMLButtonElement>('[data-showroom-activate]');
+    const status = root.querySelector<HTMLElement>('[data-showroom-status]');
+    if (!activate || !status) return;
+    let pending = false;
+    activate.addEventListener('click', async () => {
+      if (pending || root.classList.contains('is-ready')) return;
+      const moveFocus = document.activeElement === activate;
+      pending = true;
+      activate.disabled = true;
+      activate.textContent = activate.dataset.loadingLabel ?? '';
+      status.textContent = activate.textContent;
+      root.setAttribute('aria-busy', 'true');
+      root.classList.remove('is-fallback');
+      try {
+        if (!await initShowroom(root)) throw new Error('Viewer unavailable');
+        root.querySelectorAll<HTMLButtonElement>('[data-piece]').forEach((button) => { button.disabled = false; });
+        status.textContent = '';
+        if (moveFocus) root.querySelector<HTMLButtonElement>('[data-piece]')?.focus({ preventScroll: true });
+      } catch {
+        root.classList.add('is-fallback');
+        activate.textContent = activate.dataset.retryLabel ?? '';
+        status.textContent = activate.dataset.errorLabel ?? '';
+      } finally {
+        pending = false;
+        activate.disabled = false;
+        root.setAttribute('aria-busy', 'false');
+      }
+    });
   });
 }

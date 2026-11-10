@@ -3,15 +3,19 @@
  * Showroom: a framed display niche under the whiteboard with spinning 3D models of VS furniture
  * on a turntable (PantoSwing-LuPo, Hokki, a Tano island, a Puzzle table), switched with the
  * buttons below the frame. Models are procedural (src/scripts/showroom-models.ts, no asset
- * files); three.js loads lazily when the frame nears the viewport (src/scripts/showroom.ts).
+ * files); three.js loads after the visitor activates the viewer (src/scripts/showroom.ts).
  */
 import { getLang } from '../../i18n/ui';
+import VSChair from './art/VSChair.astro';
 
 const lang = getLang(Astro.currentLocale);
 const de = lang === 'de';
 const copy = de
   ? { eyebrow: 'Showroom', title: 'Möbel, die mitlernen.', text: 'Ein paar Stücke aus dem VS-Programm zum Drehen und Ansehen: vom Schwingstuhl über den Wackelhocker bis zur Gruppeninsel.', hint: 'Ziehen zum Drehen', pick: 'Möbelstück wählen', drag: 'Zum Drehen ziehen.' }
   : { eyebrow: 'Showroom', title: 'Arredi che imparano con te.', text: 'Alcuni pezzi del programma VS da girare e osservare: dalla sedia oscillante allo sgabello dinamico fino all’isola di gruppo.', hint: 'Trascina per ruotare', pick: 'Scegli un pezzo', drag: 'Trascinare per ruotare.' };
+const viewer = de
+  ? { activate: 'In 3D ansehen', loading: '3D-Ansicht lädt …', retry: 'Erneut versuchen', error: 'Die 3D-Ansicht konnte nicht geladen werden. Bitte versuchen Sie es erneut.' }
+  : { activate: 'Visualizza in 3D', loading: 'Caricamento vista 3D …', retry: 'Riprova', error: 'Impossibile caricare la vista 3D. Riprova.' };
 
 const pieces = [
   {
@@ -58,8 +62,12 @@ const first = pieces[0];
       <div class="frame-inner">
         <span class="spot" aria-hidden="true"></span>
         <canvas data-showroom-canvas role="img" aria-label={first.label}></canvas>
-        <p class="fallback">{pieces.map((p) => p.name).join(' · ')}</p>
+        <div class="showroom-launch">
+          <div class="showroom-preview" aria-hidden="true"><VSChair id="showroom-preview" /></div>
+          <button class="showroom-activate btn btn-ginster" type="button" data-showroom-activate data-loading-label={viewer.loading} data-retry-label={viewer.retry} data-error-label={viewer.error}>{viewer.activate}</button>
+        </div>
       </div>
+      <p class="sr-only" role="status" data-showroom-status></p>
       <figcaption>
         <span class="plate" aria-live="polite">
           <strong data-piece-name>{first.name}</strong>
@@ -77,6 +85,7 @@ const first = pieces[0];
             data-spec={p.spec}
             data-label={p.label}
             aria-pressed={i === 0 ? 'true' : 'false'}
+            disabled
           >
             <span class="swatch" style={`--swatch: ${p.swatch}`} aria-hidden="true"></span>
             {p.tab}
@@ -143,14 +152,13 @@ const first = pieces[0];
   }
   .is-ready canvas { opacity: 1; }
   .is-dragging canvas { cursor: grabbing; }
-  .fallback {
-    position: absolute;
-    inset: auto 16px 12%;
-    text-align: center;
-    font-weight: 700;
-    display: none;
-  }
-  .is-fallback .fallback { display: block; }
+  .showroom-launch { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; padding: 24px; }
+  .showroom-preview { width: 38%; max-height: 65%; }
+  .showroom-preview :global(svg) { display: block; width: 100%; max-height: 100%; }
+  .showroom-activate { display: none; position: relative; z-index: 1; min-height: 44px; }
+  :global(.js) .showroom-activate { display: inline-flex; }
+  .showroom-activate:disabled { cursor: progress; opacity: .7; }
+  .is-ready .showroom-launch { display: none; }
 
   figcaption {
     display: flex;
@@ -191,6 +199,7 @@ const first = pieces[0];
     transition: background-color 0.2s, border-color 0.2s, color 0.2s;
   }
   .piece:hover { border-color: rgba(255, 255, 255, 0.45); }
+  .piece:disabled { cursor: default; opacity: .55; }
   .piece[aria-pressed='true'] { background: var(--color-paper); border-color: var(--color-paper); color: var(--color-ink); }
   .piece:focus-visible { outline: 2px solid var(--color-ginster-light); outline-offset: 2px; }
   .swatch {

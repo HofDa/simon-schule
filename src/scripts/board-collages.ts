@@ -22,7 +22,13 @@ type Stack = {
 
 if (roots.length && gallery) {
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const desktop = window.matchMedia('(min-width: 1024px)');
   const photoCount = (slug: string) => gallery.querySelectorAll(`[data-gallery-set="${slug}"] [data-slide]`).length;
+  const loadPrint = (print: HTMLElement) => {
+    if (!desktop.matches) return;
+    const template = print.querySelector<HTMLTemplateElement>('[data-collage-image]');
+    template?.replaceWith(template.content.cloneNode(true));
+  };
 
   /** One stack on the board: its order (top first), with a random project on top. */
   const makeStack = (root: HTMLElement): Stack | null => {
@@ -40,17 +46,15 @@ if (roots.length && gallery) {
       });
       openButton.setAttribute('aria-label', order[0].dataset.openLabel ?? '');
       if (openHint) openHint.textContent = `${photoCount(order[0].dataset.slug!)} Fotos ansehen`;
+      loadPrint(order[0]);
     };
     const rotateTo = (k: number) => [...prints.slice(k), ...prints.slice(0, k)];
 
-    // a different project on top after every page load (the prints shown load at once)
+    // Keep the other prints inert, even when the browser considers the stack near the viewport.
     const start = Math.floor(Math.random() * prints.length);
     let order = rotateTo(start);
-    order.slice(0, 3).forEach((print) => {
-      const img = print.querySelector('img');
-      if (img) img.loading = 'eager';
-    });
     layout();
+    desktop.addEventListener('change', () => loadPrint(order[0]));
     root.closest('[data-board-home]')?.addEventListener('whiteboard:reset', () => {
       order = rotateTo(start);
       layout();
