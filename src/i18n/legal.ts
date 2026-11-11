@@ -7,7 +7,7 @@
  * and an inquiry form that either composes an e-mail (mailto) or, when configured,
  * submits through Formspree.
  */
-import { contact, inquiry, photoCredits } from '../data/site';
+import { company, contact, inquiry, photoCredits } from '../data/site';
 import type { Lang } from './ui';
 
 export interface LegalRow {
@@ -38,22 +38,22 @@ const githubPrivacy = 'https://docs.github.com/site-policy/privacy-policies/gith
 const de: Record<'imprint' | 'privacy', LegalDoc> = {
   imprint: {
     title: 'Impressum',
-    description: 'Impressum von Trias Schule, einem Geschäftsbereich der Trias OHG.',
+    description: `Impressum von Trias Schule, einem Geschäftsbereich der ${company.name}.`,
     sections: [
       {
         title: 'Anbieter',
         rows: [
-          { label: 'Unternehmen', value: 'Trias OHG' },
+          { label: 'Unternehmen', value: company.name },
           { label: 'Geschäftsbereich', value: 'Trias Schule' },
-          { label: 'Anschrift', value: contact.address },
-          { label: 'MwSt.-Nr.', value: null },
+          { label: 'Anschrift', value: company.address },
+          { label: 'MwSt.-Nr. / Steuernummer', value: company.vat },
           { label: 'Handelsregister', value: null },
           { label: 'PEC', value: null },
         ],
       },
       {
         title: 'Kontakt',
-        rows: [mail, { label: 'Telefon', value: contact.phone, href: contact.phone ? `tel:${contact.phone.replace(/\s/g, '')}` : undefined }],
+        rows: [{ label: 'E-Mail', value: company.email, href: `mailto:${company.email}` }, { label: 'Telefon', value: company.phone, href: `tel:${company.phone.replace(/\s/g, '')}` }],
       },
       { title: 'Verantwortlich für den Inhalt', rows: [{ label: 'Name', value: null }] },
       {
@@ -81,7 +81,7 @@ const de: Record<'imprint' | 'privacy', LegalDoc> = {
     draft: 'Entwurf: vor der Veröffentlichung rechtlich prüfen lassen.',
     intro: 'Wir erheben auf dieser Website so wenig Daten wie möglich: keine Cookies, keine Analyse, kein Tracking.',
     sections: [
-      { title: 'Verantwortlich', rows: [{ label: 'Unternehmen', value: 'Trias OHG' }, { label: 'Anschrift', value: contact.address }, mail] },
+      { title: 'Verantwortlich', rows: [{ label: 'Unternehmen', value: company.name }, { label: 'Anschrift', value: company.address }, mail] },
       {
         title: 'Anfrageformular',
         paragraphs: [
@@ -124,22 +124,22 @@ const de: Record<'imprint' | 'privacy', LegalDoc> = {
 const it: Record<'imprint' | 'privacy', LegalDoc> = {
   imprint: {
     title: 'Note legali',
-    description: 'Note legali di Trias Schule, un settore di Trias OHG.',
+    description: `Note legali di Trias Schule, un settore di ${company.name}.`,
     sections: [
       {
         title: 'Titolare del sito',
         rows: [
-          { label: 'Impresa', value: 'Trias OHG' },
+          { label: 'Impresa', value: company.name },
           { label: 'Settore', value: 'Trias Schule' },
-          { label: 'Indirizzo', value: contact.address },
-          { label: 'Partita IVA', value: null },
+          { label: 'Indirizzo', value: company.address },
+          { label: 'Partita IVA / Codice fiscale', value: company.vat },
           { label: 'Registro delle imprese', value: null },
           { label: 'PEC', value: null },
         ],
       },
       {
         title: 'Contatti',
-        rows: [mail, { label: 'Telefono', value: contact.phone, href: contact.phone ? `tel:${contact.phone.replace(/\s/g, '')}` : undefined }],
+        rows: [{ label: 'E-mail', value: company.email, href: `mailto:${company.email}` }, { label: 'Telefono', value: company.phone, href: `tel:${company.phone.replace(/\s/g, '')}` }],
       },
       { title: 'Responsabile dei contenuti', rows: [{ label: 'Nome', value: null }] },
       {
@@ -167,7 +167,7 @@ const it: Record<'imprint' | 'privacy', LegalDoc> = {
     draft: 'Bozza: da far verificare legalmente prima della pubblicazione.',
     intro: 'Su questo sito raccogliamo il minor numero possibile di dati: niente cookie, niente statistiche, nessun tracciamento.',
     sections: [
-      { title: 'Titolare del trattamento', rows: [{ label: 'Impresa', value: 'Trias OHG' }, { label: 'Indirizzo', value: contact.address }, mail] },
+      { title: 'Titolare del trattamento', rows: [{ label: 'Impresa', value: company.name }, { label: 'Indirizzo', value: company.address }, mail] },
       {
         title: 'Modulo di richiesta',
         paragraphs: [

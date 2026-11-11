@@ -11,6 +11,8 @@ export {};
 
 const roots = Array.from(document.querySelectorAll<HTMLElement>('[data-collages]'));
 const gallery = document.querySelector<HTMLDialogElement>('[data-gallery]');
+// the gallery's words in the page's language, rendered by BoardCollages.astro
+const words: Record<string, string> = JSON.parse(gallery?.dataset.words ?? '{}');
 
 type Stack = {
   root: HTMLElement;
@@ -45,7 +47,7 @@ if (roots.length && gallery) {
         else print.setAttribute('aria-hidden', 'true');
       });
       openButton.setAttribute('aria-label', order[0].dataset.openLabel ?? '');
-      if (openHint) openHint.textContent = `${photoCount(order[0].dataset.slug!)} Fotos ansehen`;
+      if (openHint) openHint.textContent = (words.view ?? '').replace('{n}', String(photoCount(order[0].dataset.slug!)));
       loadPrint(order[0]);
     };
     const rotateTo = (k: number) => [...prints.slice(k), ...prints.slice(0, k)];
@@ -113,8 +115,8 @@ if (roots.length && gallery) {
     const slug = slugs[project];
     const count = slidesOf(slug).length;
     title.textContent = nameOf(slug);
-    counter.textContent = `Foto ${index + 1} / ${count} · Projekt ${project + 1} / ${slugs.length}`;
-    credit.textContent = sets.get(slug)!.dataset.credit ? `Fotos: ${sets.get(slug)!.dataset.credit}` : '';
+    counter.textContent = `${words.photo} ${index + 1} / ${count} · ${words.project} ${project + 1} / ${slugs.length}`;
+    credit.textContent = sets.get(slug)!.dataset.credit ? `${words.credit}: ${sets.get(slug)!.dataset.credit}` : '';
     gallery.querySelectorAll<HTMLElement>('[data-thumb-set]').forEach((t) => (t.hidden = t.dataset.thumbSet !== slug));
     gallery.querySelectorAll<HTMLButtonElement>(`[data-thumb-set="${slug}"] [data-thumb]`).forEach((t, k) => t.setAttribute('aria-current', String(k === index)));
     projectButtons.forEach((b) => b.setAttribute('aria-current', String(b.dataset.project === slug)));
@@ -126,7 +128,7 @@ if (roots.length && gallery) {
       const label = button.querySelector<HTMLElement>('[data-step-project]')!;
       button.toggleAttribute('data-crossing', crossing);
       label.textContent = crossing ? nameOf(slugs[q]) : '';
-      button.setAttribute('aria-label', crossing ? `${d > 0 ? 'Nächstes' : 'Vorheriges'} Projekt: ${nameOf(slugs[q])}` : d > 0 ? 'Nächstes Foto' : 'Vorheriges Foto');
+      button.setAttribute('aria-label', crossing ? `${d > 0 ? words.nextProject : words.prevProject}: ${nameOf(slugs[q])}` : d > 0 ? words.next : words.prev);
     }
     warmPhoto(...neighbour(project, index, 1));
     warmPhoto(...neighbour(project, index, -1));

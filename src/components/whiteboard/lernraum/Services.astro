@@ -8,51 +8,21 @@ import DeskBack, { type DeskItem } from '../art/DeskBack.astro';
 import Lesson from '../klassenzimmer/Lesson.astro';
 import { getLang, useTranslations } from '../../../i18n/ui';
 import { servicesFor } from '../../../data/services';
+import { lernraumCopy } from '../../../i18n/lernraum';
 
 const lang = getLang(Astro.currentLocale);
 const t = useTranslations(lang).services;
 const services = servicesFor(lang);
 const items: DeskItem[] = ['mug', 'plan', 'catalogue', 'toolbox', 'plant'];
 
-const deliverables = [
-  'Vor-Ort-Begehung in Südtirol',
-  'Raum- & Möblierungskonzept',
-  'Auswahl aus dem VS-System',
-  'Bestellung & Terminmontage',
-  'Fester Kontakt auch nach Übergabe',
-];
-
-const roles = [
-  {
-    audience: 'Schule & Kindergarten',
-    title: 'Räume, die den Alltag mitmachen.',
-    text: 'Vom Morgenkreis über konzentrierte Einzelarbeit bis zur Gruppenphase: Wir planen mit Ihrem Kollegium vor Ort, wie sich Räume ohne Kraftakt umstellen lassen.',
-    cta: 'Raumidee besprechen',
-    phase: 'Erste Idee',
-    topic: 'Pädagogisches Raumkonzept',
-  },
-  {
-    audience: 'Gemeinde & Auftraggeber',
-    title: 'Verlässlich in Ausschreibung & Montage.',
-    text: 'Klare Leistungsverzeichnisse, langlebige VS-Qualität und eine sauber koordinierte Lieferung und Montage – abgestimmt auf Bauzeitpläne und Schulferien.',
-    cta: 'Ausschreibung & Ablauf klären',
-    phase: 'Ausschreibung',
-    topic: 'Ausschreibung / Gemeindeprojekt',
-  },
-  {
-    audience: 'Architektur & Planung',
-    title: 'Fachplanung mit dem VS-Systembaukasten.',
-    text: 'Wir übersetzen Ihren Grundriss in konkrete Möblierungspläne, Zonierungen und Akustiklösungen – als direkter Südtiroler Partner von VS Möbel.',
-    cta: 'Planung abstimmen',
-    phase: 'Planung läuft',
-    topic: 'Fachplanung / Architektur',
-  },
-];
+const L = lernraumCopy(lang);
+const { deliverables, roles } = L.services;
+const phases = useTranslations(lang).form.phases;
 ---
 
 <section id="leistungen" class="lr-services" aria-labelledby="services-title">
   <div class="shell">
-    <Lesson n="01" name="Frontal" note="zuhören, verstehen, den Ablauf überblicken" layout="frontal" from="talk" />
+    <Lesson n="01" name={L.lesson.services.name} note={L.lesson.services.note} layout="frontal" from="talk" />
 
     <div class="head">
       <h2 id="services-title" class="text-headline leading-[0.98] tracking-[-0.03em]">{t.title}</h2>
@@ -79,8 +49,8 @@ const roles = [
 
     <div class="roles" aria-labelledby="roles-heading">
       <div class="roles-head">
-        <p id="roles-heading" class="roles-eyebrow">Drei Perspektiven · Ein Ansprechpartner</p>
-        <p class="roles-note marker" aria-hidden="true">Wer plant mit uns?</p>
+        <p id="roles-heading" class="roles-eyebrow">{L.services.rolesEyebrow}</p>
+        <p class="roles-note marker" aria-hidden="true">{L.services.rolesNote}</p>
       </div>
       <div class="roles-grid">
         {roles.map((r) => (
@@ -92,7 +62,7 @@ const roles = [
               href="#anfrage"
               class="role-link link-line"
               data-open-form
-              data-phase={r.phase}
+              data-phase={phases[r.phase]}
               data-topic={r.topic}
             >
               {r.cta}
@@ -235,7 +205,10 @@ const roles = [
   }
 
   @media (max-width: 639px) {
-    .desks { grid-template-columns: 1fr; gap: 36px; }
+    .desks { grid-template-columns: 1fr; gap: 28px; }
+    .desk { flex-direction: row; align-items: flex-start; gap: 16px; }
+    .desk-art { flex: none; width: 92px; margin: 0; }
+    .desk-card { flex: 1; min-width: 0; }
   }
 
   @media (min-width: 640px) {

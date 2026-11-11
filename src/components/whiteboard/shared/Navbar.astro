@@ -3,6 +3,7 @@ import { homeFor } from '../../../lib/paths';
 import Logo from '../../shared/Logo.astro';
 import { trias } from '../../../data/site';
 import { getLang, langs, useTranslations, type Lang } from '../../../i18n/ui';
+import { lernraumCopy } from '../../../i18n/lernraum';
 
 interface Props {
   /** This page in each language, for the language switch (default: the home pages). */
@@ -11,6 +12,7 @@ interface Props {
 
 const lang = getLang(Astro.currentLocale);
 const t = useTranslations(lang);
+const N = lernraumCopy(lang).nav;
 const alternates = Astro.props.alternates ?? { de: homeFor('de'), it: homeFor('it') };
 // the Whiteboard pages are single pages: its section links and the inquiry stay in-page
 const onHome = true;
@@ -24,12 +26,7 @@ const nav = t.nav.items.map((item) => ({ ...item, href: `${home}${item.href}` })
       <a href={onHome ? '#top' : homeFor(lang)} class="wordmark flex shrink-0 items-center text-ink" aria-label={t.nav.home}>
         <Logo class="logo-nav" />
       </a>
-      <a href="#top" class="board-return" aria-label="Zurück zum Whiteboard"><span aria-hidden="true">↑</span> Zum Whiteboard</a>
-      <a class="family hidden items-center gap-2 border-l border-line pl-6 text-label font-medium text-muted transition-colors duration-200 hover:text-ink xl:inline-flex" href={trias.url[lang]} target="_blank" rel="noopener">
-        {t.nav.family}
-        <svg class="h-3 w-3" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5 11L11 5M6 5h5v5" /></svg>
-        <span class="sr-only">{t.nav.familyNewTab}</span>
-      </a>
+      <a href="#top" class="board-return" aria-label={N.backToBoard}><span aria-hidden="true">↑</span> {N.toBoard}</a>
     </div>
 
     <nav class="hidden items-center gap-9 lg:flex" aria-label={t.nav.main}>
@@ -77,7 +74,7 @@ const nav = t.nav.items.map((item) => ({ ...item, href: `${home}${item.href}` })
     </div>
     <nav class="menu-navigation" aria-label={t.nav.main}>
       <ul>
-        <li><a href="#top" data-menu-link>Whiteboard</a></li>
+        <li><a href="#top" data-menu-link>{N.board}</a></li>
         {nav.map((item) => (
           <li>
             <a href={item.href} data-menu-link>
@@ -98,12 +95,10 @@ const nav = t.nav.items.map((item) => ({ ...item, href: `${home}${item.href}` })
   .board-return { display: none; }
   @media (min-width: 1024px) {
     .site-nav:not(.is-below-board) .wordmark { display: none; }
-    .site-nav:not(.is-below-board) .family { display: inline-flex; border-left: 0; padding-left: 0; }
     .site-nav:not(.is-below-board) > div > nav,
     .site-nav:not(.is-below-board) .nav-cta { display: none; }
     .site-nav.is-below-board .board-return { position: absolute; top: calc(100% + 12px); left: 28px; display: inline-flex; align-items: center; gap: 8px; padding: 4px 14px; border: 1px solid var(--color-line); border-radius: 2px; background: #fafbf9; box-shadow: 0 4px 12px #20201d0a; font-size: 12px; font-weight: 600; white-space: nowrap; }
     .board-return > span { color: var(--color-ginster-deep); font-size: 20px; }
-    .site-nav.is-below-board .family { display: none; }
     .site-nav.is-below-board > div > nav { gap: clamp(12px, 2vw, 30px); }
   }
   .wordmark :global(.logo-nav) { height: 24px; width: auto; }
@@ -165,9 +160,23 @@ const nav = t.nav.items.map((item) => ({ ...item, href: `${home}${item.href}` })
   [aria-expanded='true'] .menu-icon span:nth-child(1) { top: 9px; transform: rotate(45deg); }
   [aria-expanded='true'] .menu-icon span:nth-child(2) { opacity: 0; }
   [aria-expanded='true'] .menu-icon span:nth-child(3) { top: 9px; width: 100%; transform: rotate(-45deg); background: currentColor; }
-  /* desktop: where trias.it has it, 40px from the window's right edge and centred in the header, at its size */
+  /* Desktop: the menu sits inside the board's upper-right corner, then joins the fixed navigation below it. */
   @media (min-width: 1024px) {
     .menu-toggle { position: absolute; top: 50%; right: 40px; translate: 0 -50%; padding: 0; }
+    .site-nav:not(.is-below-board) {
+      position: absolute;
+      background: transparent;
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+      pointer-events: none;
+    }
+    .site-nav:not(.is-below-board) .menu-toggle {
+      top: 24px;
+      right: 60px;
+      translate: none;
+      pointer-events: auto;
+    }
+    .site-nav:not(.is-below-board) .site-menu { pointer-events: auto; }
     .menu-icon { width: 45px; height: 26px; }
     .menu-icon span { height: 3.5px; }
     .menu-icon span:nth-child(2) { top: 11px; }
@@ -187,6 +196,10 @@ const nav = t.nav.items.map((item) => ({ ...item, href: `${home}${item.href}` })
   :global(html.site-menu-open) { overflow: hidden; }
   :global(html.site-menu-anim body > *:not(dialog)) { transition: transform 400ms cubic-bezier(.4, 0, .2, 1); }
   :global(html.site-menu-push body > *:not(dialog)) { transform: translateX(calc(-1 * var(--menu-w))); }
+  /* Keep the board beside the sidebar; its artwork fits into the remaining surface. */
+  @media (min-width: 1024px) {
+    :global(html.site-menu-fit.site-menu-push main) { transform: none; }
+  }
   .site-menu { position: fixed; inset: 0 0 0 auto; width: var(--menu-w); max-width: none; height: 100dvh; max-height: none; margin: 0; padding: 0; border: 0; background: #231f20; color: #fff; overflow-y: auto; overscroll-behavior: contain; }
   .site-menu:not([open]) { display: none; }
   .site-menu[open] { display: flex; flex-direction: column; animation: menu-enter 400ms cubic-bezier(.4, 0, .2, 1); }
@@ -246,8 +259,32 @@ const nav = t.nav.items.map((item) => ({ ...item, href: `${home}${item.href}` })
   };
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
   const root = document.documentElement;
+  const board = document.querySelector<HTMLElement>('[data-board-home]');
+  const desktop = window.matchMedia('(min-width: 1024px)');
+  const fitBoardToMenu = () => {
+    const frame = board?.querySelector<HTMLElement>('.board-frame');
+    const fits = Boolean(menu?.open && desktop.matches && board && frame && !header?.classList.contains('is-below-board'));
+    root.classList.toggle('site-menu-fit', fits);
+    if (!fits || !board || !frame || !menu) return;
+
+    // Use the board's normal width even while its right padding is animating.
+    // The canvas keeps its own dimensions, preserving dragged magnets and drawings.
+    const gutter = parseFloat(getComputedStyle(board).paddingLeft);
+    const frameStyle = getComputedStyle(frame);
+    const inset = parseFloat(frameStyle.paddingLeft) + parseFloat(frameStyle.borderLeftWidth);
+    const fullWidth = board.clientWidth - 2 * (gutter + inset);
+    const sidebarWidth = menu.getBoundingClientRect().width;
+    board.style.setProperty('--board-menu-full-width', `${fullWidth}px`);
+    board.style.setProperty('--board-menu-scale', String((fullWidth - sidebarWidth) / fullWidth));
+  };
+  const clearBoardFit = () => {
+    root.classList.remove('site-menu-fit');
+    board?.style.removeProperty('--board-menu-full-width');
+    board?.style.removeProperty('--board-menu-scale');
+  };
+  window.addEventListener('resize', fitBoardToMenu);
   let closing = 0;
-  /** Open or close the menu; the page is pushed aside on open and slides back on close (as on trias.it). */
+  /** Fit the visible board beside the menu; other sections retain the page-push transition. */
   const setMenu = (open: boolean, instant = false) => {
     if (!menu) return;
     if (open && !menu.open) {
@@ -256,6 +293,7 @@ const nav = t.nav.items.map((item) => ({ ...item, href: `${home}${item.href}` })
       document.querySelector('[data-board-home]')?.dispatchEvent(new Event('whiteboard:tools-idle'));
       root.classList.add('site-menu-anim');
       menu.showModal();
+      fitBoardToMenu();
       requestAnimationFrame(() => root.classList.add('site-menu-push'));
     } else if (!open && menu.open) {
       root.classList.remove('site-menu-push');
@@ -263,6 +301,7 @@ const nav = t.nav.items.map((item) => ({ ...item, href: `${home}${item.href}` })
         menu.classList.remove('is-closing');
         if (menu.open) menu.close();
         root.classList.remove('site-menu-anim');
+        clearBoardFit();
       };
       if (instant || reduce.matches) finish();
       else {

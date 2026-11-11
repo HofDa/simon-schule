@@ -7,7 +7,13 @@
  * section. Data: src/data/collages.ts; behaviour: src/scripts/board-collages.ts.
  */
 import ResponsiveImage from './ResponsiveImage.astro';
-import { collages } from '../../data/collages';
+import { collagesFor } from '../../data/collages';
+import { getLang } from '../../i18n/ui';
+import { lernraumCopy } from '../../i18n/lernraum';
+
+const lang = getLang(Astro.currentLocale);
+const G = lernraumCopy(lang).board.collages;
+const collages = collagesFor(lang);
 
 // each print keeps its own slight tilt, so the stack looks handled, not aligned
 const tilts = [-2.4, 1.6, -1.1, 2.3, -1.8, 0.9, -2.8, 1.9, -0.6, 2.7];
@@ -17,19 +23,16 @@ const groupOf: Record<string, string> = {
   'ms-lana': 'ms', 'ms-sterzing': 'ms', 'musikschule-brixen': 'ms',
   'kiga-tisens': 'kb', 'bibliothek-terlan': 'kb',
 };
-const groups = [
-  { key: 'gs', name: 'Grundschulen' },
-  { key: 'ms', name: 'Mittel- & Musikschulen' },
-  { key: 'kb', name: 'Kindergarten & Bibliothek' },
-].map((g) => ({ ...g, items: collages.filter((c) => (groupOf[c.slug] ?? 'gs') === g.key) }));
+const groups = (['gs', 'ms', 'kb'] as const).map((key) => ({ key, name: G.groups[key] })).map((g) => ({ ...g, items: collages.filter((c) => (groupOf[c.slug] ?? 'gs') === g.key) }));
 // the gallery runs through the projects in the same order, stack by stack
 const ordered = groups.flatMap((g) => g.items);
-const openLabel = (c: (typeof collages)[number]) => `Galerie öffnen: ${c.name}, ${c.photos.length} Fotos`;
+const openLabel = (c: (typeof collages)[number]) => G.open(c.name, c.photos.length);
+const words = { view: G.view('{n}'), photo: G.photo, project: G.project, credit: lang === 'de' ? 'Fotos' : 'Foto', prev: G.prev, next: G.next, prevProject: G.prevProject, nextProject: G.nextProject };
 ---
 
 {groups.map((g, gi) => (
   <div class={`board-object object-projects object-projects-${g.key}`} data-board-object data-collages data-path-node={gi === 0 ? '2' : undefined}>
-    <button class="stack-magnet" type="button" data-board-handle data-label={g.name} aria-label={`Magnet ${g.name} greifen und verschieben`} aria-describedby="board-drag-hint" title="Magnet greifen und den Stapel verschieben">
+    <button class="stack-magnet" type="button" data-board-handle data-label={g.name} aria-label={G.move(g.name)} aria-describedby="board-drag-hint" title={G.moveTitle}>
       <svg viewBox="0 0 60 60" aria-hidden="true">
         <defs>
           <radialGradient id={`sm-face-${g.key}`} cx=".4" cy=".35" r=".7">
@@ -90,7 +93,7 @@ const openLabel = (c: (typeof collages)[number]) => `Galerie öffnen: ${c.name},
         </figure>
       ))}
       <button type="button" class="collage-open" data-collage-open aria-haspopup="dialog" aria-label={openLabel(g.items[0])}>
-        <span class="collage-open-hint" aria-hidden="true" data-collage-open-hint>{g.items[0].photos.length} Fotos ansehen</span>
+        <span class="collage-open-hint" aria-hidden="true" data-collage-open-hint>{G.view(g.items[0].photos.length)}</span>
       </button>
     </div>
     <div class="collage-actions">
@@ -116,12 +119,12 @@ const openLabel = (c: (typeof collages)[number]) => `Galerie öffnen: ${c.name},
   </defs>
 </svg>
 
-<dialog class="gallery" aria-labelledby="gallery-title" data-gallery>
+<dialog class="gallery" aria-labelledby="gallery-title" data-gallery data-words={JSON.stringify(words)}>
   <header class="gallery-header">
     <p id="gallery-title" class="gallery-title" data-gallery-title></p>
     <span class="gallery-count" data-gallery-count aria-live="polite"></span>
     <span class="gallery-credit" data-gallery-credit></span>
-    <button type="button" class="gallery-close" data-gallery-close aria-label="Galerie schließen">×</button>
+    <button type="button" class="gallery-close" data-gallery-close aria-label={G.close}>×</button>
   </header>
   <div class="gallery-stage" data-gallery-stage>
     {ordered.map((c) => (
@@ -134,22 +137,22 @@ const openLabel = (c: (typeof collages)[number]) => `Galerie öffnen: ${c.name},
         ))}
       </div>
     ))}
-    <button type="button" class="gallery-step gallery-prev" data-gallery-step="-1" aria-label="Vorheriges Foto"><span class="step-arrow" aria-hidden="true">‹</span><span class="step-project" data-step-project aria-hidden="true"></span></button>
-    <button type="button" class="gallery-step gallery-next" data-gallery-step="1" aria-label="Nächstes Foto"><span class="step-project" data-step-project aria-hidden="true"></span><span class="step-arrow" aria-hidden="true">›</span></button>
+    <button type="button" class="gallery-step gallery-prev" data-gallery-step="-1" aria-label={G.prev}><span class="step-arrow" aria-hidden="true">‹</span><span class="step-project" data-step-project aria-hidden="true"></span></button>
+    <button type="button" class="gallery-step gallery-next" data-gallery-step="1" aria-label={G.next}><span class="step-project" data-step-project aria-hidden="true"></span><span class="step-arrow" aria-hidden="true">›</span></button>
   </div>
   <footer class="gallery-footer">
     {ordered.map((c) => (
       <div class="gallery-thumbs" data-thumb-set={c.slug} hidden>
         {c.photos.map((p, k) => (
-          <button type="button" class="thumb" data-thumb={k} aria-label={`Foto ${k + 1}: ${p.alt}`}>
+          <button type="button" class="thumb" data-thumb={k} aria-label={`${G.photo} ${k + 1}: ${p.alt}`}>
             <ResponsiveImage avif={false} src={p.image} alt="" width={240} widths={[120, 240]} sizes="120px" quality={70} loading="lazy" draggable="false" />
           </button>
         ))}
       </div>
     ))}
-    <nav class="gallery-projects" aria-label="Projekte">
+    <nav class="gallery-projects" aria-label={G.projects}>
       {ordered.map((c) => (
-        <button type="button" class="project" data-project={c.slug} aria-label={`${c.name}, ${c.photos.length} Fotos`} title={c.name}>
+        <button type="button" class="project" data-project={c.slug} aria-label={`${c.name}, ${c.photos.length} ${G.photos}`} title={c.name}>
           <ResponsiveImage avif={false} src={c.collage} alt="" width={320} widths={[160, 320]} sizes="112px" quality={70} loading="lazy" draggable="false" />
           <span>{c.name}</span>
         </button>

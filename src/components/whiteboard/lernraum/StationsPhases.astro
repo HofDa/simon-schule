@@ -6,15 +6,18 @@
  */
 import { getLang, useTranslations } from '../../../i18n/ui';
 import Lesson from '../klassenzimmer/Lesson.astro';
+import { lernraumCopy } from '../../../i18n/lernraum';
 
-const ui = useTranslations(getLang(Astro.currentLocale));
+const lang = getLang(Astro.currentLocale);
+const ui = useTranslations(lang);
+const L = lernraumCopy(lang);
 const t = ui.phases;
 const phases = ui.form.phases.map((name, i) => ({ name, hint: t.hints[i] }));
 ---
 
 <section id="phasen" class="lr-stations" aria-labelledby="phases-title">
   <div class="shell">
-    <Lesson n="05" name="Stationenlernen" note="dort einsteigen, wo Ihr Projekt gerade steht" layout="stations" from="landscape" />
+    <Lesson n="05" name={L.lesson.phases.name} note={L.lesson.phases.note} layout="stations" from="landscape" />
     <div class="head">
       <h2 id="phases-title" class="max-w-[16ch] text-headline leading-[0.98] tracking-[-0.03em]">{t.title}</h2>
       <p class="lead">{t.lead}</p>
@@ -32,10 +35,10 @@ const phases = ui.form.phases.map((name, i) => ({ name, hint: t.hints[i] }));
               <span class="station-n">{i + 1}</span>
             </span>
             <span class="station-copy">
-              <span class="station-label">Phase 0{i + 1}</span>
+              <span class="station-label">{L.stations.phase} 0{i + 1}</span>
               <span class="station-name">{p.name}</span>
               <span class="station-hint">{p.hint}</span>
-              <span class="station-go">Mit dieser Phase starten →</span>
+              <span class="station-go">{L.stations.go} →</span>
             </span>
           </a>
         </li>

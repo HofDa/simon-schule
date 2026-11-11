@@ -13,60 +13,58 @@ import vsCatalogCover from '../../assets/whiteboard/vs-school-catalog-cover-2026
 import vsCatalogInsideCover from '../../assets/whiteboard/vs-school-catalog-inside-cover-2026.webp';
 import vsCatalogFirstPage from '../../assets/whiteboard/vs-school-catalog-first-page-2026.webp';
 import '../../styles/board-navigation.css';
+import { getLang } from '../../i18n/ui';
+import { lernraumCopy } from '../../i18n/lernraum';
+
+const lang = getLang(Astro.currentLocale);
+const B = lernraumCopy(lang).board;
 
 // Taken off the board for now: the Leistungen note, Lernformen, Ansprechpartner, Kontakt and the Projektweg timeline.
 // Set to true to put them back (their sections stay reachable from the reader's topic links).
 const showTopicObjects = false;
-const hasLearning = /\/(lernraum|whiteboard-ruhig)\/?$/.test(Astro.url.pathname);
+// Temporarily hide the numbered process arrows and labels between board objects.
+const showProjectPath = false;
+const hasLearning = /\/(lernraum|whiteboard-ruhig|it)\/?$/.test(Astro.url.pathname);
 const vsSchoolCatalog = 'https://web-media.vs.de/file/p1/pdf/45-057-49_V2026-01_DE_Basics--Der-Katalog-fuer-die-Schule.archiv.pdf';
 // whiteboard marker colours for the pen and the ruler's arrows; the first is the default
-const penColors = [
-  { name: 'Schwarz', value: '#20201d' },
-  { name: 'Blau', value: '#2b4f9e' },
-  { name: 'Rot', value: '#c23a2c' },
-  { name: 'Grün', value: '#2f7a4c' },
-];
+const penColors = ['#20201d', '#2b4f9e', '#c23a2c', '#2f7a4c'].map((value, i) => ({ name: B.tools.colourNames[i], value }));
 // the magnet's own outline, used as a mask so the gloss only lies on the magnet
 const house70Mask = await getImage({ src: house70Magnet, width: 320, format: 'webp' });
-const topics = [
-  { id: 'leistungen', label: 'Leistungen' },
-  ...(hasLearning ? [{ id: 'lernformen', label: 'Lernformen' }] : []),
-  { id: 'projekte', label: 'Schule & Kindergarten' },
-  { id: 'menschen', label: 'Ansprechpartner' },
-  { id: 'vs-moebel', label: 'VS Möbel' },
-  { id: 'phasen', label: 'Ihr Projektweg' },
-  { id: 'kontakt', label: 'Kontakt' },
-];
+const topics = (['leistungen', ...(hasLearning ? ['lernformen'] : []), 'projekte', 'menschen', 'vs-moebel', 'phasen', 'kontakt'] as (keyof typeof B.topics)[]).map((id) => ({ id, label: B.topics[id] }));
 ---
 
-<section class="board-home" aria-labelledby="board-title" data-board-home>
+<section class="board-home" aria-labelledby="board-title" data-board-home data-say={JSON.stringify({ ...B.say, penHint: B.tools.penHint, rulerHint: B.tools.rulerHint })}>
   <div class="board-frame">
     <div class="board-canvas">
       <div class="board-intro">
-        <a class="board-wordmark" href="#top" aria-label="Trias Schule, zum Whiteboard"><Logo /></a>
-        <h1 id="board-title">Lernräume<br />für Südtirol<span>.</span></h1>
-        <p class="board-description">Schule und Kindergarten einrichten.<br />Persönlich begleitet. Von der ersten Idee<br />bis zur Montage. Mit Möbeln von VS.</p>
+        <a class="board-wordmark" href="#top" aria-label={B.wordmark}><Logo /></a>
+        <h1 id="board-title">{B.title[0]}<br />{B.title[1]}<span>.</span></h1>
+        <p class="board-description">{B.description[0]}<br />{B.description[1]}<br />{B.description[2]}</p>
         <div class="board-cta" data-path-node="1">
-          <a class="board-cta-main" href="#anfrage" data-open-form>Projekt anfragen <span aria-hidden="true">→</span></a>
-          <button class="board-cta-second" type="button" data-open-collages>oder erst Projekte ansehen</button>
+          <a class="board-cta-main" href="#anfrage" data-open-form>{B.cta} <span aria-hidden="true">→</span></a>
+          <button class="board-cta-second" type="button" data-open-collages>{B.second}</button>
         </div>
       </div>
 
       <!-- the project path: marker arrows from object to object, drawn by board-path.ts -->
-      <svg class="board-path" data-board-path aria-hidden="true"></svg>
-      <div class="board-path-labels" data-board-path-labels aria-hidden="true"></div>
-      <p class="sr-only">Ihr Projektweg mit Trias Schule: Idee, Planung, Auswahl, Montage und Begleitung.</p>
-      <nav class="board-objects" aria-label="Auf dem Whiteboard entdecken">
+      {showProjectPath && (
+        <>
+          <svg class="board-path" data-board-path data-steps={JSON.stringify(B.steps)} aria-hidden="true"></svg>
+          <div class="board-path-labels" data-board-path-labels aria-hidden="true"></div>
+          <p class="sr-only">{B.pathSr}</p>
+        </>
+      )}
+      <nav class="board-objects" aria-label={B.objects}>
         <div class="board-object object-house70" data-board-object>
-          <button class="house70-magnet" type="button" data-board-handle data-label="HOUSE70" aria-label="HOUSE70-Magnet verschieben" aria-describedby="board-drag-hint" title="HOUSE70 · Trias in Brixen · Magnet greifen und verschieben">
+          <button class="house70-magnet" type="button" data-board-handle data-label="HOUSE70" aria-label={B.house.move} aria-describedby="board-drag-hint" title={B.house.title}>
             <span class="magnet-body">
-              <ResponsiveImage desktopOnly avif={false} src={house70Magnet} alt="HOUSE70-Kühlschrankmagnet mit naturgetreuer grauer Fassade, farbigen Fensterreflexionen, goldenen Schildern und schmalem elfenbeinfarbenem Rand, nach dem Originalfoto von Trias" width={320} widths={[160, 240, 320, 480, 640]} sizes="(max-height: 800px) 135px, (min-width: 1600px) 210px, 13.5vw" quality={90} loading="eager" draggable="false" />
+              <ResponsiveImage desktopOnly avif={false} src={house70Magnet} alt={B.house.alt} width={320} widths={[160, 240, 320, 480, 640]} sizes="(max-height: 800px) 135px, (min-width: 1600px) 210px, 13.5vw" quality={90} loading="eager" draggable="false" />
               <span class="magnet-gloss" style={`--magnet-mask: url(${house70Mask.src})`} aria-hidden="true"></span>
             </span>
           </button>
-          <a class="house70-plaque" href={trias.url.de} target="_blank" rel="noopener" draggable="false" aria-label="Trias: Website der Muttermarke öffnen (neuer Tab)">
+          <a class="house70-plaque" href={trias.url[lang]} target="_blank" rel="noopener" draggable="false" aria-label={B.house.link}>
             <span class="plaque-brand">Trias</span>
-            <span class="plaque-place">HOUSE70 · Brixen <span aria-hidden="true">↗</span></span>
+            <span class="plaque-place">{B.house.place} <span aria-hidden="true">↗</span></span>
           </a>
         </div>
         <BoardFeedback />
@@ -102,9 +100,9 @@ const topics = [
         </div>}
 
         <div class="board-object object-furniture" data-board-object>
-          <a class="board-object-link board-catalog-link" href={vsSchoolCatalog} target="_blank" rel="noopener" aria-label="VS-Schulkatalog 2026 als PDF öffnen (neuer Tab)" draggable="false">
+          <a class="board-object-link board-catalog-link" href={vsSchoolCatalog} target="_blank" rel="noopener" aria-label={B.catalog.open} draggable="false">
             <span class="board-catalog-sheet" data-path-node="3">
-              <ResponsiveImage desktopOnly avif={false} class="catalog-first-page" src={vsCatalogFirstPage} alt="Erste Inhaltsseite des VS-Schulkatalogs mit Inhaltsverzeichnis" width={240} widths={[120, 180, 240, 360, 480]} sizes="(max-height: 800px) 100px, 180px" quality={90} loading="eager" draggable="false" />
+              <ResponsiveImage desktopOnly avif={false} class="catalog-first-page" src={vsCatalogFirstPage} alt={B.catalog.firstPage} width={240} widths={[120, 180, 240, 360, 480]} sizes="(max-height: 800px) 100px, 180px" quality={90} loading="eager" draggable="false" />
               <span class="catalog-cover-flat" aria-hidden="true">
                 <ResponsiveImage desktopOnly avif={false} src={vsCatalogCover} alt="" data-catalog-front width={240} widths={[120, 180, 240, 360, 480]} sizes="(max-height: 800px) 100px, 180px" quality={90} loading="eager" draggable="false" />
               </span>
@@ -112,10 +110,10 @@ const topics = [
               <canvas class="catalog-curl-canvas" data-catalog-curl-canvas aria-hidden="true"></canvas>
             </span>
           </a>
-          <span class="vs-plaque"><strong>Exklusivvertretung</strong> von VS in Südtirol</span>
-          <a class="object-caption catalog-caption" href="#vs-moebel" data-board-topic="vs-moebel">VS Möbel entdecken <span aria-hidden="true">↗</span></a>
-          <button class="vs-logo-magnet catalog-magnet" type="button" data-board-handle data-label="VS-Katalog" aria-label="VS-Magnet mit Katalog verschieben" aria-describedby="board-drag-hint" title="Magnet greifen und den Katalog verschieben">
-            <ResponsiveImage desktopOnly avif={false} src={vsLogoMagnet} alt="Küchenmagnet aus elfenbeinfarbenem Kunststoff mit erhabenem gelbem VS-Logo, der die Titelseite am oberen Rand festhält" width={180} widths={[90, 135, 180, 270]} sizes="90px" quality={90} loading="eager" draggable="false" />
+          <span class="vs-plaque"><strong>{B.catalog.plaqueStrong}</strong> {B.catalog.plaqueRest}</span>
+          <a class="object-caption catalog-caption" href="#vs-moebel" data-board-topic="vs-moebel">{B.catalog.caption} <span aria-hidden="true">↗</span></a>
+          <button class="vs-logo-magnet catalog-magnet" type="button" data-board-handle data-label={B.catalog.magnetLabel} aria-label={B.catalog.move} aria-describedby="board-drag-hint" title={B.catalog.title}>
+            <ResponsiveImage desktopOnly avif={false} src={vsLogoMagnet} alt={B.catalog.magnetAlt} width={180} widths={[90, 135, 180, 270]} sizes="90px" quality={90} loading="eager" draggable="false" />
           </button>
         </div>
 
@@ -160,22 +158,22 @@ const topics = [
         </div>
         )}
       </nav>
-      <span class="board-corner-note" aria-hidden="true">Magnete greifen & verschieben.<br />Ideen anklicken & entdecken.</span>
+      <span class="board-corner-note" aria-hidden="true">{B.corner[0]}<br />{B.corner[1]}</span>
       <svg id="board-drawing" class="board-drawing" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true" data-board-drawing></svg>
     </div>
     <div class="board-tray">
       <div class="board-tool-hint" data-board-tool-hint hidden>
-        <span class="board-pen-colors" role="radiogroup" aria-label="Stiftfarbe">
+        <span class="board-pen-colors" role="radiogroup" aria-label={B.tools.colours}>
           {penColors.map((c, i) => (
             <button type="button" role="radio" aria-checked={i === 0 ? 'true' : 'false'} aria-label={c.name} title={c.name} data-board-color={c.value} style={`--swatch: ${c.value}`}></button>
           ))}
         </span>
-        <span data-board-tool-hint-text>Stift aktiv · Esc zum Ablegen</span>
+        <span data-board-tool-hint-text>{B.tools.penHint}</span>
       </div>
-      <button class="board-marker-tool" type="button" data-board-pen aria-label="Auf dem Whiteboard zeichnen" aria-pressed="false" aria-controls="board-drawing" aria-describedby="board-draw-hint" title="Stift aufnehmen oder ablegen">
+      <button class="board-marker-tool" type="button" data-board-pen aria-label={B.tools.pen} aria-pressed="false" aria-controls="board-drawing" aria-describedby="board-draw-hint" title={B.tools.penTitle}>
         <span class="board-marker" aria-hidden="true"></span>
       </button>
-      <button class="board-ruler-tool" type="button" data-board-ruler aria-label="Mit dem Lineal Pfeile zeichnen" aria-pressed="false" aria-controls="board-drawing" aria-describedby="board-arrow-hint" title="Lineal aufnehmen · Ziehen, um einen Pfeil zu zeichnen">
+      <button class="board-ruler-tool" type="button" data-board-ruler aria-label={B.tools.ruler} aria-pressed="false" aria-controls="board-drawing" aria-describedby="board-arrow-hint" title={B.tools.rulerTitle}>
         <svg class="board-ruler" viewBox="0 0 180 26" aria-hidden="true">
           <rect x="1" y="1" width="178" height="24" rx="2" fill="#e9cb83" stroke="#b39a61" />
           <path d="M3 23h174" fill="none" stroke="#c0a46b" stroke-width=".7" />
@@ -187,31 +185,31 @@ const topics = [
           ))}
         </svg>
       </button>
-      <button class="board-eraser-tool" type="button" data-board-eraser aria-label="Whiteboard zurücksetzen: Zeichnungen löschen und alle Elemente an den Ausgangspunkt setzen" title="Alles löschen und an den Ausgangspunkt setzen">
+      <button class="board-eraser-tool" type="button" data-board-eraser aria-label={B.tools.eraser} title={B.tools.eraserTitle}>
         <span class="board-eraser" aria-hidden="true"></span>
       </button>
     </div>
   </div>
   <div class="board-bottom">
-    <span>Schul- und Kindergarteneinrichtung in ganz Südtirol · Meran & Brixen</span>
-    <button class="board-reset" type="button" data-board-reset hidden>Whiteboard zurücksetzen <span aria-hidden="true">↺</span></button>
-    <a href="#leistungen" data-board-scroll>Oder die ganze Seite entdecken <span aria-hidden="true">↓</span></a>
+    <span>{B.bottom}</span>
+    <button class="board-reset" type="button" data-board-reset hidden>{B.reset} <span aria-hidden="true">↺</span></button>
+    <a href="#leistungen" data-board-scroll>{B.scroll} <span aria-hidden="true">↓</span></a>
   </div>
-  <p id="board-drag-hint" class="sr-only">Zum Verschieben einen Magneten ziehen oder mit den Pfeiltasten bewegen. Mit Umschalt größere Schritte, mit Pos1 zurück an den Ausgangspunkt. Escape bricht das Ziehen ab.</p>
-  <p id="board-draw-hint" class="sr-only">Den Stift anklicken und auf dem Whiteboard mit gedrückter Maustaste, Finger oder Stift zeichnen. Den Stift erneut anklicken oder Escape drücken, um wieder zu navigieren. Der Schwamm löscht alle Zeichnungen und setzt alle Elemente zurück.</p>
-  <p id="board-arrow-hint" class="sr-only">Das Lineal anklicken und vom Startpunkt zum Ziel ziehen, um einen geraden Pfeil zu zeichnen. Beim Loslassen bleibt der Pfeil auf dem Board. Das Lineal erneut anklicken oder Escape drücken, um wieder zu navigieren. Der Schwamm löscht auch die Pfeile.</p>
+  <p id="board-drag-hint" class="sr-only">{B.dragHint}</p>
+  <p id="board-draw-hint" class="sr-only">{B.drawHint}</p>
+  <p id="board-arrow-hint" class="sr-only">{B.arrowHint}</p>
   <p class="sr-only" role="status" data-board-drag-status></p>
 </section>
 
 <dialog class="board-reader" aria-labelledby="board-reader-title" data-board-reader>
   <header class="board-reader-header">
-    <button type="button" class="board-back" data-board-close autofocus><span aria-hidden="true">←</span> Zurück zum Whiteboard</button>
+    <button type="button" class="board-back" data-board-close autofocus><span aria-hidden="true">←</span> {B.reader.back}</button>
     <p id="board-reader-title"></p>
-    <a class="board-read-page" href="#leistungen" data-board-read-page>Im Seitenverlauf ansehen <span aria-hidden="true">↙</span></a>
-    <button type="button" class="board-close" aria-label="Zurück zum Whiteboard" data-board-close>×</button>
+    <a class="board-read-page" href="#leistungen" data-board-read-page>{B.reader.page} <span aria-hidden="true">↙</span></a>
+    <button type="button" class="board-close" aria-label={B.reader.back} data-board-close>×</button>
   </header>
   <div class="board-reader-body" data-board-reader-body></div>
-  <nav class="board-reader-topics" aria-label="Weitere Themen auf dem Whiteboard">
+  <nav class="board-reader-topics" aria-label={B.reader.topics}>
     {topics.map((topic) => <a href={`#${topic.id}`} data-board-topic={topic.id}>{topic.label}</a>)}
   </nav>
 </dialog>

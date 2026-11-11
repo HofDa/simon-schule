@@ -291,7 +291,7 @@ export class Workshop {
   // tables --------------------------------------------------------------------------------------
 
   /** Tano: three five-sided beech tops forming an island, square grey legs, blue trays; six PantoSwings round it. */
-  tanoIsland(chairColour: number): THREE_NS.Group {
+  tanoIsland(chairColour: number, chairs = true): THREE_NS.Group {
     const { THREE } = this;
     const island = new THREE.Group();
     const R = 7.6 * dm;
@@ -323,7 +323,7 @@ export class Workshop {
       tray.rotation.y = -((120 * k + 120) * Math.PI) / 180;
       island.add(tray);
     }
-    for (let k = 0; k < 6; k++) {
+    if (chairs) for (let k = 0; k < 6; k++) {
       const t = (60 * k * Math.PI) / 180;
       const dist = R * 0.866 + 0.24;
       const chair = this.pantoSwing(chairColour);
@@ -336,7 +336,7 @@ export class Workshop {
   }
 
   /** Puzzle: a white free-form top with a grey edge on splayed anthracite legs, six Hokkis round it. */
-  puzzleTable(): THREE_NS.Group {
+  puzzleTable(stools = true): THREE_NS.Group {
     const { THREE } = this;
     const group = new THREE.Group();
     const height = 7.3 * dm;
@@ -366,7 +366,7 @@ export class Workshop {
     const turn = 0.25;
     const seats: [number, number][] = [[13, 16.5], [24, 14.5], [34, 19], [36.5, 28.5], [24, 33.5], [13.5, 30]];
     const colours = [COLOURS.royal, COLOURS.red, COLOURS.sky, COLOURS.lime, COLOURS.red, COLOURS.royal];
-    seats.forEach(([sx, sy], i) => {
+    if (stools) seats.forEach(([sx, sy], i) => {
       const x = sx - 24;
       const y = sy - 24;
       const px = x * Math.cos(-turn) - y * Math.sin(-turn);
@@ -374,6 +374,159 @@ export class Workshop {
       const stool = this.hokki(colours[i]);
       stool.position.set(px * dm, 0, py * dm);
       group.add(stool);
+    });
+    return group;
+  }
+
+  /**
+   * One five-sided Tano top with its legs and tray, round its own centroid. Three of them, turned
+   * by 0°, 120° and 240° round the island's centre, form an island; `tanoTopOffset` is where the
+   * centroid lies from that centre.
+   */
+  static tanoTopOutline(): { outline: [number, number][]; offset: [number, number] } {
+    const R = 7.6 * dm;
+    const at = (deg: number, r: number): [number, number] => [Math.cos((deg * Math.PI) / 180) * r, Math.sin((deg * Math.PI) / 180) * r];
+    const raw: [number, number][] = [[0, 0], at(60, R * 0.866), at(90, R), at(150, R), at(180, R * 0.866)];
+    const cx = raw.reduce((sum, p) => sum + p[0], 0) / raw.length;
+    const cy = raw.reduce((sum, p) => sum + p[1], 0) / raw.length;
+    return { outline: raw.map(([x, y]) => [(x - cx) * 0.97, (y - cy) * 0.97]), offset: [cx, cy] };
+  }
+
+  tanoTop(): THREE_NS.Group {
+    const { THREE } = this;
+    const group = new THREE.Group();
+    const height = 7.2 * dm;
+    const { outline, offset } = Workshop.tanoTopOutline();
+    group.add(this.mesh(this.slab(outline, height - 0.03, 0.03, 0.004), this.material(COLOURS.beech, 'wood')));
+    const legMat = this.material(COLOURS.greyLeg, 'metal');
+    for (const [x, z] of outline.slice(1)) {
+      const leg = this.mesh(new THREE.BoxGeometry(0.036, height - 0.03, 0.036), legMat);
+      leg.position.set(x * 0.9, (height - 0.03) / 2, z * 0.9);
+      group.add(leg);
+    }
+    const R = 7.6 * dm;
+    const tray = this.mesh(new THREE.BoxGeometry(0.28, 0.09, 0.24), this.material(COLOURS.tray));
+    tray.position.set(Math.cos((2 * Math.PI) / 3) * R * 0.55 - offset[0], height - 0.125 + 0.045, Math.sin((2 * Math.PI) / 3) * R * 0.55 - offset[1]);
+    tray.rotation.y = -(2 * Math.PI) / 3;
+    group.add(tray);
+    return group;
+  }
+
+  // room furniture (learning-room.ts) ----------------------------------------------------------
+  // Simple upholstered and storage pieces for the room scenes, each centred on its own origin.
+
+  private tint(colour: number, amount: number): number {
+    const { THREE } = this;
+    return new THREE.Color(colour).lerp(new THREE.Color(0xffffff), amount).getHex();
+  }
+
+  private box(w: number, h: number, d: number, x: number, y: number, z: number, material: THREE_NS.Material): THREE_NS.Mesh {
+    const mesh = this.mesh(new this.THREE.BoxGeometry(w, h, d), material);
+    mesh.position.set(x, y + h / 2, z);
+    return mesh;
+  }
+
+  /** An upholstered element over a plan outline (metres, round its own centre), on a dark plinth if it is a seat. */
+  softBlock(outline: [number, number][], colour: number, height: number, plinth = true): THREE_NS.Group {
+    const group = new this.THREE.Group();
+    const base = plinth ? 0.035 : 0;
+    if (plinth) group.add(this.mesh(this.slab(outline.map(([x, z]) => [x * 0.9, z * 0.9]), 0, base), this.material(0x2f302d)));
+    group.add(this.mesh(this.slab(outline, base, height - base, Math.min(0.025, height / 3)), this.material(colour, 'soft')));
+    return group;
+  }
+
+  private turnedProfile(profile: [number, number][], material: THREE_NS.Material): THREE_NS.Mesh {
+    const { THREE } = this;
+    return this.mesh(new THREE.LatheGeometry(profile.map(([r, y]) => new THREE.Vector2(r, y)), 40), material);
+  }
+
+  /** A round Shift+ pouf. */
+  pouf(colour: number, r = 0.22, h = 0.42): THREE_NS.Group {
+    const group = new this.THREE.Group();
+    group.add(this.turnedProfile([[0, 0], [r * 0.8, 0], [r * 0.8, 0.03]], this.material(0x2f302d)));
+    group.add(this.turnedProfile([[r * 0.8, 0.03], [r * 0.94, 0.03], [r, 0.07], [r, h - 0.1], [r * 0.93, h - 0.02], [r * 0.78, h], [0, h]], this.material(colour, 'soft')));
+    return group;
+  }
+
+  /** A back roll lying along x. */
+  backRoll(colour: number, length: number): THREE_NS.Group {
+    const group = new this.THREE.Group();
+    const roll = this.mesh(new this.THREE.CylinderGeometry(0.11, 0.11, length, 28), this.material(colour, 'soft'));
+    roll.rotation.z = Math.PI / 2;
+    roll.position.y = 0.11;
+    group.add(roll);
+    return group;
+  }
+
+  /** A white drum seat. */
+  drum(): THREE_NS.Group {
+    const group = new this.THREE.Group();
+    group.add(this.turnedProfile([[0, 0], [0.24, 0], [0.26, 0.03], [0.26, 0.32], [0.24, 0.36], [0, 0.36]], this.material(COLOURS.white)));
+    return group;
+  }
+
+  /** A single pupil's desk: white top on four grey legs. */
+  desk(w = 0.7, d = 0.5): THREE_NS.Group {
+    const group = new this.THREE.Group();
+    group.add(this.box(w, 0.03, d, 0, 0.7, 0, this.material(COLOURS.white, 'wood')));
+    const leg = this.material(COLOURS.greyLeg, 'metal');
+    for (const sx of [-1, 1]) for (const sz of [-1, 1]) group.add(this.box(0.03, 0.7, 0.03, sx * (w / 2 - 0.05), 0, sz * (d / 2 - 0.05), leg));
+    return group;
+  }
+
+  /** A round table on a single column. */
+  roundTable(r: number, height: number): THREE_NS.Group {
+    const group = new this.THREE.Group();
+    const grey = this.material(COLOURS.whiteEdge, 'metal');
+    group.add(this.turnedProfile([[0, 0], [0.2, 0], [0.2, 0.025], [0.035, 0.03], [0.035, height - 0.03], [0, height - 0.03]], grey));
+    group.add(this.turnedProfile([[0, height - 0.03], [r, height - 0.03], [r, height], [0, height]], this.material(COLOURS.white, 'wood')));
+    return group;
+  }
+
+  /** A Vancouver booth on a sled frame, open towards +z: padded back and side walls, a seat inside. */
+  booth(w: number, d: number, colour: number, wall = 1.2): THREE_NS.Group {
+    const group = new this.THREE.Group();
+    const lift = 0.08;
+    const outer = this.material(colour, 'soft');
+    const inner = this.material(this.tint(colour, 0.28), 'soft');
+    const sled = this.material(0x2f302d, 'metal');
+    group.add(this.box(w, wall, 0.11, 0, lift, -d / 2 + 0.055, outer));
+    for (const side of [-1, 1]) {
+      group.add(this.box(0.11, wall, d - 0.11, side * (w / 2 - 0.055), lift, 0.055, outer));
+      group.add(this.box(0.03, 0.03, d - 0.06, side * (w / 2 - 0.04), 0, 0, sled));
+    }
+    group.add(this.box(w - 0.22, 0.36, d * 0.5, 0, lift, -d / 2 + 0.11 + d * 0.25, inner));
+    group.add(this.box(w - 0.22, 0.46, 0.1, 0, lift + 0.36, -d / 2 + 0.16, inner));
+    return group;
+  }
+
+  /** A high-backed Vancouver bench: the back along x at the origin, the seat towards +z. */
+  bench(w: number, colour: number, back = 1.1): THREE_NS.Group {
+    const group = new this.THREE.Group();
+    const lift = 0.08;
+    group.add(this.box(w, back, 0.11, 0, lift, 0.055, this.material(colour, 'soft')));
+    group.add(this.box(w, 0.36, 0.44, 0, lift, 0.33, this.material(this.tint(colour, 0.28), 'soft')));
+    const sled = this.material(0x2f302d, 'metal');
+    for (const side of [-1, 1]) group.add(this.box(0.03, 0.03, 0.5, side * (w / 2 - 0.04), 0, 0.3, sled));
+    return group;
+  }
+
+  /** A mobile tray shelf on castors, its coloured trays facing +z. */
+  trayShelf(w: number, d: number, h: number, trays: number[][]): THREE_NS.Group {
+    const group = new this.THREE.Group();
+    group.add(this.box(w, h, d, 0, 0.06, 0, this.material(COLOURS.white, 'wood')));
+    const castor = this.material(COLOURS.glide);
+    for (const sx of [-1, 1]) for (const sz of [-1, 1]) {
+      const wheel = this.mesh(new this.THREE.CylinderGeometry(0.04, 0.04, 0.06, 12), castor);
+      wheel.position.set(sx * (w / 2 - 0.08), 0.03, sz * (d / 2 - 0.08));
+      group.add(wheel);
+    }
+    const rowH = (h - 0.1) / trays.length;
+    trays.forEach((row, i) => {
+      const colW = (w - 0.06) / row.length;
+      row.forEach((colour, j) => {
+        group.add(this.box(colW - 0.03, rowH - 0.05, 0.03, -w / 2 + 0.03 + colW * (j + 0.5), 0.06 + 0.06 + i * rowH, d / 2 + 0.005, this.material(colour)));
+      });
     });
     return group;
   }

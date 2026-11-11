@@ -8,7 +8,7 @@
 import { circle, rect, sector, type Item, type Pt, type Shape } from './iso';
 import { pantoSwing, hokki, tanoIsland, puzzle, desk, roundTable, shiftSeat, pouf, cushion, backRoll, vancouver, vancouverBench, trayShelf, drum } from './vs-models';
 
-export type SceneName = 'gruppen' | 'bewegung' | 'landschaft' | 'rueckzug' | 'boden';
+export type SceneName = 'frontal' | 'gruppen' | 'bewegung' | 'landschaft' | 'rueckzug' | 'boden';
 
 // colours sampled from the catalogue photographs
 const GINSTER = '#e2a300';
@@ -42,6 +42,31 @@ function island(cx: number, cy: number, chairs: string, items: Item[]) {
     const dist = R * 0.866 + 2.4;
     items.push(pantoSwing(cx + Math.cos(t) * dist, cy + Math.sin(t) * dist, t + Math.PI, chairs));
   }
+}
+
+/** Frontal: the islands' nine tops pulled apart into three rows facing the board, two pupils at each. */
+function frontal(): Item[] {
+  const items: Item[] = [];
+  const R = 7.6;
+  const at = (deg: number, r: number): Pt => [Math.cos((deg * Math.PI) / 180) * r, Math.sin((deg * Math.PI) / 180) * r];
+  const raw: Pt[] = [[0, 0], at(60, R * 0.866), at(90, R), at(150, R), at(180, R * 0.866)];
+  const mx = raw.reduce((sum, p) => sum + p[0], 0) / raw.length;
+  const my = raw.reduce((sum, p) => sum + p[1], 0) / raw.length;
+  const turn = -Math.PI / 6;
+  const place = (cx: number, cy: number, [x, y]: Pt): Pt => {
+    const dx = x - mx;
+    const dy = y - my;
+    return [cx + dx * Math.cos(turn) - dy * Math.sin(turn), cy + dx * Math.sin(turn) + dy * Math.cos(turn)];
+  };
+  [SKY, RED, GINSTER].forEach((colour, r) => {
+    for (const x of [20, 40, 60]) {
+      const y = 15 + r * 16;
+      items.push(tanoIsland([raw.map((p) => place(x, y, p))], [place(x, y, at(120, R * 0.55))]));
+      items.push(pantoSwing(x - 2.5, y + 5, toBoard, colour));
+      items.push(pantoSwing(x + 2.5, y + 5, toBoard, colour));
+    }
+  });
+  return items;
 }
 
 function gruppen(): Item[] {
@@ -155,7 +180,7 @@ function boden(): Item[] {
   return items;
 }
 
-const builders: Record<SceneName, () => Item[]> = { gruppen, bewegung, landschaft, rueckzug, boden };
+const builders: Record<SceneName, () => Item[]> = { frontal, gruppen, bewegung, landschaft, rueckzug, boden };
 
 /** The furniture of a scene, back to front. */
 export const furniture = (name: SceneName) => builders[name]().sort((a, b) => a.depth - b.depth);

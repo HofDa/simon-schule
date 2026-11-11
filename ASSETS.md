@@ -1,10 +1,10 @@
 # Trias Schule – offene Inhalte & Assets
 
-Alles hier ist auf der Seite sichtbar als Platzhalter markiert (gestrichelt unterstrichen, „Platzhalter“, „folgt“). Nichts davon ist erfunden – bitte mit echtem, freigegebenem Material ersetzen.
+Offene Inhalte und ihre Quellen. Abgeglichene Aktualisierungen aus dem Desktop-Ordner vom 11.11.2026 sind in `docs/content-update-2026-11-11.md` dokumentiert.
 
 ## Fakten (`src/data/site.ts`)
-- [ ] Telefon Trias Schule (`contact.phone`) → aktiviert „Direkt anrufen“ in der Kontakt-Szene
-- [ ] Adresse (`contact.address`)
+- [x] Allgemeine Firmenrufnummer (`contact.phone`): +39 0472 971 206, laut Firmendatenblatt. Simons direkte Telefonnummer bleibt offen.
+- [x] Büro Trias Schule: Romstraße 77, 39012 Meran. Firmensitz / Showroom: Julius-Durst-Straße 70, 39042 Brixen.
 - [ ] Rene: Nachname, Rolle/Zuständigkeit, Telefon, E-Mail (`people[1]`)
 - [ ] Simon Brugger: Rolle/Zuständigkeit, Telefon, E-Mail (`people[0]`)
 - [x] VS-Deep-Links pro Produktkategorie (`src/i18n/ui.ts`, geprüft 14.10.2026): Sitzen, Tische, Stauraum, Flexible Lernlandschaften. Italienisch verlinkt die englischen VS-Seiten.

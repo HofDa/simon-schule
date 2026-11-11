@@ -2,6 +2,8 @@
 export {};
 
 const board = document.querySelector<HTMLElement>('[data-board-home]');
+// announcements in the page's language, rendered by BoardNavigation.astro
+const say: Record<string, string> = JSON.parse(board?.dataset.say ?? '{}');
 const canvas = board?.querySelector<HTMLElement>('.board-canvas');
 const reset = board?.querySelector<HTMLButtonElement>('[data-board-reset]');
 const status = board?.querySelector<HTMLElement>('[data-board-drag-status]');
@@ -43,7 +45,7 @@ if (board && canvas && reset && status) {
     const rect = item.getBoundingClientRect();
     const left = Math.round((rect.left - surface.left) / surface.width * 100);
     const top = Math.round((rect.top - surface.top) / surface.height * 100);
-    status.textContent = `${handle.dataset.label}: ${left} Prozent von links, ${top} Prozent von oben.`;
+    status.textContent = (say.position ?? '').replace('{label}', handle.dataset.label ?? '').replace('{left}', String(left)).replace('{top}', String(top));
   };
   const finish = (cancel = false) => {
     if (!drag) return;
@@ -54,7 +56,7 @@ if (board && canvas && reset && status) {
     document.documentElement.classList.remove('whiteboard-dragging');
     if (previous.handle.hasPointerCapture(previous.pointerId)) previous.handle.releasePointerCapture(previous.pointerId);
     if (previous.moved) {
-      if (cancel) status.textContent = 'Verschieben abgebrochen.';
+      if (cancel) status.textContent = say.cancelled;
       else announce(previous.item, previous.handle);
     }
   };
@@ -117,7 +119,7 @@ if (board && canvas && reset && status) {
       item.style.removeProperty('--board-layer');
     });
     layer = 1;
-    status.textContent = 'Whiteboard zurückgesetzt.';
+    status.textContent = say.reset;
   });
   reset.addEventListener('click', () => {
     board.dispatchEvent(new Event('whiteboard:reset'));

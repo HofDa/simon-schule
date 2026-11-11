@@ -1,5 +1,7 @@
 ---
 import MiniPlan, { type Layout } from './MiniPlan.astro';
+import { getLang } from '../../../i18n/ui';
+import { lernraumCopy } from '../../../i18n/lernraum';
 
 /** The seating order of a section, written like a note on the lesson plan, with the room beside it. */
 interface Props {
@@ -10,12 +12,13 @@ interface Props {
   from: Layout;
 }
 const { n, name, note, layout, from } = Astro.props;
+const label = lernraumCopy(getLang(Astro.currentLocale)).lesson.label;
 ---
 
 <div class="lesson">
   <MiniPlan layout={layout} from={from} />
   <p class="lesson-copy">
-    <span class="lesson-n">Sitzordnung {n}</span>
+    <span class="lesson-n">{label} {n}</span>
     <span class="lesson-name marker">{name}</span>
     <span class="lesson-note">{note}</span>
   </p>

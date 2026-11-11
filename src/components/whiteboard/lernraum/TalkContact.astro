@@ -9,26 +9,25 @@ import { contact, fullName, people } from '../../../data/site';
 import { getLang, useTranslations } from '../../../i18n/ui';
 import SmartContactForm from './SmartContactForm.astro';
 import Lesson from '../klassenzimmer/Lesson.astro';
+import { lernraumCopy } from '../../../i18n/lernraum';
 
-const t = useTranslations(getLang(Astro.currentLocale)).contact;
+const lang = getLang(Astro.currentLocale);
+const t = useTranslations(lang).contact;
+const L = lernraumCopy(lang);
 const names = people.map((p) => fullName(p)).join(' · ');
 
-const stepsAfterSubmit = [
-  'Simon Brugger liest Ihre Anfrage persönlich und meldet sich zeitnah bei Ihnen.',
-  'Auf Wunsch kommen wir direkt an Ihre Schule, in Ihren Kindergarten oder in die Gemeinde nach Südtirol.',
-  'Gemeinsam klären wir Raumbedarf, VS-Bemusterung oder die nächsten Schritte für Ihre Ausschreibung.',
-];
+const stepsAfterSubmit = L.talk.steps;
 ---
 
 <section id="kontakt" class="lr-talk" aria-labelledby="contact-title">
   <div class="shell grid-wrap">
     <div class="copy">
-      <Lesson n="06" name="Einzelgespräch" note="direkt, persönlich, auf Wunsch vor Ort" layout="talk" from="stations" />
+      <Lesson n="06" name={L.lesson.contact.name} note={L.lesson.contact.note} layout="talk" from="stations" />
       <h2 id="contact-title" class="text-headline leading-[0.98] tracking-[-0.03em]">{t.title}</h2>
       <p class="mt-6 max-w-[40ch] text-body leading-[1.65] text-muted lg:text-lead">{t.lead}</p>
 
       <div class="next-steps">
-        <p class="next-heading">Was nach Ihrer Nachricht passiert:</p>
+        <p class="next-heading">{L.talk.stepsHeading}</p>
         <ol class="next-list">
           {stepsAfterSubmit.map((step, i) => (
             <li>
@@ -39,8 +38,8 @@ const stepsAfterSubmit = [
         </ol>
       </div>
 
-      <p class="mt-8 text-meta">
-        Lieber direkt per E-Mail?{' '}
+      <p class="direct mt-8 text-meta">
+        {L.talk.direct}{' '}
         {contact.phone ? (
           <a class="link-line font-semibold" href={`tel:${contact.phone.replace(/\s/g, '')}`}>{t.call}</a>
         ) : (
@@ -54,12 +53,12 @@ const stepsAfterSubmit = [
         <svg class="chair chair-them" viewBox="-12 -12 24 24"><use href="#kz-chair" x="-12" y="-12" width="24" height="24" transform="rotate(180)" /></svg>
         <span class="chair-label">{names} (Trias Schule)</span>
       </p>
-      <div id="anfrage" class="desk" tabindex="-1">
+      <div id="anfrage" class="desk" tabindex="-1" data-phase-context={L.talk.phaseContext} data-topic-key={L.form.topicKey}>
         <SmartContactForm />
       </div>
       <p class="chair-row" aria-hidden="true">
         <svg class="chair chair-you" viewBox="-12 -12 24 24"><use href="#kz-chair" x="-12" y="-12" width="24" height="24" /></svg>
-        <span class="chair-label marker">Ihr Platz am Tisch</span>
+        <span class="chair-label marker">{L.talk.you}</span>
       </p>
     </div>
   </div>
@@ -131,6 +130,14 @@ const stepsAfterSubmit = [
     outline: none;
   }
 
+  @media (max-width: 1023px) {
+    .grid-wrap { gap: 0; }
+    .copy { display: contents; }
+    .setting { order: 1; margin-top: 40px; }
+    .next-steps { order: 2; margin-top: 48px; }
+    .direct { order: 3; }
+  }
+
   @media (min-width: 1024px) {
     .grid-wrap {
       grid-template-columns: repeat(12, minmax(0, 1fr));
@@ -176,7 +183,7 @@ const stepsAfterSubmit = [
         label.className = 'chip';
         const input = document.createElement('input');
         input.type = 'checkbox';
-        input.name = 'Thema';
+        input.name = desk.dataset.topicKey ?? 'Thema';
         input.value = topic;
         input.className = 'sr-only';
         input.setAttribute('data-topic-input', '');
@@ -187,6 +194,8 @@ const stepsAfterSubmit = [
         matched = input;
       }
       matched.checked = true;
+      const more = topicChips.closest('details');
+      if (more) more.open = true;
     };
 
     document.querySelectorAll<HTMLElement>('[data-open-form]').forEach((el) =>
@@ -197,6 +206,8 @@ const stepsAfterSubmit = [
         const question = el.dataset.question;
 
         if (phase) {
+          const more = desk.querySelector<HTMLDetailsElement>('[data-more]');
+          if (more) more.open = true;
           desk.querySelectorAll<HTMLInputElement>('input[type="radio"]').forEach((radio) => {
             radio.checked = radio.value === phase;
           });
@@ -209,7 +220,7 @@ const stepsAfterSubmit = [
           selectTopicChip(topic);
           showContext(topic);
         } else if (phase) {
-          showContext(`Projektphase: ${phase}`);
+          showContext(`${desk.dataset.phaseContext}: ${phase}`);
         }
 
         if (question && textarea) {

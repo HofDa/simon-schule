@@ -4,13 +4,19 @@
  * under a magnet, but the board only exists on wide screens: here every visitor reads them, and
  * the inquiry is one step away. Renders nothing while there is no feedback.
  */
-import { feedback } from '../../data/feedback';
+import { feedbackFor } from '../../data/feedback';
+import { getLang } from '../../i18n/ui';
+import { lernraumCopy } from '../../i18n/lernraum';
+
+const lang = getLang(Astro.currentLocale);
+const V = lernraumCopy(lang).voices;
+const feedback = feedbackFor(lang);
 ---
 
 {feedback.length > 0 && (
-  <section id="stimmen" class="voices bg-paper py-24 lg:py-32" aria-labelledby="voices-title">
+  <section id="stimmen" class="voices bg-paper" aria-labelledby="voices-title">
     <div class="shell">
-      <h2 id="voices-title" class="text-title leading-[1.05] tracking-[-0.03em]">Was Schulen über die Zusammenarbeit sagen.</h2>
+      <h2 id="voices-title" class="max-w-[16ch] text-headline leading-[0.98] tracking-[-0.03em]">{V.title}</h2>
       <div class="voices-grid mt-12 lg:mt-16">
         {feedback.map((f) => (
           <figure class="voice m-0">
@@ -21,19 +27,23 @@ import { feedback } from '../../data/feedback';
             <figcaption class="mt-6 flex flex-wrap gap-x-3 gap-y-1 text-meta">
               <span class="font-semibold">{f.name}</span>
               <span class="text-muted">{f.role}, {f.organisation}</span>
+              {f.translated && <span class="basis-full text-label text-muted">{V.translated}</span>}
             </figcaption>
           </figure>
         ))}
       </div>
-      <p class="mt-12 lg:mt-16">
-        <a href="#anfrage" class="link-line text-meta font-semibold" data-open-form>Projekt anfragen <span aria-hidden="true">→</span></a>
+      <p class="voices-next">
+        <span class="text-muted">{V.next}</span>
+        <a href="#anfrage" class="link-line font-semibold" data-open-form>{V.cta} <span aria-hidden="true">→</span></a>
       </p>
     </div>
   </section>
 )}
 
 <style>
+  .voices { padding-block: clamp(88px, 10vw, 160px); }
   .voices-grid { display: grid; gap: 56px; }
+  .voices-next { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: clamp(40px, 5vw, 72px); padding-top: 20px; border-top: 1px solid var(--color-line); font-size: var(--text-meta); }
   .voice { max-width: 60ch; padding-top: 28px; border-top: 1px solid var(--color-line); }
   @media (min-width: 900px) {
     .voices-grid { grid-template-columns: 1fr 1fr; gap: 72px; }

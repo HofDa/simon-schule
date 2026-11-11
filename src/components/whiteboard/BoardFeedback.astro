@@ -8,9 +8,14 @@
  * The letter is drawn as three folds. Each fold shows its third of the same page (the page is
  * rendered once per fold and shifted), so the text runs across the creases when it is unfolded.
  */
-import { feedback } from '../../data/feedback';
+import { feedbackFor } from '../../data/feedback';
+import { getLang } from '../../i18n/ui';
+import { lernraumCopy } from '../../i18n/lernraum';
 
-const entries = feedback;
+const lang = getLang(Astro.currentLocale);
+const copy = lernraumCopy(lang);
+const F = copy.board.feedback;
+const entries = feedbackFor(lang);
 const slices = [0, 1, 2] as const;
 // the custom magnet: a speech bubble with its tail at the lower left
 const bubble = 'M24 4H96Q114 4 114 22V50Q114 68 96 68H52L27 88L33 68H24Q6 68 6 50V22Q6 4 24 4Z';
@@ -18,7 +23,7 @@ const bubble = 'M24 4H96Q114 4 114 22V50Q114 68 96 68H52L27 88L33 68H24Q6 68 6 5
 
 <span class="feedback-backdrop" data-feedback-backdrop aria-hidden="true"></span>
 <div class="board-object object-feedback" data-board-object data-feedback data-path-node="4">
-  <button class="feedback-magnet" type="button" data-board-handle data-label="Feedback" aria-label="Feedback-Magnet verschieben" aria-describedby="board-drag-hint" title="Magnet greifen und das Feedback verschieben">
+  <button class="feedback-magnet" type="button" data-board-handle data-label={F.magnet} aria-label={F.move} aria-describedby="board-drag-hint" title={F.title}>
     <svg viewBox="0 0 120 96" aria-hidden="true">
       <defs>
         <linearGradient id="fb-face" x1="0" y1="0" x2="0" y2="1">
@@ -56,8 +61,8 @@ const bubble = 'M24 4H96Q114 4 114 22V50Q114 68 96 68H52L27 88L33 68H24Q6 68 6 5
           <div class="face face-in" aria-hidden={k === 1 ? undefined : 'true'}>
             <div class="page" style={`--slice: ${k}`}>
               {entries.map((e, i) => (
-                <article class="entry" data-feedback-panel={i} hidden={i !== 0} aria-label={k === 1 ? `Feedback von ${e.name}, ${e.role}, ${e.organisation}` : undefined}>
-                  <header class="entry-head"><span>Feedback</span><time>{e.date}</time></header>
+                <article class="entry" data-feedback-panel={i} hidden={i !== 0} aria-label={k === 1 ? copy.voices.feedbackLabel(e.name, e.role, e.organisation) : undefined}>
+                  <header class="entry-head"><span>{F.heading}</span><time>{e.date}</time></header>
                   <blockquote class="entry-quote"><p>{e.quote}</p></blockquote>
                   <footer class="entry-from">
                     <span class="entry-name">{e.name}</span>
@@ -69,8 +74,8 @@ const bubble = 'M24 4H96Q114 4 114 22V50Q114 68 96 68H52L27 88L33 68H24Q6 68 6 5
           </div>
           {k === 0 && (
             <div class="face face-out" aria-hidden="true">
-              <span class="out-title">Feedback</span>
-              <span class="out-from">von <span data-feedback-from>{entries[0].name}</span></span>
+              <span class="out-title">{F.heading}</span>
+              <span class="out-from">{F.from} <span data-feedback-from>{entries[0].name}</span></span>
             </div>
           )}
           {k === 2 && <div class="face face-out face-blank" aria-hidden="true"></div>}
@@ -78,12 +83,12 @@ const bubble = 'M24 4H96Q114 4 114 22V50Q114 68 96 68H52L27 88L33 68H24Q6 68 6 5
       ))}
 
       <div class="letter-controls" data-feedback-controls inert>
-        <button type="button" class="letter-close" data-feedback-close aria-label="Feedback schließen und zurück an das Whiteboard">×</button>
+        <button type="button" class="letter-close" data-feedback-close aria-label={F.close}>×</button>
         {entries.length > 1 && (
           <div class="letter-pager">
-            <button type="button" data-feedback-step="-1" aria-label="Vorheriges Feedback">‹</button>
+            <button type="button" data-feedback-step="-1" aria-label={F.prev}>‹</button>
             <span data-feedback-count aria-live="polite">1 / {entries.length}</span>
-            <button type="button" data-feedback-step="1" aria-label="Nächstes Feedback">›</button>
+            <button type="button" data-feedback-step="1" aria-label={F.next}>›</button>
           </div>
         )}
       </div>
@@ -91,11 +96,11 @@ const bubble = 'M24 4H96Q114 4 114 22V50Q114 68 96 68H52L27 88L33 68H24Q6 68 6 5
 
     </div>
     <button type="button" class="letter-open" data-feedback-open aria-expanded="false" aria-describedby="feedback-hint">
-      <span class="sr-only">Feedback lesen: {entries.length} Rückmeldungen von Kundinnen und Kunden</span>
+      <span class="sr-only">{F.read(entries.length)}</span>
     </button>
   </div>
-  <span class="object-caption feedback-caption" aria-hidden="true">Feedback <span>↗</span></span>
-  <p id="feedback-hint" class="sr-only">Escape schließt das Feedback wieder.</p>
+  <span class="object-caption feedback-caption" aria-hidden="true">{F.heading} <span>↗</span></span>
+  <p id="feedback-hint" class="sr-only">{F.hint}</p>
 </div>
 
 <style>

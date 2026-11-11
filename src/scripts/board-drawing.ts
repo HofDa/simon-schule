@@ -3,6 +3,8 @@
 export {};
 
 const board = document.querySelector<HTMLElement>('[data-board-home]');
+// announcements in the page's language, rendered by BoardNavigation.astro
+const say: Record<string, string> = JSON.parse(board?.dataset.say ?? '{}');
 const surface = board?.querySelector<SVGSVGElement>('[data-board-drawing]');
 const pen = board?.querySelector<HTMLButtonElement>('[data-board-pen]');
 const ruler = board?.querySelector<HTMLButtonElement>('[data-board-ruler]');
@@ -99,20 +101,20 @@ if (board && surface && pen && ruler && eraser && hint && hintText && announceme
     pen.setAttribute('aria-pressed', String(mode === 'pen'));
     ruler.setAttribute('aria-pressed', String(mode === 'arrow'));
     hint.hidden = mode === null;
-    hintText.textContent = mode === 'arrow' ? 'Lineal aktiv · Ziehen für Pfeile · Esc zum Ablegen' : 'Stift aktiv · Esc zum Ablegen';
+    hintText.textContent = mode === 'arrow' ? say.rulerHint : say.penHint;
   };
 
   pen.addEventListener('click', () => {
     setMode(mode === 'pen' ? null : 'pen');
     announcement.textContent = mode === 'pen'
-      ? 'Stift aktiv. Auf dem Whiteboard zeichnen. Escape legt den Stift ab.'
-      : 'Stift abgelegt. Die Navigation ist wieder aktiv.';
+      ? say.penOn
+      : say.penOff;
   });
   ruler.addEventListener('click', () => {
     setMode(mode === 'arrow' ? null : 'arrow');
     announcement.textContent = mode === 'arrow'
-      ? 'Lineal aktiv. Vom Startpunkt zum Ziel ziehen, um einen Pfeil zu zeichnen. Escape legt das Lineal ab.'
-      : 'Lineal abgelegt. Die Navigation ist wieder aktiv.';
+      ? say.rulerOn
+      : say.rulerOff;
   });
   eraser.addEventListener('click', () => board.dispatchEvent(new Event('whiteboard:reset')));
   board.addEventListener('whiteboard:tools-idle', () => setMode(null));
@@ -121,7 +123,7 @@ if (board && surface && pen && ruler && eraser && hint && hintText && announceme
     surface.replaceChildren();
     arrows.clear();
     updateInk();
-    announcement.textContent = 'Whiteboard zurückgesetzt. Alle Zeichnungen gelöscht und alle Elemente an ihrem Ausgangspunkt.';
+    announcement.textContent = say.resetAll;
   });
 
   surface.addEventListener('pointerdown', (event) => {
@@ -172,7 +174,7 @@ if (board && surface && pen && ruler && eraser && hint && hintText && announceme
     const activeTool = mode === 'arrow' ? ruler : pen;
     setMode(null);
     activeTool.focus({ preventScroll: true });
-    announcement.textContent = 'Zeichenwerkzeug abgelegt. Die Navigation ist wieder aktiv.';
+    announcement.textContent = say.toolOff;
   });
   board.addEventListener('click', (event) => {
     if ((event.target as Element | null)?.closest('a[href]')) setMode(null);

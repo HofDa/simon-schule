@@ -9,18 +9,15 @@ import { contact, fullName, locations, people, roleFor } from '../../../data/sit
 import { asset } from '../../../lib/paths';
 import { getLang, useTranslations } from '../../../i18n/ui';
 import Lesson from '../klassenzimmer/Lesson.astro';
+import { lernraumCopy } from '../../../i18n/lernraum';
 
 const lang = getLang(Astro.currentLocale);
 const ui = useTranslations(lang);
 const t = ui.people;
 const [simon] = people;
 
-const questionAnswers = [
-  'Damit Tischgrößen, Sitzhöhen und Laufwege vom ersten Tag an zum tatsächlichen Gruppenalltag passen.',
-  'Ob schneller Wechsel zwischen Frontal- und Gruppenarbeit oder ruhige Nischen: Rollen, Gewicht und Stapelbarkeit entscheiden.',
-  'Gute Planung integriert vorhandene Einrichtung sinnvoll, statt alles pauschal auszutauschen.',
-  'Damit zum ersten Öffnungstag alles bereitsteht, stimmen wir Lieferung und unser Montageteam frühzeitig mit Ihnen ab.',
-];
+const L = lernraumCopy(lang);
+const questionAnswers = L.people.why;
 
 type Seat = { kind: 'empty' } | { kind: 'person'; label: string } | { kind: 'question'; q: number } | { kind: 'you' };
 const seats: Seat[] = [
@@ -53,7 +50,7 @@ const placed = seats.map((seat, i) => {
 <section id="menschen" class="lr-people" aria-labelledby="people-title">
   <div class="shell grid-wrap">
     <div class="copy">
-      <Lesson n="03" name="Sitzkreis" note="miteinander reden, vor Ort zuhören" layout="circle" from="groups" />
+      <Lesson n="03" name={L.lesson.people.name} note={L.lesson.people.note} layout="circle" from="groups" />
       <h2 id="people-title" class="text-headline leading-[0.98] tracking-[-0.03em]">{t.title}</h2>
       <p class="mt-6 max-w-[46ch] text-body leading-[1.65] text-muted lg:text-lead">{t.intro}</p>
 
@@ -88,7 +85,7 @@ const placed = seats.map((seat, i) => {
 
       <!-- Interactive list of the 4 planning questions synced with the circle -->
       <div class="question-picker" aria-label={t.questionsLabel}>
-        <p class="picker-label">{t.questionsLabel} (Stuhl oder Frage anklicken):</p>
+        <p class="picker-label">{t.questionsLabel} {L.people.pick}:</p>
         <div class="picker-list">
           {t.questions.map((q, i) => (
             <button
@@ -121,7 +118,7 @@ const placed = seats.map((seat, i) => {
                   data-open-form
                   data-question={q}
                 >
-                  Antwort in Anfrage übernehmen →
+                  {L.people.take} →
                 </a>
               </li>
             ))}
@@ -147,7 +144,7 @@ const placed = seats.map((seat, i) => {
             </button>
           );
           if (seat.kind === 'you') return (
-            <a class="seat seat-you" href="#anfrage" data-open-form style={style}>{chair}<span class="seat-label">Ihr Platz</span></a>
+            <a class="seat seat-you" href="#anfrage" data-open-form style={style}>{chair}<span class="seat-label">{L.people.you}</span></a>
           );
           return <span class="seat" style={style} aria-hidden="true">{chair}</span>;
         })}

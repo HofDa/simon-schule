@@ -8,26 +8,16 @@
 import { inquiry } from '../../../data/site';
 import { getLang, useTranslations } from '../../../i18n/ui';
 import { legalFor } from '../../../lib/paths';
+import { lernraumCopy } from '../../../i18n/lernraum';
 
 const lang = getLang(Astro.currentLocale);
 const ui = useTranslations(lang);
 const t = ui.form;
 const f = t.fields;
 
-const defaultTopics = [
-  'Klassenraum / Schule',
-  'Kindergarten / Gruppenraum',
-  'Offene Lernlandschaft',
-  'Vor-Ort-Begehung',
-  'Ausschreibung / Gemeindeprojekt',
-  'Fachplanung / Architektur',
-];
-
-const messagePrompts = [
-  { label: '+ Anzahl Räume / Gruppen', text: 'Es geht um ca. ___ Räume / Gruppen. ' },
-  { label: '+ Vor-Ort-Termin gewünscht', text: 'Wir würden den Raum gerne gemeinsam vor Ort anschauen. ' },
-  { label: '+ Zeitplan / Ferien', text: 'Geplanter Zeitraum für die Umsetzung: ' },
-];
+const L = lernraumCopy(lang).form;
+const defaultTopics = L.topics;
+const messagePrompts = L.prompts;
 ---
 
 <form
@@ -41,12 +31,13 @@ const messagePrompts = [
   data-mailto={inquiry.mailto}
   aria-labelledby="inquiry-title"
   data-org-key={f.org.key}
+  data-topic-key={L.topicKey}
   data-messages={JSON.stringify(t.status)}
 >
   <div class="flex flex-wrap items-baseline justify-between gap-4 border-b border-line pb-4">
     <div>
       <h3 id="inquiry-title" class="text-phi-1 tracking-[-0.03em]">{t.title}</h3>
-      <p class="mt-1 text-meta text-muted">Unverbindlich anfragen · Simon oder Rene melden sich persönlich bei Ihnen.</p>
+      <p class="mt-1 text-meta text-muted">{L.sub}</p>
     </div>
     <p class="text-label text-muted">{t.required}</p>
   </div>
@@ -54,8 +45,8 @@ const messagePrompts = [
   <!-- Context pill shown when a visitor clicked a specific room concept or question above -->
   <div class="context-bar" data-context-bar hidden>
     <span class="context-dot" aria-hidden="true"></span>
-    <span class="context-text">Ausgewählt: <strong data-context-label></strong></span>
-    <button type="button" class="context-clear" data-context-clear aria-label="Auswahl zurücksetzen">×</button>
+    <span class="context-text">{L.selected} <strong data-context-label></strong></span>
+    <button type="button" class="context-clear" data-context-clear aria-label={L.clear}>×</button>
   </div>
 
   <div class="fields mt-6">
@@ -78,6 +69,9 @@ const messagePrompts = [
       <input id="lr-tel" name={f.tel.key} type="tel" autocomplete="tel" aria-describedby="lr-reach-hint" data-reach-tel />
     </div>
     <p class="reach-hint field-wide" id="lr-reach-hint">{t.reach.hint}</p>
+    <details class="more field-wide" data-more>
+      <summary>{L.more} <span class="text-muted font-normal">{t.optional}</span></summary>
+      <div class="more-body">
     <div class="field field-wide">
       <label for="lr-ort">{f.place.label} <span class="text-muted">{t.optional}</span></label>
       <input id="lr-ort" name={f.place.key} type="text" autocomplete="address-level2" placeholder={f.place.placeholder} />
@@ -100,21 +94,24 @@ const messagePrompts = [
     </fieldset>
 
     <fieldset class="field field-wide">
-      <legend>Worum geht es? <span class="text-muted font-normal">{t.optional}</span></legend>
+      <legend>{L.about} <span class="text-muted font-normal">{t.optional}</span></legend>
       <div class="chips" data-topic-chips>
         {defaultTopics.map((topic) => (
           <label class="chip">
-            <input type="checkbox" name="Thema" value={topic} class="sr-only" data-topic-input />
+            <input type="checkbox" name={L.topicKey} value={topic} class="sr-only" data-topic-input />
             <span>{topic}</span>
           </label>
         ))}
       </div>
     </fieldset>
 
+      </div>
+    </details>
+
     <div class="field field-wide">
       <div class="msg-head">
         <label for="lr-msg">{f.msg.label} <span class="text-muted">{t.optional}</span></label>
-        <div class="prompt-row" aria-label="Textbausteine einfügen">
+        <div class="prompt-row" aria-label={L.promptsLabel}>
           {messagePrompts.map((p) => (
             <button type="button" class="prompt-chip" data-insert-prompt={p.text}>
               {p.label}
@@ -198,6 +195,13 @@ const messagePrompts = [
   .field [aria-invalid='true'] { border-color: #a4331c; box-shadow: 0 1px 0 0 #a4331c; }
   .err { margin: 6px 0 0; font-size: var(--text-label); color: #a4331c; min-height: 0; }
   .err:empty { display: none; }
+  .more { border-block: 1px solid var(--color-line); }
+  .more > summary { display: flex; align-items: center; gap: 8px; min-height: 48px; cursor: pointer; font-size: var(--text-meta); font-weight: 600; list-style: none; }
+  .more > summary::-webkit-details-marker { display: none; }
+  .more > summary::before { content: '+'; width: 1ch; font-size: 1.2em; font-weight: 500; line-height: 1; }
+  .more[open] > summary::before { content: '–'; }
+  .more > summary:focus-visible { outline: 2px solid var(--color-ink); outline-offset: 2px; }
+  .more-body { display: grid; gap: 18px; padding: 6px 0 22px; }
   .reach-hint { margin: -8px 0 0; font-size: var(--text-label); color: var(--color-muted); }
 
   .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
@@ -270,6 +274,10 @@ const messagePrompts = [
   const textarea = form?.querySelector<HTMLTextAreaElement>('#lr-msg');
   let composed = '';
 
+  // Wide screens have room for the optional project details; phones open them on demand.
+  const more = form?.querySelector<HTMLDetailsElement>('[data-more]');
+  if (more && window.matchMedia('(min-width: 1024px)').matches) more.open = true;
+
   if (form && status) {
     const msg = JSON.parse(form.dataset.messages ?? '{}') as Record<string, string>;
     const withEmail = (text: string) => text.replace('{email}', form.dataset.mailto ?? '');
@@ -327,13 +335,13 @@ const messagePrompts = [
       const org = String(data.get(form.dataset.orgKey ?? '') ?? '');
       const subject = `${msg.subject}: ${org.trim() || String(data.get(form.querySelector<HTMLInputElement>('#lr-name')?.name ?? '') ?? '')}`;
       const lines: string[] = [];
-      const topics = data.getAll('Thema').map(String).filter(Boolean);
+      const topics = data.getAll(form.dataset.topicKey ?? 'Thema').map(String).filter(Boolean);
       for (const [key, value] of data.entries()) {
-        if (key === 'Thema') continue;
+        if (key === (form.dataset.topicKey ?? 'Thema')) continue;
         if (String(value).trim()) lines.push(`${key}: ${value}`);
       }
       if (topics.length) {
-        lines.splice(Math.min(2, lines.length), 0, `Themen: ${topics.join(', ')}`);
+        lines.splice(Math.min(2, lines.length), 0, `${form.dataset.topicKey ?? 'Thema'}: ${topics.join(', ')}`);
       }
       composed = `${subject}\n\n${lines.join('\n')}`;
       const mailto = `mailto:${form.dataset.mailto}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines.join('\n'))}`;

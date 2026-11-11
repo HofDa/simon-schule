@@ -21,22 +21,32 @@ export interface Location {
   street: Record<Lang, string>;
 }
 
+/** Confirmed in the supplied company details sheet (November 2026). */
+export const company = {
+  name: 'Trias KG der Anders GmbH',
+  address: 'Julius Durst Straße 70, 39042 Brixen (BZ), Italien',
+  vat: 'IT 00707930210',
+  phone: '+39 0472 971 206',
+  email: 'info@trias.it',
+};
+
 export const locations: Location[] = [
   {
     city: { de: 'Meran', it: 'Merano' },
-    street: { de: 'Romstraße 48a', it: 'Via Roma 48a' },
+    street: { de: 'Romstraße 77', it: 'Via Roma 77' },
   },
   {
     city: { de: 'Brixen', it: 'Bressanone' },
-    street: { de: 'Vittorio-Veneto-Str. 73', it: 'Via Vittorio Veneto 73' },
+    street: { de: 'Julius-Durst-Straße 70', it: 'Via Julius Durst 70' },
   },
 ];
 
 export const contact = {
   email: 'beratung@trias.it',
   directEmail: 'simon.brugger@trias.it',
-  phone: null as string | null,
-  address: 'Meran · Brixen' as string | null,
+  /** Company switchboard; Simon's direct number remains unconfirmed. */
+  phone: company.phone as string | null,
+  address: 'Romstraße 77, 39012 Meran, Italien' as string | null,
 };
 
 /**

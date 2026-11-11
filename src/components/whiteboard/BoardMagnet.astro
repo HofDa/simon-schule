@@ -1,10 +1,13 @@
 ---
 import Magnet from './Magnet.astro';
+import { getLang } from '../../i18n/ui';
+import { lernraumCopy } from '../../i18n/lernraum';
 
 interface Props { label: string }
 const { label } = Astro.props;
+const M = lernraumCopy(getLang(Astro.currentLocale)).board.magnet;
 ---
 
-<button class="board-magnet" type="button" data-board-handle data-label={label} aria-label={`${label} verschieben`} aria-describedby="board-drag-hint" title="Magnet greifen und verschieben · Pfeiltasten zum Bewegen">
+<button class="board-magnet" type="button" data-board-handle data-label={label} aria-label={M.move(label)} aria-describedby="board-drag-hint" title={M.title}>
   <Magnet />
 </button>

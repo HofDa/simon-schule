@@ -17,7 +17,7 @@ const svg = board?.querySelector<SVGSVGElement>('[data-board-path]');
 const labels = board?.querySelector<HTMLElement>('[data-board-path-labels]');
 
 if (board && canvas && svg && labels) {
-  const STEPS = ['Idee', 'Planung', 'Auswahl', 'Montage & Begleitung'];
+  const STEPS: string[] = JSON.parse(svg.dataset.steps ?? '[]');
   const NS = 'http://www.w3.org/2000/svg';
   const desktop = window.matchMedia('(min-width: 1024px)');
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');

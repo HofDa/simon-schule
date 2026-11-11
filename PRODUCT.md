@@ -31,7 +31,7 @@ Public procurement and municipal decision cycles; projects move through phases: 
 
 ## Brand Commitments
 
-- Name set as "TRIAS SCHULE"; part of the Trias umbrella brand (Trias OHG).
+- Name set as "TRIAS SCHULE"; part of the Trias umbrella brand (Trias KG der Anders GmbH, confirmed in the company details supplied November 2026).
 - VS Möbel partnership shown prominently but not dominating; VS logo only per VS brand guidelines.
 - Ginstergelb (RAL 1032) as the single, rare accent.
 - Not a furniture webshop, not a classic office outfitter.

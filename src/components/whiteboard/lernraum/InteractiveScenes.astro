@@ -2,69 +2,20 @@
 /**
  * "Der Lernraum" – Section 2: Interactive Room Transformation ("Ein Raum, viele Arten zu lernen").
  * Combines the isometric VS catalogue SVG arrangements with instant interactive magnetic tabs
- * (no 400vh scroll-hijacking required), spatial planning facts, and a 1-click "Vormerken" hook
+ * (no 400vh scroll-hijacking required). Near the viewport the drawings give way to one 3D room
+ * (src/scripts/learning-room.ts) in which the furniture moves from one arrangement to the next;
+ * the drawings stay as the picture before that, under reduced motion and without WebGL, spatial planning facts, and a 1-click "Vormerken" hook
  * that pre-selects the room arrangement in the inquiry form.
  */
 import { sceneSize, type SceneName } from '../art/learning-scenes';
 import { asset } from '../../../lib/paths';
+import { getLang } from '../../../i18n/ui';
+import { lernraumCopy } from '../../../i18n/lernraum';
 
-const scenes = [
-  {
-    id: 'lr-scene-gruppen',
-    scene: 'gruppen' as SceneName,
-    name: 'Gruppenarbeit',
-    short: 'Tischinseln für 4–6 Kinder',
-    text: 'Mehrecktische lassen sich auf Rollen in wenigen Augenblicken zu großen Arbeitsinseln zusammenschieben und für Einzelarbeit wieder trennen.',
-    benefit: 'Schneller Wechsel zwischen Plenums- und Teamphasen ohne Lärm.',
-    setup: 'Umbau in ca. 2 Minuten',
-    product: 'VS Tano & PantoSwing-LuPo',
-    topic: 'Gruppenarbeit (VS Tano)',
-  },
-  {
-    id: 'lr-scene-bewegung',
-    scene: 'bewegung' as SceneName,
-    name: 'Bewegtes Lernen',
-    short: 'Sitzen, Stehen & Wippen',
-    text: 'Freiformtische und bewegliche Wackelhocker fördern den natürlichen Haltungswechsel – Kinder bleiben wacher und konzentrierter.',
-    benefit: 'Körperliche Aktivität wird Teil des Unterrichts, statt ihn zu stören.',
-    setup: 'Frei kombinierbare Kurvenform',
-    product: 'VS Puzzle & Hokki',
-    topic: 'Bewegtes Lernen (VS Puzzle / Hokki)',
-  },
-  {
-    id: 'lr-scene-landschaft',
-    scene: 'landschaft' as SceneName,
-    name: 'Lernlandschaft',
-    short: 'Offene Polster- & Lesezonen',
-    text: 'Weiche Sitzelemente gliedern offene Flure oder große Räume in geschützte Inseln, in denen gelesen, besprochen und gemeinsam gearbeitet wird.',
-    benefit: 'Macht Erschließungsflächen und Nebenräume zu vollwertigen Lernorten.',
-    setup: 'Modular erweiterbar',
-    product: 'VS Shift+ Landscape',
-    topic: 'Flexible Lernlandschaft (Shift+)',
-  },
-  {
-    id: 'lr-scene-rueckzug',
-    scene: 'rueckzug' as SceneName,
-    name: 'Rückzug & Fokus',
-    short: 'Akustisch abgeschirmte Nischen',
-    text: 'Gepolsterte Stellwände und Sofas dämpfen den Schall im Raum und schaffen einen ruhigen Ort für konzentrierte Einzelarbeit oder Gespräche zu zweit.',
-    benefit: 'Senkt den Geräuschpegel im gesamten Raum spürbar.',
-    setup: 'Raum-in-Raum ohne Umbau',
-    product: 'VS Vancouver',
-    topic: 'Rückzug & Akustik (VS Vancouver)',
-  },
-  {
-    id: 'lr-scene-boden',
-    scene: 'boden' as SceneName,
-    name: 'Lernen am Boden',
-    short: 'Matten, Teppiche & Sitzrollen',
-    text: 'Polstermatten, Teppiche und Rückenrollen machen den Boden zum vollwertigen Lern- und Spielort – im Kindergarten ebenso wie in der Grundschule.',
-    benefit: 'Auf Augenhöhe mit den Kindern, schnell verstaut wenn Platz gebraucht wird.',
-    setup: 'Stapel- & rollbar',
-    product: 'VS Shift+ Landscape Boden',
-    topic: 'Kindergarten / Lernen am Boden',
-  },
-];
+const lang = getLang(Astro.currentLocale);
+const S = lernraumCopy(lang).scenes;
+const order: SceneName[] = ['frontal', 'gruppen', 'bewegung', 'landschaft', 'rueckzug', 'boden'];
+const scenes = S.items.map((item, i) => ({ ...item, scene: order[i], id: `lr-scene-${order[i]}` }));
 
 const size = sceneSize();
 ---
@@ -74,18 +25,18 @@ const size = sceneSize();
     <div class="scenes-board">
       <div class="scenes-head">
         <div>
-          <p class="marker scenes-note" aria-hidden="true">… und in der nächsten Stunde?</p>
+          <p class="marker scenes-note" aria-hidden="true">{S.note}</p>
           <h2 id="lr-scenes-title" class="mt-2 text-headline leading-[0.98] tracking-[-0.03em]">
-            Ein Raum, viele Arten zu lernen.
+            {S.title}
           </h2>
         </div>
         <p class="scenes-intro">
-          Frontalunterricht ist nur eine Einstellung. Klicken Sie durch die fünf Aufstellungen, um zu sehen, wie derselbe Raum mit beweglichen VS-Möbeln auf Gruppenarbeit, Rückzug oder Bewegung reagiert.
+          {S.intro}
         </p>
       </div>
 
       <!-- Interactive magnetic switcher rail -->
-      <div class="scenes-tabs" role="tablist" aria-label="Raumaufstellungen auswählen">
+      <div class="scenes-tabs" role="tablist" aria-label={S.tablist}>
         {scenes.map((s, i) => (
           <button
             type="button"
@@ -116,10 +67,12 @@ const size = sceneSize();
             aria-labelledby={`tab-${s.id}`}
             class={`scene-panel ${i === 0 ? 'is-active' : ''}`}
             data-scene-panel={i}
+            data-scene-name={s.scene}
+            data-canvas-label={S.canvas(s.name)}
           >
             <div class="scene-copy">
               <div class="scene-badge">
-                <span class="scene-step">Aufstellung {String(i + 1).padStart(2, '0')} / 05</span>
+                <span class="scene-step">{S.step} {String(i + 1).padStart(2, '0')} / {String(scenes.length).padStart(2, '0')}</span>
                 <span class="scene-setup">{s.setup}</span>
               </div>
               <h3>{s.name}</h3>
@@ -127,11 +80,11 @@ const size = sceneSize();
 
               <dl class="scene-specs">
                 <div>
-                  <dt>Mehrwert im Alltag</dt>
+                  <dt>{S.benefit}</dt>
                   <dd>{s.benefit}</dd>
                 </div>
                 <div>
-                  <dt>VS-Systembaukasten</dt>
+                  <dt>{S.system}</dt>
                   <dd class="marker scene-product">{s.product}</dd>
                 </div>
               </dl>
@@ -143,11 +96,11 @@ const size = sceneSize();
                   data-open-form
                   data-topic={s.topic}
                 >
-                  Für Ihr Projekt vormerken
+                  {S.reserve}
                   <svg class="btn-arrow h-3.5 w-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" /></svg>
                 </a>
                 <button type="button" class="next-scene link-line" data-scene-next>
-                  Nächste Aufstellung ({scenes[(i + 1) % scenes.length].name}) →
+                  {S.next(scenes[(i + 1) % scenes.length].name)} →
                 </button>
               </div>
             </div>
@@ -158,7 +111,7 @@ const size = sceneSize();
                 src={asset(`scenes/${s.scene}.svg`)}
                 width={size.width}
                 height={size.height}
-                alt={`Isometrische Darstellung: ${s.name} mit ${s.product}`}
+                alt={S.alt(s.name, s.product)}
                 loading={i === 0 ? 'eager' : 'lazy'}
                 decoding="async"
                 data-lr-scene-src
@@ -166,6 +119,11 @@ const size = sceneSize();
             </figure>
           </div>
         ))}
+        <!-- the 3D room: one canvas, moved into the open panel's frame once three.js has loaded -->
+        <div class="room-3d" data-room-3d hidden>
+          <canvas data-room-canvas tabindex="0" role="img" aria-label=""></canvas>
+          <p class="marker room-hint" aria-hidden="true">{S.hint}</p>
+        </div>
       </div>
     </div>
   </div>
@@ -388,6 +346,16 @@ const size = sceneSize();
     margin-inline: auto;
   }
 
+  /* the 3D room takes the drawing's place in the frame */
+  .room-3d { position: relative; width: 100%; aspect-ratio: 4 / 3; max-height: 520px; }
+  .room-3d[hidden] { display: none; }
+  .room-3d canvas { display: block; width: 100%; height: 100%; cursor: grab; touch-action: pan-y; outline: none; }
+  .room-3d.is-dragging canvas { cursor: grabbing; }
+  .room-3d canvas:focus-visible { outline: 2px solid var(--color-ink); outline-offset: -2px; }
+  .room-hint { position: absolute; right: 14px; bottom: 8px; margin: 0; font-size: var(--text-marker); color: var(--color-ginster-deep); pointer-events: none; }
+  .lr-scenes.is-3d .scene-figure { padding: 0; }
+  .lr-scenes.is-3d .scene-figure :global(.iso) { display: none; }
+
   /* Furniture piece animation when switching tabs */
   @media (prefers-reduced-motion: no-preference) {
     .scene-panel.is-active :global(.iso-piece) {
@@ -464,12 +432,44 @@ const size = sceneSize();
       });
     };
 
+    // The 3D room: loaded once the section comes near, unless the visitor asked for less motion
+    // or less data. Until it is ready, and whenever it cannot run, the drawings stay.
+    type Room = { show: (name: any, instant?: boolean) => void };
+    let room: Room | null = null;
+    const host = section.querySelector<HTMLElement>('[data-room-3d]');
+    const canvas = host?.querySelector<HTMLCanvasElement>('[data-room-canvas]');
+    const seat = () => {
+      const panel = panels[current];
+      const figure = panel?.querySelector('.scene-figure');
+      if (!host || !canvas || !figure) return;
+      figure.append(host);
+      canvas.setAttribute('aria-label', panel.dataset.canvasLabel ?? '');
+    };
+    const load3d = async () => {
+      const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData;
+      if (!host || !canvas || saveData || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return inlineSvgs();
+      try {
+        const { createLearningRoom } = await import('../../../scripts/learning-room');
+        host.hidden = false;
+        seat();
+        const made = await createLearningRoom(host, canvas, panels[current].dataset.sceneName as never);
+        if (!made) throw new Error('WebGL unavailable');
+        room = made;
+        section.classList.add('is-3d');
+        // the visitor may have switched while it loaded
+        room.show(panels[current].dataset.sceneName, true);
+      } catch {
+        host.hidden = true;
+        inlineSvgs();
+      }
+    };
+
     if ('IntersectionObserver' in window) {
       const io = new IntersectionObserver(
         (entries) => {
           if (entries.some((e) => e.isIntersecting)) {
             io.disconnect();
-            inlineSvgs();
+            load3d();
           }
         },
         { rootMargin: '600px 0px' },
@@ -479,7 +479,6 @@ const size = sceneSize();
 
     const selectScene = (index: number, focusTab = false) => {
       current = (index + tabs.length) % tabs.length;
-      inlineSvgs();
       tabs.forEach((tab, i) => {
         const active = i === current;
         tab.classList.toggle('is-active', active);
@@ -490,6 +489,10 @@ const size = sceneSize();
       panels.forEach((panel, i) => {
         panel.classList.toggle('is-active', i === current);
       });
+      if (room) {
+        seat();
+        room.show(panels[current].dataset.sceneName);
+      }
     };
 
     tabs.forEach((tab, i) => {

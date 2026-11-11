@@ -8,28 +8,32 @@
 import BoardMagnet from './BoardMagnet.astro';
 import { people, fullName } from '../../data/site';
 import { asset } from '../../lib/paths';
+import { getLang } from '../../i18n/ui';
+import { lernraumCopy } from '../../i18n/lernraum';
+const lang = getLang(Astro.currentLocale);
+const C = lernraumCopy(lang).board.card;
 
 const person = people[0];
 const name = fullName(person);
 const initials = [person.firstName, person.lastName].filter(Boolean).map((n) => n![0]).join('');
-const role = person.role?.de;
+const role = person.role?.[lang];
 const phoneHref = person.phone ? `tel:${person.phone.replace(/[^\d+]/g, '')}` : null;
 ---
 
 <div class="board-object object-card" data-board-object>
-  <BoardMagnet label="Ansprechpartner" />
+  <BoardMagnet label={C.magnet} />
   <div class="business-card" data-path-node="5">
-    <p class="card-eyebrow">Ihr Ansprechpartner</p>
+    <p class="card-eyebrow">{C.eyebrow}</p>
     <div class="card-person">
       {person.photo ? (
-        <img class="card-photo" src={asset(`images/team/${person.photo}.webp`)} alt={`Porträt von ${name}`} width="80" height="100" loading="eager" draggable="false" />
+        <img class="card-photo" src={asset(`images/team/${person.photo}.webp`)} alt={C.portrait(name)} width="80" height="100" loading="eager" draggable="false" />
       ) : (
         <span class="card-stamp" aria-hidden="true">{initials}</span>
       )}
       <div>
         <p class="card-name">{name}</p>
         {role && <p class="card-role">{role}</p>}
-        <p class="card-note">Persönlich für Sie da.</p>
+        <p class="card-note">{C.note}</p>
       </div>
     </div>
     <div class="card-actions">
@@ -37,7 +41,7 @@ const phoneHref = person.phone ? `tel:${person.phone.replace(/[^\d+]/g, '')}` : 
         {person.email && <a href={`mailto:${person.email}`} draggable="false"><span aria-hidden="true">✉</span> {person.email}</a>}
         {phoneHref && <a href={phoneHref} draggable="false"><span aria-hidden="true">☏</span> {person.phone}</a>}
       </div>
-      <a class="card-cta" href="#anfrage" data-open-form draggable="false">Projekt anfragen <span aria-hidden="true">→</span></a>
+      <a class="card-cta" href="#anfrage" data-open-form draggable="false">{C.cta} <span aria-hidden="true">→</span></a>
     </div>
   </div>
 </div>

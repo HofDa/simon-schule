@@ -28,11 +28,14 @@ import StationsPhases from './StationsPhases.astro';
 import TalkContact from './TalkContact.astro';
 import FeedbackQuotes from '../FeedbackQuotes.astro';
 import { asset, homeFor } from '../../../lib/paths';
+import { getLang } from '../../../i18n/ui';
 
+const lang = getLang(Astro.currentLocale);
 const alternates = { de: asset('lernraum/'), it: homeFor('it') };
+const title = lang === 'it' ? 'Trias Scuola | Spazi per imparare in Alto Adige' : 'Trias Schule | Der Lernraum (Best-of)';
 ---
 
-<Layout title="Trias Schule | Der Lernraum (Best-of)" canonical={asset('lernraum/')} alternates={alternates} noindex>
+<Layout title={title} canonical={alternates[lang]} alternates={alternates} noindex>
   <ChairSprite />
   <Navbar alternates={alternates} />
   <main id="inhalt">

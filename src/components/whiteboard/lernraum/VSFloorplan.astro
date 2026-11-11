@@ -8,9 +8,11 @@ import { vs } from '../../../data/site';
 import { getLang, useTranslations } from '../../../i18n/ui';
 import Lesson from '../klassenzimmer/Lesson.astro';
 import VSChair from '../art/VSChair.astro';
+import { lernraumCopy } from '../../../i18n/lernraum';
 
 const lang = getLang(Astro.currentLocale);
 const t = useTranslations(lang).vs;
+const L = lernraumCopy(lang);
 const categories: { name: string; text: string; url?: string }[] = t.categories;
 const catalogUrl = vs.catalogUrl[lang];
 const areas = ['sit', 'tab', 'store', 'flex', 'kg'];
@@ -18,7 +20,7 @@ const areas = ['sit', 'tab', 'store', 'flex', 'kg'];
 
 <section id="vs-moebel" class="lr-vs" aria-labelledby="vs-title" data-lr-vs>
   <div class="shell">
-    <Lesson n="04" name="Lernlandschaft" note="der Systembaukasten von VS Möbel in einem Grundriss" layout="landscape" from="circle" />
+    <Lesson n="04" name={L.lesson.vs.name} note={L.lesson.vs.note} layout="landscape" from="circle" />
 
     <div class="head">
       <div class="head-copy">
@@ -94,7 +96,7 @@ const areas = ['sit', 'tab', 'store', 'flex', 'kg'];
               {c.url ? (
                 <span class="zone-action" aria-hidden="true">VS.de ↗</span>
               ) : (
-                <span class="zone-action" aria-hidden="true">Direkt anfragen →</span>
+                <span class="zone-action" aria-hidden="true">{L.vs.direct} →</span>
               )}
             </div>
             <span class="zone-text">{c.text}</span>
@@ -108,7 +110,7 @@ const areas = ['sit', 'tab', 'store', 'flex', 'kg'];
                 <span class="sr-only">{t.newTab}</span>
               </a>
             ) : (
-              <a class="zone-inner" href="#anfrage" data-open-form data-topic="Kindergarten-Ausstattung">
+              <a class="zone-inner" href="#anfrage" data-open-form data-topic={L.vs.kgTopic}>
                 {body}
               </a>
             )}
@@ -122,8 +124,8 @@ const areas = ['sit', 'tab', 'store', 'flex', 'kg'];
         {t.all}
         <svg class="btn-arrow h-3.5 w-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" /></svg>
       </a>
-      <a href="#anfrage" class="link-line text-meta font-semibold" data-open-form data-topic="VS Möbel / Produktauswahl">
-        Musterstuhl oder Beratung vor Ort anfragen →
+      <a href="#anfrage" class="link-line text-meta font-semibold" data-open-form data-topic={L.vs.sampleTopic}>
+        {L.vs.sample} →
       </a>
     </div>
   </div>
@@ -177,6 +179,7 @@ const areas = ['sit', 'tab', 'store', 'flex', 'kg'];
     margin: clamp(44px, 5vw, 72px) 0 0;
     padding: clamp(14px, 1.6vw, 24px);
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     gap: clamp(12px, 1.4vw, 20px);
     border: 3px solid var(--color-ink);
     border-radius: 2px;
@@ -215,9 +218,10 @@ const areas = ['sit', 'tab', 'store', 'flex', 'kg'];
     display: flex;
     align-items: baseline;
     justify-content: space-between;
-    gap: 12px;
+    flex-wrap: wrap;
+    gap: 4px 12px;
   }
-  .zone-name { font-size: var(--text-title); font-weight: 600; letter-spacing: -0.03em; line-height: 1.05; }
+  .zone-name { min-width: 0; font-size: var(--text-title); font-weight: 600; letter-spacing: -0.03em; line-height: 1.05; }
   .zone-action {
     font-size: var(--text-label);
     font-weight: 600;

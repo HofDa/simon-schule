@@ -2,7 +2,7 @@
 import '../styles/global.css';
 import { asset, homeFor } from '../lib/paths';
 import { getLang, langs, useTranslations, type Lang } from '../i18n/ui';
-import { contact } from '../data/site';
+import { company, contact } from '../data/site';
 import archivoUrl from '../assets/fonts/archivo-latin-var.woff2?url';
 
 interface Props {
@@ -41,7 +41,7 @@ const structuredData = Astro.props.homepage && site
           '@type': 'Organization',
           '@id': `${organizationUrl}#organization`,
           name: 'Trias Schule',
-          legalName: 'Trias OHG',
+          legalName: company.name,
           url: organizationUrl,
           email: contact.email,
         },

@@ -4,6 +4,8 @@
  * The Italian copy was written for this site and should be reviewed by a native speaker.
  */
 
+import { company } from '../data/site';
+
 export const langs = ['de', 'it'] as const;
 export type Lang = (typeof langs)[number];
 
@@ -177,7 +179,7 @@ const de = {
     legal: 'Rechtliches',
     imprint: 'Impressum',
     privacy: 'Datenschutz',
-    company: 'ein Geschäftsbereich der Trias OHG',
+    company: `ein Geschäftsbereich der ${company.name}`,
     partner: 'Exklusivpartner von VS Möbel in Südtirol',
     credits: 'Bildnachweis:',
   },
@@ -223,7 +225,7 @@ const it: UI = {
     headline: 'Spazi per imparare in Alto Adige.',
     sub: 'Trias Schule è il partner affidabile in tutto l’Alto Adige per l’arredo di scuole e scuole dell’infanzia. Con Simon Brugger seguiamo il vostro progetto dalla consulenza al montaggio puntuale, con i mobili di VS.',
     /** the short line under the handwritten claim (Whiteboard) */
-    subShort: 'Il vostro partner affidabile per l’arredo di scuole e scuole dell’infanzia in Alto Adige – seguiti personalmente da Simon Brugger, dalla progettazione al montaggio con i mobili di VS.',
+    subShort: 'Arrediamo scuole e scuole dell’infanzia in tutto l’Alto Adige – seguiti personalmente da Simon Brugger, dalla progettazione al montaggio, con i mobili di VS.',
     primary: 'Vedi le soluzioni',
     secondary: 'Richiedi un progetto',
     notes: { flex: 'Flessibilità', acoustics: 'Acustica?', groups: 'Lavoro di gruppo' },
@@ -349,7 +351,7 @@ const it: UI = {
     legal: 'Note legali',
     imprint: 'Note legali',
     privacy: 'Privacy',
-    company: 'un settore di Trias OHG',
+    company: `un settore di ${company.name}`,
     partner: 'Partner esclusivo di VS Möbel in Alto Adige',
     credits: 'Crediti fotografici:',
   },
