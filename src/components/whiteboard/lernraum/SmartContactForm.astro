@@ -65,19 +65,19 @@ const messagePrompts = [
       <p class="err" id="lr-name-err" data-msg={f.name.error}></p>
     </div>
     <div class="field">
-      <label for="lr-org">{f.org.label} *</label>
-      <input id="lr-org" name={f.org.key} type="text" autocomplete="organization" required aria-describedby="lr-org-err" />
-      <p class="err" id="lr-org-err" data-msg={f.org.error}></p>
+      <label for="lr-org">{f.org.label}</label>
+      <input id="lr-org" name={f.org.key} type="text" autocomplete="organization" />
     </div>
     <div class="field">
       <label for="lr-mail">{f.mail.label} *</label>
-      <input id="lr-mail" name={f.mail.key} type="email" autocomplete="email" required aria-describedby="lr-mail-err" />
-      <p class="err" id="lr-mail-err" data-msg={f.mail.error}></p>
+      <input id="lr-mail" name={f.mail.key} type="email" autocomplete="email" required aria-describedby="lr-mail-err lr-reach-hint" data-reach-mail />
+      <p class="err" id="lr-mail-err" data-msg={t.reach.error}></p>
     </div>
     <div class="field">
-      <label for="lr-tel">{f.tel.label} <span class="text-muted">{t.optional}</span></label>
-      <input id="lr-tel" name={f.tel.key} type="tel" autocomplete="tel" />
+      <label for="lr-tel">{f.tel.label} <span class="text-muted">{t.reach.callback}</span></label>
+      <input id="lr-tel" name={f.tel.key} type="tel" autocomplete="tel" aria-describedby="lr-reach-hint" data-reach-tel />
     </div>
+    <p class="reach-hint field-wide" id="lr-reach-hint">{t.reach.hint}</p>
     <div class="field field-wide">
       <label for="lr-ort">{f.place.label} <span class="text-muted">{t.optional}</span></label>
       <input id="lr-ort" name={f.place.key} type="text" autocomplete="address-level2" placeholder={f.place.placeholder} />
@@ -92,6 +92,10 @@ const messagePrompts = [
             <span>{phase}</span>
           </label>
         ))}
+        <label class="chip">
+          <input type="radio" name={f.phase.key} value={t.orderOption} class="sr-only" />
+          <span>{t.orderOption}</span>
+        </label>
       </div>
     </fieldset>
 
@@ -109,7 +113,7 @@ const messagePrompts = [
 
     <div class="field field-wide">
       <div class="msg-head">
-        <label for="lr-msg">{f.msg.label} *</label>
+        <label for="lr-msg">{f.msg.label} <span class="text-muted">{t.optional}</span></label>
         <div class="prompt-row" aria-label="Textbausteine einfügen">
           {messagePrompts.map((p) => (
             <button type="button" class="prompt-chip" data-insert-prompt={p.text}>
@@ -118,8 +122,7 @@ const messagePrompts = [
           ))}
         </div>
       </div>
-      <textarea id="lr-msg" name={f.msg.key} rows="3" required aria-describedby="lr-msg-err" placeholder={f.msg.placeholder}></textarea>
-      <p class="err" id="lr-msg-err" data-msg={f.msg.error}></p>
+      <textarea id="lr-msg" name={f.msg.key} rows="3" placeholder={f.msg.placeholder}></textarea>
     </div>
   </div>
 
@@ -195,6 +198,7 @@ const messagePrompts = [
   .field [aria-invalid='true'] { border-color: #a4331c; box-shadow: 0 1px 0 0 #a4331c; }
   .err { margin: 6px 0 0; font-size: var(--text-label); color: #a4331c; min-height: 0; }
   .err:empty { display: none; }
+  .reach-hint { margin: -8px 0 0; font-size: var(--text-label); color: var(--color-muted); }
 
   .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
   .chip { position: relative; }
@@ -291,6 +295,17 @@ const messagePrompts = [
       return valid;
     };
 
+    // E-mail or phone is enough: the e-mail is only required while no phone number is given.
+    const reachMail = form.querySelector<HTMLInputElement>('[data-reach-mail]');
+    const reachTel = form.querySelector<HTMLInputElement>('[data-reach-tel]');
+    const syncReach = () => {
+      if (!reachMail || !reachTel) return;
+      reachMail.required = reachTel.value.replace(/\D/g, '').length < 6;
+      if (reachMail.getAttribute('aria-invalid') === 'true') showError(reachMail);
+    };
+    reachTel?.addEventListener('input', syncReach);
+    form.addEventListener('reset', () => window.setTimeout(syncReach));
+
     fields.forEach((f) => {
       f.addEventListener('blur', () => f.value && showError(f));
       f.addEventListener('input', () => f.getAttribute('aria-invalid') === 'true' && showError(f));
@@ -299,6 +314,7 @@ const messagePrompts = [
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
       if (form.getAttribute('aria-busy') === 'true') return;
+      syncReach();
       const invalid = fields.filter((f) => !showError(f));
       if (invalid.length) {
         invalid[0].focus();
@@ -309,7 +325,7 @@ const messagePrompts = [
 
       const data = new FormData(form);
       const org = String(data.get(form.dataset.orgKey ?? '') ?? '');
-      const subject = `${msg.subject}: ${org}`;
+      const subject = `${msg.subject}: ${org.trim() || String(data.get(form.querySelector<HTMLInputElement>('#lr-name')?.name ?? '') ?? '')}`;
       const lines: string[] = [];
       const topics = data.getAll('Thema').map(String).filter(Boolean);
       for (const [key, value] of data.entries()) {
@@ -336,7 +352,7 @@ const messagePrompts = [
         );
         controls.forEach((control) => { control.disabled = true; });
         const emailField = form.querySelector<HTMLInputElement>('#lr-mail');
-        if (emailField) data.set('_replyto', emailField.value);
+        if (emailField?.value) data.set('_replyto', emailField.value);
         data.set('_subject', subject);
         const controller = new AbortController();
         const timeout = window.setTimeout(() => controller.abort(), 15_000);

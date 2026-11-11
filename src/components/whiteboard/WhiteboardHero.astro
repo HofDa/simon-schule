@@ -144,11 +144,11 @@ const timelineCss = `:root{${css({ 'hero-write': writeDuration, 't-claim': T_CLA
               {t.hero.subShort}
             </p>
             <div class="rise mt-8 flex flex-wrap items-center gap-x-6 gap-y-4" style="--rise-at: var(--t-actions)">
-              <a href="#projekte" class="btn btn-ink">
-                {t.hero.primary}
-                <svg class="btn-arrow h-3.5 w-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M8 2v11M4 9l4 4 4-4" /></svg>
+              <a href="#anfrage" class="btn btn-ink" data-open-form>
+                {t.hero.secondary}
+                <svg class="btn-arrow h-3.5 w-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" /></svg>
               </a>
-              <a href="#anfrage" class="link-line text-meta font-semibold" data-open-form>{t.hero.secondary}</a>
+              <a href="#projekte" class="link-line text-meta font-semibold">{t.hero.primary}</a>
             </div>
           </div>
 

@@ -33,19 +33,19 @@ const f = t.fields;
       <p class="err" id="f-name-err" data-msg={f.name.error}></p>
     </div>
     <div class="field">
-      <label for="f-org">{f.org.label} *</label>
-      <input id="f-org" name={f.org.key} type="text" autocomplete="organization" required aria-describedby="f-org-err" />
-      <p class="err" id="f-org-err" data-msg={f.org.error}></p>
+      <label for="f-org">{f.org.label}</label>
+      <input id="f-org" name={f.org.key} type="text" autocomplete="organization" />
     </div>
     <div class="field">
       <label for="f-mail">{f.mail.label} *</label>
-      <input id="f-mail" name={f.mail.key} type="email" autocomplete="email" required aria-describedby="f-mail-err" />
-      <p class="err" id="f-mail-err" data-msg={f.mail.error}></p>
+      <input id="f-mail" name={f.mail.key} type="email" autocomplete="email" required aria-describedby="f-mail-err f-reach-hint" data-reach-mail />
+      <p class="err" id="f-mail-err" data-msg={t.reach.error}></p>
     </div>
     <div class="field">
-      <label for="f-tel">{f.tel.label} <span class="text-muted">{t.optional}</span></label>
-      <input id="f-tel" name={f.tel.key} type="tel" autocomplete="tel" />
+      <label for="f-tel">{f.tel.label} <span class="text-muted">{t.reach.callback}</span></label>
+      <input id="f-tel" name={f.tel.key} type="tel" autocomplete="tel" aria-describedby="f-reach-hint" data-reach-tel />
     </div>
+    <p class="reach-hint field-wide" id="f-reach-hint">{t.reach.hint}</p>
     <div class="field">
       <label for="f-ort">{f.place.label}</label>
       <input id="f-ort" name={f.place.key} type="text" autocomplete="address-level2" placeholder={f.place.placeholder} />
@@ -59,12 +59,15 @@ const f = t.fields;
             <span>{phase}</span>
           </label>
         ))}
+        <label class="chip">
+          <input type="radio" name={f.phase.key} value={t.orderOption} class="sr-only" />
+          <span>{t.orderOption}</span>
+        </label>
       </div>
     </fieldset>
     <div class="field field-wide">
-      <label for="f-msg">{f.msg.label} *</label>
-      <textarea id="f-msg" name={f.msg.key} rows="3" required aria-describedby="f-msg-err" placeholder={f.msg.placeholder}></textarea>
-      <p class="err" id="f-msg-err" data-msg={f.msg.error}></p>
+      <label for="f-msg">{f.msg.label} <span class="text-muted">{t.optional}</span></label>
+      <textarea id="f-msg" name={f.msg.key} rows="3" placeholder={f.msg.placeholder}></textarea>
     </div>
   </div>
 
@@ -73,6 +76,7 @@ const f = t.fields;
       {t.submit}
       <svg class="btn-arrow h-3.5 w-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" /></svg>
     </button>
+    <p class="reassure text-meta text-muted">{t.reassure}</p>
     <p class="status text-meta text-muted" role="status" aria-live="polite" data-status></p>
     <a class="mail-fallback link-line text-meta font-semibold" data-mail-fallback hidden>{t.emailAction}</a>
     <button type="button" class="copy link-line text-meta font-semibold" data-copy hidden>{t.copy}</button>
@@ -110,6 +114,8 @@ const f = t.fields;
   .field [aria-invalid='true'] { border-color: #a4331c; box-shadow: 0 1px 0 0 #a4331c; }
   .err { margin: 6px 0 0; font-size: var(--text-label); color: #a4331c; min-height: 0; }
   .err:empty { display: none; }
+  .reach-hint { margin: -8px 0 0; font-size: var(--text-label); color: var(--color-muted); }
+  .status:empty { display: none; }
 
   .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
   .chip { position: relative; }
@@ -163,6 +169,17 @@ const f = t.fields;
       return valid;
     };
 
+    // E-mail or phone is enough: the e-mail is only required while no phone number is given.
+    const reachMail = form.querySelector<HTMLInputElement>('[data-reach-mail]');
+    const reachTel = form.querySelector<HTMLInputElement>('[data-reach-tel]');
+    const syncReach = () => {
+      if (!reachMail || !reachTel) return;
+      reachMail.required = reachTel.value.replace(/\D/g, '').length < 6;
+      if (reachMail.getAttribute('aria-invalid') === 'true') showError(reachMail);
+    };
+    reachTel?.addEventListener('input', syncReach);
+    form.addEventListener('reset', () => window.setTimeout(syncReach));
+
     fields.forEach((f) => {
       f.addEventListener('blur', () => f.value && showError(f));
       f.addEventListener('input', () => f.getAttribute('aria-invalid') === 'true' && showError(f));
@@ -171,6 +188,7 @@ const f = t.fields;
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
       if (form.getAttribute('aria-busy') === 'true') return;
+      syncReach();
       const invalid = fields.filter((f) => !showError(f));
       if (invalid.length) {
         invalid[0].focus();
@@ -181,7 +199,7 @@ const f = t.fields;
 
       const data = new FormData(form);
       const org = String(data.get(form.dataset.orgKey ?? '') ?? '');
-      const subject = `${msg.subject}: ${org}`;
+      const subject = `${msg.subject}: ${org.trim() || String(data.get(form.querySelector<HTMLInputElement>('#f-name')?.name ?? '') ?? '')}`;
       const lines: string[] = [];
       for (const [key, value] of data.entries()) {
         if (String(value).trim()) lines.push(`${key}: ${value}`);
@@ -203,7 +221,7 @@ const f = t.fields;
         );
         controls.forEach((control) => { control.disabled = true; });
         const emailField = form.querySelector<HTMLInputElement>('#f-mail');
-        if (emailField) data.set('_replyto', emailField.value);
+        if (emailField?.value) data.set('_replyto', emailField.value);
         data.set('_subject', subject);
         const controller = new AbortController();
         const timeout = window.setTimeout(() => controller.abort(), 15_000);

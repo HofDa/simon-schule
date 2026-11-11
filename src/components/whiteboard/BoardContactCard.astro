@@ -3,7 +3,7 @@
  * The contact corner of the whiteboard: Simon's business card, held by a magnet (drag like every
  * board object). Name, role, e-mail and phone come from src/data/site.ts; a missing phone number
  * or portrait is simply left out (the portrait gives way to a hand-written initials stamp).
- * "Termin vereinbaren" opens the same enquiry form as the board's main call to action.
+ * "Projekt anfragen" opens the same enquiry form as the board's main call to action.
  */
 import BoardMagnet from './BoardMagnet.astro';
 import { people, fullName } from '../../data/site';
@@ -37,7 +37,7 @@ const phoneHref = person.phone ? `tel:${person.phone.replace(/[^\d+]/g, '')}` : 
         {person.email && <a href={`mailto:${person.email}`} draggable="false"><span aria-hidden="true">✉</span> {person.email}</a>}
         {phoneHref && <a href={phoneHref} draggable="false"><span aria-hidden="true">☏</span> {person.phone}</a>}
       </div>
-      <a class="card-cta" href="#anfrage" data-open-form draggable="false">Termin vereinbaren <span aria-hidden="true">→</span></a>
+      <a class="card-cta" href="#anfrage" data-open-form draggable="false">Projekt anfragen <span aria-hidden="true">→</span></a>
     </div>
   </div>
 </div>

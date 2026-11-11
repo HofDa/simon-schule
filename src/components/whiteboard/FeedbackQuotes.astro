@@ -1,0 +1,41 @@
+---
+/**
+ * The customers' answers from src/data/feedback.ts in the page flow. On the board they are letters
+ * under a magnet, but the board only exists on wide screens: here every visitor reads them, and
+ * the inquiry is one step away. Renders nothing while there is no feedback.
+ */
+import { feedback } from '../../data/feedback';
+---
+
+{feedback.length > 0 && (
+  <section id="stimmen" class="voices bg-paper py-24 lg:py-32" aria-labelledby="voices-title">
+    <div class="shell">
+      <h2 id="voices-title" class="text-title leading-[1.05] tracking-[-0.03em]">Was Schulen über die Zusammenarbeit sagen.</h2>
+      <div class="voices-grid mt-12 lg:mt-16">
+        {feedback.map((f) => (
+          <figure class="voice m-0">
+            <svg class="h-5 w-7" viewBox="0 0 36 28" aria-hidden="true"><path d="M0 28V16C0 7 5 1.5 14 0l1.5 3.5C10 5 7.5 8.5 7.5 13H14v15H0Zm21 0V16c0-9 5-14.5 14-16l1 3.5c-5.5 1.5-8 5-8 9.5H35v15H21Z" fill="var(--color-ginster)" /></svg>
+            <blockquote class="m-0 mt-6">
+              <p class="text-body leading-[1.65] lg:text-lead">{f.quote}</p>
+            </blockquote>
+            <figcaption class="mt-6 flex flex-wrap gap-x-3 gap-y-1 text-meta">
+              <span class="font-semibold">{f.name}</span>
+              <span class="text-muted">{f.role}, {f.organisation}</span>
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+      <p class="mt-12 lg:mt-16">
+        <a href="#anfrage" class="link-line text-meta font-semibold" data-open-form>Projekt anfragen <span aria-hidden="true">→</span></a>
+      </p>
+    </div>
+  </section>
+)}
+
+<style>
+  .voices-grid { display: grid; gap: 56px; }
+  .voice { max-width: 60ch; padding-top: 28px; border-top: 1px solid var(--color-line); }
+  @media (min-width: 900px) {
+    .voices-grid { grid-template-columns: 1fr 1fr; gap: 72px; }
+  }
+</style>

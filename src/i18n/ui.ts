@@ -47,9 +47,9 @@ const de = {
     headline: 'Lernräume für Südtirol.',
     sub: 'Trias Schule ist in ganz Südtirol bekannt als verlässlicher Partner für die Einrichtung von Schulen und Kindergärten. Persönlich betreut von Simon Brugger – von der Planung bis zur pünktlichen Montage, mit Möbeln von VS.',
     /** the short line under the handwritten claim (Whiteboard) */
-    subShort: 'Ihr bekannter, verlässlicher Partner für die Einrichtung von Schulen und Kindergärten in Südtirol – persönlich betreut von Simon Brugger, von der Planung bis zur Montage mit Möbeln von VS.',
+    subShort: 'Wir richten Schulen und Kindergärten in ganz Südtirol ein – persönlich betreut von Simon Brugger, von der Planung bis zur Montage, mit Möbeln von VS.',
     primary: 'Raumlösungen ansehen',
-    secondary: 'Projekt besprechen',
+    secondary: 'Projekt anfragen',
     notes: { flex: 'Flexibilität', acoustics: 'Akustik?', groups: 'Gruppenarbeit' },
   },
   chair: {
@@ -134,7 +134,7 @@ const de = {
     seated: (name: string) => `${name} auf einem ginstergelben VS-Hocker (Zeichnung)`,
   },
   form: {
-    title: 'Ihr Projekt',
+    title: 'Ihre Anfrage',
     required: '* Pflichtfeld',
     optional: '(optional)',
     fields: {
@@ -147,6 +147,11 @@ const de = {
       msg: { label: 'Nachricht', key: 'Nachricht', placeholder: 'Um welchen Raum geht es, und was soll er künftig können?', error: 'Bitte beschreiben Sie Ihr Projekt in ein, zwei Sätzen.' },
     },
     phases: ['Erste Idee', 'Planung läuft', 'Konkrete Ausstattung', 'Ausschreibung', 'Umbau / Erweiterung'],
+    /** Whiteboard form: an extra choice next to the phases, for orders without a project */
+    orderOption: 'Bestellung / Nachbestellung',
+    /** Whiteboard form: e-mail or phone is enough */
+    reach: { hint: 'E-Mail oder Telefon – eines von beiden genügt.', error: 'Bitte eine gültige E-Mail-Adresse oder eine Telefonnummer angeben, damit wir Sie erreichen.', callback: '(für einen Rückruf)' },
+    reassure: 'Unverbindlich. Simon Brugger meldet sich persönlich bei Ihnen.',
     submit: 'Anfrage senden',
     status: {
       invalid: 'Bitte prüfen Sie die markierten Felder.',
@@ -220,7 +225,7 @@ const it: UI = {
     /** the short line under the handwritten claim (Whiteboard) */
     subShort: 'Il vostro partner affidabile per l’arredo di scuole e scuole dell’infanzia in Alto Adige – seguiti personalmente da Simon Brugger, dalla progettazione al montaggio con i mobili di VS.',
     primary: 'Vedi le soluzioni',
-    secondary: 'Parliamo del progetto',
+    secondary: 'Richiedi un progetto',
     notes: { flex: 'Flessibilità', acoustics: 'Acustica?', groups: 'Lavoro di gruppo' },
   },
   chair: {
@@ -303,7 +308,7 @@ const it: UI = {
     seated: (name: string) => `${name} su uno sgabello VS giallo ginestra (disegno)`,
   },
   form: {
-    title: 'Il vostro progetto',
+    title: 'La vostra richiesta',
     required: '* Campo obbligatorio',
     optional: '(facoltativo)',
     fields: {
@@ -316,6 +321,9 @@ const it: UI = {
       msg: { label: 'Messaggio', key: 'Messaggio', placeholder: 'Di quale spazio si tratta e cosa dovrà offrire in futuro?', error: 'Descrivete il progetto in una o due frasi.' },
     },
     phases: ['Prima idea', 'Progettazione in corso', 'Arredamento concreto', 'Gara d’appalto', 'Ristrutturazione / ampliamento'],
+    orderOption: 'Ordine / riordino',
+    reach: { hint: 'E-mail o telefono: basta uno dei due.', error: 'Indicate un indirizzo e-mail valido o un numero di telefono per potervi ricontattare.', callback: '(per essere richiamati)' },
+    reassure: 'Senza impegno. Simon Brugger vi ricontatterà personalmente.',
     submit: 'Invia richiesta',
     status: {
       invalid: 'Controllate i campi evidenziati.',

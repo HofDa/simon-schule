@@ -26,12 +26,13 @@ import PeopleCircle from './PeopleCircle.astro';
 import VSFloorplan from './VSFloorplan.astro';
 import StationsPhases from './StationsPhases.astro';
 import TalkContact from './TalkContact.astro';
+import FeedbackQuotes from '../FeedbackQuotes.astro';
 import { asset, homeFor } from '../../../lib/paths';
 
 const alternates = { de: asset('lernraum/'), it: homeFor('it') };
 ---
 
-<Layout title="Trias Schule | Der Lernraum (Best-of)" canonical={asset('lernraum/')} alternates={alternates} noindex variantSwitcher>
+<Layout title="Trias Schule | Der Lernraum (Best-of)" canonical={asset('lernraum/')} alternates={alternates} noindex>
   <ChairSprite />
   <Navbar alternates={alternates} />
   <main id="inhalt">
@@ -40,6 +41,7 @@ const alternates = { de: asset('lernraum/'), it: homeFor('it') };
     <Services />
     <InteractiveScenes />
     <AnnotatedProjects />
+    <FeedbackQuotes />
     <PeopleCircle />
     <VSFloorplan />
     <ClosingTestimonial />
