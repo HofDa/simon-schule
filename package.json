@@ -8,6 +8,7 @@
   "scripts": {
     "dev": "astro dev",
     "check": "astro check",
+    "test:layouts": "node --test tests/tano-layouts.test.mjs",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro"

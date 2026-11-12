@@ -1,10 +1,10 @@
-import { tanoOutline, tanoOffset } from '../lib/tano-layouts';
 /**
  * 3D VS furniture for the showroom, built procedurally with three.js. Proportions and colours
  * follow src/components/whiteboard/art/vs-models.ts (Basiskatalog Schule 2026), which works in
  * decimetres with u forward, v across and z up; here 1 unit = 1 m, x = v, y = z, z = u.
  */
 import type * as THREE_NS from 'three';
+import { tanoOutline, tanoOffset } from '../lib/tano-layouts';
 
 type Three = typeof THREE_NS;
 type V3 = [number, number, number];
