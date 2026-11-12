@@ -14,7 +14,7 @@ import { lernraumCopy } from '../../../i18n/lernraum';
 
 const lang = getLang(Astro.currentLocale);
 const S = lernraumCopy(lang).scenes;
-const order: SceneName[] = ['frontal', 'gruppen', 'bewegung', 'landschaft', 'rueckzug', 'boden'];
+const order: SceneName[] = ['frontal', 'uform', 'gruppen', 'bewegung', 'landschaft', 'rueckzug', 'boden'];
 const scenes = S.items.map((item, i) => ({ ...item, scene: order[i], id: `lr-scene-${order[i]}` }));
 
 const size = sceneSize();
@@ -58,7 +58,7 @@ const size = sceneSize();
         ))}
       </div>
 
-      <!-- Stage with the 5 scenes -->
+      <!-- Stage with the room arrangements -->
       <div class="scenes-stage">
         {scenes.map((s, i) => (
           <div

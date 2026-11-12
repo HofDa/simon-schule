@@ -1,3 +1,4 @@
+import { tanoOutline, tanoOffset } from '../lib/tano-layouts';
 /**
  * 3D VS furniture for the showroom, built procedurally with three.js. Proportions and colours
  * follow src/components/whiteboard/art/vs-models.ts (Basiskatalog Schule 2026), which works in
@@ -384,12 +385,10 @@ export class Workshop {
    * centroid lies from that centre.
    */
   static tanoTopOutline(): { outline: [number, number][]; offset: [number, number] } {
-    const R = 7.6 * dm;
-    const at = (deg: number, r: number): [number, number] => [Math.cos((deg * Math.PI) / 180) * r, Math.sin((deg * Math.PI) / 180) * r];
-    const raw: [number, number][] = [[0, 0], at(60, R * 0.866), at(90, R), at(150, R), at(180, R * 0.866)];
-    const cx = raw.reduce((sum, p) => sum + p[0], 0) / raw.length;
-    const cy = raw.reduce((sum, p) => sum + p[1], 0) / raw.length;
-    return { outline: raw.map(([x, y]) => [(x - cx) * 0.97, (y - cy) * 0.97]), offset: [cx, cy] };
+    return {
+      outline: tanoOutline.map(([x, y]) => [x * dm, y * dm]),
+      offset: [tanoOffset[0] * dm, tanoOffset[1] * dm],
+    };
   }
 
   tanoTop(): THREE_NS.Group {
@@ -397,7 +396,7 @@ export class Workshop {
     const group = new THREE.Group();
     const height = 7.2 * dm;
     const { outline, offset } = Workshop.tanoTopOutline();
-    group.add(this.mesh(this.slab(outline, height - 0.03, 0.03, 0.004), this.material(COLOURS.beech, 'wood')));
+    group.add(this.mesh(this.slab(outline, height - 0.03, 0.03), this.material(COLOURS.beech, 'wood')));
     const legMat = this.material(COLOURS.greyLeg, 'metal');
     for (const [x, z] of outline.slice(1)) {
       const leg = this.mesh(new THREE.BoxGeometry(0.036, height - 0.03, 0.036), legMat);

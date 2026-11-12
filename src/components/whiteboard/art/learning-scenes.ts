@@ -1,14 +1,15 @@
 /**
- * The five ways the classroom of the learning scenes is set up, after arrangements in the
+ * The ways the classroom of the learning scenes is set up, after arrangements in the
  * VS catalogue (Basiskatalog Schule 2026), with the VS furniture from vs-models.ts:
  * Tano group islands, Puzzle tables with Hokki stools, the Shift+ Landscape seating,
  * Vancouver booths and a Shift+ floor island. No walls, no floor: the furniture alone.
  * Units are decimetres on an 8 × 6.4 m footprint; the board side is y = 0.
  */
 import { circle, rect, sector, type Item, type Pt, type Shape } from './iso';
+import { tanoLayout, tanoSeats, tanoPolygon, tanoPoint, tanoOffset, type TanoArrangement } from '../../../lib/tano-layouts';
 import { pantoSwing, hokki, tanoIsland, puzzle, desk, roundTable, shiftSeat, pouf, cushion, backRoll, vancouver, vancouverBench, trayShelf, drum } from './vs-models';
 
-export type SceneName = 'frontal' | 'gruppen' | 'bewegung' | 'landschaft' | 'rueckzug' | 'boden';
+export type SceneName = 'frontal' | 'uform' | 'gruppen' | 'bewegung' | 'landschaft' | 'rueckzug' | 'boden';
 
 // colours sampled from the catalogue photographs
 const GINSTER = '#e2a300';
@@ -21,60 +22,14 @@ const ORANGE = '#ef8a1f';
 const ANTHRACITE = '#3d3e3b';
 const toBoard = -Math.PI / 2;
 
-/**
- * Tano: three five-sided tops to an island (cut from the centre to every other edge midpoint,
- * so the island does not read as an isometric cube), a tray under each, six PantoSwings round it.
- */
-function island(cx: number, cy: number, chairs: string, items: Item[]) {
-  const R = 7.6;
-  const at = (deg: number, r: number): Pt => [cx + Math.cos((deg * Math.PI) / 180) * r, cy + Math.sin((deg * Math.PI) / 180) * r];
-  const vertex = (k: number) => at(60 * k + 30, R);
-  const middle = (k: number) => at(60 * k + 60, R * 0.866);
-  const gap = (pts: Pt[]) => {
-    const [mx, my] = pts.reduce(([sx, sy], [x, y]) => [sx + x / pts.length, sy + y / pts.length], [0, 0]);
-    return pts.map(([x, y]) => [x + (mx - x) * 0.03, y + (my - y) * 0.03] as Pt);
-  };
-  const tops = [0, 1, 2].map((k) => gap([[cx, cy], middle(2 * k), vertex(2 * k + 1), vertex(2 * k + 2), middle(2 * k + 2)]));
-  const trays = [0, 1, 2].map((k) => at(120 * k + 120, R * 0.55));
-  items.push(tanoIsland(tops, trays));
-  for (let k = 0; k < 6; k++) {
-    const t = (60 * k * Math.PI) / 180;
-    const dist = R * 0.866 + 2.4;
-    items.push(pantoSwing(cx + Math.cos(t) * dist, cy + Math.sin(t) * dist, t + Math.PI, chairs));
-  }
-}
-
-/** Frontal: the islands' nine tops pulled apart into three rows facing the board, two pupils at each. */
-function frontal(): Item[] {
-  const items: Item[] = [];
-  const R = 7.6;
-  const at = (deg: number, r: number): Pt => [Math.cos((deg * Math.PI) / 180) * r, Math.sin((deg * Math.PI) / 180) * r];
-  const raw: Pt[] = [[0, 0], at(60, R * 0.866), at(90, R), at(150, R), at(180, R * 0.866)];
-  const mx = raw.reduce((sum, p) => sum + p[0], 0) / raw.length;
-  const my = raw.reduce((sum, p) => sum + p[1], 0) / raw.length;
-  const turn = -Math.PI / 6;
-  const place = (cx: number, cy: number, [x, y]: Pt): Pt => {
-    const dx = x - mx;
-    const dy = y - my;
-    return [cx + dx * Math.cos(turn) - dy * Math.sin(turn), cy + dx * Math.sin(turn) + dy * Math.cos(turn)];
-  };
-  [SKY, RED, GINSTER].forEach((colour, r) => {
-    for (const x of [20, 40, 60]) {
-      const y = 15 + r * 16;
-      items.push(tanoIsland([raw.map((p) => place(x, y, p))], [place(x, y, at(120, R * 0.55))]));
-      items.push(pantoSwing(x - 2.5, y + 5, toBoard, colour));
-      items.push(pantoSwing(x + 2.5, y + 5, toBoard, colour));
-    }
-  });
-  return items;
-}
-
-function gruppen(): Item[] {
-  const items: Item[] = [];
-  island(20, 22, SKY, items);
-  island(54, 20, RED, items);
-  island(38, 48, GINSTER, items);
-  return items;
+/** Use the exact same finished tops, joins and seats as the interactive 3D room. */
+function tanoArrangement(name: TanoArrangement): Item[] {
+  const colours = [SKY, RED, GINSTER];
+  const tray: Pt = [Math.cos(2 * Math.PI / 3) * 7.6 * 0.55 - tanoOffset[0], Math.sin(2 * Math.PI / 3) * 7.6 * 0.55 - tanoOffset[1]];
+  return tanoLayout(name).flatMap((desk) => [
+    tanoIsland([tanoPolygon(desk)], [tanoPoint(desk, tray)]),
+    ...tanoSeats(desk).map((seat) => pantoSwing(seat.x, seat.y, seat.angle, colours[seat.colour])),
+  ]);
 }
 
 /** Puzzle: a free-form outline, turned. */
@@ -180,7 +135,7 @@ function boden(): Item[] {
   return items;
 }
 
-const builders: Record<SceneName, () => Item[]> = { frontal, gruppen, bewegung, landschaft, rueckzug, boden };
+const builders: Record<SceneName, () => Item[]> = { frontal: () => tanoArrangement('frontal'), uform: () => tanoArrangement('uform'), gruppen: () => tanoArrangement('gruppen'), bewegung, landschaft, rueckzug, boden };
 
 /** The furniture of a scene, back to front. */
 export const furniture = (name: SceneName) => builders[name]().sort((a, b) => a.depth - b.depth);

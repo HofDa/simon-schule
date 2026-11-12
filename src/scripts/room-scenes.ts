@@ -1,5 +1,5 @@
 /**
- * The five room arrangements of the learning scenes as 3D furniture lists. Positions follow
+ * The room arrangements of the learning scenes as 3D furniture lists. Positions follow
  * src/components/whiteboard/art/learning-scenes.ts (decimetres on an 8 × 6.4 m footprint, the
  * board side at y = 0); here they are metres round the room's centre, x across and z away from
  * the board. Pieces with the same `key` are the same piece of furniture in two arrangements:
@@ -8,8 +8,9 @@
 import type * as THREE_NS from 'three';
 import { COLOURS, Workshop } from './showroom-models';
 import { circle, rect, sector, type Pt } from '../components/whiteboard/art/iso';
+import { tanoLayout, tanoSeats, type TanoArrangement } from '../lib/tano-layouts';
 
-export type SceneName = 'frontal' | 'gruppen' | 'bewegung' | 'landschaft' | 'rueckzug' | 'boden';
+export type SceneName = 'frontal' | 'uform' | 'gruppen' | 'bewegung' | 'landschaft' | 'rueckzug' | 'boden';
 
 export interface Piece {
   key: string;
@@ -46,44 +47,13 @@ const chair = (x: number, y: number, a: number, colour: number) =>
 
 /** A Tano top whose centroid lies at x y, turned by a plan angle (0 = as the first top of an island). */
 const tanoTop = (x: number, y: number, planTurn: number) => piece('tano-top', x, y, (w) => w.tanoTop(), -planTurn);
-const [topX, topY] = Workshop.tanoTopOutline().offset.map((v) => v / dm);
-
-/**
- * Frontal: the same nine tops and eighteen chairs as the group islands, pulled apart into three
- * rows facing the board, two pupils at each top's long edge.
- */
-function frontal(): Piece[] {
-  const pieces: Piece[] = [];
-  const rows = [SKY, RED, GINSTER];
-  rows.forEach((colour, r) => {
-    for (const x of [20, 40, 60]) {
-      const y = 15 + r * 16;
-      // the long outer edge points away from the board, towards the pupils
-      pieces.push(tanoTop(x, y, -Math.PI / 6));
-      pieces.push(chair(x - 2.5, y + 5, -Math.PI / 2, colour));
-      pieces.push(chair(x + 2.5, y + 5, -Math.PI / 2, colour));
-    }
-  });
-  return pieces;
-}
-
-function gruppen(): Piece[] {
-  const pieces: Piece[] = [];
-  const island = (cx: number, cy: number, colour: number) => {
-    for (let k = 0; k < 3; k++) {
-      const a = (k * 2 * Math.PI) / 3;
-      pieces.push(tanoTop(cx + topX * Math.cos(a) - topY * Math.sin(a), cy + topX * Math.sin(a) + topY * Math.cos(a), a));
-    }
-    for (let k = 0; k < 6; k++) {
-      const t = (60 * k * Math.PI) / 180;
-      const dist = 7.6 * 0.866 + 2.4;
-      pieces.push(chair(cx + Math.cos(t) * dist, cy + Math.sin(t) * dist, t + Math.PI, colour));
-    }
-  };
-  island(20, 22, SKY);
-  island(54, 20, RED);
-  island(38, 48, GINSTER);
-  return pieces;
+/** The same nine Tano tops and eighteen chairs move between these three arrangements. */
+function tanoArrangement(name: TanoArrangement): Piece[] {
+  const colours = [SKY, RED, GINSTER];
+  return tanoLayout(name).flatMap((desk) => [
+    tanoTop(desk.x, desk.y, desk.turn),
+    ...tanoSeats(desk).map((seat) => chair(seat.x, seat.y, seat.angle, colours[seat.colour])),
+  ]);
 }
 
 function bewegung(): Piece[] {
@@ -174,6 +144,6 @@ function boden(): Piece[] {
   return pieces;
 }
 
-const builders: Record<SceneName, () => Piece[]> = { frontal, gruppen, bewegung, landschaft, rueckzug, boden };
+const builders: Record<SceneName, () => Piece[]> = { frontal: () => tanoArrangement('frontal'), uform: () => tanoArrangement('uform'), gruppen: () => tanoArrangement('gruppen'), bewegung, landschaft, rueckzug, boden };
 
 export const roomScene = (name: SceneName): Piece[] => builders[name]();
