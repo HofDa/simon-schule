@@ -58,7 +58,7 @@ const de = {
   scenes: {
     note: '… und in der nächsten Stunde?',
     title: 'Ein Raum, viele Arten zu lernen.',
-    intro: 'Frontalunterricht ist nur eine Einstellung. Ein Klick stellt den Raum um: Sehen Sie, wie derselbe Raum mit beweglichen VS-Möbeln von der Tafelreihe zu Gruppenarbeit, Rückzug oder Bewegung wechselt.',
+    intro: 'Ein Klick stellt den Raum um: Sehen Sie, wie dieselben Tische und Stühle von bündigen Reihen zur offenen U-Form und zu Gruppeninseln wechseln – und wie weitere VS-Möbel Raum für Rückzug oder Bewegung schaffen.',
     tablist: 'Raumaufstellungen auswählen',
     step: 'Aufstellung',
     benefit: 'Mehrwert im Alltag',
@@ -70,13 +70,22 @@ const de = {
     canvas: (name: string) => `3D-Ansicht: ${name}. Ziehen oder Pfeiltasten drehen den Raum.`,
     items: [
       {
-        name: 'Frontalunterricht',
-        short: 'Alle blicken zur Tafel',
-        text: 'Für Einführung, Erklärung und Präsentation stehen die Tische in Reihen mit freiem Blick zur Tafel. Von hier aus entsteht jede andere Aufstellung.',
-        benefit: 'Klare Sichtachsen und Ruhe, wenn eine Person spricht.',
+        name: 'Tischreihen',
+        short: 'Bündige Kanten, freie Wege',
+        text: 'Die Mehrecktische schließen an ihren kurzen Kanten bündig zu drei Reihen zusammen. Die Stühle stehen an den freien langen Kanten, zwischen den Reihen bleiben Wege frei.',
+        benefit: 'Zusammenhängende Arbeitsflächen für Aufgaben zu zweit und klare Wege durch den Raum.',
         setup: 'Ausgangsaufstellung',
         product: 'VS Tano & PantoSwing-LuPo',
-        topic: 'Frontalunterricht (VS Tano)',
+        topic: 'Tischreihen (VS Tano)',
+      },
+      {
+        name: 'U-Form',
+        short: 'Zur Tafel hin offen',
+        text: 'Dieselben neun Tano-Tische bilden mit bündig anschließenden Kanten eine offene U-Form. Die Stühle folgen den freien Tischkanten, die Mitte bleibt für Austausch und Präsentationen frei.',
+        benefit: 'Ein gemeinsamer Gesprächsraum mit freier Mitte und einer Öffnung zur Tafel.',
+        setup: 'Dieselben Tische, neu verbunden',
+        product: 'VS Tano & PantoSwing-LuPo',
+        topic: 'U-Form (VS Tano)',
       },
       {
         name: 'Gruppenarbeit',
@@ -368,7 +377,7 @@ const it: LernraumCopy = {
   scenes: {
     note: '… e nell’ora successiva?',
     title: 'Un’aula, tanti modi di imparare.',
-    intro: 'La lezione frontale è solo una delle disposizioni. Un clic trasforma l’aula: guardate come lo stesso spazio, con gli arredi mobili di VS, passa dalle file davanti alla lavagna al lavoro di gruppo, al raccoglimento o al movimento.',
+    intro: 'Un clic trasforma l’aula: gli stessi tavoli e le stesse sedie passano dalle file con bordi accostati alla disposizione a U e alle isole di gruppo. Altri arredi VS creano spazio per il raccoglimento o il movimento.',
     tablist: 'Scegliere la disposizione dell’aula',
     step: 'Disposizione',
     benefit: 'Vantaggio quotidiano',
@@ -380,13 +389,22 @@ const it: LernraumCopy = {
     canvas: (name: string) => `Vista 3D: ${name}. Trascinare o usare i tasti freccia per ruotare l’aula.`,
     items: [
       {
-        name: 'Lezione frontale',
-        short: 'Tutti guardano la lavagna',
-        text: 'Per introdurre, spiegare e presentare i tavoli sono in file con la vista libera sulla lavagna. Da qui nasce ogni altra disposizione.',
-        benefit: 'Visuali chiare e tranquillità quando parla una persona.',
+        name: 'Tavoli in file',
+        short: 'Bordi accostati, passaggi liberi',
+        text: 'I tavoli poligonali si accostano lungo i bordi corti formando tre file continue. Le sedie si dispongono lungo i bordi lunghi liberi, lasciando spazio per passare tra le file.',
+        benefit: 'Superfici di lavoro continue per le attività a coppie e percorsi chiari nell’aula.',
         setup: 'Disposizione di partenza',
         product: 'VS Tano & PantoSwing-LuPo',
-        topic: 'Lezione frontale (VS Tano)',
+        topic: 'Tavoli in file (VS Tano)',
+      },
+      {
+        name: 'Disposizione a U',
+        short: 'Aperta verso la lavagna',
+        text: 'Gli stessi nove tavoli Tano formano una U aperta, con i bordi accostati. Le sedie seguono i bordi liberi dei tavoli e il centro resta disponibile per il confronto e le presentazioni.',
+        benefit: 'Uno spazio comune per dialogare, con il centro libero e l’apertura verso la lavagna.',
+        setup: 'Gli stessi tavoli, un nuovo insieme',
+        product: 'VS Tano & PantoSwing-LuPo',
+        topic: 'Disposizione a U (VS Tano)',
       },
       {
         name: 'Lavoro di gruppo',

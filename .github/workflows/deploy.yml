@@ -15,10 +15,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: 'npm'
@@ -28,7 +28,7 @@ jobs:
 
       # AVIF encoding is expensive; reuse transforms whose source and options are unchanged.
       - name: Cache optimized images
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: node_modules/.astro/assets
           key: ${{ runner.os }}-astro-images-v1-${{ hashFiles('package-lock.json') }}-${{ hashFiles('src/**', 'astro.config.mjs') }}
@@ -52,7 +52,7 @@ jobs:
 
       - name: Upload artifact
         if: github.event_name != 'pull_request'
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: ./dist
 
@@ -70,4 +70,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
