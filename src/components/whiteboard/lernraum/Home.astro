@@ -19,36 +19,39 @@ import WhiteboardHero from '../WhiteboardHero.astro';
 import ClosingTestimonial from '../../ClosingTestimonial.astro';
 import ChairSprite from '../klassenzimmer/ChairSprite.astro';
 import Showroom from '../Showroom.astro';
+import NarrativeIntro from './NarrativeIntro.astro';
 import Services from './Services.astro';
 import InteractiveScenes from './InteractiveScenes.astro';
 import AnnotatedProjects from './AnnotatedProjects.astro';
 import PeopleCircle from './PeopleCircle.astro';
 import VSFloorplan from './VSFloorplan.astro';
 import StationsPhases from './StationsPhases.astro';
+import FaqSection from './FaqSection.astro';
 import TalkContact from './TalkContact.astro';
 import FeedbackQuotes from '../FeedbackQuotes.astro';
-import { asset, homeFor } from '../../../lib/paths';
+import { homeFor } from '../../../lib/paths';
 import { getLang } from '../../../i18n/ui';
 
 const lang = getLang(Astro.currentLocale);
-const alternates = { de: asset('lernraum/'), it: homeFor('it') };
-const title = lang === 'it' ? 'Trias Scuola | Spazi per imparare in Alto Adige' : 'Trias Schule | Der Lernraum (Best-of)';
+const alternates = { de: homeFor('de'), it: homeFor('it') };
 ---
 
-<Layout title={title} canonical={alternates[lang]} alternates={alternates} noindex>
+<Layout canonical={alternates[lang]} alternates={alternates} homepage>
   <ChairSprite />
   <Navbar alternates={alternates} />
   <main id="inhalt">
     <WhiteboardHero />
-    <Showroom />
-    <Services />
+    <NarrativeIntro />
     <InteractiveScenes />
     <AnnotatedProjects />
     <FeedbackQuotes />
+    <Services />
     <PeopleCircle />
     <VSFloorplan />
+    <Showroom />
     <ClosingTestimonial />
     <StationsPhases />
+    <FaqSection />
     <TalkContact />
   </main>
   <Footer />

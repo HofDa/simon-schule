@@ -165,7 +165,7 @@ async function initShowroom(root: HTMLElement) {
     if (id !== current || swap) show(id);
   }));
 
-  // drag to turn
+  // drag or keyboard arrows to turn
   let dragging = false;
   let lastX = 0;
   let velocity = 0;
@@ -189,6 +189,18 @@ async function initShowroom(root: HTMLElement) {
   };
   canvas.addEventListener('pointerup', release);
   canvas.addEventListener('pointercancel', release);
+  canvas.addEventListener('keydown', (e) => {
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+    e.preventDefault();
+    const step = e.key === 'ArrowLeft' ? -0.25 : 0.25;
+    if (reduceMotion) {
+      turntable.rotation.y += step;
+      renderer.render(scene, camera);
+    } else {
+      velocity = step * 0.35;
+      start();
+    }
+  });
 
   const SPIN = 0.4; // rad/s
   const SWAP_TIME = 0.7; // s
@@ -250,11 +262,22 @@ export function setupShowrooms() {
   document.querySelectorAll<HTMLElement>('[data-showroom]').forEach((root) => {
     const activate = root.querySelector<HTMLButtonElement>('[data-showroom-activate]');
     const status = root.querySelector<HTMLElement>('[data-showroom-status]');
+    const buttons = [...root.querySelectorAll<HTMLButtonElement>('[data-piece]')];
+    const nameEl = root.querySelector<HTMLElement>('[data-piece-name]');
+    const specEl = root.querySelector<HTMLElement>('[data-piece-spec]');
+    const canvas = root.querySelector<HTMLCanvasElement>('[data-showroom-canvas]');
     if (!activate || !status) return;
     let pending = false;
-    activate.addEventListener('click', async () => {
+
+    const selectButton = (button: HTMLButtonElement) => {
+      buttons.forEach((b) => b.setAttribute('aria-pressed', String(b === button)));
+      if (nameEl) nameEl.textContent = button.dataset.name ?? '';
+      if (specEl) specEl.textContent = button.dataset.spec ?? '';
+      if (canvas) canvas.setAttribute('aria-label', button.dataset.label ?? '');
+    };
+
+    const launch = async (moveFocus: boolean) => {
       if (pending || root.classList.contains('is-ready')) return;
-      const moveFocus = document.activeElement === activate;
       pending = true;
       activate.disabled = true;
       activate.textContent = activate.dataset.loadingLabel ?? '';
@@ -263,9 +286,8 @@ export function setupShowrooms() {
       root.classList.remove('is-fallback');
       try {
         if (!await initShowroom(root)) throw new Error('Viewer unavailable');
-        root.querySelectorAll<HTMLButtonElement>('[data-piece]').forEach((button) => { button.disabled = false; });
         status.textContent = '';
-        if (moveFocus) root.querySelector<HTMLButtonElement>('[data-piece]')?.focus({ preventScroll: true });
+        if (moveFocus) root.querySelector<HTMLButtonElement>('[data-piece][aria-pressed="true"]')?.focus({ preventScroll: true });
       } catch {
         root.classList.add('is-fallback');
         activate.textContent = activate.dataset.retryLabel ?? '';
@@ -275,6 +297,15 @@ export function setupShowrooms() {
         activate.disabled = false;
         root.setAttribute('aria-busy', 'false');
       }
+    };
+
+    activate.addEventListener('click', () => launch(document.activeElement === activate));
+    buttons.forEach((button) => {
+      button.addEventListener('click', () => {
+        if (root.classList.contains('is-ready')) return;
+        selectButton(button);
+        launch(false);
+      });
     });
   });
 }

@@ -14,12 +14,13 @@ export const getLang = (locale: string | undefined): Lang => (locale === 'it' ? 
 
 const de = {
   htmlLang: 'de',
+  hreflang: 'de-IT',
   ogLocale: 'de_IT',
   langName: 'Deutsch',
   meta: {
-    title: 'Trias Schule | Einrichtung für Schulen und Kindergärten in Südtirol',
+    title: 'Trias Schule | Schulmöbel & Kindergärten einrichten in Südtirol',
     description:
-      'Ihr verlässlicher Partner für die Einrichtung von Schulen und Kindergärten in Südtirol. Persönliche Projektbegleitung durch Simon Brugger, Standorte Meran & Brixen, Exklusivvertretung von VS Möbel.',
+      'Schulen & Kindergärten einrichten in Südtirol: Beratung, Planung & Montage mit VS Möbel. Persönliche Begleitung aus Meran & Brixen seit 2015.',
   },
   skip: 'Zum Inhalt springen',
   /** One quiet line for facts that are not confirmed yet, e.g. "Rolle und Telefon folgen". */
@@ -189,12 +190,13 @@ export type UI = typeof de;
 
 const it: UI = {
   htmlLang: 'it',
+  hreflang: 'it-IT',
   ogLocale: 'it_IT',
   langName: 'Italiano',
   meta: {
-    title: 'Trias Schule | Spazi di apprendimento per scuole e scuole dell’infanzia in Alto Adige',
+    title: 'Trias Schule | Arredi per scuole e infanzia in Alto Adige',
     description:
-      'Trias Schule offre consulenza, progettazione, fornitura e montaggio di arredi per scuole e scuole dell’infanzia in Alto Adige. Rappresentanza esclusiva di VS Möbel.',
+      'Arredi per scuole e scuole dell’infanzia in Alto Adige: consulenza, progettazione e montaggio con VS Möbel. Sedi a Merano e Bressanone.',
   },
   skip: 'Vai al contenuto',
   pending: (items: string[]) => {

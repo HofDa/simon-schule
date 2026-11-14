@@ -1,6 +1,25 @@
 ---
-/** Design variant 04 "Der Lernraum (Best-of)": combines the strongest creative metaphors with interactive conversion hooks. */
-import Home from '../components/whiteboard/lernraum/Home.astro';
+/**
+ * Legacy route redirect from /lernraum/ to the canonical German homepage (/).
+ * Preserves existing preview links without creating a duplicate indexed landing page.
+ */
+import { homeFor } from '../lib/paths';
+
+const target = homeFor('de');
+const canonical = Astro.site ? new URL(target, Astro.site).href : undefined;
 ---
 
-<Home />
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <title>Trias Schule | Schulmöbel & Kindergärten einrichten in Südtirol</title>
+    <meta name="robots" content="noindex" />
+    {canonical && <link rel="canonical" href={canonical} />}
+    <meta http-equiv="refresh" content={`0;url=${target}`} />
+    <script is:inline define:vars={{ target }}>location.replace(target + location.hash);</script>
+  </head>
+  <body>
+    <a href={target}>Trias Schule: Lernräume für Südtirol</a>
+  </body>
+</html>

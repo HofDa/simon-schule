@@ -49,7 +49,7 @@ const nav = t.nav.items.map((item) => ({ ...item, href: `${home}${item.href}` })
             {l === lang ? (
               <span class="text-ink" aria-current="true">{l}</span>
             ) : (
-              <a class="lang-other" href={alternates[l]} hreflang={l} lang={l} title={useTranslations(l).langName}>{l}</a>
+              <a class="lang-other" href={alternates[l]} hreflang={useTranslations(l).hreflang} lang={l} title={useTranslations(l).langName}>{l}</a>
             )}
           </>
         ))}
@@ -82,7 +82,7 @@ const nav = t.nav.items.map((item) => ({ ...item, href: `${home}${item.href}` })
           return l === lang ? (
             <span class="inline-flex min-h-11 items-center pr-4 text-ink" aria-current="true">{name}</span>
           ) : (
-            <a class="inline-flex min-h-11 items-center pr-4 text-muted" href={alternates[l]} hreflang={l} lang={l}>{name}</a>
+            <a class="inline-flex min-h-11 items-center pr-4 text-muted" href={alternates[l]} hreflang={useTranslations(l).hreflang} lang={l}>{name}</a>
           );
         })}
       </div>

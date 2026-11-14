@@ -165,12 +165,17 @@ const size = sceneSize();
 
   /* Magnetic switcher rail */
   .scenes-tabs {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+    display: flex;
     gap: 10px;
     margin-top: clamp(24px, 3vw, 36px);
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    padding-bottom: 6px;
+    scrollbar-width: thin;
   }
   .scene-tab {
+    flex: 0 0 min(215px, 70vw);
+    scroll-snap-align: start;
     position: relative;
     display: flex;
     align-items: flex-start;
@@ -183,6 +188,15 @@ const size = sceneSize();
     font: inherit;
     cursor: pointer;
     transition: background-color 200ms var(--ease-draw), border-color 200ms var(--ease-draw), transform 200ms var(--ease-draw);
+  }
+  @media (min-width: 900px) {
+    .scenes-tabs {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      overflow-x: visible;
+      padding-bottom: 0;
+    }
+    .scene-tab { flex: initial; }
   }
   .scene-tab:hover {
     border-color: var(--color-ink);
@@ -477,18 +491,24 @@ const size = sceneSize();
       io.observe(section);
     }
 
-    const selectScene = (index: number, focusTab = false) => {
+    const selectScene = (index: number, focusTarget: 'tab' | 'next' | 'none' = 'none') => {
       current = (index + tabs.length) % tabs.length;
       tabs.forEach((tab, i) => {
         const active = i === current;
         tab.classList.toggle('is-active', active);
         tab.setAttribute('aria-selected', String(active));
         tab.tabIndex = active ? 0 : -1;
-        if (active && focusTab) tab.focus();
+        if (active) {
+          tab.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+          if (focusTarget === 'tab') tab.focus();
+        }
       });
       panels.forEach((panel, i) => {
         panel.classList.toggle('is-active', i === current);
       });
+      if (focusTarget === 'next') {
+        panels[current]?.querySelector<HTMLButtonElement>('[data-scene-next]')?.focus({ preventScroll: true });
+      }
       if (room) {
         seat();
         room.show(panels[current].dataset.sceneName);
@@ -500,16 +520,16 @@ const size = sceneSize();
       tab.addEventListener('keydown', (e) => {
         if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
           e.preventDefault();
-          selectScene(i + 1, true);
+          selectScene(i + 1, 'tab');
         } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
           e.preventDefault();
-          selectScene(i - 1, true);
+          selectScene(i - 1, 'tab');
         }
       });
     });
 
     nextButtons.forEach((btn) => {
-      btn.addEventListener('click', () => selectScene(current + 1));
+      btn.addEventListener('click', () => selectScene(current + 1, 'next'));
     });
   }
 </script>

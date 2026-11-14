@@ -16,13 +16,12 @@ const services = servicesFor(lang);
 const items: DeskItem[] = ['mug', 'plan', 'catalogue', 'toolbox', 'plant'];
 
 const L = lernraumCopy(lang);
-const { deliverables, roles } = L.services;
-const phases = useTranslations(lang).form.phases;
+const { deliverables } = L.services;
 ---
 
 <section id="leistungen" class="lr-services" aria-labelledby="services-title">
   <div class="shell">
-    <Lesson n="01" name={L.lesson.services.name} note={L.lesson.services.note} layout="frontal" from="talk" />
+    <Lesson n="02" name={L.lesson.services.name} note={L.lesson.services.note} layout="frontal" from="groups" />
 
     <div class="head">
       <h2 id="services-title" class="text-headline leading-[0.98] tracking-[-0.03em]">{t.title}</h2>
@@ -46,32 +45,6 @@ const phases = useTranslations(lang).form.phases;
         </li>
       ))}
     </ol>
-
-    <div class="roles" aria-labelledby="roles-heading">
-      <div class="roles-head">
-        <p id="roles-heading" class="roles-eyebrow">{L.services.rolesEyebrow}</p>
-        <p class="roles-note marker" aria-hidden="true">{L.services.rolesNote}</p>
-      </div>
-      <div class="roles-grid">
-        {roles.map((r) => (
-          <article class="role-card">
-            <p class="role-audience">{r.audience}</p>
-            <h3 class="role-title">{r.title}</h3>
-            <p class="role-text">{r.text}</p>
-            <a
-              href="#anfrage"
-              class="role-link link-line"
-              data-open-form
-              data-phase={phases[r.phase]}
-              data-topic={r.topic}
-            >
-              {r.cta}
-              <span aria-hidden="true">→</span>
-            </a>
-          </article>
-        ))}
-      </div>
-    </div>
   </div>
 </section>
 
@@ -124,86 +97,6 @@ const phases = useTranslations(lang).form.phases;
   .desk h3 { font-size: clamp(1.4rem, 2vw, 1.85rem); font-weight: 600; letter-spacing: -0.035em; line-height: 1.12; }
   .desk p { margin-top: 10px; max-width: 36ch; color: var(--color-muted); font-size: var(--text-meta); line-height: 1.6; }
 
-  /* 3 decision-maker perspectives */
-  .roles {
-    margin-top: clamp(64px, 8vw, 112px);
-    padding: clamp(24px, 3.2vw, 44px);
-    background: var(--color-warm);
-    border-top: 1.5px solid var(--color-ink);
-    border-bottom: 1px solid var(--color-line);
-  }
-  .roles-head {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 12px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid var(--color-line);
-  }
-  .roles-eyebrow {
-    font-size: var(--text-label);
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--color-muted);
-  }
-  .roles-note {
-    font-size: var(--text-marker);
-    color: var(--color-ink);
-    transform: rotate(-1.5deg);
-  }
-  .roles-grid {
-    display: grid;
-    gap: 28px;
-    margin-top: 24px;
-  }
-  .role-card {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .role-audience {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-size: var(--text-label);
-    font-weight: 600;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: var(--color-ink);
-  }
-  .role-audience::before {
-    content: '';
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--color-ginster);
-  }
-  .role-title {
-    margin-top: 10px;
-    font-size: clamp(1.25rem, 1.6vw, 1.55rem);
-    font-weight: 600;
-    letter-spacing: -0.03em;
-    line-height: 1.15;
-  }
-  .role-text {
-    margin-top: 10px;
-    color: var(--color-muted);
-    font-size: var(--text-meta);
-    line-height: 1.6;
-  }
-  .role-link {
-    margin-top: auto;
-    padding-top: 16px;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: var(--text-meta);
-    font-weight: 600;
-    color: var(--color-ink);
-  }
-
   @media (max-width: 639px) {
     .desks { grid-template-columns: 1fr; gap: 28px; }
     .desk { flex-direction: row; align-items: flex-start; gap: 16px; }
@@ -218,14 +111,6 @@ const phases = useTranslations(lang).form.phases;
     .desk:nth-child(5) { grid-column: 4 / 6; }
     .is-front .desk-art { width: min(86%, 240px); }
     .is-back .desk-art { width: min(100%, 280px); }
-  }
-
-  @media (min-width: 768px) {
-    .roles-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(24px, 3vw, 44px); }
-    .role-card + .role-card {
-      border-left: 1px solid var(--color-line);
-      padding-left: clamp(20px, 2.4vw, 36px);
-    }
   }
 
   @media (min-width: 1024px) {

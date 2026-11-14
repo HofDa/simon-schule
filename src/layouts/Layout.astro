@@ -2,7 +2,7 @@
 import '../styles/global.css';
 import { asset, homeFor } from '../lib/paths';
 import { getLang, langs, useTranslations, type Lang } from '../i18n/ui';
-import { company, contact } from '../data/site';
+import { buildStructuredData } from '../lib/seo';
 import archivoUrl from '../assets/fonts/archivo-latin-var.woff2?url';
 
 interface Props {
@@ -12,7 +12,7 @@ interface Props {
   alternates?: Record<Lang, string>;
   /** Canonical route path (defaults to the localized homepage). */
   canonical?: string;
-  /** Add site identity structured data to the home pages. */
+  /** Add full entity & FAQ structured data to the home pages. */
   homepage?: boolean;
   /** A design exploration: kept out of search engines and without language alternates. */
   noindex?: boolean;
@@ -32,43 +32,16 @@ const socialImage = site ? absolute(asset('images/social-preview.jpg')) : undefi
 const socialImageAlt = lang === 'it'
   ? 'Spazio di apprendimento aperto con tavoli, sedie e aree di lavoro'
   : 'Offene Lernlandschaft mit Tischgruppen und verschiedenen Arbeitsbereichen';
-const organizationUrl = absolute(homeFor('de'));
-const structuredData = Astro.props.homepage && site
-  ? JSON.stringify({
-      '@context': 'https://schema.org',
-      '@graph': [
-        {
-          '@type': 'Organization',
-          '@id': `${organizationUrl}#organization`,
-          name: 'Trias Schule',
-          legalName: company.name,
-          url: organizationUrl,
-          email: contact.email,
-        },
-        {
-          '@type': 'WebSite',
-          '@id': `${organizationUrl}#website`,
-          url: organizationUrl,
-          name: 'Trias Schule',
-          publisher: { '@id': `${organizationUrl}#organization` },
-          inLanguage: ['de-IT', 'it-IT'],
-        },
-        {
-          '@type': 'Service',
-          '@id': `${absolute(canonicalPath)}#school-furnishing`,
-          name: lang === 'it'
-            ? 'Arredi per scuole e scuole dell’infanzia'
-            : 'Einrichtung von Schulen und Kindergärten',
-          description: t.hero.sub,
-          serviceType: t.services.items.map(({ title }) => title),
-          areaServed: {
-            '@type': 'AdministrativeArea',
-            name: lang === 'it' ? 'Alto Adige' : 'Südtirol',
-          },
-          provider: { '@id': `${organizationUrl}#organization` },
-        },
-      ],
-    }).replace(/</g, '\\u003c')
+const structuredData = !Astro.props.noindex
+  ? buildStructuredData({
+      site,
+      lang,
+      canonicalPath,
+      title,
+      description,
+      socialImage,
+      homepage: Astro.props.homepage,
+    })
   : undefined;
 ---
 
@@ -98,8 +71,10 @@ const structuredData = Astro.props.homepage && site
     <meta name="twitter:description" content={description} />
     {socialImage && <meta name="twitter:image" content={socialImage} />}
     {socialImage && <meta name="twitter:image:alt" content={socialImageAlt} />}
-    {!Astro.props.noindex && langs.map((l) => <link rel="alternate" hreflang={l} href={absolute(alternates[l])} />)}
+    {!Astro.props.noindex && langs.map((l) => <link rel="alternate" hreflang={useTranslations(l).hreflang} href={absolute(alternates[l])} />)}
     {!Astro.props.noindex && <link rel="alternate" hreflang="x-default" href={absolute(alternates.de)} />}
+    {!Astro.props.noindex && site && <link rel="alternate" type="text/plain" href={absolute(asset('llms.txt'))} title="LLM Summary (llms.txt)" />}
+    {!Astro.props.noindex && site && <link rel="alternate" type="text/plain" href={absolute(asset('llms-full.txt'))} title="LLM Full Context (llms-full.txt)" />}
     <link rel="icon" type="image/svg+xml" href={asset('favicon.svg')} />
     {Astro.props.variantSwitcher && <link rel="stylesheet" href={asset('variant-switcher.css')} />}
     <meta name="generator" content={Astro.generator} />

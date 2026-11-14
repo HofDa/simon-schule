@@ -23,6 +23,12 @@ type Stack = {
 };
 
 if (roots.length && gallery) {
+  // Keep the gallery dialog and its SVG photo filter outside `.board-home` so mobile viewports
+  // (< 1024px, where `.board-home` is `display: none`) can still open any reference project.
+  const filterSvg = document.getElementById('gallery-photo-finish')?.closest('svg');
+  if (filterSvg && filterSvg.parentElement !== document.body) document.body.append(filterSvg);
+  if (gallery.parentElement !== document.body) document.body.append(gallery);
+
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const desktop = window.matchMedia('(min-width: 1024px)');
   const photoCount = (slug: string) => gallery.querySelectorAll(`[data-gallery-set="${slug}"] [data-slide]`).length;
@@ -172,28 +178,35 @@ if (roots.length && gallery) {
   };
 
   let opener: HTMLElement = stacks[0].openButton;
-  const openGallery = (stack: Stack, event?: Event) => {
-    opener = (event?.currentTarget as HTMLElement | null) ?? stack.openButton;
-    const print = stack.top();
+  const openProject = (slug: string, trigger?: HTMLElement | null, sourceEl?: HTMLElement | null) => {
+    opener = trigger ?? stacks[0].openButton;
     current = null;
     sets.forEach((set) => (set.hidden = true));
-    show(slugs.indexOf(print.dataset.slug!), 0);
+    show(Math.max(0, slugs.indexOf(slug)), 0);
     document.documentElement.classList.add('whiteboard-reading');
     gallery.showModal();
 
-    // the photos grow out of the print they belong to
+    // the photos grow out of the print (or card) they belong to when visible
     if (!reduceMotion.matches) {
-      const a = print.getBoundingClientRect();
+      const origin = sourceEl ?? trigger;
+      const a = origin?.getBoundingClientRect();
       const b = stage.getBoundingClientRect();
-      const scale = Math.max(0.08, a.width / b.width);
-      const dx = a.left + a.width / 2 - (b.left + b.width / 2);
-      const dy = a.top + a.height / 2 - (b.top + b.height / 2);
-      stage.animate(
-        [{ transform: `translate(${dx}px, ${dy}px) scale(${scale})`, opacity: 0.4 }, { transform: 'none', opacity: 1 }],
-        { duration: 480, easing: 'cubic-bezier(.2, .8, .2, 1)' },
-      );
+      if (a && a.width > 0 && b.width > 0) {
+        const scale = Math.max(0.08, a.width / b.width);
+        const dx = a.left + a.width / 2 - (b.left + b.width / 2);
+        const dy = a.top + a.height / 2 - (b.top + b.height / 2);
+        stage.animate(
+          [{ transform: `translate(${dx}px, ${dy}px) scale(${scale})`, opacity: 0.4 }, { transform: 'none', opacity: 1 }],
+          { duration: 480, easing: 'cubic-bezier(.2, .8, .2, 1)' },
+        );
+      }
       gallery.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 220, easing: 'ease-out' });
     }
+  };
+
+  const openGallery = (stack: Stack, event?: Event) => {
+    const print = stack.top();
+    openProject(print.dataset.slug!, (event?.currentTarget as HTMLElement | null) ?? stack.openButton, print);
   };
 
   for (const stack of stacks) {
@@ -209,6 +222,10 @@ if (roots.length && gallery) {
   }
   // "oder erst Projekte ansehen" under the board's headline opens the gallery at the first stack
   document.querySelectorAll<HTMLElement>('[data-open-collages]').forEach((el) => el.addEventListener('click', (event) => openGallery(stacks[0], event)));
+  // Reference cards in the page body open the matching project on both desktop and mobile
+  document.querySelectorAll<HTMLElement>('[data-open-project]').forEach((el) =>
+    el.addEventListener('click', () => openProject(el.dataset.openProject!, el)),
+  );
 
   gallery.querySelector('[data-gallery-close]')?.addEventListener('click', () => gallery.close());
   gallery.addEventListener('close', () => {

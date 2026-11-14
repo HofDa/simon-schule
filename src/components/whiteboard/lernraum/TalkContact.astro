@@ -148,8 +148,19 @@ const stepsAfterSubmit = L.talk.steps;
       grid-column: 1 / 6;
       position: sticky;
       top: calc(var(--nav-h) + 40px);
+      max-height: calc(100svh - var(--nav-h) - 48px);
+      overflow-y: auto;
+      scrollbar-width: thin;
     }
     .setting { grid-column: 6 / 13; }
+  }
+  @media (min-width: 1024px) and (max-height: 820px) {
+    .copy {
+      top: calc(var(--nav-h) + 20px);
+      max-height: calc(100svh - var(--nav-h) - 28px);
+    }
+    .next-steps { margin-top: 20px; padding: 14px 18px; }
+    .direct { margin-top: 18px; padding-top: 14px; }
   }
 </style>
 
@@ -163,20 +174,43 @@ const stepsAfterSubmit = L.talk.steps;
     const textarea = desk.querySelector<HTMLTextAreaElement>('#lr-msg');
     const stationCards = Array.from(document.querySelectorAll<HTMLElement>('[data-station-card]'));
 
+    let autoTopicInput: HTMLInputElement | null = null;
+    let autoQuestionBlock: string | null = null;
+
     const showContext = (text: string) => {
       if (!contextBar || !contextLabel) return;
       contextLabel.textContent = text;
       contextBar.hidden = false;
     };
 
+    const clearAutoTopic = () => {
+      if (!autoTopicInput) return;
+      autoTopicInput.checked = false;
+      if (autoTopicInput.hasAttribute('data-dynamic-topic')) {
+        autoTopicInput.closest('label')?.remove();
+      }
+      autoTopicInput = null;
+    };
+
     contextClear?.addEventListener('click', () => {
       if (contextBar) contextBar.hidden = true;
+      desk.querySelectorAll<HTMLInputElement>('input[type="radio"]').forEach((radio) => {
+        radio.checked = false;
+      });
+      stationCards.forEach((card) => card.classList.remove('is-chosen'));
+      clearAutoTopic();
+      if (autoQuestionBlock && textarea && textarea.value.includes(autoQuestionBlock)) {
+        textarea.value = textarea.value.replace(autoQuestionBlock, '').replace(/\n{3,}/g, '\n\n').trim();
+      }
+      autoQuestionBlock = null;
+      desk.querySelector<HTMLInputElement>('input')?.focus({ preventScroll: true });
     });
 
     const selectTopicChip = (topic: string) => {
       if (!topicChips) return;
       const inputs = Array.from(topicChips.querySelectorAll<HTMLInputElement>('[data-topic-input]'));
       let matched = inputs.find((input) => input.value.toLowerCase() === topic.toLowerCase());
+      if (autoTopicInput && autoTopicInput !== matched) clearAutoTopic();
       if (!matched) {
         // Dynamically add a chip if a specific VS arrangement was chosen
         const label = document.createElement('label');
@@ -187,6 +221,7 @@ const stepsAfterSubmit = L.talk.steps;
         input.value = topic;
         input.className = 'sr-only';
         input.setAttribute('data-topic-input', '');
+        input.setAttribute('data-dynamic-topic', '');
         const span = document.createElement('span');
         span.textContent = topic;
         label.append(input, span);
@@ -194,6 +229,7 @@ const stepsAfterSubmit = L.talk.steps;
         matched = input;
       }
       matched.checked = true;
+      autoTopicInput = matched;
       const more = topicChips.closest('details');
       if (more) more.open = true;
     };
@@ -228,6 +264,7 @@ const stepsAfterSubmit = L.talk.steps;
           if (!textarea.value.includes(question)) {
             textarea.value = textarea.value ? `${textarea.value.trimEnd()}\n\n${line}` : line;
           }
+          autoQuestionBlock = line;
           showContext(question);
         }
 

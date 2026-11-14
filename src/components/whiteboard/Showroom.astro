@@ -11,8 +11,8 @@ import VSChair from './art/VSChair.astro';
 const lang = getLang(Astro.currentLocale);
 const de = lang === 'de';
 const copy = de
-  ? { eyebrow: 'Showroom', title: 'Möbel, die mitlernen.', text: 'Ein paar Stücke aus dem VS-Programm zum Drehen und Ansehen: vom Schwingstuhl über den Wackelhocker bis zur Gruppeninsel.', hint: 'Ziehen zum Drehen', pick: 'Möbelstück wählen', drag: 'Zum Drehen ziehen.' }
-  : { eyebrow: 'Showroom', title: 'Arredi che imparano con te.', text: 'Alcuni pezzi del programma VS da girare e osservare: dalla sedia oscillante allo sgabello dinamico fino all’isola di gruppo.', hint: 'Trascina per ruotare', pick: 'Scegli un pezzo', drag: 'Trascinare per ruotare.' };
+  ? { eyebrow: 'Showroom', title: 'Möbel, die mitlernen.', text: 'Ein paar Stücke aus dem VS-Programm zum Drehen und Ansehen: vom Schwingstuhl über den Wackelhocker bis zur Gruppeninsel.', hint: 'Ziehen zum Drehen', pick: 'Möbelstück wählen', drag: 'Zum Drehen ziehen oder Pfeiltasten nutzen.' }
+  : { eyebrow: 'Showroom', title: 'Arredi che imparano con te.', text: 'Alcuni pezzi del programma VS da girare e osservare: dalla sedia oscillante allo sgabello dinamico fino all’isola di gruppo.', hint: 'Trascina per ruotare', pick: 'Scegli un pezzo', drag: 'Trascinare o usare i tasti freccia per ruotare.' };
 const viewer = de
   ? { activate: 'In 3D ansehen', loading: '3D-Ansicht lädt …', retry: 'Erneut versuchen', error: 'Die 3D-Ansicht konnte nicht geladen werden. Bitte versuchen Sie es erneut.' }
   : { activate: 'Visualizza in 3D', loading: 'Caricamento vista 3D …', retry: 'Riprova', error: 'Impossibile caricare la vista 3D. Riprova.' };
@@ -61,7 +61,7 @@ const first = pieces[0];
     <figure class="showroom-frame" data-showroom>
       <div class="frame-inner">
         <span class="spot" aria-hidden="true"></span>
-        <canvas data-showroom-canvas role="img" aria-label={first.label}></canvas>
+        <canvas data-showroom-canvas tabindex="0" role="img" aria-label={first.label}></canvas>
         <div class="showroom-launch">
           <div class="showroom-preview" aria-hidden="true"><VSChair id="showroom-preview" /></div>
           <button class="showroom-activate btn btn-ginster" type="button" data-showroom-activate data-loading-label={viewer.loading} data-retry-label={viewer.retry} data-error-label={viewer.error}>{viewer.activate}</button>
@@ -85,7 +85,6 @@ const first = pieces[0];
             data-spec={p.spec}
             data-label={p.label}
             aria-pressed={i === 0 ? 'true' : 'false'}
-            disabled
           >
             <span class="swatch" style={`--swatch: ${p.swatch}`} aria-hidden="true"></span>
             {p.tab}
@@ -121,7 +120,7 @@ const first = pieces[0];
     margin: 0;
     padding: clamp(10px, 1.2vw, 16px);
     background: var(--color-ink);
-    border-radius: 6px;
+    border-radius: 2px;
     box-shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.45);
   }
   .frame-inner {
@@ -186,10 +185,10 @@ const first = pieces[0];
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    min-height: 40px;
+    min-height: 44px;
     padding: 0 14px 0 10px;
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: 2px;
     background: transparent;
     color: var(--color-paper);
     font: inherit;

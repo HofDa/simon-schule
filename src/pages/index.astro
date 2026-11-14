@@ -1,26 +1,6 @@
 ---
-/**
- * Only the Lernraum (Best-of) is shown for now, so the start page forwards straight to it.
- * The other variants and the chooser are parked as _whiteboard.astro, _whiteboard-ruhig.astro,
- * _klassenzimmer.astro and _entwuerfe.astro in this folder: Astro does not build pages whose
- * name starts with an underscore. To bring them back, remove the underscore (and make
- * _entwuerfe.astro the index again), then set `variantSwitcher` on the Lernraum layout.
- */
-import { asset } from '../lib/paths';
-
-const target = asset('lernraum/');
+/** The German home page: "Der Lernraum", served directly at /. */
+import Home from '../components/whiteboard/lernraum/Home.astro';
 ---
 
-<!doctype html>
-<html lang="de">
-  <head>
-    <meta charset="utf-8" />
-    <title>Trias Schule</title>
-    <meta name="robots" content="noindex" />
-    <meta http-equiv="refresh" content={`0;url=${target}`} />
-    <script is:inline define:vars={{ target }}>location.replace(target + location.hash);</script>
-  </head>
-  <body>
-    <a href={target}>Trias Schule: Lernräume für Südtirol</a>
-  </body>
-</html>
+<Home />

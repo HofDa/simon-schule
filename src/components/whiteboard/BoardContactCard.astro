@@ -82,7 +82,10 @@ const phoneHref = person.phone ? `tel:${person.phone.replace(/[^\d+]/g, '')}` : 
 
   .card-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 14px; margin-top: 1.2cqh; padding-top: 1cqh; border-top: 1px dashed #d9d5c9; }
   .card-lines { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-  .card-lines a { display: inline-flex; align-items: center; gap: 6px; min-height: 28px; font-size: clamp(11px, .85cqw, 13px); font-weight: 600; color: var(--color-ink); text-decoration: underline; text-decoration-color: #d9d5c9; text-underline-offset: 3px; overflow-wrap: anywhere; }
+  .card-lines a { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; font-size: clamp(11px, .85cqw, 13px); font-weight: 600; color: var(--color-ink); text-decoration: underline; text-decoration-color: #d9d5c9; text-underline-offset: 3px; overflow-wrap: anywhere; }
+  @media (pointer: coarse) {
+    .card-lines a { min-height: 44px; }
+  }
   .card-lines a:hover { text-decoration-color: var(--color-ginster); }
   .card-lines a span { color: var(--color-ginster-deep); text-decoration: none; }
   .card-cta {
@@ -106,7 +109,7 @@ const phoneHref = person.phone ? `tel:${person.phone.replace(/[^\d+]/g, '')}` : 
 
   /* narrow boards: a little lower, leaving room for the arrow from the feedback */
   @container (max-width: 1050px) {
-    .object-card { top: 64%; }
+    .object-card { left: 73%; top: 64%; }
   }
 
   @media (max-height: 800px) {

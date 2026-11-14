@@ -116,9 +116,9 @@ const phases = ui.form.phases.map((name, i) => ({ name, hint: t.hints[i] }));
   .station.is-chosen .station-n {
     background: var(--color-ginster);
   }
-  .station-copy { display: grid; gap: 6px; padding-top: 8px; }
+  .station-copy { display: grid; gap: 6px; padding-top: 8px; min-width: 0; }
   .station-label { color: var(--color-muted); font-size: var(--text-label); letter-spacing: 0.08em; text-transform: uppercase; }
-  .station-name { font-size: var(--text-phi-1); font-weight: 600; line-height: 1.1; letter-spacing: -0.03em; }
+  .station-name { font-size: var(--text-phi-1); font-weight: 600; line-height: 1.1; letter-spacing: -0.03em; overflow-wrap: break-word; hyphens: auto; }
   .station-hint { max-width: 32ch; color: var(--color-muted); font-size: var(--text-meta); line-height: 1.5; }
   .station-go {
     margin-top: 4px;
@@ -146,7 +146,7 @@ const phases = ui.form.phases.map((name, i) => ({ name, hint: t.hints[i] }));
 
     .route { grid-template-columns: repeat(5, minmax(0, 1fr)); column-gap: clamp(12px, 1.6vw, 24px); }
     .route::before { left: 58px; right: 10%; top: 58px; bottom: auto; border-left: 0; border-top: 2px dashed var(--color-ginster-deep); }
-    .station { grid-template-columns: 1fr; gap: 12px; height: 100%; }
+    .station { grid-template-columns: 1fr; gap: 12px; height: 100%; min-width: 0; }
     .station-copy { padding-top: 0; }
     .station-name { font-size: clamp(var(--text-lead), 1.75vw, var(--text-phi-1)); }
   }

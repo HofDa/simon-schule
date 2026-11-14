@@ -1,0 +1,92 @@
+---
+/**
+ * Concise visible FAQ section matching the JSON-LD `FAQPage` graph in `src/lib/seo.ts`.
+ * Open semantic `<dl>` rows keep answers immediately readable for visitors, crawlers, and LLMs.
+ */
+import { getLang } from '../../../i18n/ui';
+import { lernraumCopy } from '../../../i18n/lernraum';
+
+const lang = getLang(Astro.currentLocale);
+const faq = lernraumCopy(lang).faq;
+---
+
+<section id="faq" class="lr-faq" aria-labelledby="faq-title">
+  <div class="shell faq-grid">
+    <div class="faq-head">
+      <p class="faq-eyebrow marker">{faq.eyebrow}</p>
+      <h2 id="faq-title" class="text-headline leading-[0.98] tracking-[-0.03em]">{faq.title}</h2>
+      <p class="faq-lead">{faq.lead}</p>
+    </div>
+
+    <dl class="faq-list">
+      {faq.items.map((item) => (
+        <div class="faq-item">
+          <dt class="faq-question">{item.question}</dt>
+          <dd class="faq-answer">{item.answer}</dd>
+        </div>
+      ))}
+    </dl>
+  </div>
+</section>
+
+<style>
+  .lr-faq {
+    padding-block: clamp(72px, 8vw, 128px);
+    border-bottom: 1px solid var(--color-line);
+  }
+  .faq-grid {
+    display: grid;
+    gap: clamp(32px, 5vw, 64px);
+  }
+  .faq-eyebrow {
+    font-size: clamp(1rem, 1.4vw, 1.25rem);
+    color: var(--color-ginster-deep);
+    margin-bottom: 12px;
+  }
+  .faq-lead {
+    margin-top: 18px;
+    max-width: 40ch;
+    color: var(--color-muted);
+    font-size: var(--text-body);
+    line-height: 1.65;
+  }
+  .faq-list {
+    margin: 0;
+    display: grid;
+  }
+  .faq-item {
+    padding-block: 24px;
+    border-top: 1px solid var(--color-line);
+  }
+  .faq-item:last-child {
+    border-bottom: 1px solid var(--color-line);
+  }
+  .faq-question {
+    font-size: clamp(1.0625rem, 1.4vw, 1.25rem);
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+    color: var(--color-ink);
+  }
+  .faq-answer {
+    margin: 10px 0 0;
+    max-width: 65ch;
+    color: var(--color-muted);
+    font-size: var(--text-meta);
+    line-height: 1.65;
+  }
+
+  @media (min-width: 1024px) {
+    .faq-grid {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: clamp(24px, 2.6vw, 44px);
+      align-items: start;
+    }
+    .faq-head {
+      grid-column: 1 / 5;
+    }
+    .faq-list {
+      grid-column: 6 / 13;
+    }
+  }
+</style>

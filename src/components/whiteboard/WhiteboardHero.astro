@@ -73,10 +73,10 @@ const wide = (() => {
   return { 't-images': images, 't-offer': offer, 't-actions': actions, 't-chair': actions + RISE + 0.6 };
 })();
 const narrow = (() => {
-  const offer = T_SETTLE;
-  const actions = offer + 0.4;
-  const images = actions + RISE + 0.4;
-  return { 't-images': images, 't-offer': offer, 't-actions': actions, 't-chair': images + PIN_STEP + PIN + 0.4 };
+  const offer = 0.35;
+  const actions = 0.55;
+  const images = actions + RISE + 0.25;
+  return { 't-images': images, 't-offer': offer, 't-actions': actions, 't-chair': images + PIN_STEP + PIN + 0.3 };
 })();
 const css = (vars: Record<string, number>) => Object.entries(vars).map(([k, v]) => `--${k}:${v.toFixed(2)}s`).join(';');
 const timelineCss = `:root{${css({ 'hero-write': writeDuration, 't-claim': T_CLAIM, 't-after': T_AFTER, 'pin-step': PIN_STEP, ...wide })}}`
@@ -128,7 +128,7 @@ const timelineCss = `:root{${css({ 'hero-write': writeDuration, 't-claim': T_CLA
                 {words.map((letters, wi) => (
                   <>
                     <span class={`word${wi === words.length - 1 ? ' word-last' : ''}`}>
-                      {letters.map((l) => <span class="ch" style={`--cd: ${l.delay}s`}>{l.char}</span>)}
+                      {letters.map((l) => <span class="ch" style={`--cd: ${l.delay}s`} data-ch={l.char}></span>)}
                       {wi === words.length - 1 && (
                         <svg class="hand-underline" viewBox="0 0 300 16" preserveAspectRatio="none">
                           <path pathLength="1" d="M4 10 C60 5 130 12 190 8 S270 6 296 9" />
@@ -287,6 +287,7 @@ const timelineCss = `:root{${css({ 'hero-write': writeDuration, 't-claim': T_CLA
   .handwriting { display: block; transform: rotate(-1.5deg); transform-origin: 0 100%; }
   .word { display: inline-block; white-space: nowrap; position: relative; }
   .ch { display: inline-block; }
+  .ch::before { content: attr(data-ch); }
   .claim {
     display: block;
     width: var(--w);

@@ -1,7 +1,8 @@
 import type { APIRoute } from 'astro';
 import { homeFor, legalFor } from '../lib/paths';
+import { useTranslations, type Lang } from '../i18n/ui';
 
-const pagePairs = [
+const pagePairs: Record<Lang, string>[] = [
   { de: homeFor('de'), it: homeFor('it') },
   { de: legalFor('de', 'imprint'), it: legalFor('it', 'imprint') },
   { de: legalFor('de', 'privacy'), it: legalFor('it', 'privacy') },
@@ -13,8 +14,8 @@ const xmlEscape = (value: string) =>
 export const GET: APIRoute = ({ site }) => {
   const urls = site
     ? pagePairs.flatMap((pair) => {
-        const alternates = Object.entries(pair)
-          .map(([lang, path]) => `    <xhtml:link rel="alternate" hreflang="${lang}" href="${xmlEscape(new URL(path, site).href)}" />`)
+        const alternates = (Object.entries(pair) as [Lang, string][])
+          .map(([lang, path]) => `    <xhtml:link rel="alternate" hreflang="${useTranslations(lang).hreflang}" href="${xmlEscape(new URL(path, site).href)}" />`)
           .join('\n');
         const xDefault = `    <xhtml:link rel="alternate" hreflang="x-default" href="${xmlEscape(new URL(pair.de, site).href)}" />`;
 

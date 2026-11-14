@@ -50,7 +50,7 @@ const placed = seats.map((seat, i) => {
 <section id="menschen" class="lr-people" aria-labelledby="people-title">
   <div class="shell grid-wrap">
     <div class="copy">
-      <Lesson n="03" name={L.lesson.people.name} note={L.lesson.people.note} layout="circle" from="groups" />
+      <Lesson n="03" name={L.lesson.people.name} note={L.lesson.people.note} layout="circle" from="frontal" />
       <h2 id="people-title" class="text-headline leading-[0.98] tracking-[-0.03em]">{t.title}</h2>
       <p class="mt-6 max-w-[46ch] text-body leading-[1.65] text-muted lg:text-lead">{t.intro}</p>
 
@@ -98,6 +98,18 @@ const placed = seats.map((seat, i) => {
               <span>{q}</span>
             </button>
           ))}
+        </div>
+        <div class="picker-answer" aria-live="polite">
+          <p class="picker-why" data-lr-picker-why>{questionAnswers[0]}</p>
+          <a
+            href="#anfrage"
+            class="picker-cta link-line"
+            data-open-form
+            data-question={t.questions[0]}
+            data-lr-picker-cta
+          >
+            {L.people.take} →
+          </a>
         </div>
       </div>
     </div>
@@ -224,6 +236,15 @@ const placed = seats.map((seat, i) => {
     place-items: center;
     flex: none;
   }
+  .picker-answer {
+    display: none;
+    margin-top: 12px;
+    padding: 14px 16px;
+    background: var(--color-paper);
+    border-left: 3px solid var(--color-ginster);
+  }
+  .picker-why { font-size: var(--text-meta); line-height: 1.55; color: var(--color-muted); }
+  .picker-cta { display: inline-block; margin-top: 10px; font-size: var(--text-meta); font-weight: 600; color: var(--color-ink); }
 
   .ring-wrap { display: grid; place-items: center; }
   .kz-ring {
@@ -354,6 +375,7 @@ const placed = seats.map((seat, i) => {
   @media (max-width: 539px) {
     .persons { grid-template-columns: 1fr; }
     .middle-label, .question-why { display: none; }
+    .picker-answer { display: block; }
   }
 </style>
 
@@ -363,6 +385,9 @@ const placed = seats.map((seat, i) => {
   if (section && ring) {
     const questions = Array.from(ring.querySelectorAll<HTMLElement>('[data-lr-question]'));
     const triggers = Array.from(section.querySelectorAll<HTMLButtonElement>('[data-lr-ask]'));
+    const picker = section.querySelector<HTMLElement>('.question-picker');
+    const pickerWhy = section.querySelector<HTMLElement>('[data-lr-picker-why]');
+    const pickerCta = section.querySelector<HTMLAnchorElement>('[data-lr-picker-cta]');
     let current = 0;
     let timer: number | undefined;
 
@@ -377,11 +402,17 @@ const placed = seats.map((seat, i) => {
         btn.classList.toggle('is-asking', on);
         btn.setAttribute('aria-pressed', String(on));
       });
+      const active = questions[q];
+      if (pickerWhy && active) pickerWhy.textContent = active.querySelector('.question-why')?.textContent ?? '';
+      if (pickerCta && active) pickerCta.dataset.question = active.querySelector('.question')?.textContent ?? '';
     };
 
     ring.classList.add('is-live');
     ask(0);
-    const stop = () => window.clearInterval(timer);
+    const stop = () => {
+      window.clearInterval(timer);
+      timer = undefined;
+    };
 
     triggers.forEach((btn) => {
       btn.addEventListener('click', () => {
@@ -392,13 +423,25 @@ const placed = seats.map((seat, i) => {
 
     if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window) {
       let stopped = false;
-      triggers.forEach((btn) => btn.addEventListener('click', () => { stopped = true; }));
+      let paused = false;
+      let visible = false;
+      const syncTimer = () => {
+        stop();
+        if (visible && !stopped && !paused) {
+          timer = window.setInterval(() => ask((current + 1) % questions.length), 4200);
+        }
+      };
+      triggers.forEach((btn) => btn.addEventListener('click', () => { stopped = true; syncTimer(); }));
+      for (const target of [ring, picker].filter((el): el is HTMLElement => Boolean(el))) {
+        target.addEventListener('pointerenter', () => { paused = true; syncTimer(); });
+        target.addEventListener('pointerleave', () => { paused = false; syncTimer(); });
+        target.addEventListener('focusin', () => { paused = true; syncTimer(); });
+        target.addEventListener('focusout', () => { paused = false; syncTimer(); });
+      }
       new IntersectionObserver(
         ([entry]) => {
-          stop();
-          if (entry.isIntersecting && !stopped) {
-            timer = window.setInterval(() => ask((current + 1) % questions.length), 4200);
-          }
+          visible = entry.isIntersecting;
+          syncTimer();
         },
         { threshold: 0.4 },
       ).observe(ring);

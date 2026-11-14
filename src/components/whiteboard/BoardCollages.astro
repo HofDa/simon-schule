@@ -131,7 +131,7 @@ const words = { view: G.view('{n}'), photo: G.photo, project: G.project, credit:
       <div class="gallery-set" data-gallery-set={c.slug} data-name={c.name} data-credit={c.credit ?? ''} hidden>
         {c.photos.map((p, k) => (
           <figure class="slide" data-slide hidden={k !== 0}>
-            <ResponsiveImage src={p.image} alt="" widths={[640, 960, 1280, 1600, 2000]} sizes="(min-width: 1024px) 82vw, 100vw" quality={82} loading="lazy" draggable="false" />
+            <ResponsiveImage src={p.image} alt={`${c.name} – ${p.alt}`} widths={[640, 960, 1280, 1600, 2000]} sizes="(min-width: 1024px) 82vw, 100vw" quality={82} loading="lazy" draggable="false" />
             <figcaption>{p.alt}</figcaption>
           </figure>
         ))}
@@ -162,17 +162,17 @@ const words = { view: G.view('{n}'), photo: G.photo, project: G.project, credit:
 </dialog>
 
 <style>
-  .object-projects { --print-h: min(18cqh, 12.6cqw); width: auto; }
+  .object-projects { --print-h: min(18cqh, 10.4cqw); width: auto; }
   /* the three stacks, fanned out a little in the upper right corner */
-  .object-projects-gs { left: 46%; top: 8%; rotate: -2.5deg; }
-  .object-projects-ms { left: 63.5%; top: 5%; rotate: 1.5deg; }
-  .object-projects-kb { left: 81%; top: 9%; rotate: -1deg; }
+  .object-projects-gs { left: 44.5%; top: 8%; rotate: -2.5deg; }
+  .object-projects-ms { left: 62.5%; top: 5%; rotate: 1.5deg; }
+  .object-projects-kb { left: 80.5%; top: 9%; rotate: -1deg; }
   /* narrow boards: a little smaller, so the three stay apart and on the board */
-  @container (max-width: 1050px) {
-    .object-projects { --print-h: min(16cqh, 11.2cqw); }
-    .object-projects-gs { left: 45%; }
+  @container (max-width: 1120px) {
+    .object-projects { --print-h: min(15.5cqh, 9.6cqw); }
+    .object-projects-gs { left: 44%; }
     .object-projects-ms { left: 62%; }
-    .object-projects-kb { left: 79%; }
+    .object-projects-kb { left: 80%; }
   }
   /* the magnet holds the whole stack, so it sits above every print */
   /* a round button magnet holds each stack; its icon names the kind of building. It is the drag handle. */
@@ -233,7 +233,7 @@ const words = { view: G.view('{n}'), photo: G.photo, project: G.project, credit:
     white-space: nowrap;
   }
   .print figcaption span:first-child { overflow: hidden; text-overflow: ellipsis; }
-  .print-number { color: #8a887e; font-size: .8em; }
+  .print-number { color: var(--color-muted); font-size: .8em; }
 
   /* the stack: the two prints under the top one peek out, everything further down hides under them */
   .collage-stack :global(.print[data-depth='1']) { --dx: 2.5%; --dy: 2.5%; }
@@ -263,21 +263,25 @@ const words = { view: G.view('{n}'), photo: G.photo, project: G.project, credit:
   .collage-open:focus-visible { outline: 3px solid var(--color-ginster-deep); outline-offset: 10px; }
   .collage-open-hint {
     position: absolute;
-    left: 50%;
-    top: calc(7px + var(--print-h) - 14px);
-    translate: -50% -100%;
-    padding: 7px 14px;
-    border-radius: 999px;
-    background: #1d1d1be6;
+    right: 10px;
+    top: calc(5px + var(--print-h) - 8px);
+    translate: 0 -100%;
+    padding: 5px 10px;
+    border-radius: 2px;
+    background: #1d1d1bd9;
     color: #fff;
-    font-size: clamp(11px, .95cqw, 14px);
+    font-size: clamp(10px, .85cqw, 12px);
     font-weight: 600;
     white-space: nowrap;
-    opacity: 0;
-    transition: opacity 200ms ease, translate 200ms ease;
+    opacity: .92;
+    transition: opacity 200ms ease, translate 200ms ease, background-color 200ms ease;
     pointer-events: none;
   }
-  .collage-open:hover .collage-open-hint, .collage-open:focus-visible .collage-open-hint { opacity: 1; translate: -50% calc(-100% - 6px); }
+  .collage-open:hover .collage-open-hint, .collage-open:focus-visible .collage-open-hint {
+    opacity: 1;
+    background: var(--color-ink);
+    translate: 0 calc(-100% - 3px);
+  }
 
   .collage-actions {
     display: flex;

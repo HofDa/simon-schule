@@ -9,6 +9,26 @@
 import type { Lang } from './ui';
 
 const de = {
+  narrative: {
+    eyebrow: 'Warum kein Lernraum wie der andere ist',
+    title: 'Ein Lernraum beginnt nicht im Möbelkatalog – sondern im Alltag.',
+    tensionLabel: 'Die Realität vor Ort',
+    tensionText:
+      'Zwischen Morgenkreis, ruhiger Einzelarbeit und Gruppenphase wechseln Räume heute mehrmals am Tag. Gleichzeitig müssen Gemeindebudgets, Ausschreibungen und kurze Sommerferien-Fenster exakt zusammenpassen. Einzelne Möbel von der Stange lösen diesen Spagat selten.',
+    answerLabel: 'Unser Weg in Südtirol',
+    answerText:
+      'Wir starten nicht beim Prospekt, sondern bei den Menschen im Raum. Vom ersten Gespräch vor Ort über Grundrissplanung und Leistungsverzeichnis bis zur pünktlichen Montage begleiten Simon Brugger und unser Team aus Meran und Brixen Ihr Projekt aus einer Hand.',
+    proof: {
+      countLabel: 'eingerichtete Bildungsräume & Einrichtungen in Südtirol – von Grund- und Mittelschulen bis zu Kindergärten und Bibliotheken',
+      localTitle: 'Meran & Brixen',
+      localText: 'persönliche Beratung vor Ort, Bemusterung im Haus und eigenes Montageteam in ganz Südtirol',
+      vsTitle: 'VS Möbel',
+      vsText: 'Exklusivpartner in Südtirol – modulare Systeme für bewegtes Lernen, Rückzug und offene Lernlandschaften',
+    },
+    bridgeLead: 'Wie sieht das konkret aus, wenn ein einziger Raum sich innerhalb von zwei Minuten verwandelt?',
+    bridgeCta: 'Raumverwandlung entdecken',
+    bridgeInquiry: 'Direkt Projekt anfragen',
+  },
   lesson: {
     label: 'Sitzordnung',
     services: { name: 'Frontal', note: 'zuhören, verstehen, den Ablauf überblicken' },
@@ -142,6 +162,9 @@ const de = {
     notesLabel: 'Planungsgedanken zu diesem Raum',
     notesHeading: 'Unser Planungsblick im Detail:',
     cta: 'Ähnlichen Raum planen',
+    referencesTitle: 'Ausgewählte Referenzprojekte in Südtirol',
+    referencesSub: 'Einblicke in eingerichtete Schulen, Kindergärten und Bibliotheken – klicken Sie auf ein Projekt, um die Fotos anzusehen.',
+    photosCount: (n: number) => `${n} Fotos`,
     annotations: {
       'schule-klassenraeume': {
         topic: 'Klassenraum / Schule',
@@ -323,11 +346,63 @@ const de = {
       position: '{label}: {left} Prozent von links, {top} Prozent von oben.',
     },
   },
+  faq: {
+    eyebrow: 'Häufige Fragen',
+    title: 'Kurz geklärt zu Planung, VS Möbel & Ablauf.',
+    lead: 'Die wichtigsten Antworten für Schulführungen, Kindergärten, Gemeinden und Planungsbüros in Südtirol.',
+    items: [
+      {
+        question: 'Wer vertritt VS Möbel in Südtirol?',
+        answer:
+          'Trias Schule – ein Geschäftsbereich der Trias KG der Anders GmbH – ist Exklusivpartner von VS Vereinigte Spezialmöbelfabriken in Südtirol. Simon Brugger begleitet Schulen, Kindergärten und Gemeinden persönlich von den Standorten Meran und Brixen aus.',
+      },
+      {
+        question: 'Wie viele Schulen und Kindergärten hat Trias Schule bereits eingerichtet?',
+        answer:
+          'Zwischen 2015 und 2026 hat Trias 234 Bildungseinrichtungen in Südtirol eingerichtet: 112 Grundschulen, 53 Mittelschulen, 23 Oberschulen, 23 Berufs- & Fachschulen, 15 Kindergärten, 5 Kitas sowie 3 Bibliotheken – unter anderem in Meran, Brixen, Lana, Sterzing, Sarnthein, Gais, Tisens und Terlan.',
+      },
+      {
+        question: 'Wie läuft ein Einrichtungsprojekt – auch bei Ausschreibungen – ab?',
+        answer:
+          'Jedes Projekt beginnt mit einer Vor-Ort-Begehung in Südtirol. Darauf folgen Raum- und Möblierungskonzept sowie bei Bedarf klare Leistungsverzeichnisse für Gemeinden und Ausschreibungen, die Auswahl aus dem VS-Systembaukasten mit Bemusterung, termingerechte Montage und feste Betreuung danach.',
+      },
+      {
+        question: 'Wann findet die Montage statt und lassen sich bestehende Möbel integrieren?',
+        answer:
+          'Lieferung und Montage übernimmt unser eigenes Montageteam in ganz Südtirol, abgestimmt auf Bauzeitpläne und Schulferien, damit zum ersten Schultag oder Öffnungstag alles bereitsteht. Vorhandene Möbel beziehen wir in der Planung auf Wunsch sinnvoll mit ein.',
+      },
+      {
+        question: 'Wo befinden sich die Standorte und wie erreicht man Trias Schule direkt?',
+        answer:
+          'Trias ist in Meran (Romstraße 77, 39012 Meran) und Brixen (Julius-Durst-Straße 70, 39042 Brixen) vor Ort. Für Beratungen, Vor-Ort-Termine oder Musteranfragen erreichen Sie uns unter beratung@trias.it, simon.brugger@trias.it oder telefonisch unter +39 0472 971 206.',
+      },
+    ],
+  },
 };
 
 export type LernraumCopy = typeof de;
 
 const it: LernraumCopy = {
+  narrative: {
+    eyebrow: 'Perché nessuno spazio per imparare è uguale all’altro',
+    title: 'Uno spazio per imparare non nasce da un catalogo – ma dalla vita di ogni giorno.',
+    tensionLabel: 'La realtà quotidiana',
+    tensionText:
+      'Tra cerchio del mattino, lavoro individuale silenzioso e fasi di gruppo, oggi gli spazi cambiano uso più volte al giorno. Allo stesso tempo devono combaciare budget comunali, gare d’appalto e finestre brevi delle vacanze estive. Ordinare singoli mobili a catalogo risolve raramente questo equilibrio.',
+    answerLabel: 'Il nostro metodo in Alto Adige',
+    answerText:
+      'Non partiamo dal prospetto, ma dalle persone che vivono l’aula. Dal primo sopralluogo ai piani d’arredo e al capitolato fino al montaggio puntuale, Simon Brugger e il nostro team di Merano e Bressanone seguono il progetto da un unico referente.',
+    proof: {
+      countLabel: 'strutture formative arredate in Alto Adige – dalle scuole primarie e medie fino a scuole dell’infanzia e biblioteche',
+      localTitle: 'Merano e Bressanone',
+      localText: 'consulenza personale sul posto, campionatura dedicata e squadra di montaggio interna in tutto l’Alto Adige',
+      vsTitle: 'VS Möbel',
+      vsText: 'partner esclusivo in Alto Adige – sistemi modulari per movimento, raccoglimento e paesaggi didattici',
+    },
+    bridgeLead: 'Come funziona concretamente quando una sola aula cambia assetto in due minuti?',
+    bridgeCta: 'Vedere la trasformazione dell’aula',
+    bridgeInquiry: 'Richiedere un progetto',
+  },
   lesson: {
     label: 'Disposizione',
     services: { name: 'Frontale', note: 'ascoltare, capire, avere il quadro del percorso' },
@@ -461,6 +536,9 @@ const it: LernraumCopy = {
     notesLabel: 'Riflessioni di progetto su questo spazio',
     notesHeading: 'Il nostro sguardo di progetto in dettaglio:',
     cta: 'Progettare uno spazio simile',
+    referencesTitle: 'Progetti di riferimento selezionati in Alto Adige',
+    referencesSub: 'Uno sguardo a scuole, scuole dell’infanzia e biblioteche arredate – cliccate su un progetto per vedere le foto.',
+    photosCount: (n: number) => `${n} foto`,
     annotations: {
       'schule-klassenraeume': {
         topic: 'Aula / scuola',
@@ -639,6 +717,38 @@ const it: LernraumCopy = {
       cancelled: 'Spostamento annullato.',
       position: '{label}: {left} per cento da sinistra, {top} per cento dall’alto.',
     },
+  },
+  faq: {
+    eyebrow: 'Domande frequenti',
+    title: 'Risposte rapide su progettazione, mobili VS e tempi.',
+    lead: 'Le informazioni principali per direzioni scolastiche, scuole dell’infanzia, Comuni e studi di architettura in Alto Adige.',
+    items: [
+      {
+        question: 'Chi rappresenta VS Möbel in Alto Adige?',
+        answer:
+          'Trias Schule – un settore di Trias KG der Anders GmbH – è rappresentanza esclusiva di VS Vereinigte Spezialmöbelfabriken in Alto Adige. Simon Brugger segue personalmente scuole, scuole dell’infanzia e Comuni dalle sedi di Merano e Bressanone.',
+      },
+      {
+        question: 'Quante scuole e scuole dell’infanzia ha già arredato Trias Schule?',
+        answer:
+          'Tra il 2015 e il 2026 Trias ha arredato 234 strutture formative in Alto Adige: 112 scuole primarie, 53 scuole medie, 23 scuole superiori, 23 scuole professionali e di specializzazione, 15 scuole dell’infanzia, 5 asili nido e 3 biblioteche – tra cui a Merano, Bressanone, Lana, Vipiteno, Sarentino, Gais, Tesimo e Terlano.',
+      },
+      {
+        question: 'Come si svolge un progetto di arredo, anche in caso di gara d’appalto?',
+        answer:
+          'Ogni progetto inizia con un sopralluogo in Alto Adige. Seguono il concetto di spazio e arredo (e, su richiesta, capitolati chiari per Comuni e gare pubbliche), la scelta dal sistema modulare VS con campionatura, la consegna e il montaggio puntuale e l’assistenza diretta anche dopo la consegna.',
+      },
+      {
+        question: 'Quando avviene il montaggio ed è possibile integrare arredi esistenti?',
+        answer:
+          'Consegna e montaggio sono gestiti dalla nostra squadra interna in tutto l’Alto Adige, in accordo con il cantiere e le vacanze scolastiche, perché tutto sia pronto all’apertura. In fase di progetto integriamo volentieri anche gli arredi già esistenti.',
+      },
+      {
+        question: 'Dove si trovano le sedi e come contattare direttamente Trias Schule?',
+        answer:
+          'Trias è presente a Merano (Via Roma 77, 39012 Merano) e Bressanone (Via Julius Durst 70, 39042 Bressanone). Per consulenze, sopralluoghi o campioni potete scrivere a beratung@trias.it o simon.brugger@trias.it oppure chiamare il +39 0472 971 206.',
+      },
+    ],
   },
 };
 

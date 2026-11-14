@@ -103,7 +103,7 @@ const areas = ['sit', 'tab', 'store', 'flex', 'kg'];
           </>
         );
         return (
-          <li class={`zone zone-${area}`}>
+          <li class={`zone zone-${area}${c.url ? '' : ' zone-direct'}`}>
             {c.url ? (
               <a class="zone-inner" href={c.url} target="_blank" rel="noopener">
                 {body}
@@ -209,6 +209,15 @@ const areas = ['sit', 'tab', 'store', 'flex', 'kg'];
     border-style: solid;
     border-color: var(--color-ink);
   }
+  .zone-direct .zone-inner {
+    background: var(--color-paper);
+    border-style: solid;
+    border-color: var(--color-ginster-deep);
+  }
+  .zone-direct:hover .zone-inner,
+  .zone-direct:focus-within .zone-inner {
+    border-color: var(--color-ink);
+  }
   .glyph { width: 100%; max-width: 220px; height: auto; margin-bottom: 16px; overflow: visible; }
   .glyph .top { fill: var(--color-paper); stroke: var(--color-ink); stroke-width: 1.5; }
   .glyph .soft { fill: var(--color-ginster-light); stroke: var(--color-ink); stroke-width: 1.2; }
@@ -223,11 +232,22 @@ const areas = ['sit', 'tab', 'store', 'flex', 'kg'];
   }
   .zone-name { min-width: 0; font-size: var(--text-title); font-weight: 600; letter-spacing: -0.03em; line-height: 1.05; }
   .zone-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     font-size: var(--text-label);
     font-weight: 600;
-    color: var(--color-muted);
+    color: #57554e;
     white-space: nowrap;
     transition: color 200ms var(--ease-draw);
+  }
+  .zone-direct .zone-action { color: var(--color-ink); }
+  .zone-direct .zone-action::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-ginster);
   }
   .zone:hover .zone-action { color: var(--color-ink); }
   .zone-text { margin-top: 8px; color: var(--color-muted); font-size: var(--text-meta); }

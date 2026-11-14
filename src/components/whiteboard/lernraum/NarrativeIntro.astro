@@ -1,0 +1,356 @@
+---
+/**
+ * "Der Lernraum" – Narrative Opening Bridge directly below the Whiteboard Hero.
+ * Articulates the core thesis ("a learning space begins with daily school life, not a catalog"),
+ * grounds it with Trias Schule's verified 2015–2026 South Tyrol track record, and gives
+ * schools, municipalities, and architects an immediate entry point before diving into the rooms.
+ */
+import { experience } from '../../../data/experience';
+import { getLang, useTranslations } from '../../../i18n/ui';
+import { lernraumCopy } from '../../../i18n/lernraum';
+
+const lang = getLang(Astro.currentLocale);
+const L = lernraumCopy(lang);
+const N = L.narrative;
+const { roles, rolesEyebrow, rolesNote } = L.services;
+const phases = useTranslations(lang).form.phases;
+const totalFacilities = experience.categories.reduce((sum, category) => sum + category.count, 0);
+---
+
+<section id="einstieg" class="lr-narrative" aria-labelledby="narrative-title">
+  <div class="shell">
+    <div class="thesis-grid">
+      <div class="thesis-head">
+        <p class="thesis-eyebrow marker" aria-hidden="true">{N.eyebrow}</p>
+        <h2 id="narrative-title" class="thesis-title">{N.title}</h2>
+      </div>
+
+      <div class="thesis-arc">
+        <article class="arc-step arc-tension">
+          <p class="arc-label">{N.tensionLabel}</p>
+          <p class="arc-text">{N.tensionText}</p>
+        </article>
+        <article class="arc-step arc-answer">
+          <p class="arc-label">{N.answerLabel}</p>
+          <p class="arc-text">{N.answerText}</p>
+        </article>
+      </div>
+    </div>
+
+    <div class="proof-strip">
+      <div class="proof-item">
+        <p class="proof-figure">
+          <span class="proof-num">{totalFacilities}</span>
+          <span class="proof-period">{experience.period}</span>
+        </p>
+        <p class="proof-desc">{N.proof.countLabel}</p>
+      </div>
+      <div class="proof-item">
+        <p class="proof-figure">{N.proof.localTitle}</p>
+        <p class="proof-desc">{N.proof.localText}</p>
+      </div>
+      <div class="proof-item">
+        <p class="proof-figure">{N.proof.vsTitle}</p>
+        <p class="proof-desc">{N.proof.vsText}</p>
+      </div>
+    </div>
+
+    <div class="roles" aria-labelledby="roles-heading">
+      <div class="roles-head">
+        <p id="roles-heading" class="roles-eyebrow">{rolesEyebrow}</p>
+        <p class="roles-note marker" aria-hidden="true">{rolesNote}</p>
+      </div>
+      <div class="roles-grid">
+        {roles.map((r) => (
+          <article class="role-card">
+            <p class="role-audience">{r.audience}</p>
+            <h3 class="role-title">{r.title}</h3>
+            <p class="role-text">{r.text}</p>
+            <a
+              href="#anfrage"
+              class="role-link link-line"
+              data-open-form
+              data-phase={phases[r.phase]}
+              data-topic={r.topic}
+            >
+              {r.cta}
+              <span aria-hidden="true">→</span>
+            </a>
+          </article>
+        ))}
+      </div>
+    </div>
+
+    <div class="bridge">
+      <p class="bridge-lead">{N.bridgeLead}</p>
+      <div class="bridge-actions">
+        <a href="#lernformen" class="bridge-next link-line">
+          {N.bridgeCta}
+          <span aria-hidden="true">↓</span>
+        </a>
+        <a href="#anfrage" class="btn btn-ink" data-open-form>
+          {N.bridgeInquiry}
+          <svg class="btn-arrow h-3.5 w-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" /></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .lr-narrative {
+    background: var(--color-warm);
+    border-top: 1px solid var(--color-line);
+    border-bottom: 1px solid var(--color-line);
+    padding-block: clamp(56px, 7vw, 108px);
+  }
+
+  .thesis-grid {
+    display: grid;
+    gap: clamp(32px, 4vw, 56px);
+  }
+  .thesis-eyebrow {
+    position: relative;
+    z-index: 0;
+    display: inline-block;
+    font-size: var(--text-marker);
+    color: var(--color-ink);
+    transform: rotate(-1.2deg);
+    margin-bottom: 14px;
+  }
+  .thesis-eyebrow::after {
+    content: '';
+    position: absolute;
+    left: -1%;
+    right: -3%;
+    bottom: 0.04em;
+    height: 0.2em;
+    border-radius: 99px;
+    background: var(--color-ginster);
+    opacity: 0.55;
+    z-index: -1;
+  }
+  .thesis-title {
+    max-width: 18ch;
+    font-size: clamp(2.1rem, 3.8vw, 3.5rem);
+    font-weight: 600;
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+  }
+
+  .thesis-arc {
+    display: grid;
+    gap: 24px;
+  }
+  .arc-step {
+    padding-left: 20px;
+    border-left: 2px solid var(--color-line);
+  }
+  .arc-answer {
+    border-left-width: 3px;
+    border-left-color: var(--color-ginster-deep);
+  }
+  .arc-label {
+    font-size: var(--text-label);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #57554e;
+    margin-bottom: 8px;
+  }
+  .arc-answer .arc-label {
+    color: var(--color-ink);
+  }
+  .arc-text {
+    max-width: 54ch;
+    color: var(--color-ink);
+    font-size: var(--text-body);
+    line-height: 1.65;
+  }
+  .arc-tension .arc-text {
+    color: #4f4e48;
+  }
+
+  /* Proof anchor strip */
+  .proof-strip {
+    margin-top: clamp(44px, 5vw, 72px);
+    padding-block: clamp(24px, 3vw, 36px);
+    border-top: 1px solid var(--color-line);
+    border-bottom: 1px solid var(--color-line);
+    display: grid;
+    gap: 24px;
+  }
+  .proof-figure {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 10px;
+    font-size: clamp(1.4rem, 2.2vw, 1.95rem);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-ink);
+  }
+  .proof-period {
+    font-size: var(--text-label);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: #57554e;
+    padding: 2px 8px;
+    background: var(--color-paper);
+    border: 1px solid var(--color-line);
+  }
+  .proof-desc {
+    margin-top: 8px;
+    max-width: 38ch;
+    color: var(--color-muted);
+    font-size: var(--text-meta);
+    line-height: 1.55;
+  }
+
+  /* 3 decision-maker perspectives */
+  .roles {
+    margin-top: clamp(36px, 4.5vw, 56px);
+    padding: clamp(24px, 3vw, 40px);
+    background: var(--color-paper);
+    border: 1px solid var(--color-line);
+    border-top: 2px solid var(--color-ink);
+  }
+  .roles-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--color-line);
+  }
+  .roles-eyebrow {
+    font-size: var(--text-label);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #57554e;
+  }
+  .roles-note {
+    font-size: var(--text-marker);
+    color: var(--color-ink);
+    transform: rotate(-1.5deg);
+  }
+  .roles-grid {
+    display: grid;
+    gap: 28px;
+    margin-top: 24px;
+  }
+  .role-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .role-audience {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: var(--text-label);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-ink);
+  }
+  .role-audience::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--color-ginster);
+  }
+  .role-title {
+    margin-top: 10px;
+    font-size: clamp(1.25rem, 1.6vw, 1.55rem);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+  }
+  .role-text {
+    margin-top: 10px;
+    color: var(--color-muted);
+    font-size: var(--text-meta);
+    line-height: 1.6;
+  }
+  .role-link {
+    margin-top: auto;
+    padding-top: 14px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: var(--text-meta);
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+
+  /* Story bridge into the room transformation */
+  .bridge {
+    margin-top: clamp(32px, 4vw, 48px);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px 24px;
+  }
+  .bridge-lead {
+    color: var(--color-ink);
+    font-size: var(--text-lead);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    max-width: 46ch;
+  }
+  .bridge-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px 24px;
+  }
+  .bridge-next {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: var(--text-meta);
+    font-weight: 600;
+  }
+
+  @media (min-width: 768px) {
+    .proof-strip {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: clamp(20px, 3vw, 40px);
+    }
+    .proof-item + .proof-item {
+      border-left: 1px solid var(--color-line);
+      padding-left: clamp(20px, 2.4vw, 36px);
+    }
+    .roles-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: clamp(24px, 3vw, 44px);
+    }
+    .role-card + .role-card {
+      border-left: 1px solid var(--color-line);
+      padding-left: clamp(20px, 2.4vw, 36px);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .thesis-grid {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: clamp(24px, 2.6vw, 44px);
+      align-items: start;
+    }
+    .thesis-head {
+      grid-column: 1 / 6;
+    }
+    .thesis-arc {
+      grid-column: 7 / 13;
+    }
+  }
+</style>

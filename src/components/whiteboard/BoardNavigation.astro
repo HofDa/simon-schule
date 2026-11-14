@@ -15,6 +15,7 @@ import vsCatalogFirstPage from '../../assets/whiteboard/vs-school-catalog-first-
 import '../../styles/board-navigation.css';
 import { getLang } from '../../i18n/ui';
 import { lernraumCopy } from '../../i18n/lernraum';
+import { isHome } from '../../lib/paths';
 
 const lang = getLang(Astro.currentLocale);
 const B = lernraumCopy(lang).board;
@@ -24,7 +25,7 @@ const B = lernraumCopy(lang).board;
 const showTopicObjects = false;
 // Temporarily hide the numbered process arrows and labels between board objects.
 const showProjectPath = false;
-const hasLearning = /\/(lernraum|whiteboard-ruhig|it)\/?$/.test(Astro.url.pathname);
+const hasLearning = isHome(Astro.url.pathname, lang) || /\/(lernraum|whiteboard-ruhig|it)\/?$/.test(Astro.url.pathname);
 const vsSchoolCatalog = 'https://web-media.vs.de/file/p1/pdf/45-057-49_V2026-01_DE_Basics--Der-Katalog-fuer-die-Schule.archiv.pdf';
 // whiteboard marker colours for the pen and the ruler's arrows; the first is the default
 const penColors = ['#20201d', '#2b4f9e', '#c23a2c', '#2f7a4c'].map((value, i) => ({ name: B.tools.colourNames[i], value }));
@@ -38,7 +39,7 @@ const topics = (['leistungen', ...(hasLearning ? ['lernformen'] : []), 'projekte
     <div class="board-canvas">
       <div class="board-intro">
         <a class="board-wordmark" href="#top" aria-label={B.wordmark}><Logo /></a>
-        <h1 id="board-title">{B.title[0]}<br />{B.title[1]}<span>.</span></h1>
+        <p id="board-title" class="board-title" role="heading" aria-level="1">{B.title[0]}<br />{B.title[1]}<span>.</span></p>
         <p class="board-description">{B.description[0]}<br />{B.description[1]}<br />{B.description[2]}</p>
         <div class="board-cta" data-path-node="1">
           <a class="board-cta-main" href="#anfrage" data-open-form>{B.cta} <span aria-hidden="true">→</span></a>
@@ -193,7 +194,7 @@ const topics = (['leistungen', ...(hasLearning ? ['lernformen'] : []), 'projekte
   <div class="board-bottom">
     <span>{B.bottom}</span>
     <button class="board-reset" type="button" data-board-reset hidden>{B.reset} <span aria-hidden="true">↺</span></button>
-    <a href="#leistungen" data-board-scroll>{B.scroll} <span aria-hidden="true">↓</span></a>
+    <a href={hasLearning ? '#einstieg' : '#leistungen'} data-board-scroll>{B.scroll} <span aria-hidden="true">↓</span></a>
   </div>
   <p id="board-drag-hint" class="sr-only">{B.dragHint}</p>
   <p id="board-draw-hint" class="sr-only">{B.drawHint}</p>
