@@ -79,9 +79,7 @@ if (board && reader && body && title && pageLink) {
     if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     const link = (event.target as Element | null)?.closest<HTMLAnchorElement>('a[href]');
     if (!link) return;
-    // Inquiry links scroll to the form on the page itself (TalkContact.astro handles the context and
-    // focus), so they behave the same from the board, the reader, the gallery or the page body.
-    if (link.matches('[data-board-scroll], [data-board-read-page], [data-open-form]')) {
+    if (link.matches('[data-board-scroll], [data-board-read-page]')) {
       if (reader.open) close(true, false);
       return;
     }
@@ -90,7 +88,8 @@ if (board && reader && body && title && pageLink) {
     const topic = link.dataset.boardTopic;
     const fromBoard = Boolean(link.closest('[data-board-home], [data-board-reader]'));
     const fromMenu = Boolean(link.closest('[data-board-menu]')) && window.scrollY < board.offsetHeight;
-    if (!topic && !fromBoard && !fromMenu) return;
+    const inquiry = link.hasAttribute('data-open-form');
+    if (!topic && !fromBoard && !fromMenu && !(inquiry && window.scrollY < board.offsetHeight)) return;
 
     const url = new URL(link.href);
     if (url.origin !== location.origin || url.pathname !== location.pathname || !url.hash) return;
@@ -101,7 +100,10 @@ if (board && reader && body && title && pageLink) {
     }
     if (open(id, link)) {
       event.preventDefault();
-      reader.querySelector<HTMLButtonElement>('[data-board-close]')?.focus({ preventScroll: true });
+      // Inquiry listeners run at the target, after this capture handler.
+      // Keep the board URL after those listeners update the conventional form anchor.
+      if (inquiry) queueMicrotask(() => history.replaceState(null, '', `#tafel-${id}`));
+      else reader.querySelector<HTMLButtonElement>('[data-board-close]')?.focus({ preventScroll: true });
     }
   }, true);
 
