@@ -1,13 +1,14 @@
 ---
 /**
- * "Der Lernraum" – Section 5: VS Möbel Floor Plan & Rocking PantoSwing Chair.
- * Combines the architectural floor plan zones from "Das Klassenzimmer" with the
- * signature Ginstergelb VS chair illustration and a direct inquiry hook for kindergarten.
+ * "Der Lernraum" – Section 4 below the Whiteboard: Compact VS Möbel System Overview.
+ * Moves the pinned VS School Catalog 2026 (held by the VS kitchen magnet & Exklusivvertretung plaque)
+ * directly beside the section heading, above a compact 5-zone architectural grid.
  */
 import { vs } from '../../../data/site';
 import { getLang, useTranslations } from '../../../i18n/ui';
-import Lesson from '../klassenzimmer/Lesson.astro';
-import VSChair from '../art/VSChair.astro';
+import ResponsiveImage from '../ResponsiveImage.astro';
+import vsLogoMagnet from '../../../assets/whiteboard/vs-logo-kitchen-magnet.webp';
+import vsCatalogCover from '../../../assets/whiteboard/vs-school-catalog-cover-2026.webp';
 import { lernraumCopy } from '../../../i18n/lernraum';
 
 const lang = getLang(Astro.currentLocale);
@@ -15,26 +16,51 @@ const t = useTranslations(lang).vs;
 const L = lernraumCopy(lang);
 const categories: { name: string; text: string; url?: string }[] = t.categories;
 const catalogUrl = vs.catalogUrl[lang];
+const vsSchoolCatalog = 'https://web-media.vs.de/file/p1/pdf/45-057-49_V2026-01_DE_Basics--Der-Katalog-fuer-die-Schule.archiv.pdf';
 const areas = ['sit', 'tab', 'store', 'flex', 'kg'];
 ---
 
 <section id="vs-moebel" class="lr-vs" aria-labelledby="vs-title" data-lr-vs>
   <div class="shell">
-    <Lesson n="04" name={L.lesson.vs.name} note={L.lesson.vs.note} layout="landscape" from="circle" />
-
     <div class="head">
-      <div class="head-copy">
+      <div class="head-copy" data-wb-reveal>
         <p class="exclusive-badge">{t.exclusive}</p>
         <h2 id="vs-title" class="mt-3 text-headline leading-[0.98] tracking-[-0.03em]">{t.title}</h2>
-        <p class="intro mt-6">{t.intro}</p>
+        <p class="intro mt-5">{t.intro}</p>
+        <div class="head-actions">
+          <a href="#anfrage" class="btn btn-ink" data-open-form data-topic={L.vs.sampleTopic}>
+            {L.vs.sample}
+            <svg class="btn-arrow h-3.5 w-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" /></svg>
+          </a>
+          <a class="link-line text-meta font-semibold" href={catalogUrl} target="_blank" rel="noopener">
+            {t.all} <span aria-hidden="true">↗</span>
+          </a>
+        </div>
       </div>
 
-      <figure class="chair-card m-0">
-        <div class="chair-art" data-lr-vs-chair>
-          <VSChair id="lr-vs-chair" class="block w-full" />
+      <!-- Pinned VS School Catalog 2026 + VS Kitchen Magnet -->
+      <div class="catalog-box" data-wb-reveal style="--wb-d: 80ms">
+        <a class="catalog-pin" data-lr-catalog-pin href={vsSchoolCatalog} target="_blank" rel="noopener" aria-label={L.board.catalog.open}>
+          <span class="catalog-magnet" aria-hidden="true">
+            <ResponsiveImage src={vsLogoMagnet} alt="" width={110} widths={[90, 120]} sizes="56px" quality={88} loading="lazy" draggable="false" />
+          </span>
+          <span class="catalog-cover">
+            <ResponsiveImage src={vsCatalogCover} alt={L.vs.catalogBadge} width={200} widths={[140, 200]} sizes="104px" quality={88} loading="lazy" draggable="false" />
+            <span class="catalog-pdf-tag" aria-hidden="true">PDF ↗</span>
+          </span>
+          <span class="catalog-plaque">
+            <strong>{L.board.catalog.plaqueStrong}</strong>
+            <span>{L.board.catalog.plaqueRest}</span>
+          </span>
+        </a>
+        <div class="catalog-meta">
+          <p class="catalog-badge marker">{L.vs.catalogBadge}</p>
+          <p class="catalog-sub">{L.vs.catalogSub}</p>
+          <a class="link-line text-label font-semibold" href={vsSchoolCatalog} target="_blank" rel="noopener">
+            {L.vs.catalogPdf} <span aria-hidden="true">↗</span>
+          </a>
         </div>
-        <figcaption class="chair-caption">{t.caption}</figcaption>
-      </figure>
+      </div>
     </div>
 
     <ul class="floor">
@@ -42,55 +68,6 @@ const areas = ['sit', 'tab', 'store', 'flex', 'kg'];
         const area = areas[i] ?? 'flex';
         const body = (
           <>
-            <svg class="glyph" viewBox="0 0 160 70" aria-hidden="true">
-              {area === 'sit' && (
-                <>
-                  <circle cx="34" cy="38" r="12" class="soft" />
-                  <circle cx="66" cy="26" r="10" class="soft" />
-                  <circle cx="64" cy="54" r="9" class="soft" />
-                  <use href="#kz-chair" x="96" y="22" width="26" height="26" transform="rotate(-20 109 35)" />
-                  <use href="#kz-chair" x="122" y="30" width="26" height="26" transform="rotate(25 135 43)" />
-                </>
-              )}
-              {area === 'tab' && (
-                <>
-                  <rect x="44" y="20" width="72" height="30" rx="2" class="top" />
-                  <use href="#kz-chair" x="50" y="0" width="22" height="22" transform="rotate(180 61 11)" />
-                  <use href="#kz-chair" x="88" y="0" width="22" height="22" transform="rotate(180 99 11)" />
-                  <use href="#kz-chair" x="50" y="48" width="22" height="22" />
-                  <use href="#kz-chair" x="88" y="48" width="22" height="22" />
-                  <use href="#kz-chair" x="20" y="24" width="22" height="22" transform="rotate(90 31 35)" />
-                  <use href="#kz-chair" x="118" y="24" width="22" height="22" transform="rotate(-90 129 35)" />
-                </>
-              )}
-              {area === 'store' && (
-                <>
-                  <rect x="10" y="12" width="140" height="20" rx="1.5" class="top" />
-                  {[0, 1, 2, 3, 4, 5, 6].map((k) => <line x1={10 + k * 20} y1="12" x2={10 + k * 20} y2="32" class="rule" />)}
-                  <rect x="60" y="44" width="40" height="16" rx="1.5" class="top" />
-                  <line x1="80" y1="44" x2="80" y2="60" class="rule" />
-                </>
-              )}
-              {area === 'flex' && (
-                <>
-                  <rect x="12" y="14" width="64" height="44" rx="2" class="top" />
-                  <rect x="12" y="28" width="64" height="30" rx="2" class="top" />
-                  <rect x="12" y="42" width="64" height="16" rx="2" class="top" />
-                  <circle cx="104" cy="36" r="15" class="soft" />
-                  <circle cx="138" cy="44" r="11" class="soft" />
-                </>
-              )}
-              {area === 'kg' && (
-                <>
-                  <circle cx="80" cy="35" r="17" class="top" />
-                  <use href="#kz-chair" x="71" y="0" width="18" height="18" transform="rotate(180 80 9)" />
-                  <use href="#kz-chair" x="71" y="52" width="18" height="18" />
-                  <use href="#kz-chair" x="45" y="26" width="18" height="18" transform="rotate(90 54 35)" />
-                  <use href="#kz-chair" x="97" y="26" width="18" height="18" transform="rotate(-90 106 35)" />
-                  <rect x="126" y="16" width="22" height="38" rx="2" class="top" />
-                </>
-              )}
-            </svg>
             <div class="zone-header">
               <span class="zone-name">{c.name}</span>
               {c.url ? (
@@ -103,7 +80,7 @@ const areas = ['sit', 'tab', 'store', 'flex', 'kg'];
           </>
         );
         return (
-          <li class={`zone zone-${area}${c.url ? '' : ' zone-direct'}`}>
+          <li class={`zone zone-${area}${c.url ? '' : ' zone-direct'}`} data-wb-reveal style={`--wb-d: ${i * 70}ms`}>
             {c.url ? (
               <a class="zone-inner" href={c.url} target="_blank" rel="noopener">
                 {body}
@@ -118,22 +95,14 @@ const areas = ['sit', 'tab', 'store', 'flex', 'kg'];
         );
       })}
     </ul>
-
-    <div class="actions">
-      <a class="btn btn-ink" href={catalogUrl} target="_blank" rel="noopener">
-        {t.all}
-        <svg class="btn-arrow h-3.5 w-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" /></svg>
-      </a>
-      <a href="#anfrage" class="link-line text-meta font-semibold" data-open-form data-topic={L.vs.sampleTopic}>
-        {L.vs.sample} →
-      </a>
-    </div>
   </div>
 </section>
 
 <style>
-  .lr-vs { padding-block: clamp(80px, 9vw, 144px); }
-  .head { display: grid; gap: 36px; align-items: end; }
+  .lr-vs {
+    padding-block: clamp(56px, 6.5vw, 96px);
+  }
+  .head { display: grid; gap: 32px; align-items: center; }
   .exclusive-badge {
     display: inline-flex;
     align-items: center;
@@ -151,160 +120,234 @@ const areas = ['sit', 'tab', 'store', 'flex', 'kg'];
     border-radius: 50%;
     background: var(--color-ginster);
   }
-  .intro { max-width: 48ch; color: var(--color-muted); font-size: var(--text-body); line-height: 1.65; }
+  .intro { max-width: 48ch; color: var(--color-muted); font-size: var(--text-body); line-height: 1.6; }
+  .head-actions {
+    margin-top: 24px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px 22px;
+  }
 
-  .chair-card {
+  /* Pinned VS School Catalog 2026 in header */
+  .catalog-box {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    padding: 0;
+    background: transparent;
+    border: 0;
+  }
+  .catalog-pin {
+    position: relative;
+    flex: none;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 20px 24px;
-    background: var(--color-warm);
-    border: 1px solid var(--color-line);
+    padding-top: 12px;
+    translate: 0 var(--cat-y, 0px);
+    rotate: calc(-2deg + var(--cat-r, 0deg));
+    transition: transform 220ms var(--ease-draw);
   }
-  .chair-art {
-    width: min(52vw, 210px);
-    transform: translateX(var(--shift, 0px));
+  .catalog-pin:hover {
+    transform: rotate(2deg) translateY(-2px);
   }
-  .chair-caption {
-    margin-top: 10px;
-    font-size: var(--text-label);
-    color: var(--color-muted);
+  .catalog-magnet {
+    position: relative;
+    z-index: 3;
+    margin-bottom: -12px;
+    width: 54px;
+    rotate: 5deg;
+    filter: drop-shadow(0 2px 0 rgba(41, 37, 29, 0.35)) drop-shadow(1px 4px 3px rgba(32, 32, 29, 0.25));
+  }
+  .catalog-magnet :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .catalog-cover {
+    position: relative;
+    display: block;
+    width: 92px;
+    background: #fff;
+    box-shadow: 1px 2px 0 #d9d6ca, 2px 3px 0 #fff, 3px 10px 16px -8px rgba(32, 32, 29, 0.38);
+  }
+  .catalog-pdf-tag {
+    position: absolute;
+    right: -6px;
+    top: 8px;
+    padding: 2px 6px;
+    border-radius: 2px;
+    background: var(--color-ink);
+    color: #fff;
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    line-height: 1.2;
+    box-shadow: 0 2px 4px rgba(32, 32, 29, 0.25);
+    transition: background-color 180ms var(--ease-draw), color 180ms var(--ease-draw);
+  }
+  .catalog-pin:hover .catalog-pdf-tag,
+  .catalog-pin:focus-visible .catalog-pdf-tag {
+    background: var(--color-ginster);
+    color: var(--color-ink);
+  }
+  .catalog-cover :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .catalog-plaque {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: -6px;
+    padding: 3px 8px 4px;
+    border-radius: 4px;
+    background: linear-gradient(#fffdf6, #f3eedf);
+    box-shadow: 0 0 0 1px #fbf7ec, 0 1.5px 0 1px #d6cfbd, 1px 4px 7px -2px rgba(32, 32, 29, 0.26);
+    font-size: 0.6rem;
+    line-height: 1.2;
+    color: #4d4b45;
+    rotate: 3deg;
     text-align: center;
   }
+  .catalog-plaque strong {
+    font-weight: 800;
+    color: var(--color-ink);
+  }
+  .catalog-meta {
+    min-width: 0;
+  }
+  .catalog-badge {
+    font-size: var(--text-marker);
+    color: var(--color-ginster-deep);
+  }
+  .catalog-sub {
+    margin: 6px 0 12px;
+    font-size: var(--text-label);
+    line-height: 1.5;
+    color: var(--color-muted);
+  }
 
-  /* Floor plan container */
+  /* Compact 5-zone architectural grid */
   .floor {
     position: relative;
     list-style: none;
-    margin: clamp(44px, 5vw, 72px) 0 0;
-    padding: clamp(14px, 1.6vw, 24px);
+    margin: clamp(32px, 4vw, 48px) 0 0;
+    padding: 0;
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    gap: clamp(12px, 1.4vw, 20px);
-    border: 3px solid var(--color-ink);
-    border-radius: 2px;
-    background: var(--color-warm);
-  }
-  .floor::after {
-    content: '';
-    position: absolute;
-    right: 12%;
-    bottom: -3px;
-    width: 72px;
-    height: 3px;
-    background: var(--color-warm);
+    gap: clamp(18px, 2vw, 24px);
+    border: 0;
+    background: transparent;
   }
   .zone-inner {
     height: 100%;
     display: flex;
     flex-direction: column;
-    padding: 18px 20px 22px;
-    border: 1.5px dashed #c3bfb3;
-    border-radius: 3px;
-    transition: background-color 250ms var(--ease-draw), border-color 250ms var(--ease-draw), transform 250ms var(--ease-draw);
+    justify-content: space-between;
+    padding: 12px 0;
+    border: 0;
+    border-radius: 0;
+    transition: transform 220ms var(--ease-draw);
   }
   .zone:hover .zone-inner,
   .zone:focus-within .zone-inner {
-    background: var(--color-paper);
-    border-style: solid;
-    border-color: var(--color-ink);
+    transform: translateY(-2px);
   }
-  .zone-direct .zone-inner {
-    background: var(--color-paper);
-    border-style: solid;
-    border-color: var(--color-ginster-deep);
-  }
-  .zone-direct:hover .zone-inner,
-  .zone-direct:focus-within .zone-inner {
-    border-color: var(--color-ink);
-  }
-  .glyph { width: 100%; max-width: 220px; height: auto; margin-bottom: 16px; overflow: visible; }
-  .glyph .top { fill: var(--color-paper); stroke: var(--color-ink); stroke-width: 1.5; }
-  .glyph .soft { fill: var(--color-ginster-light); stroke: var(--color-ink); stroke-width: 1.2; }
-  .glyph .rule { stroke: var(--color-ink); stroke-width: 1.2; }
 
   .zone-header {
     display: flex;
     align-items: baseline;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 4px 12px;
+    gap: 4px 10px;
   }
-  .zone-name { min-width: 0; font-size: var(--text-title); font-weight: 600; letter-spacing: -0.03em; line-height: 1.05; }
+  .zone-name { min-width: 0; font-size: clamp(1.15rem, 1.4vw, 1.35rem); font-weight: 600; letter-spacing: -0.025em; line-height: 1.1; }
   .zone-action {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    font-size: var(--text-label);
+    padding: 0;
+    border: 0;
+    background: transparent;
+    font-size: 0.74rem;
     font-weight: 600;
     color: #57554e;
     white-space: nowrap;
-    transition: color 200ms var(--ease-draw);
+    transition: color 200ms var(--ease-draw), background-color 200ms var(--ease-draw);
   }
-  .zone-direct .zone-action { color: var(--color-ink); }
+  .zone:hover .zone-action {
+    color: var(--color-ink);
+  }
+  .zone-direct .zone-action {
+    background: #f6dc78;
+    padding: 2px 8px;
+    border-radius: 2px;
+    color: var(--color-ink);
+  }
   .zone-direct .zone-action::before {
     content: '';
     width: 6px;
     height: 6px;
     border-radius: 50%;
+    background: var(--color-ink);
+  }
+  .zone-direct:hover .zone-action {
     background: var(--color-ginster);
   }
-  .zone:hover .zone-action { color: var(--color-ink); }
-  .zone-text { margin-top: 8px; color: var(--color-muted); font-size: var(--text-meta); }
+  .zone-text { margin-top: 8px; color: var(--color-muted); font-size: 0.85rem; line-height: 1.48; }
 
-  .actions {
-    margin-top: 36px;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-  }
-
-  @media (min-width: 768px) {
+  @media (min-width: 640px) {
     .floor {
-      grid-template-columns: repeat(6, minmax(0, 1fr));
-      grid-template-areas:
-        'sit sit tab tab tab tab'
-        'store store store flex flex flex'
-        'kg kg kg kg kg kg';
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
-    .zone-sit { grid-area: sit; }
-    .zone-tab { grid-area: tab; }
-    .zone-store { grid-area: store; }
-    .zone-flex { grid-area: flex; }
-    .zone-kg { grid-area: kg; }
+    .zone-kg { grid-column: 1 / -1; }
   }
 
   @media (min-width: 1024px) {
     .head {
       grid-template-columns: repeat(12, minmax(0, 1fr));
       column-gap: clamp(24px, 2.6vw, 44px);
-      align-items: center;
     }
-    .head-copy { grid-column: 1 / 8; }
-    .chair-card { grid-column: 9 / 13; }
+    .catalog-box { grid-column: 1 / 6; grid-row: 1; }
+    .head-copy { grid-column: 6 / 13; grid-row: 1; }
     .floor {
-      grid-template-columns: repeat(12, minmax(0, 1fr));
-      grid-template-areas:
-        'store store store store store store store store kg kg kg kg'
-        'sit sit sit sit tab tab tab tab kg kg kg kg'
-        'sit sit sit sit flex flex flex flex flex flex flex flex';
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+    .zone-kg { grid-column: auto; }
+  }
+
+  @media (max-width: 480px) {
+    .catalog-box {
+      flex-direction: column;
+      align-items: flex-start;
     }
   }
 </style>
 
 <script>
-  import { addScene, viewProgress } from '../../../scripts/motion';
+  import { addScene, isMotionAllowed, revealOnce, viewProgress } from '../../../scripts/motion';
 
   const section = document.querySelector<HTMLElement>('[data-lr-vs]');
-  const chair = section?.querySelector<HTMLElement>('[data-lr-vs-chair]');
-  if (section && chair) {
-    addScene({
-      el: section,
-      media: '(min-width: 1024px)',
-      progress: viewProgress(1, -0.6),
-      render: (p) => chair.style.setProperty('--shift', `${((p - 0.5) * 28).toFixed(1)}px`),
-    });
+  if (section) {
+    revealOnce(section.querySelectorAll('[data-wb-reveal]'));
+
+    const pin = section.querySelector<HTMLElement>('[data-lr-catalog-pin]');
+    if (pin) {
+      addScene({
+        el: section,
+        media: '(min-width: 1024px)',
+        progress: viewProgress(1, 0),
+        render: (p) => {
+          const offset = isMotionAllowed() ? p - 0.5 : 0;
+          pin.style.setProperty('--cat-y', `${(offset * 14).toFixed(1)}px`);
+          pin.style.setProperty('--cat-r', `${(offset * 3).toFixed(2)}deg`);
+        },
+      });
+    }
   }
 </script>

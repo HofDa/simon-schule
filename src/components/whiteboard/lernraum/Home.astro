@@ -1,34 +1,24 @@
 ---
 /**
- * "Der Lernraum" (Variant 04 – Best-of):
- * Merges the strongest visual metaphors and conversion mechanics across all variants:
- * - WhiteboardHero (stroke-by-stroke marker claim + pinned prints)
- * - Showroom (framed turntable with spinning 3D VS furniture: PantoSwing, Hokki, Tano, Puzzle)
- * - Services (5 desks facing the board + 3 decision-maker perspective cards for Schule, Gemeinde, Architektur)
- * - InteractiveScenes ("Ein Raum, viele Arten zu lernen" with clickable magnetic tabs + isometric VS furniture)
- * - AnnotatedProjects (room concepts with interactive numbered "Planner's Eye" pins instead of "Platzhalter" apologies)
- * - PeopleCircle (Simon & Rene + interactive Sitzkreis planning questions with "Why we ask" + 1-click form transfer)
- * - VSFloorplan (architectural floor plan zones + rocking Ginstergelb VS chair)
- * - StationsPhases (5 interactive project phase stations)
- * - TalkContact (always-open Einzelgespräch desk with topic chips, prompt starters, and next-step transparency)
+ * "Der Lernraum" – Streamlined, low-cognitive-load landing page:
+ * - WhiteboardHero (interactive whiteboard with stroke-by-stroke claim, draggable magnets, photo collages & letters)
+ * - AnnotatedProjects (#projekte: 234 South Tyrol proof bar + 10 real reference collages grouped by whiteboard magnet icons)
+ * - InteractiveScenes (#lernformen: whiteboard-framed 3D/SVG room transformation)
+ * - Services (#leistungen: 5 compact project steps + 3 pinned decision-maker role cards)
+ * - VSFloorplan (#vs-moebel: pinned VS 2026 Catalog & Kitchen Magnet + 5 compact VS system tiles)
+ * - FeedbackQuotes (#stimmen: 4 compact lined-paper customer letters with the speech-bubble magnet)
+ * - TalkContact (#kontakt / #menschen / #anfrage: Simon's pinned card, HOUSE70 Meran & Brixen, FAQ drawer & low-friction form)
  */
 import Layout from '../../../layouts/WhiteboardLayout.astro';
 import Navbar from '../shared/Navbar.astro';
 import Footer from '../shared/Footer.astro';
 import WhiteboardHero from '../WhiteboardHero.astro';
-import ClosingTestimonial from '../../ClosingTestimonial.astro';
-import ChairSprite from '../klassenzimmer/ChairSprite.astro';
-import Showroom from '../Showroom.astro';
-import NarrativeIntro from './NarrativeIntro.astro';
-import Services from './Services.astro';
 import InteractiveScenes from './InteractiveScenes.astro';
 import AnnotatedProjects from './AnnotatedProjects.astro';
-import PeopleCircle from './PeopleCircle.astro';
-import VSFloorplan from './VSFloorplan.astro';
-import StationsPhases from './StationsPhases.astro';
-import FaqSection from './FaqSection.astro';
-import TalkContact from './TalkContact.astro';
 import FeedbackQuotes from '../FeedbackQuotes.astro';
+import Services from './Services.astro';
+import VSFloorplan from './VSFloorplan.astro';
+import TalkContact from './TalkContact.astro';
 import { homeFor } from '../../../lib/paths';
 import { getLang } from '../../../i18n/ui';
 
@@ -37,21 +27,14 @@ const alternates = { de: homeFor('de'), it: homeFor('it') };
 ---
 
 <Layout canonical={alternates[lang]} alternates={alternates} homepage>
-  <ChairSprite />
   <Navbar alternates={alternates} />
   <main id="inhalt">
     <WhiteboardHero />
-    <NarrativeIntro />
-    <InteractiveScenes />
     <AnnotatedProjects />
-    <FeedbackQuotes />
+    <InteractiveScenes />
     <Services />
-    <PeopleCircle />
     <VSFloorplan />
-    <Showroom />
-    <ClosingTestimonial />
-    <StationsPhases />
-    <FaqSection />
+    <FeedbackQuotes />
     <TalkContact />
   </main>
   <Footer />

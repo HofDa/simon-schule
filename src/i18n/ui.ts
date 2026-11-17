@@ -29,9 +29,9 @@ const de = {
   pendingFields: { lastName: 'Nachname', role: 'Rolle', phone: 'Telefon', address: 'Adresse' },
   nav: {
     items: [
-      { label: 'Leistungen', href: '#leistungen' },
       { label: 'Schule & Kindergarten', href: '#projekte' },
-      { label: 'Ansprechpartner', href: '#menschen' },
+      { label: 'Lernformen', href: '#lernformen' },
+      { label: 'Leistungen', href: '#leistungen' },
       { label: 'VS Möbel', href: '#vs-moebel' },
       { label: 'Kontakt', href: '#kontakt' },
     ],
@@ -76,7 +76,7 @@ const de = {
     ],
   },
   projects: {
-    title: 'Raumlösungen für Schule & Kindergarten',
+    title: 'Raumlösungen für Schule, Kindergarten und mehr',
     sub: 'Wie zeitgemäße Lern- und Gruppenräume in Südtirol funktionieren – geplant, geliefert und montiert von Trias Schule mit Systemmöbeln von VS.',
     placeholder: 'Raumlösung · VS Möbel',
     meta: { location: 'Ort', type: 'Bereich', services: 'Leistungen', year: 'Jahr', architect: 'Architektur', client: 'Auftraggeber' },
@@ -206,9 +206,9 @@ const it: UI = {
   pendingFields: { lastName: 'cognome', role: 'ruolo', phone: 'telefono', address: 'indirizzo' },
   nav: {
     items: [
-      { label: 'Servizi', href: '#leistungen' },
       { label: 'Scuola e infanzia', href: '#projekte' },
-      { label: 'Referente', href: '#menschen' },
+      { label: 'Modi di imparare', href: '#lernformen' },
+      { label: 'Servizi', href: '#leistungen' },
       { label: 'Mobili VS', href: '#vs-moebel' },
       { label: 'Contatti', href: '#kontakt' },
     ],
@@ -253,7 +253,7 @@ const it: UI = {
     ],
   },
   projects: {
-    title: 'Soluzioni per scuola e infanzia',
+    title: 'Soluzioni per scuola, infanzia e altro',
     sub: 'Come funzionano spazi moderni per scuole e scuole dell’infanzia in Alto Adige – progettati, forniti e montati da Trias Schule con i mobili di VS.',
     placeholder: 'Soluzione · VS Möbel',
     meta: { location: 'Luogo', type: 'Ambito', services: 'Servizi', year: 'Anno', architect: 'Architettura', client: 'Committente' },

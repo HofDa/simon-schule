@@ -291,7 +291,7 @@ export class Workshop {
 
   // tables --------------------------------------------------------------------------------------
 
-  /** Tano: three five-sided beech tops forming an island, square grey legs, blue trays; six PantoSwings round it. */
+  /** Tano: three five-sided beech tops forming an island, square grey legs, blue trays; three PantoSwings round it. */
   tanoIsland(chairColour: number, chairs = true): THREE_NS.Group {
     const { THREE } = this;
     const island = new THREE.Group();
@@ -324,8 +324,8 @@ export class Workshop {
       tray.rotation.y = -((120 * k + 120) * Math.PI) / 180;
       island.add(tray);
     }
-    if (chairs) for (let k = 0; k < 6; k++) {
-      const t = (60 * k * Math.PI) / 180;
+    if (chairs) for (let k = 0; k < 3; k++) {
+      const t = ((120 * k + 120) * Math.PI) / 180;
       const dist = R * 0.866 + 0.24;
       const chair = this.pantoSwing(chairColour);
       chair.position.set(Math.cos(t) * dist, 0, Math.sin(t) * dist);

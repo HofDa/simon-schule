@@ -1,42 +1,43 @@
 ---
 /**
- * "Der Lernraum" – Section 1: The five project steps drawn as desks facing the board,
- * enriched with concrete deliverables and a 3-role perspective bar for South Tyrol's
- * decision makers (Schule & Kindergarten, Gemeinde & Amt, Architektur & Planung).
+ * "Der Lernraum" – Section 3 below the Whiteboard: Compact 5-step process + 3 Pinned Role Cards.
+ * Shows the 5 steps in a single horizontal strip on desktop (`repeat(5, 1fr)`) with animated
+ * desk illustrations, line-drawn rules, popping step badges, sticky-note deliverables, and 3
+ * pinned decision-maker role cards that pre-fill phase and topic directly in `#anfrage`.
  */
 import DeskBack, { type DeskItem } from '../art/DeskBack.astro';
-import Lesson from '../klassenzimmer/Lesson.astro';
+import Magnet from '../Magnet.astro';
 import { getLang, useTranslations } from '../../../i18n/ui';
 import { servicesFor } from '../../../data/services';
 import { lernraumCopy } from '../../../i18n/lernraum';
 
 const lang = getLang(Astro.currentLocale);
-const t = useTranslations(lang).services;
+const ui = useTranslations(lang);
+const t = ui.services;
+const phases = ui.form.phases;
 const services = servicesFor(lang);
 const items: DeskItem[] = ['mug', 'plan', 'catalogue', 'toolbox', 'plant'];
 
 const L = lernraumCopy(lang);
-const { deliverables } = L.services;
+const { deliverables, roles, rolesEyebrow, rolesNote } = L.services;
 ---
 
-<section id="leistungen" class="lr-services" aria-labelledby="services-title">
+<section id="leistungen" class="lr-services" aria-labelledby="services-title" data-lr-services>
   <div class="shell">
-    <Lesson n="02" name={L.lesson.services.name} note={L.lesson.services.note} layout="frontal" from="groups" />
-
-    <div class="head">
+    <div class="head" data-wb-reveal>
       <h2 id="services-title" class="text-headline leading-[0.98] tracking-[-0.03em]">{t.title}</h2>
       <p class="intro">{t.intro}</p>
     </div>
 
     <ol class="desks" data-lr-desks>
       {services.map((service, index) => (
-        <li class={`desk ${index < 3 ? 'is-front' : 'is-back'}`} style={`--i: ${index}`}>
+        <li class="desk" style={`--wb-d: ${index * 80}ms`} data-wb-reveal>
           <div class="desk-art" aria-hidden="true">
             <DeskBack item={items[index]} />
           </div>
           <div class="desk-card">
             <div class="desk-meta">
-              <span class="desk-n" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+              <span class="desk-n" aria-hidden="true">{index + 1}</span>
               <span class="desk-tag">{deliverables[index]}</span>
             </div>
             <h3>{service.title}</h3>
@@ -45,77 +46,313 @@ const { deliverables } = L.services;
         </li>
       ))}
     </ol>
+
+    <div class="roles" aria-labelledby="roles-heading">
+      <div class="roles-head" data-wb-reveal>
+        <p id="roles-heading" class="roles-eyebrow">{rolesEyebrow}</p>
+        <p class="roles-note marker" aria-hidden="true">{rolesNote}</p>
+      </div>
+      <div class="roles-grid">
+        {roles.map((r, i) => (
+          <article
+            class="role-card"
+            style={`--card-tilt: ${i === 0 ? '-0.6deg' : i === 1 ? '0.4deg' : '-0.4deg'}; --wb-d: ${i * 100}ms`}
+            data-wb-pin
+          >
+            <Magnet />
+            <p class="role-audience">{r.audience}</p>
+            <h3 class="role-title">{r.title}</h3>
+            <p class="role-text">{r.text}</p>
+            <p class="role-deliverable">{r.deliverable}</p>
+            <a
+              href="#anfrage"
+              class="role-cta"
+              data-open-form
+              data-phase={phases[r.phase]}
+              data-topic={r.topic}
+            >
+              <span>{r.cta}</span>
+              <span class="role-arrow" aria-hidden="true">→</span>
+            </a>
+          </article>
+        ))}
+      </div>
+    </div>
   </div>
 </section>
 
 <style>
-  .lr-services { padding-block: clamp(56px, 7vw, 104px) clamp(80px, 9vw, 144px); }
-  .head { display: grid; gap: 20px; margin-bottom: clamp(48px, 6vw, 80px); }
-  .intro { max-width: 50ch; color: var(--color-muted); font-size: var(--text-body); line-height: 1.65; }
+  .lr-services { padding-block: clamp(56px, 6.5vw, 96px); }
+  .head { display: grid; gap: 16px; margin-bottom: clamp(32px, 4vw, 48px); }
+  .intro { max-width: 50ch; color: var(--color-muted); font-size: var(--text-body); line-height: 1.6; }
 
-  .desks { list-style: none; margin: 0; padding: 0; display: grid; gap: 44px 24px; }
-  .desk { min-width: 0; display: flex; flex-direction: column; }
-  .desk-art { width: min(100%, 250px); margin-inline: auto; }
+  .desks { position: relative; list-style: none; margin: 0; padding: 0; display: grid; gap: 28px 18px; }
+  .desk { position: relative; z-index: 1; min-width: 0; display: flex; flex-direction: column; }
+  .desk-art { width: min(100%, 130px); margin-inline: auto; }
   .desk-card {
-    margin-top: 16px;
-    padding-top: 16px;
-    border-top: 1.5px solid var(--color-ink);
+    position: relative;
+    margin-top: 12px;
+    padding-top: 4px;
   }
   .desk-meta {
     display: flex;
     flex-wrap: wrap;
-    align-items: baseline;
-    justify-content: space-between;
+    align-items: center;
     gap: 8px;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
   }
   .desk-n {
-    color: var(--color-muted);
-    font-size: var(--text-label);
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    flex: none;
+    border-radius: 50%;
+    background: var(--color-ginster);
+    color: var(--color-ink);
+    font-size: 0.76rem;
+    font-weight: 800;
     font-variant-numeric: tabular-nums;
-    letter-spacing: 0.08em;
-    font-weight: 600;
   }
   .desk-tag {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    font-size: 0.76rem;
+    font-size: 0.72rem;
     font-weight: 600;
     color: var(--color-ink);
-    background: var(--color-warm);
-    padding: 2px 8px;
-    border: 1px solid var(--color-line);
+    background: #f6dc78;
+    padding: 3px 8px;
+    line-height: 1.25;
+    rotate: -0.8deg;
   }
-  .desk-tag::before {
+  .desk h3 { font-size: clamp(1.18rem, 1.45vw, 1.45rem); font-weight: 600; letter-spacing: -0.03em; line-height: 1.12; }
+  .desk p { margin-top: 6px; color: var(--color-muted); font-size: 0.88rem; line-height: 1.52; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    :global(html.js) .desk:not(.is-in) .desk-art {
+      opacity: 0;
+      translate: 0 12px;
+    }
+    .desk-art {
+      transition:
+        opacity 420ms var(--ease-draw) var(--wb-d, 0ms),
+        translate 460ms var(--ease-draw) var(--wb-d, 0ms);
+    }
+    :global(html.js) .desk:not(.is-in) .desk-n {
+      opacity: 0;
+      scale: 0.4;
+    }
+    .desk-n {
+      transition:
+        opacity 260ms var(--ease-draw) calc(var(--wb-d, 0ms) + 140ms),
+        scale 320ms cubic-bezier(0.34, 1.55, 0.64, 1) calc(var(--wb-d, 0ms) + 140ms),
+        transform 200ms var(--ease-draw);
+    }
+    .desk:hover .desk-n {
+      transform: scale(1.1);
+    }
+    :global(html.js) .desk:not(.is-in) .desk-tag {
+      opacity: 0;
+      translate: 0 -6px;
+      rotate: -3.5deg;
+    }
+    .desk-tag {
+      transition:
+        opacity 320ms var(--ease-draw) calc(var(--wb-d, 0ms) + 200ms),
+        translate 340ms var(--ease-draw) calc(var(--wb-d, 0ms) + 200ms),
+        rotate 340ms var(--ease-draw) calc(var(--wb-d, 0ms) + 200ms),
+        transform 200ms var(--ease-draw),
+        box-shadow 200ms var(--ease-draw);
+    }
+    .desk:hover .desk-tag {
+      transform: translateY(-2px);
+      box-shadow: 1px 6px 10px -5px rgba(32, 32, 29, 0.35);
+    }
+
+    /* Subtle desk-item life when in view */
+    .desk.is-in :global(.item-steam) {
+      animation: desk-steam 3.2s ease-in-out infinite;
+      transform-box: fill-box;
+      transform-origin: 50% 100%;
+    }
+    .desk.is-in :global(.item-leaf) {
+      animation: desk-leaf 2.8s ease-in-out calc(var(--wb-d, 0ms) + 300ms) 2 alternate;
+      transform-box: fill-box;
+      transform-origin: 50% 100%;
+    }
+    @keyframes desk-steam {
+      0%, 100% { transform: translateY(0); opacity: 0.65; }
+      50% { transform: translateY(-4px); opacity: 1; }
+    }
+    @keyframes desk-leaf {
+      from { transform: rotate(-2deg); }
+      to { transform: rotate(2deg); }
+    }
+  }
+
+  :global(.board-reader-body) .desk-art,
+  :global(.board-reader-body) .desk-n,
+  :global(.board-reader-body) .desk-tag {
+    opacity: 1 !important;
+    translate: none !important;
+    scale: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  /* 3 pinned decision-maker perspectives */
+  .roles {
+    margin-top: clamp(44px, 5vw, 68px);
+  }
+  .roles-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    padding-bottom: 4px;
+  }
+  .roles-eyebrow {
+    font-size: var(--text-label);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #57554e;
+  }
+  .roles-note {
+    font-size: var(--text-marker);
+    color: var(--color-ink);
+    transform: rotate(-1.5deg);
+  }
+  .roles-grid {
+    display: grid;
+    gap: 24px;
+    margin-top: 24px;
+  }
+  .role-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 24px 22px 18px;
+    background: #fffefb;
+    border: 0;
+    box-shadow: inset 4px 0 0 var(--color-ginster), 2px 14px 24px -16px rgba(32, 32, 29, 0.24);
+    cursor: pointer;
+    transform: rotate(var(--card-tilt, 0deg));
+    transition: transform 220ms var(--ease-draw), box-shadow 220ms var(--ease-draw);
+  }
+  .role-card:hover,
+  .role-card:has(.role-cta:focus-visible) {
+    transform: rotate(0deg) translateY(-2px);
+    box-shadow: inset 4px 0 0 var(--color-ginster), 4px 18px 28px -14px rgba(32, 32, 29, 0.32);
+  }
+  .role-card:has(.role-cta:focus-visible) {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 3px;
+  }
+  .role-audience {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: var(--text-label);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-ginster-deep);
+  }
+  .role-title {
+    margin-top: 8px;
+    font-size: clamp(1.2rem, 1.5vw, 1.45rem);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+  }
+  .role-text {
+    margin-top: 8px;
+    color: var(--color-muted);
+    font-size: var(--text-meta);
+    line-height: 1.55;
+  }
+  .role-deliverable {
+    margin-top: 14px;
+    margin-bottom: 16px;
+    padding: 4px 9px;
+    background: #f6dc78;
+    color: var(--color-ink);
+    font-family: var(--font-marker);
+    font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 1.1;
+    rotate: -1deg;
+    box-shadow: 1px 3px 6px -3px rgba(32, 32, 29, 0.28);
+  }
+  .role-cta {
+    margin-top: auto;
+    padding-top: 8px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    min-height: 44px;
+    border-top: 0;
+    font-size: var(--text-meta);
+    font-weight: 700;
+    color: var(--color-ink);
+  }
+  .role-cta::after {
     content: '';
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: var(--color-ginster);
+    position: absolute;
+    inset: 0;
+    z-index: 1;
   }
-  .desk h3 { font-size: clamp(1.4rem, 2vw, 1.85rem); font-weight: 600; letter-spacing: -0.035em; line-height: 1.12; }
-  .desk p { margin-top: 10px; max-width: 36ch; color: var(--color-muted); font-size: var(--text-meta); line-height: 1.6; }
+  .role-cta:focus-visible {
+    outline: none;
+  }
+  .role-arrow {
+    color: var(--color-ginster-deep);
+    transition: transform 200ms var(--ease-draw);
+  }
+  .role-card:hover .role-arrow,
+  .role-cta:focus-visible .role-arrow {
+    transform: translateX(4px);
+  }
 
   @media (max-width: 639px) {
-    .desks { grid-template-columns: 1fr; gap: 28px; }
-    .desk { flex-direction: row; align-items: flex-start; gap: 16px; }
-    .desk-art { flex: none; width: 92px; margin: 0; }
-    .desk-card { flex: 1; min-width: 0; }
+    .desks { grid-template-columns: 1fr; gap: 22px; }
+    .desk { flex-direction: row; align-items: flex-start; gap: 14px; }
+    .desk-art { flex: none; width: 76px; margin: 0; }
+    .desk-card { flex: 1; min-width: 0; margin-top: 0; }
   }
 
-  @media (min-width: 640px) {
-    .desks { grid-template-columns: repeat(6, minmax(0, 1fr)); column-gap: clamp(24px, 3vw, 48px); row-gap: clamp(48px, 5vw, 76px); }
+  @media (min-width: 640px) and (max-width: 1023px) {
+    .desks { grid-template-columns: repeat(6, minmax(0, 1fr)); column-gap: 20px; row-gap: 32px; }
     .desk { grid-column: span 2; }
     .desk:nth-child(4) { grid-column: 2 / 4; }
     .desk:nth-child(5) { grid-column: 4 / 6; }
-    .is-front .desk-art { width: min(86%, 240px); }
-    .is-back .desk-art { width: min(100%, 280px); }
+  }
+
+  @media (min-width: 768px) {
+    .roles-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: clamp(18px, 2.2vw, 28px);
+    }
   }
 
   @media (min-width: 1024px) {
     .head { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(24px, 2.6vw, 44px); align-items: end; }
     .head h2 { grid-column: 1 / 7; }
     .intro { grid-column: 8 / 13; }
+    .desks { grid-template-columns: repeat(5, minmax(0, 1fr)); column-gap: clamp(16px, 2vw, 28px); }
   }
 </style>
+
+<script>
+  import { revealOnce } from '../../../scripts/motion';
+
+  const section = document.querySelector<HTMLElement>('[data-lr-services]');
+  if (section) {
+    revealOnce(section.querySelectorAll('[data-wb-reveal], [data-wb-pin]'));
+  }
+</script>

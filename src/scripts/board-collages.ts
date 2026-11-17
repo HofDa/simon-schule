@@ -23,10 +23,8 @@ type Stack = {
 };
 
 if (roots.length && gallery) {
-  // Keep the gallery dialog and its SVG photo filter outside `.board-home` so mobile viewports
+  // Keep the gallery dialog outside `.board-home` so mobile viewports
   // (< 1024px, where `.board-home` is `display: none`) can still open any reference project.
-  const filterSvg = document.getElementById('gallery-photo-finish')?.closest('svg');
-  if (filterSvg && filterSvg.parentElement !== document.body) document.body.append(filterSvg);
   if (gallery.parentElement !== document.body) document.body.append(gallery);
 
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -49,12 +47,14 @@ if (roots.length && gallery) {
       order.forEach((print, pos) => {
         print.style.setProperty('--pos', String(pos));
         print.dataset.depth = pos < 3 ? String(pos) : 'deep';
+        const number = print.querySelector<HTMLElement>('.print-number');
+        if (number) number.textContent = `${pos + 1}/${order.length}`;
         if (pos === 0) print.removeAttribute('aria-hidden');
         else print.setAttribute('aria-hidden', 'true');
       });
       openButton.setAttribute('aria-label', order[0].dataset.openLabel ?? '');
       if (openHint) openHint.textContent = (words.view ?? '').replace('{n}', String(photoCount(order[0].dataset.slug!)));
-      loadPrint(order[0]);
+      order.slice(0, 3).forEach(loadPrint);
     };
     const rotateTo = (k: number) => [...prints.slice(k), ...prints.slice(0, k)];
 
@@ -62,7 +62,7 @@ if (roots.length && gallery) {
     const start = Math.floor(Math.random() * prints.length);
     let order = rotateTo(start);
     layout();
-    desktop.addEventListener('change', () => loadPrint(order[0]));
+    desktop.addEventListener('change', () => order.slice(0, 3).forEach(loadPrint));
     root.closest('[data-board-home]')?.addEventListener('whiteboard:reset', () => {
       order = rotateTo(start);
       layout();
@@ -91,7 +91,9 @@ if (roots.length && gallery) {
   const stage = gallery.querySelector<HTMLElement>('[data-gallery-stage]')!;
   const title = gallery.querySelector<HTMLElement>('[data-gallery-title]')!;
   const counter = gallery.querySelector<HTMLElement>('[data-gallery-count]')!;
+  const highlight = gallery.querySelector<HTMLElement>('[data-gallery-highlight]');
   const credit = gallery.querySelector<HTMLElement>('[data-gallery-credit]')!;
+  const galleryInquire = gallery.querySelector<HTMLAnchorElement>('[data-gallery-inquire]');
   const prev = gallery.querySelector<HTMLButtonElement>('[data-gallery-step="-1"]')!;
   const next = gallery.querySelector<HTMLButtonElement>('[data-gallery-step="1"]')!;
   const projectButtons = Array.from(gallery.querySelectorAll<HTMLButtonElement>('[data-project]'));
@@ -102,11 +104,16 @@ if (roots.length && gallery) {
   let index = 0; // photo within the project
   let current: HTMLElement | null = null;
 
+  const eagerImage = (img: HTMLImageElement | null | undefined) => {
+    if (!img) return;
+    img.loading = 'eager';
+    img.removeAttribute('loading');
+  };
+
   /** Load a photo before it is needed. */
   const warmPhoto = (p: number, i: number) => {
     const slides = slidesOf(slugs[(p + slugs.length) % slugs.length]);
-    const img = slides[(i + slides.length) % slides.length]?.querySelector('img');
-    if (img) img.loading = 'eager';
+    eagerImage(slides[(i + slides.length) % slides.length]?.querySelector('img'));
   };
 
   /** The photo before / after the current one, running on across projects. */
@@ -121,9 +128,16 @@ if (roots.length && gallery) {
     const slug = slugs[project];
     const count = slidesOf(slug).length;
     title.textContent = nameOf(slug);
+    if (highlight) highlight.textContent = sets.get(slug)!.dataset.highlight ?? '';
+    if (galleryInquire) galleryInquire.dataset.topic = nameOf(slug);
     counter.textContent = `${words.photo} ${index + 1} / ${count} · ${words.project} ${project + 1} / ${slugs.length}`;
     credit.textContent = sets.get(slug)!.dataset.credit ? `${words.credit}: ${sets.get(slug)!.dataset.credit}` : '';
-    gallery.querySelectorAll<HTMLElement>('[data-thumb-set]').forEach((t) => (t.hidden = t.dataset.thumbSet !== slug));
+    gallery.querySelectorAll<HTMLElement>('[data-thumb-set]').forEach((t) => {
+      const active = t.dataset.thumbSet === slug;
+      t.hidden = !active;
+      if (active) t.querySelectorAll<HTMLImageElement>('img').forEach(eagerImage);
+    });
+    gallery.querySelectorAll<HTMLImageElement>('.gallery-projects img').forEach(eagerImage);
     gallery.querySelectorAll<HTMLButtonElement>(`[data-thumb-set="${slug}"] [data-thumb]`).forEach((t, k) => t.setAttribute('aria-current', String(k === index)));
     projectButtons.forEach((b) => b.setAttribute('aria-current', String(b.dataset.project === slug)));
     projectButtons.find((b) => b.dataset.project === slug)?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
@@ -147,14 +161,20 @@ if (roots.length && gallery) {
     const slides = slidesOf(slugs[project]);
     index = (i + slides.length) % slides.length;
     const to = slides[index];
+    gallery.querySelectorAll<HTMLElement>('[data-slide]').forEach((s) => {
+      if (s !== to && s !== from) {
+        s.getAnimations().forEach((a) => a.cancel());
+        s.hidden = true;
+      }
+    });
+    from?.getAnimations().forEach((a) => a.cancel());
+    to.getAnimations().forEach((a) => a.cancel());
     sets.forEach((set, slug) => {
       if (slug === slugs[project] || (from && set.contains(from))) set.hidden = false;
       else set.hidden = true;
     });
-    slides.forEach((s) => { if (s !== to && s !== from) s.hidden = true; });
+    slides.forEach((s) => eagerImage(s.querySelector('img')));
     to.hidden = false;
-    const img = to.querySelector('img');
-    if (img) img.loading = 'eager';
     current = to;
     updateChrome();
     if (!from || from === to) return;
@@ -168,7 +188,7 @@ if (roots.length && gallery) {
     const easing = 'cubic-bezier(.2, .8, .2, 1)';
     // moving into another project slides further, so the change of place is felt
     const shift = from.closest('[data-gallery-set]') === to.closest('[data-gallery-set]') ? 6 : 14;
-    from.animate([{ transform: 'none', opacity: 1 }, { transform: `translateX(${-direction * shift}%)`, opacity: 0 }], { duration: 260, easing }).finished.then(hideFrom);
+    from.animate([{ transform: 'none', opacity: 1 }, { transform: `translateX(${-direction * shift}%)`, opacity: 0 }], { duration: 260, easing }).finished.then(hideFrom, () => {});
     to.animate([{ transform: `translateX(${direction * shift}%)`, opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 360, easing });
   };
 
@@ -182,9 +202,9 @@ if (roots.length && gallery) {
     opener = trigger ?? stacks[0].openButton;
     current = null;
     sets.forEach((set) => (set.hidden = true));
-    show(Math.max(0, slugs.indexOf(slug)), 0);
     document.documentElement.classList.add('whiteboard-reading');
-    gallery.showModal();
+    if (!gallery.open) gallery.showModal();
+    show(Math.max(0, slugs.indexOf(slug)), 0);
 
     // the photos grow out of the print (or card) they belong to when visible
     if (!reduceMotion.matches) {
@@ -227,12 +247,19 @@ if (roots.length && gallery) {
     el.addEventListener('click', () => openProject(el.dataset.openProject!, el)),
   );
 
+  let closingForInquiry = false;
+  galleryInquire?.addEventListener('click', () => {
+    closingForInquiry = true;
+    gallery.close();
+  });
   gallery.querySelector('[data-gallery-close]')?.addEventListener('click', () => gallery.close());
   gallery.addEventListener('close', () => {
-    document.documentElement.classList.remove('whiteboard-reading');
+    const readerOpen = Boolean(document.querySelector('[data-board-reader][open]'));
+    if (!readerOpen) document.documentElement.classList.remove('whiteboard-reading');
     // the project seen last goes on top of its own stack
     stacks.find((st) => st.has(slugs[project]))?.bringToTop(slugs[project]);
-    opener.focus({ preventScroll: true });
+    if (!closingForInquiry) opener.focus({ preventScroll: true });
+    closingForInquiry = false;
   });
   // a click on the backdrop (outside the dialog box) closes it
   gallery.addEventListener('click', (event) => {

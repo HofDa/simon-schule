@@ -17,6 +17,7 @@ if (board && canvas && item) {
   const controls = item.querySelector<HTMLElement>('[data-feedback-controls]')!;
   const count = item.querySelector<HTMLElement>('[data-feedback-count]');
   const from = item.querySelector<HTMLElement>('[data-feedback-from]');
+  const inquire = item.querySelector<HTMLAnchorElement>('[data-feedback-inquire]');
   const handle = item.querySelector<HTMLElement>('[data-board-handle]');
   const backdrop = board.querySelector<HTMLElement>('[data-feedback-backdrop]');
   const panels = Array.from(item.querySelectorAll<HTMLElement>('[data-feedback-panel]'));
@@ -44,15 +45,17 @@ if (board && canvas && item) {
     index = (i + total) % total;
     panels.forEach((panel) => (panel.hidden = Number(panel.dataset.feedbackPanel) !== index));
     if (count) count.textContent = `${index + 1} / ${total}`;
-    const name = panels.find((p) => Number(p.dataset.feedbackPanel) === index)?.querySelector('.entry-name')?.textContent;
+    const activePanel = panels.find((p) => Number(p.dataset.feedbackPanel) === index);
+    const name = activePanel?.querySelector('.entry-name')?.textContent;
     if (from && name) from.textContent = name;
+    if (inquire && activePanel) inquire.dataset.topic = activePanel.dataset.org ?? '';
     letter.classList.remove('is-live', 'is-paging');
     void letter.offsetWidth; // restart the animations
     letter.classList.add('is-live');
     letter.classList.toggle('is-paging', paging);
   };
 
-  const setOpen = (next: boolean) => {
+  const setOpen = (next: boolean, restoreFocus = true) => {
     if (next === open) return;
     open = next;
     if (open) {
@@ -67,12 +70,14 @@ if (board && canvas && item) {
       closeButton.focus({ preventScroll: true });
     } else {
       window.setTimeout(() => { if (!open) letter.classList.remove('is-live', 'is-paging'); }, reduceMotion.matches ? 0 : 900);
-      openButton.focus({ preventScroll: true });
+      if (restoreFocus) openButton.focus({ preventScroll: true });
     }
   };
 
   openButton.addEventListener('click', () => setOpen(true));
+  item.querySelector('[data-feedback-caption]')?.addEventListener('click', () => setOpen(true));
   closeButton.addEventListener('click', () => setOpen(false));
+  inquire?.addEventListener('click', () => setOpen(false, false));
   backdrop?.addEventListener('click', () => setOpen(false));
   item.querySelectorAll<HTMLButtonElement>('[data-feedback-step]').forEach((button) =>
     button.addEventListener('click', () => show(index + Number(button.dataset.feedbackStep), true)),
@@ -88,7 +93,7 @@ if (board && canvas && item) {
       show(index + (event.key === 'ArrowRight' ? 1 : -1), true);
     } else if (event.key === 'Tab') {
       // keep focus inside the open letter
-      const focusable = Array.from(controls.querySelectorAll<HTMLElement>('button'));
+      const focusable = Array.from(controls.querySelectorAll<HTMLElement>('button, a[href]'));
       const first = focusable[0];
       const last = focusable[focusable.length - 1];
       if (event.shiftKey && document.activeElement === first) {

@@ -110,11 +110,40 @@ export const viewProgress =
   (rect: DOMRect, vh: number) =>
     (vh * from - rect.top) / (vh * (from - to));
 
+const revealedNodes = new Set<Element>();
+const revealCallbacks = new Map<Element, (el: Element) => void>();
+let revealListening = false;
+
+function revealInsideReader() {
+  for (const n of revealedNodes) {
+    if (reduced.matches || n.closest('[data-board-reader]')) {
+      n.classList.add('is-in');
+      const cb = revealCallbacks.get(n);
+      if (cb) {
+        revealCallbacks.delete(n);
+        cb(n);
+      }
+    }
+  }
+}
+
 /** Reveal once when the element enters the viewport (for quiet sections). */
-export function revealOnce(nodes: Iterable<Element>, rootMargin = '0px 0px -12% 0px') {
+export function revealOnce(
+  nodes: Iterable<Element>,
+  rootMargin = '0px 0px -6% 0px',
+  onReveal?: (el: Element) => void,
+) {
   const list = Array.from(nodes);
+  if (!revealListening) {
+    revealListening = true;
+    window.addEventListener('whiteboard:content', revealInsideReader);
+    reduced.addEventListener('change', revealInsideReader);
+  }
   if (reduced.matches || !('IntersectionObserver' in window)) {
-    list.forEach((n) => n.classList.add('is-in'));
+    list.forEach((n) => {
+      n.classList.add('is-in');
+      onReveal?.(n);
+    });
     return;
   }
   const io = new IntersectionObserver(
@@ -122,10 +151,25 @@ export function revealOnce(nodes: Iterable<Element>, rootMargin = '0px 0px -12% 
       for (const item of items) {
         if (!item.isIntersecting) continue;
         item.target.classList.add('is-in');
+        revealedNodes.delete(item.target);
+        const cb = revealCallbacks.get(item.target);
+        if (cb) {
+          revealCallbacks.delete(item.target);
+          cb(item.target);
+        }
         io.unobserve(item.target);
       }
     },
     { rootMargin },
   );
-  list.forEach((n) => io.observe(n));
+  list.forEach((n) => {
+    if (n.closest('[data-board-reader]')) {
+      n.classList.add('is-in');
+      onReveal?.(n);
+      return;
+    }
+    revealedNodes.add(n);
+    if (onReveal) revealCallbacks.set(n, onReveal);
+    io.observe(n);
+  });
 }

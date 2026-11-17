@@ -209,6 +209,87 @@
 }
 
 /* Motion is opt-in: static, fully visible content is the default. */
+@media (prefers-reduced-motion: no-preference) {
+  html.js [data-wb-reveal] {
+    opacity: 0;
+    translate: 0 16px;
+    transition:
+      opacity 440ms var(--ease-draw) var(--wb-d, 0ms),
+      translate 440ms var(--ease-draw) var(--wb-d, 0ms);
+  }
+  html.js [data-wb-reveal].is-in {
+    opacity: 1;
+    translate: 0 0;
+  }
+
+  html.js [data-wb-pin] {
+    opacity: 0;
+  }
+  html.js [data-wb-pin].is-in {
+    animation: wb-pin-in 440ms var(--ease-draw) var(--wb-d, 0ms) both;
+  }
+  html.js [data-wb-pin] > .magnet {
+    opacity: 0;
+  }
+  html.js [data-wb-pin].is-in > .magnet {
+    animation: wb-magnet-in 240ms var(--ease-draw) calc(var(--wb-d, 0ms) + 160ms) both;
+  }
+
+  html.js [data-wb-sticky] {
+    opacity: 0;
+    translate: 0 -8px;
+    rotate: -4deg;
+    transition:
+      opacity 360ms var(--ease-draw) var(--wb-d, 0ms),
+      translate 360ms var(--ease-draw) var(--wb-d, 0ms),
+      rotate 360ms var(--ease-draw) var(--wb-d, 0ms);
+  }
+  html.js [data-wb-sticky].is-in {
+    opacity: 1;
+    translate: 0 0;
+    rotate: -1deg;
+  }
+
+  /* Inside the desktop board-reader modal everything appears immediately in its final state. */
+  .board-reader-body [data-wb-reveal],
+  .board-reader-body [data-wb-pin],
+  .board-reader-body [data-wb-pin] > .magnet,
+  .board-reader-body [data-wb-sticky] {
+    opacity: 1 !important;
+    translate: none !important;
+    scale: 1 !important;
+    animation: none !important;
+    transition: none !important;
+  }
+
+  @keyframes wb-pin-in {
+    from {
+      opacity: 0;
+      translate: 0 -14px;
+      scale: 1.035;
+    }
+    40% {
+      opacity: 1;
+    }
+    to {
+      opacity: 1;
+      translate: 0 0;
+      scale: 1;
+    }
+  }
+
+  @keyframes wb-magnet-in {
+    from {
+      opacity: 0;
+      scale: 0.5;
+    }
+    to {
+      opacity: 1;
+      scale: 1;
+    }
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;

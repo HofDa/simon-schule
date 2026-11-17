@@ -15,7 +15,9 @@ const ui = useTranslations(lang);
 const t = ui.form;
 const f = t.fields;
 
-const L = lernraumCopy(lang).form;
+const copy = lernraumCopy(lang);
+const L = copy.form;
+const talk = copy.talk;
 const defaultTopics = L.topics;
 const messagePrompts = L.prompts;
 ---
@@ -34,8 +36,9 @@ const messagePrompts = L.prompts;
   data-topic-key={L.topicKey}
   data-messages={JSON.stringify(t.status)}
 >
-  <div class="flex flex-wrap items-baseline justify-between gap-4 border-b border-line pb-4">
+  <div class="flex flex-wrap items-baseline justify-between gap-4 pb-4">
     <div>
+      <span class="marker inquiry-seat" aria-hidden="true">{talk.you}</span>
       <h3 id="inquiry-title" class="text-phi-1 tracking-[-0.03em]">{t.title}</h3>
       <p class="mt-1 text-meta text-muted">{L.sub}</p>
     </div>
@@ -47,6 +50,22 @@ const messagePrompts = L.prompts;
     <span class="context-dot" aria-hidden="true"></span>
     <span class="context-text">{L.selected} <strong data-context-label></strong></span>
     <button type="button" class="context-clear" data-context-clear aria-label={L.clear}>×</button>
+  </div>
+
+  <!-- 3 Concrete low-barrier first steps -->
+  <div class="starters" role="group" aria-label={L.startersLabel}>
+    {L.starters.map((s) => (
+      <button
+        type="button"
+        class="starter-btn"
+        data-starter-topic={s.topic}
+        data-starter-prompt={s.prompt}
+        aria-pressed="false"
+      >
+        <strong class="starter-title">{s.title}</strong>
+        <span class="starter-sub">{s.sub}</span>
+      </button>
+    ))}
   </div>
 
   <div class="fields mt-6">
@@ -69,44 +88,6 @@ const messagePrompts = L.prompts;
       <input id="lr-tel" name={f.tel.key} type="tel" autocomplete="tel" aria-describedby="lr-reach-hint" data-reach-tel />
     </div>
     <p class="reach-hint field-wide" id="lr-reach-hint">{t.reach.hint}</p>
-    <details class="more field-wide" data-more>
-      <summary>{L.more} <span class="text-muted font-normal">{t.optional}</span></summary>
-      <div class="more-body">
-    <div class="field field-wide">
-      <label for="lr-ort">{f.place.label} <span class="text-muted">{t.optional}</span></label>
-      <input id="lr-ort" name={f.place.key} type="text" autocomplete="address-level2" placeholder={f.place.placeholder} />
-    </div>
-
-    <fieldset class="field field-wide">
-      <legend>{f.phase.label}</legend>
-      <div class="chips" data-phase-chips>
-        {t.phases.map((phase) => (
-          <label class="chip">
-            <input type="radio" name={f.phase.key} value={phase} class="sr-only" />
-            <span>{phase}</span>
-          </label>
-        ))}
-        <label class="chip">
-          <input type="radio" name={f.phase.key} value={t.orderOption} class="sr-only" />
-          <span>{t.orderOption}</span>
-        </label>
-      </div>
-    </fieldset>
-
-    <fieldset class="field field-wide">
-      <legend>{L.about} <span class="text-muted font-normal">{t.optional}</span></legend>
-      <div class="chips" data-topic-chips>
-        {defaultTopics.map((topic) => (
-          <label class="chip">
-            <input type="checkbox" name={L.topicKey} value={topic} class="sr-only" data-topic-input />
-            <span>{topic}</span>
-          </label>
-        ))}
-      </div>
-    </fieldset>
-
-      </div>
-    </details>
 
     <div class="field field-wide">
       <div class="msg-head">
@@ -119,8 +100,46 @@ const messagePrompts = L.prompts;
           ))}
         </div>
       </div>
-      <textarea id="lr-msg" name={f.msg.key} rows="3" placeholder={f.msg.placeholder}></textarea>
+      <textarea id="lr-msg" name={f.msg.key} rows="2" placeholder={f.msg.placeholder}></textarea>
     </div>
+
+    <details class="more field-wide" data-more>
+      <summary>{L.more} <span class="text-muted font-normal">{t.optional}</span></summary>
+      <div class="more-body">
+        <fieldset class="field field-wide">
+          <legend>{L.about} <span class="text-muted font-normal">{t.optional}</span></legend>
+          <div class="chips" data-topic-chips>
+            {defaultTopics.map((topic) => (
+              <label class="chip">
+                <input type="checkbox" name={L.topicKey} value={topic} class="sr-only" data-topic-input />
+                <span>{topic}</span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+
+        <div class="field field-wide">
+          <label for="lr-ort">{f.place.label} <span class="text-muted">{t.optional}</span></label>
+          <input id="lr-ort" name={f.place.key} type="text" autocomplete="address-level2" placeholder={f.place.placeholder} />
+        </div>
+
+        <fieldset class="field field-wide">
+          <legend>{f.phase.label}</legend>
+          <div class="chips" data-phase-chips>
+            {t.phases.map((phase) => (
+              <label class="chip">
+                <input type="radio" name={f.phase.key} value={phase} class="sr-only" />
+                <span>{phase}</span>
+              </label>
+            ))}
+            <label class="chip">
+              <input type="radio" name={f.phase.key} value={t.orderOption} class="sr-only" />
+              <span>{t.orderOption}</span>
+            </label>
+          </div>
+        </fieldset>
+      </div>
+    </details>
   </div>
 
   <div class="mt-7 flex flex-wrap items-center gap-x-6 gap-y-3">
@@ -128,6 +147,7 @@ const messagePrompts = L.prompts;
       {t.submit}
       <svg class="btn-arrow h-3.5 w-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" /></svg>
     </button>
+    <span class="text-label text-muted">{talk.responsePromise}</span>
     <p class="status text-meta text-muted" role="status" aria-live="polite" data-status></p>
     <a class="mail-fallback link-line text-meta font-semibold" data-mail-fallback hidden>{t.emailAction}</a>
     <button type="button" class="copy link-line text-meta font-semibold" data-copy hidden>{t.copy}</button>
@@ -138,17 +158,41 @@ const messagePrompts = L.prompts;
 </form>
 
 <style>
+  .inquiry-seat {
+    display: inline-block;
+    margin-bottom: 4px;
+    font-size: 1.15rem;
+    color: var(--color-ginster-deep);
+    transform: rotate(-1.2deg);
+  }
   .context-bar {
     margin-top: 16px;
-    padding: 10px 14px;
-    background: var(--color-warm);
-    border: 1px solid var(--color-ink);
+    padding: 12px 14px;
+    background: #fdf9e7;
+    border: 0;
+    border-left: 3px solid var(--color-ginster);
+    box-shadow: 1px 6px 12px -8px rgba(32, 32, 29, 0.25);
     display: flex;
     align-items: center;
     gap: 10px;
     font-size: var(--text-meta);
   }
   .context-bar[hidden] { display: none; }
+  @media (prefers-reduced-motion: no-preference) {
+    .context-bar.is-pulsing {
+      animation: context-pulse 680ms var(--ease-draw);
+    }
+    @keyframes context-pulse {
+      0% {
+        background: #f6dc78;
+        box-shadow: 0 0 0 3px rgba(226, 163, 0, 0.35), 1px 6px 12px -8px rgba(32, 32, 29, 0.25);
+      }
+      100% {
+        background: #fdf9e7;
+        box-shadow: 1px 6px 12px -8px rgba(32, 32, 29, 0.25);
+      }
+    }
+  }
   .context-dot {
     width: 8px;
     height: 8px;
@@ -175,6 +219,55 @@ const messagePrompts = L.prompts;
   }
   .context-clear:hover { color: var(--color-ink); }
 
+  .starters {
+    margin-top: 18px;
+    display: grid;
+    gap: 10px;
+  }
+  @media (min-width: 640px) {
+    .starters {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  .starter-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+    padding: 12px 14px;
+    border: 0;
+    border-radius: 4px;
+    background: var(--color-warm);
+    color: var(--color-ink);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    box-shadow: inset 3px 0 0 transparent;
+    transition: background-color 180ms var(--ease-draw), box-shadow 180ms var(--ease-draw), transform 180ms var(--ease-draw);
+  }
+  .starter-btn:hover {
+    background: #eae8df;
+    transform: translateY(-1px);
+  }
+  .starter-btn:focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 2px;
+  }
+  .starter-btn[aria-pressed='true'] {
+    background: #fdf9e7;
+    box-shadow: inset 3px 0 0 var(--color-ginster), 1px 6px 12px -8px rgba(32, 32, 29, 0.25);
+  }
+  .starter-title {
+    font-size: var(--text-meta);
+    font-weight: 700;
+    line-height: 1.25;
+  }
+  .starter-sub {
+    font-size: 0.76rem;
+    line-height: 1.35;
+    color: var(--color-muted);
+  }
+
   .fields { display: grid; gap: 18px 28px; }
   @media (min-width: 640px) {
     .fields { grid-template-columns: 1fr 1fr; }
@@ -195,14 +288,14 @@ const messagePrompts = L.prompts;
     color: var(--color-ink);
     transition: border-color 200ms var(--ease-draw), box-shadow 200ms var(--ease-draw);
   }
-  .field textarea { resize: vertical; min-height: 92px; }
+  .field textarea { resize: vertical; min-height: 68px; }
   .field input::placeholder, .field textarea::placeholder { color: #8f8c83; }
   .field input:focus, .field textarea:focus { outline: none; border-color: var(--color-ink); box-shadow: 0 1px 0 0 var(--color-ink); }
   .field input:focus-visible, .field textarea:focus-visible { box-shadow: 0 2px 0 0 var(--color-ginster); }
   .field [aria-invalid='true'] { border-color: #a4331c; box-shadow: 0 1px 0 0 #a4331c; }
   .err { margin: 6px 0 0; font-size: var(--text-label); color: #a4331c; min-height: 0; }
   .err:empty { display: none; }
-  .more { border-block: 1px solid var(--color-line); }
+  .more { border: 0; }
   .more > summary { display: flex; align-items: center; gap: 8px; min-height: 48px; cursor: pointer; font-size: var(--text-meta); font-weight: 600; list-style: none; }
   .more > summary::-webkit-details-marker { display: none; }
   .more > summary::before { content: '+'; width: 1ch; font-size: 1.2em; font-weight: 500; line-height: 1; }
@@ -218,17 +311,18 @@ const messagePrompts = L.prompts;
     align-items: center;
     min-height: 36px;
     padding: 0 12px;
-    border: 1px solid #c9c6bc;
-    border-radius: 2px;
+    background: var(--color-warm);
+    border: 0;
+    border-radius: 4px;
     font-size: var(--text-meta);
     cursor: pointer;
-    transition: background-color 180ms var(--ease-draw), border-color 180ms var(--ease-draw), color 180ms var(--ease-draw);
+    transition: background-color 180ms var(--ease-draw), color 180ms var(--ease-draw);
   }
-  .chip:hover span { border-color: var(--color-ink); }
+  .chip:hover span { background: #eae8df; }
   @media (pointer: coarse) {
     .chip span { min-height: 44px; }
   }
-  .chip input:checked + span { background: var(--color-ink); border-color: var(--color-ink); color: #fff; }
+  .chip input:checked + span { background: var(--color-ink); color: #fff; }
   .chip input:checked + span::before {
     content: '';
     width: 6px;
@@ -256,23 +350,22 @@ const messagePrompts = L.prompts;
     display: inline-flex;
     align-items: center;
     min-height: 32px;
-    border: 1px dashed var(--color-line);
+    border: 0;
+    border-radius: 4px;
     background: var(--color-warm);
     color: var(--color-ink);
     font: inherit;
     font-size: 0.78rem;
     padding: 4px 10px;
     cursor: pointer;
-    transition: border-color 180ms var(--ease-draw), color 180ms var(--ease-draw), background-color 180ms var(--ease-draw);
+    transition: color 180ms var(--ease-draw), background-color 180ms var(--ease-draw);
   }
   @media (pointer: coarse) {
     .prompt-chip { min-height: 44px; padding: 6px 12px; }
   }
   .prompt-chip:hover {
-    border-color: var(--color-ink);
-    border-style: solid;
     color: var(--color-ink);
-    background: var(--color-paper);
+    background: #eae8df;
   }
 
   .status.is-ok { color: var(--color-ink); font-weight: 500; }
@@ -287,14 +380,106 @@ const messagePrompts = L.prompts;
   const textarea = form?.querySelector<HTMLTextAreaElement>('#lr-msg');
   let composed = '';
 
-  // Wide screens have room for the optional project details; phones open them on demand.
-  const more = form?.querySelector<HTMLDetailsElement>('[data-more]');
-  if (more && window.matchMedia('(min-width: 1024px)').matches) more.open = true;
-
   if (form && status) {
     const msg = JSON.parse(form.dataset.messages ?? '{}') as Record<string, string>;
     const withEmail = (text: string) => text.replace('{email}', form.dataset.mailto ?? '');
     const fields = Array.from(form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('input[required], textarea[required]'));
+
+    // Low-barrier first-step starters: select topic chip, highlight context bar & pre-fill starter sentence
+    const starters = Array.from(form.querySelectorAll<HTMLButtonElement>('[data-starter-topic]'));
+    const topicChips = form.querySelector<HTMLElement>('[data-topic-chips]');
+    const contextBar = form.querySelector<HTMLElement>('[data-context-bar]');
+    const contextLabel = form.querySelector<HTMLElement>('[data-context-label]');
+    const contextClear = form.querySelector<HTMLButtonElement>('[data-context-clear]');
+    let activeStarterTopic = '';
+    let activeStarterPrompt = '';
+
+    const setStarterTopic = (topic: string, checked: boolean) => {
+      if (!topicChips || !topic) return;
+      const inputs = Array.from(topicChips.querySelectorAll<HTMLInputElement>('[data-topic-input]'));
+      let matched = inputs.find((input) => input.value.toLowerCase() === topic.toLowerCase());
+      if (!matched && checked) {
+        const label = document.createElement('label');
+        label.className = 'chip';
+        const input = document.createElement('input');
+        input.type = 'checkbox';
+        input.name = form.dataset.topicKey ?? 'Thema';
+        input.value = topic;
+        input.className = 'sr-only';
+        input.setAttribute('data-topic-input', '');
+        const span = document.createElement('span');
+        span.textContent = topic;
+        label.append(input, span);
+        topicChips.prepend(label);
+        matched = input;
+      }
+      if (matched) matched.checked = checked;
+    };
+
+    const clearStarters = () => {
+      starters.forEach((btn) => btn.setAttribute('aria-pressed', 'false'));
+      if (activeStarterTopic) setStarterTopic(activeStarterTopic, false);
+      activeStarterTopic = '';
+      activeStarterPrompt = '';
+    };
+
+    starters.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const wasPressed = btn.getAttribute('aria-pressed') === 'true';
+        const topic = btn.dataset.starterTopic ?? '';
+        const prompt = btn.dataset.starterPrompt ?? '';
+
+        if (activeStarterTopic && activeStarterTopic !== topic) {
+          setStarterTopic(activeStarterTopic, false);
+        }
+        if (textarea && activeStarterPrompt && textarea.value.trim() === activeStarterPrompt.trim()) {
+          textarea.value = '';
+        }
+
+        if (wasPressed) {
+          btn.setAttribute('aria-pressed', 'false');
+          setStarterTopic(topic, false);
+          if (contextBar && contextLabel?.textContent === (btn.querySelector('.starter-title')?.textContent ?? topic)) {
+            contextBar.hidden = true;
+          }
+          activeStarterTopic = '';
+          activeStarterPrompt = '';
+          return;
+        }
+
+        starters.forEach((other) => other.setAttribute('aria-pressed', other === btn ? 'true' : 'false'));
+        setStarterTopic(topic, true);
+        activeStarterTopic = topic;
+        activeStarterPrompt = prompt;
+
+        if (contextBar && contextLabel) {
+          contextLabel.textContent = btn.querySelector('.starter-title')?.textContent ?? topic;
+          contextBar.hidden = false;
+          contextBar.classList.remove('is-pulsing');
+          void contextBar.offsetWidth;
+          contextBar.classList.add('is-pulsing');
+        }
+
+        if (textarea && !textarea.value.trim()) {
+          textarea.value = prompt;
+        }
+        form.querySelector<HTMLInputElement>('#lr-name')?.focus({ preventScroll: true });
+      });
+    });
+
+    contextClear?.addEventListener('click', clearStarters);
+    // A CTA elsewhere on the page ([data-open-form], handled in TalkContact.astro) sets its own
+    // context: drop the starter first (capture, so its topic chip is set after this), and its
+    // pre-filled sentence when it is still untouched.
+    document.addEventListener('click', (event) => {
+      if (!activeStarterTopic || !(event.target as Element | null)?.closest('[data-open-form]')) return;
+      if (textarea && activeStarterPrompt && textarea.value.trim() === activeStarterPrompt.trim()) textarea.value = '';
+      clearStarters();
+    }, true);
+    form.addEventListener('reset', () => {
+      clearStarters();
+      if (contextBar) contextBar.hidden = true;
+    });
 
     // Quick message starter prompts
     form.querySelectorAll<HTMLButtonElement>('[data-insert-prompt]').forEach((btn) => {

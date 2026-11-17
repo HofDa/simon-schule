@@ -152,6 +152,33 @@ const nav = t.nav.items.map((item) => ({ ...item, href: `${home}${item.href}` })
   [aria-expanded='true'] .menu-icon span:nth-child(1) { top: 6px; transform: rotate(45deg); }
   [aria-expanded='true'] .menu-icon span:nth-child(2) { opacity: 0; }
   [aria-expanded='true'] .menu-icon span:nth-child(3) { top: 6px; width: 100%; transform: rotate(-45deg); background: currentColor; }
+
+  .mobile-menu {
+    opacity: 0;
+    translate: 0 -10px;
+    transition: opacity 280ms var(--ease-draw, cubic-bezier(0.16, 1, 0.3, 1)), translate 320ms var(--ease-draw, cubic-bezier(0.16, 1, 0.3, 1));
+  }
+  .mobile-menu.is-visible {
+    opacity: 1;
+    translate: 0 0;
+  }
+  .mobile-menu li {
+    opacity: 0;
+    translate: 0 8px;
+    transition: opacity 260ms var(--ease-draw, cubic-bezier(0.16, 1, 0.3, 1)), translate 300ms var(--ease-draw, cubic-bezier(0.16, 1, 0.3, 1));
+  }
+  .mobile-menu.is-visible li {
+    opacity: 1;
+    translate: 0 0;
+  }
+  .mobile-menu.is-visible li:nth-child(1) { transition-delay: 40ms; }
+  .mobile-menu.is-visible li:nth-child(2) { transition-delay: 75ms; }
+  .mobile-menu.is-visible li:nth-child(3) { transition-delay: 110ms; }
+  .mobile-menu.is-visible li:nth-child(4) { transition-delay: 145ms; }
+  .mobile-menu.is-visible li:nth-child(5) { transition-delay: 180ms; }
+  @media (prefers-reduced-motion: reduce) {
+    .mobile-menu, .mobile-menu li { transition: none; opacity: 1; translate: none; }
+  }
 </style>
 
 <script>
@@ -159,6 +186,8 @@ const nav = t.nav.items.map((item) => ({ ...item, href: `${home}${item.href}` })
   const toggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
   const menu = document.getElementById('mobile-menu');
   const label = document.querySelector<HTMLElement>('[data-menu-label]');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let closeTimer = 0;
 
   if (header) {
     const onScroll = () => header.classList.toggle('is-scrolled', window.scrollY > 8);
@@ -168,11 +197,22 @@ const nav = t.nav.items.map((item) => ({ ...item, href: `${home}${item.href}` })
 
   const setMenu = (open: boolean) => {
     if (!toggle || !menu || !header) return;
+    window.clearTimeout(closeTimer);
     toggle.setAttribute('aria-expanded', String(open));
-    menu.hidden = !open;
     header.classList.toggle('is-open', open);
     document.body.style.overflow = open ? 'hidden' : '';
     if (label) label.textContent = (open ? toggle.dataset.labelClose : toggle.dataset.labelOpen) ?? '';
+    if (open) {
+      menu.hidden = false;
+      void menu.offsetHeight;
+      requestAnimationFrame(() => {
+        if (toggle.getAttribute('aria-expanded') === 'true') menu.classList.add('is-visible');
+      });
+    } else {
+      menu.classList.remove('is-visible');
+      if (reduce.matches) menu.hidden = true;
+      else closeTimer = window.setTimeout(() => { menu.hidden = true; }, 280);
+    }
   };
 
   toggle?.addEventListener('click', () => setMenu(toggle.getAttribute('aria-expanded') !== 'true'));

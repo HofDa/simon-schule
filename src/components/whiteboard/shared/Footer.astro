@@ -29,7 +29,7 @@ const home = '';
           <li class="text-ink font-medium">Simon Brugger</li>
           <li><a class="link-line text-ink" href={`mailto:${contact.directEmail}`}>{contact.directEmail}</a></li>
           <li><a class="link-line text-ink" href={`mailto:${contact.email}`}>{contact.email}</a></li>
-          {contact.phone && <li><a href={`tel:${contact.phone.replace(/\s/g, '')}`}>{contact.phone}</a></li>}
+          {contact.phone && <li><a class="link-line text-ink" href={`tel:${contact.phone.replace(/\s/g, '')}`}>{contact.phone}</a></li>}
           {locations.map((loc) => (
             <li>{loc.city[lang]} · {loc.street[lang]}</li>
           ))}

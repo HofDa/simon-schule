@@ -6,7 +6,7 @@
  * "Projekt anfragen" opens the same enquiry form as the board's main call to action.
  */
 import BoardMagnet from './BoardMagnet.astro';
-import { people, fullName } from '../../data/site';
+import { contact, people, fullName } from '../../data/site';
 import { asset } from '../../lib/paths';
 import { getLang } from '../../i18n/ui';
 import { lernraumCopy } from '../../i18n/lernraum';
@@ -17,11 +17,16 @@ const person = people[0];
 const name = fullName(person);
 const initials = [person.firstName, person.lastName].filter(Boolean).map((n) => n![0]).join('');
 const role = person.role?.[lang];
-const phoneHref = person.phone ? `tel:${person.phone.replace(/[^\d+]/g, '')}` : null;
+const directPhone = person.phone ?? contact.phone;
+const phoneHref = directPhone ? `tel:${directPhone.replace(/[^\d+]/g, '')}` : null;
 ---
 
 <div class="board-object object-card" data-board-object>
   <BoardMagnet label={C.magnet} />
+  <svg class="card-lead-arrow" viewBox="0 0 64 36" fill="none" aria-hidden="true">
+    <path d="M4 22 Q28 4 56 18" stroke="var(--color-ginster-deep)" stroke-width="2.6" stroke-linecap="round" />
+    <path d="M46 11 L57 18.5 L47 26" stroke="var(--color-ginster-deep)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" />
+  </svg>
   <div class="business-card" data-path-node="5">
     <p class="card-eyebrow">{C.eyebrow}</p>
     <div class="card-person">
@@ -39,7 +44,7 @@ const phoneHref = person.phone ? `tel:${person.phone.replace(/[^\d+]/g, '')}` : 
     <div class="card-actions">
       <div class="card-lines">
         {person.email && <a href={`mailto:${person.email}`} draggable="false"><span aria-hidden="true">✉</span> {person.email}</a>}
-        {phoneHref && <a href={phoneHref} draggable="false"><span aria-hidden="true">☏</span> {person.phone}</a>}
+        {phoneHref && <a href={phoneHref} draggable="false"><span aria-hidden="true">☏</span> {directPhone}</a>}
       </div>
       <a class="card-cta" href="#anfrage" data-open-form draggable="false">{C.cta} <span aria-hidden="true">→</span></a>
     </div>
@@ -47,7 +52,17 @@ const phoneHref = person.phone ? `tel:${person.phone.replace(/[^\d+]/g, '')}` : 
 </div>
 
 <style>
-  .object-card { left: 75%; top: 64%; width: min(22%, 42cqh); rotate: 2deg; }
+  .object-card { left: 67.5%; top: 50%; width: min(26.5%, 46cqh); rotate: -1deg; }
+
+  .card-lead-arrow {
+    position: absolute;
+    left: -2.6cqw;
+    top: 22%;
+    width: clamp(32px, 3cqw, 46px);
+    height: auto;
+    pointer-events: none;
+    transform: rotate(8deg);
+  }
 
   /* a business card: white card stock, a Ginstergelb edge on the left, a soft shadow */
   .business-card {
@@ -55,7 +70,7 @@ const phoneHref = person.phone ? `tel:${person.phone.replace(/[^\d+]/g, '')}` : 
     width: 100%;
     padding: 1.9cqh 1.3cqw 1.7cqh 1.6cqw;
     background: #fffefb;
-    box-shadow: inset 4px 0 0 var(--color-ginster), 0 1px 0 #e3dfd3, 2px 12px 18px -10px #20201d66;
+    box-shadow: inset 5px 0 0 var(--color-ginster), 0 18px 36px -14px rgba(32, 32, 29, 0.34);
     color: var(--color-ink);
     text-align: left;
   }
@@ -80,7 +95,7 @@ const phoneHref = person.phone ? `tel:${person.phone.replace(/[^\d+]/g, '')}` : 
   .card-role { margin-top: 3px; font-size: clamp(10px, .78cqw, 12px); line-height: 1.35; color: #6e6c65; }
   .card-note { margin-top: 4px; font-family: var(--font-marker); font-size: clamp(17px, min(1.4cqw, 2.8cqh), 22px); font-weight: 600; line-height: 1; color: #22305f; }
 
-  .card-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 14px; margin-top: 1.2cqh; padding-top: 1cqh; border-top: 1px dashed #d9d5c9; }
+  .card-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 14px; margin-top: 1.2cqh; padding-top: 1cqh; }
   .card-lines { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
   .card-lines a { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; font-size: clamp(11px, .85cqw, 13px); font-weight: 600; color: var(--color-ink); text-decoration: underline; text-decoration-color: #d9d5c9; text-underline-offset: 3px; overflow-wrap: anywhere; }
   @media (pointer: coarse) {
@@ -92,28 +107,29 @@ const phoneHref = person.phone ? `tel:${person.phone.replace(/[^\d+]/g, '')}` : 
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    min-height: 40px;
-    padding: 0 14px;
-    border-radius: 2px;
-    background: var(--color-ink);
-    color: #fff;
-    font-size: clamp(11px, .9cqw, 14px);
-    font-weight: 700;
+    min-height: 42px;
+    padding: 0 16px;
+    border-radius: 3px;
+    background: var(--color-ginster);
+    color: var(--color-ink);
+    font-size: clamp(12px, .95cqw, 14px);
+    font-weight: 800;
     white-space: nowrap;
-    transition: background-color 150ms ease;
+    box-shadow: 0 8px 18px -8px rgba(184, 132, 0, 0.6);
+    transition: background-color 150ms ease, translate 150ms ease, box-shadow 150ms ease;
   }
-  .card-cta span { display: inline-block; color: var(--color-ginster-light); transition: translate 200ms ease; }
-  .card-cta:hover { background: #000; }
+  .card-cta span { display: inline-block; color: var(--color-ink); transition: translate 200ms ease; }
+  .card-cta:hover { background: var(--color-ginster-light); translate: 0 -1px; box-shadow: 0 10px 20px -8px rgba(184, 132, 0, 0.75); }
   .card-cta:hover span { translate: 3px 0; }
   .card-lines a:focus-visible, .card-cta:focus-visible { outline: 2px dashed var(--color-ginster-deep); outline-offset: 3px; }
 
-  /* narrow boards: a little lower, leaving room for the arrow from the feedback */
+  /* narrow boards: stay anchored on the lower right */
   @container (max-width: 1050px) {
-    .object-card { left: 73%; top: 64%; }
+    .object-card { left: 67%; top: 51%; }
   }
 
   @media (max-height: 800px) {
-    .object-card { top: 64%; left: 76%; }
+    .object-card { left: 67%; top: 51%; }
   }
   @media (prefers-reduced-motion: reduce) {
     .card-cta, .card-cta span { transition: none; }

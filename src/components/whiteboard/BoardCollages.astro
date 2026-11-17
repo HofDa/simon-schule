@@ -12,7 +12,9 @@ import { getLang } from '../../i18n/ui';
 import { lernraumCopy } from '../../i18n/lernraum';
 
 const lang = getLang(Astro.currentLocale);
-const G = lernraumCopy(lang).board.collages;
+const copy = lernraumCopy(lang);
+const G = copy.board.collages;
+const galleryCta = copy.projects.galleryCta;
 const collages = collagesFor(lang);
 
 // each print keeps its own slight tilt, so the stack looks handled, not aligned
@@ -105,30 +107,23 @@ const words = { view: G.view('{n}'), photo: G.photo, project: G.project, credit:
   </div>
 ))}
 
-<!-- Lift shadows and midtones without pushing white walls/windows past white. -->
-<svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute;pointer-events:none">
-  <defs>
-    <filter id="gallery-photo-finish" color-interpolation-filters="sRGB">
-      <feComponentTransfer>
-        <feFuncR type="gamma" amplitude="1" exponent=".86" offset="0" />
-        <feFuncG type="gamma" amplitude="1" exponent=".86" offset="0" />
-        <feFuncB type="gamma" amplitude="1" exponent=".86" offset="0" />
-      </feComponentTransfer>
-      <feColorMatrix type="saturate" values="1.24" />
-    </filter>
-  </defs>
-</svg>
-
 <dialog class="gallery" aria-labelledby="gallery-title" data-gallery data-words={JSON.stringify(words)}>
   <header class="gallery-header">
     <p id="gallery-title" class="gallery-title" data-gallery-title></p>
     <span class="gallery-count" data-gallery-count aria-live="polite"></span>
+    <span class="gallery-highlight" data-gallery-highlight></span>
     <span class="gallery-credit" data-gallery-credit></span>
-    <button type="button" class="gallery-close" data-gallery-close aria-label={G.close}>×</button>
+    <div class="gallery-header-actions">
+      <a href="#anfrage" class="gallery-inquire" data-gallery-inquire data-open-form data-topic="">
+        <span>{galleryCta}</span>
+        <span class="gallery-inquire-arrow" aria-hidden="true">→</span>
+      </a>
+      <button type="button" class="gallery-close" data-gallery-close aria-label={G.close}>×</button>
+    </div>
   </header>
   <div class="gallery-stage" data-gallery-stage>
     {ordered.map((c) => (
-      <div class="gallery-set" data-gallery-set={c.slug} data-name={c.name} data-credit={c.credit ?? ''} hidden>
+      <div class="gallery-set" data-gallery-set={c.slug} data-name={c.name} data-credit={c.credit ?? ''} data-highlight={copy.projects.referenceHighlights[c.slug] ?? ''} hidden>
         {c.photos.map((p, k) => (
           <figure class="slide" data-slide hidden={k !== 0}>
             <ResponsiveImage src={p.image} alt={`${c.name} – ${p.alt}`} widths={[640, 960, 1280, 1600, 2000]} sizes="(min-width: 1024px) 82vw, 100vw" quality={82} loading="lazy" draggable="false" />
@@ -163,16 +158,16 @@ const words = { view: G.view('{n}'), photo: G.photo, project: G.project, credit:
 
 <style>
   .object-projects { --print-h: min(18cqh, 10.4cqw); width: auto; }
-  /* the three stacks, fanned out a little in the upper right corner */
-  .object-projects-gs { left: 44.5%; top: 8%; rotate: -2.5deg; }
-  .object-projects-ms { left: 62.5%; top: 5%; rotate: 1.5deg; }
-  .object-projects-kb { left: 80.5%; top: 9%; rotate: -1deg; }
+  /* the three stacks, fanned out in a downward-stepping arc in the upper right */
+  .object-projects-gs { left: 42.5%; top: 7%; rotate: -2deg; }
+  .object-projects-ms { left: 61%; top: 5.5%; rotate: 1.4deg; }
+  .object-projects-kb { left: 79.5%; top: 9.5%; rotate: -1.2deg; }
   /* narrow boards: a little smaller, so the three stay apart and on the board */
   @container (max-width: 1120px) {
     .object-projects { --print-h: min(15.5cqh, 9.6cqw); }
-    .object-projects-gs { left: 44%; }
-    .object-projects-ms { left: 62%; }
-    .object-projects-kb { left: 80%; }
+    .object-projects-gs { left: 42%; }
+    .object-projects-ms { left: 60.5%; }
+    .object-projects-kb { left: 79%; }
   }
   /* the magnet holds the whole stack, so it sits above every print */
   /* a round button magnet holds each stack; its icon names the kind of building. It is the drag handle. */
@@ -312,10 +307,38 @@ const words = { view: G.view('{n}'), photo: G.photo, project: G.project, credit:
   }
   .gallery[open] { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; }
   .gallery::backdrop { background: #f3f2edf2; }
-  .gallery-header { display: flex; align-items: center; gap: 20px; min-height: 64px; padding: 8px 12px 8px 24px; }
-  .gallery-title { font-family: var(--font-marker); font-size: 30px; font-weight: 600; line-height: 1; color: #fff; }
+  .gallery-header { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 20px; min-height: 64px; padding: 10px 12px 10px 24px; }
+  .gallery-title { font-family: var(--font-marker); font-size: clamp(22px, 2.4vw, 30px); font-weight: 600; line-height: 1; color: #fff; }
   .gallery-count { font-size: 13px; font-weight: 600; letter-spacing: .06em; color: #a9a79e; font-variant-numeric: tabular-nums; }
-  .gallery-close { display: grid; place-items: center; width: 44px; height: 44px; margin-left: auto; padding: 0; border: 0; border-radius: 50%; background: none; color: #fff; font-size: 30px; line-height: 1; cursor: pointer; }
+  .gallery-highlight {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-ginster-light);
+    background: #ffffff14;
+    padding: 3px 10px;
+    border-radius: 3px;
+  }
+  .gallery-highlight:empty { display: none; }
+  .gallery-header-actions { display: flex; align-items: center; gap: 12px; margin-left: auto; }
+  .gallery-inquire {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 38px;
+    padding: 0 14px;
+    border-radius: 2px;
+    background: var(--color-ginster);
+    color: var(--color-ink);
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+    transition: background-color 160ms ease;
+  }
+  .gallery-inquire:hover { background: var(--color-ginster-light); }
+  .gallery-inquire-arrow { display: inline-block; transition: translate 180ms ease; }
+  .gallery-inquire:hover .gallery-inquire-arrow { translate: 3px 0; }
+  .gallery-inquire:focus-visible { outline: 2px solid var(--color-ginster-light); outline-offset: 2px; }
+  .gallery-close { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 50%; background: none; color: #fff; font-size: 30px; line-height: 1; cursor: pointer; }
   .gallery-close:hover { background: #ffffff1a; }
 
   .gallery-stage { position: relative; min-height: 0; overflow: hidden; touch-action: pan-y; }
@@ -326,15 +349,35 @@ const words = { view: G.view('{n}'), photo: G.photo, project: G.project, credit:
     inset: 0;
     display: grid;
     grid-template-rows: minmax(0, 1fr) auto;
-    justify-items: center;
+    justify-items: stretch;
+    align-items: stretch;
     gap: 12px;
     margin: 0;
-    padding: 4px 210px 0;
+    padding: 8px clamp(72px, 10vw, 160px) 0;
   }
-  .slide :global(img) { width: 100%; height: 100%; object-fit: contain; -webkit-user-drag: none; user-select: none; }
+  .slide :global(picture) {
+    display: block !important;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+  }
+  .slide :global(img) {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    -webkit-user-drag: none;
+    user-select: none;
+  }
   /* Match the bright, colorful collage finish in full-size photos and their previews. */
-  .slide :global(img), .thumb :global(img) { filter: url('#gallery-photo-finish'); }
-  .slide figcaption { max-width: 70ch; font-size: 14px; line-height: 1.45; text-align: center; color: #c9c7be; }
+  .slide :global(img), .thumb :global(img) { filter: brightness(1.04) contrast(1.02) saturate(1.14); }
+  .slide figcaption { justify-self: center; max-width: 70ch; font-size: 14px; line-height: 1.45; text-align: center; color: #c9c7be; }
 
   .gallery-step {
     position: absolute;
@@ -375,7 +418,8 @@ const words = { view: G.view('{n}'), photo: G.photo, project: G.project, credit:
     cursor: pointer;
     transition: opacity 150ms ease, translate 150ms ease;
   }
-  .thumb :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .thumb :global(picture) { display: block !important; width: 100%; height: 100%; }
+  .thumb :global(img) { display: block; width: 100%; height: 100%; object-fit: cover; }
   .thumb:hover { opacity: .85; }
   .thumb[aria-current='true'] { opacity: 1; translate: 0 -3px; box-shadow: 0 0 0 2px var(--color-ginster); }
   .gallery-credit { font-size: 11px; color: #8e8c83; }
@@ -408,7 +452,8 @@ const words = { view: G.view('{n}'), photo: G.photo, project: G.project, credit:
     cursor: pointer;
     transition: opacity 150ms ease, color 150ms ease;
   }
-  .project :global(img) { width: 112px; height: 75px; border-radius: 3px; object-fit: cover; }
+  .project :global(picture) { display: block !important; width: 112px; height: 75px; border-radius: 3px; overflow: hidden; }
+  .project :global(img) { display: block; width: 100%; height: 100%; border-radius: 3px; object-fit: cover; }
   .project span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .project:hover { opacity: .9; }
   .project[aria-current='true'] { opacity: 1; color: #fff; }
@@ -432,14 +477,18 @@ const words = { view: G.view('{n}'), photo: G.photo, project: G.project, credit:
 
   @media (max-width: 1023px) {
     .gallery { inset: 0; border: 0; border-radius: 0; }
+    .gallery-header { padding: 10px 12px 8px 16px; }
     .slide { padding-inline: 12px; }
     .gallery-step { top: auto; bottom: 8px; translate: none; width: 48px; height: 48px; }
     .gallery-credit { position: static; }
     .gallery-footer { flex-direction: column; gap: 8px; }
   }
+  @media (max-width: 520px) {
+    .gallery-inquire { min-height: 44px; padding: 0 12px; font-size: 12px; }
+  }
 
   @media (prefers-reduced-motion: reduce) {
-    .print, .collage-open-hint, .thumb, .project, .stack-magnet, .sm-gloss { transition: none; }
+    .print, .collage-open-hint, .thumb, .project, .stack-magnet, .sm-gloss, .gallery-inquire, .gallery-inquire-arrow { transition: none; }
   }
 </style>
 

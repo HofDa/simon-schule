@@ -1,22 +1,30 @@
 ---
 /**
- * "Der Lernraum" – Section 4: Simon & Rene in the Sitzkreis.
- * Combines personal local contact cards with the interactive 10-chair Sitzkreis.
- * Clicking a question chair shows why Simon & Rene ask that question during an on-site visit
- * and lets the visitor take that exact question into the inquiry form.
+ * "Der Lernraum" – Section 4: Simon Brugger & Trias Meran/Brixen in the Sitzkreis.
+ * Reuses Simon's pinned business card (with circular SB stamp) and the HOUSE70 fridge magnet
+ * from the whiteboard, paired with the interactive 10-chair Sitzkreis planning questions.
  */
 import { contact, fullName, locations, people, roleFor } from '../../../data/site';
 import { asset } from '../../../lib/paths';
 import { getLang, useTranslations } from '../../../i18n/ui';
 import Lesson from '../klassenzimmer/Lesson.astro';
+import Magnet from '../Magnet.astro';
+import ResponsiveImage from '../ResponsiveImage.astro';
+import house70Magnet from '../../../assets/whiteboard/house70-fridge-magnet-natural.webp';
 import { lernraumCopy } from '../../../i18n/lernraum';
 
 const lang = getLang(Astro.currentLocale);
 const ui = useTranslations(lang);
 const t = ui.people;
 const [simon] = people;
+const simonName = fullName(simon);
+const simonInitials = [simon.firstName, simon.lastName].filter(Boolean).map((n) => n![0]).join('');
+const simonRole = roleFor(simon, lang);
+const directPhone = simon.phone ?? contact.phone;
+const phoneHref = directPhone ? `tel:${directPhone.replace(/[^\d+]/g, '')}` : null;
 
 const L = lernraumCopy(lang);
+const C = L.board.card;
 const questionAnswers = L.people.why;
 
 type Seat = { kind: 'empty' } | { kind: 'person'; label: string } | { kind: 'question'; q: number } | { kind: 'you' };
@@ -54,32 +62,74 @@ const placed = seats.map((seat, i) => {
       <h2 id="people-title" class="text-headline leading-[0.98] tracking-[-0.03em]">{t.title}</h2>
       <p class="mt-6 max-w-[46ch] text-body leading-[1.65] text-muted lg:text-lead">{t.intro}</p>
 
-      <div class="persons">
-        {people.map((person) => {
-          const role = roleFor(person, lang);
-          return (
-            <article class="person">
-              {person.photo && (
-                <img
-                  class="portrait"
-                  src={asset(`images/team/${person.photo}.webp`)}
-                  alt={t.portraitAlt(fullName(person))}
-                  width="800"
-                  height="1000"
-                  loading="lazy"
-                  decoding="async"
-                />
+      <div class="pinned-cards">
+        <!-- Simon Brugger's pinned whiteboard business card -->
+        <article class="simon-card">
+          <Magnet />
+          <p class="card-eyebrow">{C.eyebrow}</p>
+          <div class="card-person">
+            {simon.photo ? (
+              <img
+                class="card-photo"
+                src={asset(`images/team/${simon.photo}.webp`)}
+                alt={t.portraitAlt(simonName)}
+                width="80"
+                height="100"
+                loading="lazy"
+                decoding="async"
+              />
+            ) : (
+              <span class="card-stamp" aria-hidden="true">{simonInitials}</span>
+            )}
+            <div class="min-w-0">
+              <h3 class="card-name">{simonName}</h3>
+              {simonRole && <p class="card-role">{simonRole}</p>}
+              <p class="card-note">{C.note}</p>
+            </div>
+          </div>
+          <div class="card-actions">
+            <div class="card-lines">
+              {simon.email && (
+                <a href={`mailto:${simon.email}`}>
+                  <span aria-hidden="true">✉</span> {simon.email}
+                </a>
               )}
-              <h3 class="name">{fullName(person)}</h3>
-              {role && <p class="mt-1 text-muted">{role}</p>}
-              {person.email && <p class="mt-3 text-meta"><a class="link-line font-semibold" href={`mailto:${person.email}`}>{person.email}</a></p>}
-            </article>
-          );
-        })}
-        <article class="person">
-          <h3 class="name">{t.teamTitle}</h3>
-          <p class="mt-1 text-muted">{locations.map((l) => l.city[lang]).join(' · ')}</p>
-          <p class="mt-3 text-meta"><a class="link-line" href={`mailto:${contact.email}`}>{contact.email}</a></p>
+              {phoneHref && (
+                <a href={phoneHref}>
+                  <span aria-hidden="true">☏</span> {directPhone}
+                </a>
+              )}
+            </div>
+            <a class="card-cta" href="#anfrage" data-open-form>
+              {C.cta} <span aria-hidden="true">→</span>
+            </a>
+          </div>
+        </article>
+
+        <!-- Pinned HOUSE70 Meran & Brixen card -->
+        <article class="house-card">
+          <Magnet />
+          <div class="house-card-head">
+            <div class="house-thumb" aria-hidden="true">
+              <ResponsiveImage src={house70Magnet} alt="" width={110} widths={[96, 140]} sizes="56px" quality={88} loading="lazy" draggable="false" />
+            </div>
+            <div>
+              <p class="card-eyebrow">{L.board.house.place}</p>
+              <h3 class="house-title">{t.teamTitle}</h3>
+              <p class="house-role">{t.teamRole}</p>
+            </div>
+          </div>
+          <ul class="house-locations">
+            {locations.map((loc) => (
+              <li>
+                <strong>{loc.city[lang]}</strong>
+                <span>{loc.street[lang]}</span>
+              </li>
+            ))}
+          </ul>
+          <p class="house-mail">
+            <a class="link-line font-semibold" href={`mailto:${contact.email}`}>{contact.email}</a>
+          </p>
         </article>
       </div>
 
@@ -103,12 +153,13 @@ const placed = seats.map((seat, i) => {
           <p class="picker-why" data-lr-picker-why>{questionAnswers[0]}</p>
           <a
             href="#anfrage"
-            class="picker-cta link-line"
+            class="picker-cta"
             data-open-form
             data-question={t.questions[0]}
             data-lr-picker-cta
           >
-            {L.people.take} →
+            <span>{L.people.take}</span>
+            <span aria-hidden="true">→</span>
           </a>
         </div>
       </div>
@@ -126,11 +177,12 @@ const placed = seats.map((seat, i) => {
                 <p class="question-why">{questionAnswers[i]}</p>
                 <a
                   href="#anfrage"
-                  class="question-cta link-line"
+                  class="question-cta"
                   data-open-form
                   data-question={q}
                 >
-                  {L.people.take} →
+                  <span>{L.people.take}</span>
+                  <span aria-hidden="true">→</span>
                 </a>
               </li>
             ))}
@@ -173,19 +225,182 @@ const placed = seats.map((seat, i) => {
     border-bottom: 1px solid var(--color-line);
   }
   .grid-wrap { display: grid; gap: 56px; }
-  .persons { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 32px; }
-  .person { border-top: 1.5px solid var(--color-ink); padding-top: 16px; }
-  .portrait {
-    display: block;
-    width: 100%;
-    max-width: 16rem;
-    aspect-ratio: 4 / 5;
-    object-fit: cover;
-    margin-bottom: 16px;
-    background: var(--color-surface);
+
+  /* Pinned business card & HOUSE70 card */
+  .pinned-cards {
+    display: grid;
+    gap: 24px;
+    margin-top: 32px;
   }
-  .name { font-size: var(--text-title); letter-spacing: -0.03em; line-height: 1.05; }
-  .mail { margin-top: 20px; font-size: var(--text-meta); color: var(--color-muted); }
+  .simon-card,
+  .house-card {
+    position: relative;
+    padding: 22px 20px 18px;
+    background: #fffefb;
+    border: 1px solid #e3dfd3;
+    box-shadow: inset 4px 0 0 var(--color-ginster), 0 1px 0 #e3dfd3, 2px 12px 18px -10px rgba(32, 32, 29, 0.25);
+  }
+  .simon-card { rotate: -0.6deg; }
+  .house-card {
+    rotate: 0.7deg;
+    box-shadow: 0 1px 0 #e3dfd3, 2px 12px 18px -10px rgba(32, 32, 29, 0.25);
+  }
+  .card-eyebrow {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-ginster-deep);
+  }
+  .card-person {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 10px;
+  }
+  .card-stamp {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 58px;
+    height: 58px;
+    border: 2px solid var(--color-ginster);
+    border-radius: 50%;
+    color: var(--color-ink);
+    font-family: var(--font-hand);
+    font-size: 1.55rem;
+    font-weight: 700;
+    rotate: -8deg;
+  }
+  .card-photo {
+    flex: none;
+    width: 58px;
+    aspect-ratio: 4 / 5;
+    height: auto;
+    object-fit: cover;
+    border-radius: 2px;
+  }
+  .card-name {
+    font-size: clamp(1.2rem, 1.8vw, 1.45rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+  .card-role {
+    margin-top: 3px;
+    font-size: var(--text-label);
+    line-height: 1.35;
+    color: var(--color-muted);
+  }
+  .card-note {
+    margin-top: 4px;
+    font-family: var(--font-marker);
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1;
+    color: #22305f;
+  }
+  .card-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px 14px;
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px dashed #d9d5c9;
+  }
+  .card-lines {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+  .card-lines a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 36px;
+    font-size: var(--text-label);
+    font-weight: 600;
+    color: var(--color-ink);
+    text-decoration: underline;
+    text-decoration-color: #d9d5c9;
+    text-underline-offset: 3px;
+    overflow-wrap: anywhere;
+  }
+  .card-lines a:hover { text-decoration-color: var(--color-ginster); }
+  .card-lines a span { color: var(--color-ginster-deep); text-decoration: none; }
+  .card-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 40px;
+    padding: 0 14px;
+    border-radius: 2px;
+    background: var(--color-ink);
+    color: #fff;
+    font-size: var(--text-label);
+    font-weight: 700;
+    white-space: nowrap;
+    transition: background-color 150ms ease;
+  }
+  .card-cta span { display: inline-block; color: var(--color-ginster-light); transition: translate 200ms ease; }
+  .card-cta:hover { background: #000; }
+  .card-cta:hover span { translate: 3px 0; }
+
+  .house-card-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .house-thumb img {
+    display: block;
+    width: 50px;
+    height: auto;
+    rotate: -3deg;
+    filter:
+      drop-shadow(1.5px 0 0 #fbf7ec)
+      drop-shadow(-1.5px 0 0 #fbf7ec)
+      drop-shadow(0 1.5px 0 #fbf7ec)
+      drop-shadow(0 -1.5px 0 #fbf7ec)
+      drop-shadow(1px 5px 4px rgba(32, 32, 29, 0.25));
+  }
+  .house-title {
+    margin-top: 2px;
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+  }
+  .house-role {
+    margin-top: 2px;
+    font-size: var(--text-label);
+    color: var(--color-muted);
+    line-height: 1.4;
+  }
+  .house-locations {
+    list-style: none;
+    margin: 14px 0 0;
+    padding: 12px 0 0;
+    border-top: 1px dashed #d9d5c9;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 16px;
+    font-size: var(--text-label);
+  }
+  .house-locations li {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+  .house-locations span {
+    color: var(--color-muted);
+  }
+  .house-mail {
+    margin-top: 10px;
+    font-size: var(--text-label);
+  }
 
   .question-picker {
     margin-top: 32px;
@@ -240,11 +455,23 @@ const placed = seats.map((seat, i) => {
     display: none;
     margin-top: 12px;
     padding: 14px 16px;
-    background: var(--color-paper);
-    border-left: 3px solid var(--color-ginster);
+    background: #fffefb;
+    border: 1px solid #e3dfd3;
+    border-left: 4px solid var(--color-ginster);
   }
   .picker-why { font-size: var(--text-meta); line-height: 1.55; color: var(--color-muted); }
-  .picker-cta { display: inline-block; margin-top: 10px; font-size: var(--text-meta); font-weight: 600; color: var(--color-ink); }
+  .picker-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+    padding: 6px 12px;
+    background: var(--color-ink);
+    color: #fff;
+    border-radius: 2px;
+    font-size: var(--text-label);
+    font-weight: 700;
+  }
 
   .ring-wrap { display: grid; place-items: center; }
   .kz-ring {
@@ -304,11 +531,20 @@ const placed = seats.map((seat, i) => {
     margin-inline: auto;
   }
   .question-cta {
-    display: inline-block;
-    margin-top: 10px;
-    font-size: 0.78rem;
-    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 12px;
+    padding: 6px 12px;
+    background: var(--color-ginster);
     color: var(--color-ink);
+    border-radius: 2px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    transition: background-color 180ms var(--ease-draw);
+  }
+  .question-cta:hover {
+    background: var(--color-ginster-light);
   }
 
   .seat {
@@ -373,7 +609,7 @@ const placed = seats.map((seat, i) => {
     .ring-wrap { grid-column: 6 / 13; }
   }
   @media (max-width: 539px) {
-    .persons { grid-template-columns: 1fr; }
+    .house-locations { grid-template-columns: 1fr; }
     .middle-label, .question-why { display: none; }
     .picker-answer { display: block; }
   }

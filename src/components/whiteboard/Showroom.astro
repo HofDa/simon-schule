@@ -46,7 +46,11 @@ const pieces = [
     spec: de ? 'Freiform-Tisch · mit sechs Hokki' : 'Tavolo a forma libera · con sei Hokki',
     swatch: '#f6f5f1',
   },
-].map((p) => ({ ...p, label: `${de ? '3D-Modell' : 'Modello 3D'}: ${p.name}, ${p.spec}. ${copy.drag}` }));
+].map((p) => ({
+  ...p,
+  label: `${de ? '3D-Modell' : 'Modello 3D'}: ${p.name}, ${p.spec}. ${copy.drag}`,
+  inquireLabel: de ? `${p.name} anfragen` : `Richiedi ${p.name}`,
+}));
 const first = pieces[0];
 ---
 
@@ -56,6 +60,10 @@ const first = pieces[0];
       <p class="marker eyebrow">{copy.eyebrow}</p>
       <h2 id="showroom-title">{copy.title}</h2>
       <p>{copy.text}</p>
+      <a href="#anfrage" class="btn btn-ink mt-7" data-open-form data-showroom-inquire data-topic={first.name}>
+        <span data-showroom-inquire-label>{first.inquireLabel}</span>
+        <svg class="btn-arrow h-3.5 w-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" /></svg>
+      </a>
     </div>
 
     <figure class="showroom-frame" data-showroom>
@@ -84,6 +92,7 @@ const first = pieces[0];
             data-name={p.name}
             data-spec={p.spec}
             data-label={p.label}
+            data-inquire-label={p.inquireLabel}
             aria-pressed={i === 0 ? 'true' : 'false'}
           >
             <span class="swatch" style={`--swatch: ${p.swatch}`} aria-hidden="true"></span>
@@ -113,7 +122,7 @@ const first = pieces[0];
     line-height: 1;
     letter-spacing: -0.045em;
   }
-  .showroom-copy > p:last-child { margin-top: 20px; max-width: 42ch; color: var(--color-muted); font-size: 1.08rem; }
+  .showroom-copy > p:not(.eyebrow) { margin-top: 20px; max-width: 42ch; color: var(--color-muted); font-size: 1.08rem; }
 
   /* the frame: a deep display niche with an ink border, a lit back wall and a floor */
   .showroom-frame {

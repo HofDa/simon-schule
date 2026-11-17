@@ -61,7 +61,7 @@ const bubble = 'M24 4H96Q114 4 114 22V50Q114 68 96 68H52L27 88L33 68H24Q6 68 6 5
           <div class="face face-in" aria-hidden={k === 1 ? undefined : 'true'}>
             <div class="page" style={`--slice: ${k}`}>
               {entries.map((e, i) => (
-                <article class="entry" data-feedback-panel={i} hidden={i !== 0} aria-label={k === 1 ? copy.voices.feedbackLabel(e.name, e.role, e.organisation) : undefined}>
+                <article class="entry" data-feedback-panel={i} data-org={e.organisation} hidden={i !== 0} aria-label={k === 1 ? copy.voices.feedbackLabel(e.name, e.role, e.organisation) : undefined}>
                   <header class="entry-head"><span>{F.heading}</span><time>{e.date}</time></header>
                   <blockquote class="entry-quote"><p>{e.quote}</p></blockquote>
                   <footer class="entry-from">
@@ -84,13 +84,19 @@ const bubble = 'M24 4H96Q114 4 114 22V50Q114 68 96 68H52L27 88L33 68H24Q6 68 6 5
 
       <div class="letter-controls" data-feedback-controls inert>
         <button type="button" class="letter-close" data-feedback-close aria-label={F.close}>×</button>
-        {entries.length > 1 && (
-          <div class="letter-pager">
-            <button type="button" data-feedback-step="-1" aria-label={F.prev}>‹</button>
-            <span data-feedback-count aria-live="polite">1 / {entries.length}</span>
-            <button type="button" data-feedback-step="1" aria-label={F.next}>›</button>
-          </div>
-        )}
+        <div class="letter-pager">
+          {entries.length > 1 && (
+            <div class="letter-pager-nav">
+              <button type="button" data-feedback-step="-1" aria-label={F.prev}>‹</button>
+              <span data-feedback-count aria-live="polite">1 / {entries.length}</span>
+              <button type="button" data-feedback-step="1" aria-label={F.next}>›</button>
+            </div>
+          )}
+          <a href="#anfrage" class="letter-inquire" data-feedback-inquire data-open-form data-topic={entries[0]?.organisation ?? ''}>
+            <span>{copy.voices.cardCta}</span>
+            <span aria-hidden="true">→</span>
+          </a>
+        </div>
       </div>
 
 
@@ -99,7 +105,7 @@ const bubble = 'M24 4H96Q114 4 114 22V50Q114 68 96 68H52L27 88L33 68H24Q6 68 6 5
       <span class="sr-only">{F.read(entries.length)}</span>
     </button>
   </div>
-  <span class="object-caption feedback-caption" aria-hidden="true">{F.heading} <span>↗</span></span>
+  <button type="button" class="object-caption feedback-caption" data-feedback-caption tabindex="-1" aria-hidden="true">{F.heading} <span aria-hidden="true">↗</span></button>
   <p id="feedback-hint" class="sr-only">{F.hint}</p>
 </div>
 
@@ -118,9 +124,9 @@ const bubble = 'M24 4H96Q114 4 114 22V50Q114 68 96 68H52L27 88L33 68H24Q6 68 6 5
 
   .object-feedback {
     --letter-w: 21cqh;
-    --tilt: -3deg;
-    left: 64%;
-    top: 41%;
+    --tilt: -2.5deg;
+    left: 46.5%;
+    top: 56%;
   }
   .object-feedback.is-open { z-index: 5000; }
   /* the magnet stays grabbable above the letter's open button */
@@ -138,7 +144,7 @@ const bubble = 'M24 4H96Q114 4 114 22V50Q114 68 96 68H52L27 88L33 68H24Q6 68 6 5
     touch-action: none;
     rotate: -6deg;
     filter: drop-shadow(1px 5px 4px #20201d40);
-    transition: translate 160ms ease, filter 160ms ease;
+    transition: translate 160ms ease, filter 160ms ease, opacity 250ms ease 1050ms;
   }
   .feedback-magnet svg { display: block; width: 100%; height: auto; overflow: visible; }
   .fm-gloss { transition: transform 700ms cubic-bezier(.2, .8, .2, 1); }
@@ -157,6 +163,7 @@ const bubble = 'M24 4H96Q114 4 114 22V50Q114 68 96 68H52L27 88L33 68H24Q6 68 6 5
     box-shadow: 1px 2px 0 #dcd8cc, 2px 8px 12px -8px #20201d55;
     rotate: 5deg;
     translate: 6% 10%;
+    transition: opacity 250ms ease 1050ms;
   }
 
   /* the whole page, laid out at --up times its board size (so its text is drawn at reading size
@@ -176,6 +183,7 @@ const bubble = 'M24 4H96Q114 4 114 22V50Q114 68 96 68H52L27 88L33 68H24Q6 68 6 5
     transition: transform 650ms cubic-bezier(.2, .8, .2, 1) 650ms;
   }
   .is-open .letter {
+    z-index: 30;
     transform: translate(var(--open-x, 0px), var(--open-y, 0px)) scale(calc(var(--open-s, 1) / var(--up)));
     transition-delay: 0ms;
   }
@@ -260,16 +268,45 @@ const bubble = 'M24 4H96Q114 4 114 22V50Q114 68 96 68H52L27 88L33 68H24Q6 68 6 5
     cursor: pointer;
   }
   .letter-close:hover, .letter-pager button:hover { background: #20201d10; }
-  .letter-close:focus-visible, .letter-pager button:focus-visible { outline: .6cqi solid var(--color-ginster-deep); outline-offset: .4cqi; }
+  .letter-close:focus-visible, .letter-pager button:focus-visible, .letter-inquire:focus-visible { outline: .6cqi solid var(--color-ginster-deep); outline-offset: .4cqi; }
   .letter-close { position: absolute; top: 2cqi; right: 2cqi; }
-  .letter-pager { position: absolute; left: 12cqi; right: 8cqi; bottom: 1.5cqi; display: flex; align-items: center; justify-content: space-between; color: #6e6c65; font-size: 4cqi; font-weight: 600; }
+  .letter-pager { position: absolute; left: 11cqi; right: 7cqi; bottom: 1.5cqi; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 2cqi; color: #6e6c65; font-size: 3.6cqi; font-weight: 600; }
+  .letter-pager-nav { display: inline-flex; align-items: center; gap: 1cqi; }
+  .letter-pager button { width: 9cqi; height: 9cqi; font-size: 7cqi; }
+  .letter-inquire {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 1.5cqi;
+    padding: 1.4cqi 2.8cqi;
+    border-radius: 1cqi;
+    background: var(--color-ginster);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 3cqi;
+    font-weight: 800;
+    line-height: 1.1;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background-color 150ms ease;
+  }
+  .letter-inquire:hover { background: var(--color-ginster-light); }
 
   .letter-open { position: absolute; inset: 0; z-index: 10; padding: 0; border: 0; background: none; cursor: zoom-in; }
   .letter-open:focus-visible { outline: 3px solid var(--color-ginster-deep); outline-offset: 6px; }
   .is-open .letter-open { display: none; }
 
-  .feedback-caption { margin-top: 2.6cqh; font-size: clamp(18px, 1.6cqw, 25px); white-space: nowrap; rotate: 2deg; transition: opacity 300ms; }
-  .is-open .feedback-caption { opacity: 0; }
+  .feedback-caption { margin-top: 2.6cqh; padding: 0; border: 0; background: none; color: inherit; text-align: left; cursor: zoom-in; font-size: clamp(18px, 1.6cqw, 25px); white-space: nowrap; rotate: 2deg; transition: opacity 300ms ease 1050ms; }
+  .feedback-caption:hover > span[aria-hidden] { translate: 3px -3px; }
+  /* closing: magnet, under-sheet and caption come back only once the letter has folded onto the board
+     (fold-2 0–600ms, fold-0 350–950ms, the letter's return from 650ms); opening: they go at once */
+  .is-open .feedback-magnet,
+  .is-open .letter-under,
+  .is-open .feedback-caption {
+    opacity: 0;
+    pointer-events: none;
+    transition-delay: 0ms;
+  }
 
   /* hover: the top flap lifts, as if someone is about to open the letter */
   @media (hover: hover) and (pointer: fine) {
@@ -285,13 +322,13 @@ const bubble = 'M24 4H96Q114 4 114 22V50Q114 68 96 68H52L27 88L33 68H24Q6 68 6 5
   @keyframes write-down { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0 0 0 0); } }
   @keyframes write-across { from { clip-path: inset(-20% 100% -20% 0); } to { clip-path: inset(-20% 0 -20% 0); } }
 
-  /* narrow boards: further right, clear of the collage stack */
+  /* narrow boards: stay in the lower-middle Z-pattern slot */
   @container (max-width: 1050px) {
-    .object-feedback { left: 64%; top: 33%; --letter-w: 17cqh; }
+    .object-feedback { left: 46.5%; top: 55%; --letter-w: 17cqh; }
   }
 
   @media (max-height: 800px) {
-    .object-feedback { --letter-w: 18cqh; top: 44%; left: 55%; }
+    .object-feedback { --letter-w: 18cqh; top: 55%; left: 46.5%; }
     .feedback-caption { font-size: clamp(17px, min(1.6cqw, 3.4cqh), 22px); }
   }
 

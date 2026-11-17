@@ -6,6 +6,7 @@ export interface TanoDesk {
   y: number;
   turn: number;
   colour: number;
+  inverted?: boolean;
 }
 
 const R = 7.6;
@@ -33,41 +34,58 @@ export function joinTano(previous: TanoDesk, edge: number, nextEdge: number, col
   }
   const turn = Math.atan2(a[1] - b[1], a[0] - b[0]) - Math.atan2(d[1] - c[1], d[0] - c[0]);
   const [dx, dy] = rotate(c, turn);
-  return { x: b[0] - dx, y: b[1] - dy, turn, colour };
+  const inverted = edge === nextEdge ? !previous.inverted : Boolean(previous.inverted);
+  return { x: b[0] - dx, y: b[1] - dy, turn, colour, inverted };
 }
 
-/** Two seats at the free long edge; their direction always follows their desk. */
+/** One seat per Tano top on the student side; inverted tops in connected runs seat behind their outer apex facing the board. */
 export function tanoSeats(desk: TanoDesk) {
   const polygon = tanoPolygon(desk);
   const [a, b] = [polygon[2], polygon[3]];
   const length = Math.hypot(b[0] - a[0], b[1] - a[1]);
   const dx = (b[0] - a[0]) / length;
   const dy = (b[1] - a[1]) / length;
-  return [-2.3, 2.3].map((along) => ({
-    x: (a[0] + b[0]) / 2 + along * dx + 2.7 * dy,
-    y: (a[1] + b[1]) / 2 + along * dy - 2.7 * dx,
-    angle: Math.atan2(dx, -dy),
-    colour: desk.colour,
-  }));
+  const angle = Math.atan2(dx, -dy);
+  if (desk.inverted || Math.sin(angle) > 0.9) {
+    return [
+      {
+        x: polygon[0][0] - 2.7 * dy,
+        y: polygon[0][1] + 2.7 * dx,
+        angle: Math.atan2(-dx, dy),
+        colour: desk.colour,
+      },
+    ];
+  }
+  return [
+    {
+      x: (a[0] + b[0]) / 2 + 2.7 * dy,
+      y: (a[1] + b[1]) / 2 - 2.7 * dx,
+      angle,
+      colour: desk.colour,
+    },
+  ];
 }
 
 export function tanoLayout(name: TanoArrangement): TanoDesk[] {
   if (name === 'frontal') {
-    return [16, 34, 52].flatMap((y, colour) => {
-      const first: TanoDesk = { x: 30.785, y, turn: -Math.PI / 6, colour };
+    const tilt = -0.08;
+    return [15, 33.5, 52].flatMap((y, colour) => {
+      const first: TanoDesk = { x: 30.785, y, turn: -Math.PI / 6 + tilt, colour };
       const second = joinTano(first, 1, 1);
-      return [first, second, joinTano(second, 3, 3)];
+      const row = [first, second, joinTano(second, 3, 3)];
+      const xs = row.flatMap(tanoPolygon).map(([x]) => x);
+      const shift = 40 - (Math.min(...xs) + Math.max(...xs)) / 2;
+      return row.map((desk) => ({ ...desk, x: desk.x + shift }));
     });
   }
   if (name === 'uform') {
-    const desks: TanoDesk[] = [{ x: 25, y: 16, turn: Math.PI / 3, colour: 0 }];
-    // The polygon's short sides and radial sides form a continuous, stepped horseshoe.
-    const seams = [[1, 1], [3, 3], [0, 4], [1, 1], [4, 4], [0, 0], [3, 3], [0, 4]];
+    const desks: TanoDesk[] = [{ x: 14, y: 22, turn: (7 * Math.PI) / 6, colour: 0, inverted: true }];
+    // Three 3-desk arms ([3, 3], [1, 1]) joined by [3, 1] corners form a symmetric horseshoe open to the board.
+    const seams = [[3, 3], [1, 1], [3, 1], [3, 3], [1, 1], [3, 1], [3, 3], [1, 1]];
     seams.forEach(([edge, nextEdge], i) => desks.push(joinTano(desks[desks.length - 1], edge, nextEdge, Math.floor((i + 1) / 3))));
-    // Centre the horseshoe across the room, keeping its open side towards the board (y = 0).
     const xs = desks.flatMap(tanoPolygon).map(([x]) => x);
     const shift = 40 - (Math.min(...xs) + Math.max(...xs)) / 2;
-    return desks.map((desk) => ({ ...desk, x: desk.x + shift, y: desk.y + 4 }));
+    return desks.map((desk) => ({ ...desk, x: desk.x + shift }));
   }
   return [[20, 22], [54, 20], [38, 48]].flatMap(([x, y], colour) =>
     [0, 1, 2].map((k) => {

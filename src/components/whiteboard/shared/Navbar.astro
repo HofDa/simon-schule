@@ -111,6 +111,13 @@ const nav = t.nav.items.map((item) => ({ ...item, href: `${home}${item.href}` })
     .site-nav:not(.is-below-board) .nav-cta { display: none; }
     .site-nav:not(.is-below-board) .nav-right { margin-left: auto; margin-right: max(0px, calc(60px + 45px + 20px - var(--gutter))); pointer-events: auto; }
     .site-nav.is-below-board > div > nav { gap: clamp(12px, 2vw, 30px); }
+    .site-nav.is-below-board {
+      animation: nav-reveal 340ms var(--ease-menu) both;
+    }
+  }
+  @keyframes nav-reveal {
+    from { opacity: 0; translate: 0 -12px; }
+    to { opacity: 1; translate: none; }
   }
   @media (min-width: 1400px) {
     .site-nav.is-below-board .board-return {
@@ -219,19 +226,49 @@ const nav = t.nav.items.map((item) => ({ ...item, href: `${home}${item.href}` })
   }
 
   /* The menu, after trias.it: a dark panel at the right; opening pushes the whole page to the left
-     while the panel moves in with it (0.4s), closing slides both back. */
-  :global(:root) { --menu-w: min(440px, 92vw); }
-  :global(html.site-menu-open) { overflow: hidden; }
-  :global(html.site-menu-anim body > *:not(dialog)) { transition: transform 400ms cubic-bezier(.4, 0, .2, 1); }
+     while the panel moves in with it, closing slides both back together cleanly. */
+  :global(:root) {
+    --menu-w: min(440px, 92vw);
+    --ease-menu: cubic-bezier(0.22, 1, 0.36, 1);
+    --dur-menu: 500ms;
+  }
+  :global(html.site-menu-open) {
+    overflow: hidden;
+    padding-right: var(--menu-sbw, 0px);
+  }
+  :global(html.site-menu-open) .site-nav {
+    right: var(--menu-sbw, 0px);
+  }
+  :global(html.site-menu-anim body > *:not(dialog)) {
+    transition: transform var(--dur-menu) var(--ease-menu);
+    will-change: transform;
+  }
   :global(html.site-menu-push body > *:not(dialog)) { transform: translateX(calc(-1 * var(--menu-w))); }
   /* Keep the board beside the sidebar; its artwork fits into the remaining surface. */
   @media (min-width: 1024px) {
     :global(html.site-menu-fit.site-menu-push main) { transform: none; }
   }
-  .site-menu { position: fixed; inset: 0 0 0 auto; width: var(--menu-w); max-width: none; height: 100dvh; max-height: none; margin: 0; padding: 0; border: 0; background: #231f20; color: #fff; overflow-y: auto; overscroll-behavior: contain; }
+  .site-menu {
+    position: fixed;
+    inset: 0 0 0 auto;
+    width: var(--menu-w);
+    max-width: none;
+    height: 100dvh;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: #231f20;
+    color: #fff;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    transform: translate3d(100%, 0, 0);
+    transition: transform var(--dur-menu) var(--ease-menu);
+    will-change: transform;
+  }
   .site-menu:not([open]) { display: none; }
-  .site-menu[open] { display: flex; flex-direction: column; animation: menu-enter 400ms cubic-bezier(.4, 0, .2, 1); }
-  .site-menu.is-closing { animation: menu-leave 400ms cubic-bezier(.4, 0, .2, 1) forwards; }
+  .site-menu[open] { display: flex; flex-direction: column; }
+  :global(html.site-menu-push) .site-menu[open] { transform: translate3d(0, 0, 0); }
   /* no dimming: the page stays as it is, pushed aside (a click on it closes the menu) */
   .site-menu::backdrop { background: transparent; }
   .menu-header { display: flex; align-items: stretch; justify-content: space-between; min-height: 60px; padding-left: 30px; border-bottom: 1px solid #ffffff12; }
@@ -244,6 +281,27 @@ const nav = t.nav.items.map((item) => ({ ...item, href: `${home}${item.href}` })
   .menu-close { display: grid; place-items: center; width: 60px; min-height: 60px; padding: 0; border: 0; background: #2f2a2b; color: #fff; font-size: 38px; font-weight: 200; line-height: 1; cursor: pointer; transition: background-color 150ms ease, color 150ms ease; }
   .menu-close:hover { background: #3b3537; color: var(--color-ginster); }
   .menu-navigation { padding: clamp(24px, 6.5vh, 64px) 30px 24px; }
+  .menu-navigation li,
+  .menu-footer {
+    opacity: 0;
+    translate: 16px 0;
+    transition:
+      opacity 320ms var(--ease-menu),
+      translate 420ms var(--ease-menu);
+  }
+  :global(html.site-menu-push) .menu-navigation li,
+  :global(html.site-menu-push) .menu-footer {
+    opacity: 1;
+    translate: 0 0;
+  }
+  :global(html.site-menu-push) .menu-navigation li:nth-child(1) { transition-delay: 45ms; }
+  :global(html.site-menu-push) .menu-navigation li:nth-child(2) { transition-delay: 75ms; }
+  :global(html.site-menu-push) .menu-navigation li:nth-child(3) { transition-delay: 105ms; }
+  :global(html.site-menu-push) .menu-navigation li:nth-child(4) { transition-delay: 135ms; }
+  :global(html.site-menu-push) .menu-navigation li:nth-child(5) { transition-delay: 165ms; }
+  :global(html.site-menu-push) .menu-navigation li:nth-child(6) { transition-delay: 195ms; }
+  :global(html.site-menu-push) .menu-navigation li:nth-child(7) { transition-delay: 225ms; }
+  :global(html.site-menu-push) .menu-footer { transition-delay: 210ms; }
   .menu-navigation a { display: block; padding-block: clamp(12px, 2.6vh, 21px); color: #fff; font-size: clamp(23px, 2vw, 28px); line-height: 1.2; font-weight: 400; letter-spacing: -.01em; transition: color 150ms ease, translate 150ms ease; }
   .menu-navigation a:hover { color: var(--color-ginster); translate: 4px 0; }
   .menu-footer { display: flex; flex-direction: column; gap: 24px; margin-top: auto; padding: 0 30px max(30px, env(safe-area-inset-bottom)); }
@@ -251,12 +309,12 @@ const nav = t.nav.items.map((item) => ({ ...item, href: `${home}${item.href}` })
   .menu-family:hover { color: #fff; }
   .site-menu a:focus-visible, .menu-close:focus-visible { outline: 2px solid var(--color-ginster); outline-offset: 4px; }
   .menu-close:focus-visible { outline-offset: -6px; }
-  @keyframes menu-enter { from { transform: translateX(100%); } to { transform: translateX(0); } }
-  @keyframes menu-leave { from { transform: translateX(0); } to { transform: translateX(100%); } }
   @media (prefers-reduced-motion: reduce) {
-    .site-menu[open], .site-menu.is-closing { animation: none; }
+    .site-menu, .menu-navigation li, .menu-footer { transition: none; }
+    .site-nav.is-below-board { animation: none; }
     .menu-icon span, .menu-navigation a { transition: none; }
     :global(html.site-menu-push body > *:not(dialog)) { transform: none; }
+    :global(html.site-menu-push) .site-menu[open] { transform: none; }
   }
 </style>
 
@@ -282,7 +340,7 @@ const nav = t.nav.items.map((item) => ({ ...item, href: `${home}${item.href}` })
     const open = menu.open && !menu.classList.contains('is-closing');
     toggle.setAttribute('aria-expanded', String(open));
     header.classList.toggle('is-open', open);
-    document.documentElement.classList.toggle('site-menu-open', open);
+    document.documentElement.classList.toggle('site-menu-open', menu.open);
     if (label) label.textContent = (open ? toggle.dataset.labelClose : toggle.dataset.labelOpen) ?? '';
   };
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -295,8 +353,7 @@ const nav = t.nav.items.map((item) => ({ ...item, href: `${home}${item.href}` })
     root.classList.toggle('site-menu-fit', fits);
     if (!fits || !board || !frame || !menu) return;
 
-    // Use the board's normal width even while its right padding is animating.
-    // The canvas keeps its own dimensions, preserving dragged magnets and drawings.
+    // Measure after overflow/scrollbar compensation so the board never jumps horizontally.
     const gutter = parseFloat(getComputedStyle(board).paddingLeft);
     const frameStyle = getComputedStyle(frame);
     const inset = parseFloat(frameStyle.paddingLeft) + parseFloat(frameStyle.borderLeftWidth);
@@ -315,35 +372,54 @@ const nav = t.nav.items.map((item) => ({ ...item, href: `${home}${item.href}` })
   /** Fit the visible board beside the menu; other sections retain the page-push transition. */
   const setMenu = (open: boolean, instant = false) => {
     if (!menu) return;
-    if (open && !menu.open) {
+    if (open && (!menu.open || menu.classList.contains('is-closing'))) {
       window.clearTimeout(closing);
+      const wasClosed = !menu.open;
       menu.classList.remove('is-closing');
       document.querySelector('[data-board-home]')?.dispatchEvent(new Event('whiteboard:tools-idle'));
       root.classList.add('site-menu-anim');
-      menu.showModal();
+      if (wasClosed) {
+        const sbw = Math.max(0, window.innerWidth - root.clientWidth);
+        root.style.setProperty('--menu-sbw', `${sbw}px`);
+        root.classList.add('site-menu-open');
+        menu.showModal();
+      }
       fitBoardToMenu();
-      requestAnimationFrame(() => root.classList.add('site-menu-push'));
+      // Commit initial transforms before triggering the push state so frame 1 always transitions smoothly.
+      void menu.offsetWidth;
+      void board?.offsetWidth;
+      requestAnimationFrame(() => {
+        if (menu.open && !menu.classList.contains('is-closing')) root.classList.add('site-menu-push');
+      });
     } else if (!open && menu.open) {
+      window.clearTimeout(closing);
       root.classList.remove('site-menu-push');
       const finish = () => {
         menu.classList.remove('is-closing');
         if (menu.open) menu.close();
-        root.classList.remove('site-menu-anim');
+        root.classList.remove('site-menu-anim', 'site-menu-open');
+        root.style.removeProperty('--menu-sbw');
         clearBoardFit();
-      };
-      if (instant || reduce.matches) finish();
-      else {
-        menu.classList.add('is-closing');
         syncMenu();
-        closing = window.setTimeout(finish, 400);
+      };
+      if (instant || reduce.matches) {
+        finish();
+        return;
       }
+      menu.classList.add('is-closing');
+      closing = window.setTimeout(finish, 500);
     }
     syncMenu();
   };
 
   toggle?.addEventListener('click', () => setMenu(toggle.getAttribute('aria-expanded') !== 'true'));
   menu?.querySelector('[data-menu-close]')?.addEventListener('click', () => setMenu(false));
-  menu?.addEventListener('close', syncMenu);
+  menu?.addEventListener('close', () => {
+    root.classList.remove('site-menu-anim', 'site-menu-open', 'site-menu-push');
+    root.style.removeProperty('--menu-sbw');
+    clearBoardFit();
+    syncMenu();
+  });
   // Escape closes with the same slide
   menu?.addEventListener('cancel', (event) => {
     event.preventDefault();

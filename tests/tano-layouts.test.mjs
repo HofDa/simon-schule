@@ -25,11 +25,11 @@ function sharesEdge(a, b) {
 }
 
 for (const name of ['frontal', 'uform', 'gruppen']) {
-  test(`${name} keeps nine desks, eighteen usable seats and the same chair colours`, () => {
+  test(`${name} keeps nine desks, nine usable seats and the same chair colours`, () => {
     const desks = tanoLayout(name), seats = desks.flatMap(tanoSeats), polygons = desks.map(tanoPolygon);
     assert.equal(desks.length, 9);
-    assert.equal(seats.length, 18);
-    for (const colour of [0, 1, 2]) assert.equal(seats.filter((seat) => seat.colour === colour).length, 6);
+    assert.equal(seats.length, 9);
+    for (const colour of [0, 1, 2]) assert.equal(seats.filter((seat) => seat.colour === colour).length, 3);
     for (let i = 0; i < polygons.length; i++) {
       for (let j = i + 1; j < polygons.length; j++) assert.ok(!overlaps(polygons[i], polygons[j]), `desks ${i} and ${j} overlap`);
     }
@@ -43,7 +43,13 @@ for (const name of ['frontal', 'uform', 'gruppen']) {
 }
 
 test('rows have two complete flush seams each and clear space between rows', () => {
-  const polygons = tanoLayout('frontal').map(tanoPolygon);
+  const desks = tanoLayout('frontal');
+  const polygons = desks.map(tanoPolygon);
+  const seats = desks.flatMap(tanoSeats);
+  seats.forEach((seat) => {
+    assert.ok(Math.sin(seat.angle) < -0.95, 'all row chairs face the whiteboard');
+    assert.ok(Math.abs(seat.angle - seats[0].angle) < 1e-6, 'all row chairs face one consistent direction');
+  });
   for (let row = 0; row < 3; row++) {
     const offset = row * 3;
     assert.ok(sharesEdge(polygons[offset], polygons[offset + 1]));
@@ -57,13 +63,14 @@ test('rows have two complete flush seams each and clear space between rows', () 
 });
 
 test('U forms one continuous run with an opening and free centre towards the board', () => {
-  const desks = tanoLayout('uform'), polygons = desks.map(tanoPolygon);
+  const desks = tanoLayout('uform'), polygons = desks.map(tanoPolygon), seats = desks.flatMap(tanoSeats);
   for (let i = 1; i < polygons.length; i++) assert.ok(sharesEdge(polygons[i - 1], polygons[i]), `seam ${i} must be flush`);
   assert.ok(desks[0].x < 40 && desks.at(-1).x > 40);
   assert.ok(desks[0].y < 25 && desks.at(-1).y < 25);
   assert.ok(Math.max(...desks.map(({ y }) => y)) > 38, 'back of the U closes behind its opening');
   const centre = [[35, 10], [45, 10], [45, 29], [35, 29]];
   polygons.forEach((polygon) => assert.ok(!overlaps(centre, polygon), 'central path to the board stays open'));
+  seats.forEach((seat) => assert.ok(Math.sin(seat.angle) < -0.45, 'U-form chairs face inward towards the board'));
 });
 
 test('unequal edges cannot silently create a gap or overlap', () => {

@@ -1,141 +1,336 @@
 ---
 /**
- * "Der Lernraum" – Section 7: Einzelgespräch (Always-Open Desk Contact).
- * Simon & Rene sit on one side of the table, "Ihr Platz" is on the other, and the inquiry form
- * lies open on the desk between them. Any link with `data-open-form` (`data-phase`, `data-topic`,
- * `data-question`) pre-fills the form and scrolls smoothly to the desk.
+ * "Der Lernraum" – Section 6 below the Whiteboard: Consolidated People, Locations, FAQ Drawer & Low-Friction Form.
+ * Houses Simon Brugger's pinned business card (`#menschen`), the HOUSE70 Meran & Brixen card,
+ * a compact closed-by-default FAQ accordion, and the clean `#anfrage` inquiry desk (`SmartContactForm`).
  */
-import { contact, fullName, people } from '../../../data/site';
+import { contact, fullName, locations, people, roleFor } from '../../../data/site';
+import { asset } from '../../../lib/paths';
 import { getLang, useTranslations } from '../../../i18n/ui';
 import SmartContactForm from './SmartContactForm.astro';
-import Lesson from '../klassenzimmer/Lesson.astro';
+import Magnet from '../Magnet.astro';
+import ResponsiveImage from '../ResponsiveImage.astro';
+import house70Magnet from '../../../assets/whiteboard/house70-fridge-magnet-natural.webp';
 import { lernraumCopy } from '../../../i18n/lernraum';
 
 const lang = getLang(Astro.currentLocale);
-const t = useTranslations(lang).contact;
+const ui = useTranslations(lang);
+const t = ui.contact;
+const pt = ui.people;
 const L = lernraumCopy(lang);
-const names = people.map((p) => fullName(p)).join(' · ');
-
-const stepsAfterSubmit = L.talk.steps;
+const [simon] = people;
+const simonName = fullName(simon);
+const simonInitials = [simon.firstName, simon.lastName].filter(Boolean).map((n) => n![0]).join('');
+const simonRole = roleFor(simon, lang);
+const directPhone = simon.phone ?? contact.phone;
+const phoneHref = directPhone ? `tel:${directPhone.replace(/[^\d+]/g, '')}` : null;
 ---
 
-<section id="kontakt" class="lr-talk" aria-labelledby="contact-title">
+<section id="kontakt" class="lr-talk" aria-labelledby="contact-title" data-lr-talk>
   <div class="shell grid-wrap">
-    <div class="copy">
-      <Lesson n="06" name={L.lesson.contact.name} note={L.lesson.contact.note} layout="talk" from="stations" />
-      <h2 id="contact-title" class="text-headline leading-[0.98] tracking-[-0.03em]">{t.title}</h2>
-      <p class="mt-6 max-w-[40ch] text-body leading-[1.65] text-muted lg:text-lead">{t.lead}</p>
-
-      <div class="next-steps">
-        <p class="next-heading">{L.talk.stepsHeading}</p>
-        <ol class="next-list">
-          {stepsAfterSubmit.map((step, i) => (
-            <li>
-              <span class="next-num" aria-hidden="true">{i + 1}</span>
-              <span>{step}</span>
-            </li>
-          ))}
-        </ol>
+    <div id="menschen" class="copy">
+      <div data-wb-reveal>
+        <h2 id="contact-title" class="text-headline leading-[0.98] tracking-[-0.03em]">{t.title}</h2>
+        <p class="mt-4 max-w-[42ch] text-body leading-[1.6] text-muted">{t.lead}</p>
       </div>
 
-      <p class="direct mt-8 text-meta">
-        {L.talk.direct}{' '}
-        {contact.phone ? (
-          <a class="link-line font-semibold" href={`tel:${contact.phone.replace(/\s/g, '')}`}>{t.call}</a>
-        ) : (
-          <a class="link-line font-semibold" href={`mailto:${contact.email}`}>{contact.email}</a>
-        )}
-      </p>
+      <!-- Simon Brugger's pinned whiteboard business card -->
+      <article class="talk-card" data-wb-pin style="--wb-d: 0ms">
+        <Magnet />
+        <div class="talk-card-top">
+          {simon.photo ? (
+            <img
+              class="talk-photo"
+              src={asset(`images/team/${simon.photo}.webp`)}
+              alt={pt.portraitAlt(simonName)}
+              width="64"
+              height="80"
+              loading="lazy"
+              decoding="async"
+            />
+          ) : (
+            <span class="talk-stamp" aria-hidden="true">{simonInitials}</span>
+          )}
+          <div class="min-w-0">
+            <p class="talk-eyebrow">{L.board.card.eyebrow}</p>
+            <h3 class="talk-name">{simonName}</h3>
+            {simonRole && <p class="talk-role">{simonRole}</p>}
+            <p class="talk-note">{L.board.card.note}</p>
+          </div>
+        </div>
+        <div class="talk-card-links">
+          {simon.email && (
+            <a href={`mailto:${simon.email}`}>
+              <span aria-hidden="true">✉</span> {simon.email}
+            </a>
+          )}
+          {phoneHref && (
+            <a href={phoneHref}>
+              <span aria-hidden="true">☏</span> {directPhone}
+            </a>
+          )}
+        </div>
+        <p class="talk-promise">{L.talk.responsePromise}</p>
+      </article>
+
+      <!-- Open HOUSE70 Meran & Brixen Block -->
+      <div class="house-row" data-wb-reveal style="--wb-d: 100ms">
+        <div class="house-card-head">
+          <div class="house-thumb" aria-hidden="true">
+            <ResponsiveImage src={house70Magnet} alt="" width={100} widths={[80, 120]} sizes="48px" quality={88} loading="lazy" draggable="false" />
+          </div>
+          <div class="min-w-0">
+            <p class="talk-eyebrow">{L.board.house.place}</p>
+            <h3 class="house-title">{pt.teamTitle}</h3>
+            <p class="talk-role">{pt.teamRole}</p>
+          </div>
+        </div>
+        <ul class="house-locations">
+          {locations.map((loc) => (
+            <li>
+              <strong>{loc.city[lang]}</strong>
+              <span>{loc.street[lang]}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <!-- Compact closed-by-default FAQ drawer -->
+      <details class="faq-drawer" id="faq" data-wb-reveal style="--wb-d: 140ms">
+        <summary class="faq-summary">
+          <span>{L.faq.eyebrow}: {L.faq.title}</span>
+          <span class="faq-toggle" aria-hidden="true"></span>
+        </summary>
+        <dl class="faq-list">
+          {L.faq.items.map((item) => (
+            <div class="faq-item">
+              <dt>{item.question}</dt>
+              <dd>{item.answer}</dd>
+            </div>
+          ))}
+        </dl>
+      </details>
     </div>
 
     <div class="setting">
-      <p class="chair-row" aria-hidden="true">
-        <svg class="chair chair-them" viewBox="-12 -12 24 24"><use href="#kz-chair" x="-12" y="-12" width="24" height="24" transform="rotate(180)" /></svg>
-        <span class="chair-label">{names} (Trias Schule)</span>
-      </p>
-      <div id="anfrage" class="desk" tabindex="-1" data-phase-context={L.talk.phaseContext} data-topic-key={L.form.topicKey}>
+      <div id="anfrage" class="desk" tabindex="-1" data-phase-context={L.talk.phaseContext} data-topic-key={L.form.topicKey} data-wb-pin style="--wb-d: 140ms">
+        <Magnet />
         <SmartContactForm />
       </div>
-      <p class="chair-row" aria-hidden="true">
-        <svg class="chair chair-you" viewBox="-12 -12 24 24"><use href="#kz-chair" x="-12" y="-12" width="24" height="24" /></svg>
-        <span class="chair-label marker">{L.talk.you}</span>
-      </p>
     </div>
   </div>
 </section>
 
 <style>
-  .lr-talk { padding-block: clamp(88px, 10vw, 160px); }
-  .grid-wrap { display: grid; gap: 48px; }
+  .lr-talk { padding-block: clamp(56px, 7vw, 108px); }
+  .grid-wrap { display: grid; gap: 40px; }
 
-  .next-steps {
-    margin-top: 32px;
-    padding: 20px 22px;
-    background: var(--color-warm);
-    border-left: 3px solid var(--color-ginster);
+  .talk-card {
+    position: relative;
+    margin-top: 24px;
+    padding: 20px 20px 16px;
+    background: #fffefb;
+    border: 0;
+    box-shadow: inset 4px 0 0 var(--color-ginster), 2px 14px 24px -14px rgba(32, 32, 29, 0.24);
+    transform: rotate(-0.5deg);
+    transition: transform 220ms var(--ease-draw), box-shadow 220ms var(--ease-draw);
   }
-  .next-heading {
-    font-size: var(--text-label);
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--color-ink);
+  .talk-card:hover {
+    transform: rotate(0deg) translateY(-2px);
+    box-shadow: inset 4px 0 0 var(--color-ginster), 4px 18px 28px -14px rgba(32, 32, 29, 0.3);
   }
-  .next-list {
-    list-style: none;
-    margin: 14px 0 0;
-    padding: 0;
-    display: grid;
-    gap: 12px;
+  .talk-card-top {
+    display: flex;
+    align-items: center;
+    gap: 14px;
   }
-  .next-list li {
-    display: grid;
-    grid-template-columns: 22px minmax(0, 1fr);
-    gap: 10px;
-    align-items: baseline;
-    font-size: var(--text-meta);
-    color: var(--color-muted);
-    line-height: 1.5;
-  }
-  .next-num {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    border: 1px solid var(--color-ink);
-    color: var(--color-ink);
-    font-size: 0.74rem;
-    font-weight: 700;
-    font-variant-numeric: tabular-nums;
+  .talk-stamp {
+    flex: none;
     display: grid;
     place-items: center;
+    width: 52px;
+    height: 52px;
+    border: 2px solid var(--color-ginster);
+    border-radius: 50%;
+    color: var(--color-ink);
+    font-family: var(--font-hand);
+    font-size: 1.4rem;
+    font-weight: 700;
+    rotate: -8deg;
+  }
+  .talk-photo {
+    flex: none;
+    width: 52px;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: 2px;
+  }
+  .talk-eyebrow {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-ginster-deep);
+  }
+  .talk-name {
+    font-size: 1.2rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+  }
+  .talk-role {
+    font-size: var(--text-label);
+    color: var(--color-muted);
+    line-height: 1.35;
+  }
+  .talk-note {
+    margin-top: 3px;
+    font-family: var(--font-marker);
+    font-size: 1.15rem;
+    font-weight: 600;
+    line-height: 1;
+    color: #22305f;
+  }
+  .talk-card-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+    margin-top: 12px;
+    padding-top: 10px;
+  }
+  .talk-card-links a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 36px;
+    font-size: var(--text-label);
+    font-weight: 600;
+    color: var(--color-ink);
+    text-decoration: underline;
+    text-decoration-color: #d9d5c9;
+    text-underline-offset: 3px;
+  }
+  .talk-card-links a:hover { text-decoration-color: var(--color-ginster); }
+  .talk-card-links a span { color: var(--color-ginster-deep); text-decoration: none; }
+  .talk-promise {
+    margin-top: 10px;
+    padding: 4px 9px;
+    display: inline-block;
+    background: #f6dc78;
+    color: var(--color-ink);
+    font-size: 0.76rem;
+    font-weight: 600;
+    rotate: -0.6deg;
   }
 
-  .setting { display: flex; flex-direction: column; align-items: center; }
-  .chair-row { display: flex; align-items: center; gap: 14px; }
-  .chair { width: 64px; height: 64px; overflow: visible; }
-  .chair-them { --seat: var(--color-ink); }
-  .chair-row:first-child { margin-bottom: -14px; }
-  .chair-row:last-child { margin-top: -14px; }
-  .chair-label { font-size: var(--text-meta); font-weight: 600; }
-  .chair-label.marker { font-size: var(--text-marker); font-weight: 600; }
+  .house-row {
+    margin-top: 24px;
+  }
+  .house-card-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .house-thumb img {
+    display: block;
+    width: 44px;
+    height: auto;
+    rotate: -3deg;
+    filter:
+      drop-shadow(1.5px 0 0 #fbf7ec)
+      drop-shadow(-1.5px 0 0 #fbf7ec)
+      drop-shadow(0 1.5px 0 #fbf7ec)
+      drop-shadow(0 -1.5px 0 #fbf7ec)
+      drop-shadow(1px 5px 4px rgba(32, 32, 29, 0.25));
+  }
+  .house-title {
+    margin-top: 2px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+  }
+  .house-locations {
+    list-style: none;
+    margin: 12px 0 0;
+    padding: 6px 0 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 14px;
+    font-size: var(--text-label);
+  }
+  .house-locations li {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+  .house-locations span {
+    color: var(--color-muted);
+  }
 
+  /* Compact closed-by-default FAQ accordion */
+  .faq-drawer {
+    margin-top: 22px;
+  }
+  .faq-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 48px;
+    padding-block: 10px;
+    font-size: var(--text-meta);
+    font-weight: 600;
+    color: var(--color-ink);
+    cursor: pointer;
+    list-style: none;
+  }
+  .faq-summary::-webkit-details-marker { display: none; }
+  .faq-toggle::before {
+    content: '+';
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: var(--color-ginster-deep);
+  }
+  .faq-drawer[open] .faq-toggle::before {
+    content: '–';
+  }
+  .faq-list {
+    margin: 0 0 16px;
+    display: grid;
+    gap: 14px;
+  }
+  .faq-item {
+    padding-top: 10px;
+  }
+  .faq-item dt {
+    font-size: var(--text-label);
+    font-weight: 700;
+    color: var(--color-ink);
+    line-height: 1.35;
+  }
+  .faq-item dd {
+    margin: 4px 0 0;
+    font-size: 0.82rem;
+    line-height: 1.5;
+    color: var(--color-muted);
+  }
+
+  .setting { display: flex; flex-direction: column; align-items: stretch; }
   .desk {
     position: relative;
     width: 100%;
-    padding: clamp(24px, 3vw, 44px);
-    border: 1.5px solid var(--color-ink);
+    padding: clamp(24px, 3vw, 40px);
+    border: 0;
+    border-top: 4px solid var(--color-ginster);
     border-radius: 3px;
     background: var(--color-paper);
-    box-shadow: 0 24px 48px -36px rgba(32, 32, 29, 0.55);
+    box-shadow: 0 24px 52px -24px rgba(32, 32, 29, 0.34);
     outline: none;
+    transition: box-shadow 350ms var(--ease-draw);
   }
-
-  @media (max-width: 1023px) {
-    .grid-wrap { gap: 0; }
-    .copy { display: contents; }
-    .setting { order: 1; margin-top: 40px; }
-    .next-steps { order: 2; margin-top: 48px; }
-    .direct { order: 3; }
+  .desk.is-arriving {
+    box-shadow: 0 0 0 3px var(--color-ginster), 0 24px 52px -24px rgba(32, 32, 29, 0.34);
   }
 
   @media (min-width: 1024px) {
@@ -144,27 +339,48 @@ const stepsAfterSubmit = L.talk.steps;
       column-gap: clamp(24px, 2.6vw, 44px);
       align-items: start;
     }
-    .copy {
-      grid-column: 1 / 6;
-      position: sticky;
-      top: calc(var(--nav-h) + 40px);
-      max-height: calc(100svh - var(--nav-h) - 48px);
-      overflow-y: auto;
-      scrollbar-width: thin;
-    }
+    .copy { grid-column: 1 / 6; position: sticky; top: 96px; }
     .setting { grid-column: 6 / 13; }
   }
-  @media (min-width: 1024px) and (max-height: 820px) {
-    .copy {
-      top: calc(var(--nav-h) + 20px);
-      max-height: calc(100svh - var(--nav-h) - 28px);
+  @media (max-width: 480px) {
+    .house-locations { grid-template-columns: 1fr; }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    :global(html.js) .talk-card:not(.is-in) .talk-stamp {
+      opacity: 0;
     }
-    .next-steps { margin-top: 20px; padding: 14px 18px; }
-    .direct { margin-top: 18px; padding-top: 14px; }
+    .talk-card.is-in .talk-stamp {
+      animation: sb-stamp 360ms cubic-bezier(0.22, 1.35, 0.36, 1) 240ms both;
+    }
+    @keyframes sb-stamp {
+      from {
+        opacity: 0;
+        scale: 1.3;
+        rotate: -20deg;
+      }
+      to {
+        opacity: 1;
+        scale: 1;
+        rotate: -8deg;
+      }
+    }
+  }
+  :global(.board-reader-body) .talk-stamp {
+    opacity: 1 !important;
+    scale: 1 !important;
+    rotate: -8deg !important;
+    animation: none !important;
   }
 </style>
 
 <script>
+  import { revealOnce } from '../../../scripts/motion';
+
+  const talkSection = document.querySelector<HTMLElement>('[data-lr-talk]');
+  if (talkSection) {
+    revealOnce(talkSection.querySelectorAll('[data-wb-reveal], [data-wb-pin]'));
+  }
+
   const desk = document.getElementById('anfrage');
   if (desk) {
     const contextBar = desk.querySelector<HTMLElement>('[data-context-bar]');
@@ -172,15 +388,24 @@ const stepsAfterSubmit = L.talk.steps;
     const contextClear = desk.querySelector<HTMLButtonElement>('[data-context-clear]');
     const topicChips = desk.querySelector<HTMLElement>('[data-topic-chips]');
     const textarea = desk.querySelector<HTMLTextAreaElement>('#lr-msg');
-    const stationCards = Array.from(document.querySelectorAll<HTMLElement>('[data-station-card]'));
 
     let autoTopicInput: HTMLInputElement | null = null;
     let autoQuestionBlock: string | null = null;
+    let arriveTimer: number | undefined;
+
+    const highlightDesk = () => {
+      window.clearTimeout(arriveTimer);
+      desk.classList.add('is-arriving');
+      arriveTimer = window.setTimeout(() => desk.classList.remove('is-arriving'), 900);
+    };
 
     const showContext = (text: string) => {
       if (!contextBar || !contextLabel) return;
       contextLabel.textContent = text;
       contextBar.hidden = false;
+      contextBar.classList.remove('is-pulsing');
+      void contextBar.offsetWidth;
+      contextBar.classList.add('is-pulsing');
     };
 
     const clearAutoTopic = () => {
@@ -197,7 +422,6 @@ const stepsAfterSubmit = L.talk.steps;
       desk.querySelectorAll<HTMLInputElement>('input[type="radio"]').forEach((radio) => {
         radio.checked = false;
       });
-      stationCards.forEach((card) => card.classList.remove('is-chosen'));
       clearAutoTopic();
       if (autoQuestionBlock && textarea && textarea.value.includes(autoQuestionBlock)) {
         textarea.value = textarea.value.replace(autoQuestionBlock, '').replace(/\n{3,}/g, '\n\n').trim();
@@ -212,7 +436,7 @@ const stepsAfterSubmit = L.talk.steps;
       let matched = inputs.find((input) => input.value.toLowerCase() === topic.toLowerCase());
       if (autoTopicInput && autoTopicInput !== matched) clearAutoTopic();
       if (!matched) {
-        // Dynamically add a chip if a specific VS arrangement was chosen
+        // Dynamically add a chip if a specific VS arrangement or reference school was chosen
         const label = document.createElement('label');
         label.className = 'chip';
         const input = document.createElement('input');
@@ -230,8 +454,6 @@ const stepsAfterSubmit = L.talk.steps;
       }
       matched.checked = true;
       autoTopicInput = matched;
-      const more = topicChips.closest('details');
-      if (more) more.open = true;
     };
 
     document.querySelectorAll<HTMLElement>('[data-open-form]').forEach((el) =>
@@ -242,18 +464,18 @@ const stepsAfterSubmit = L.talk.steps;
         const question = el.dataset.question;
 
         if (phase) {
-          const more = desk.querySelector<HTMLDetailsElement>('[data-more]');
-          if (more) more.open = true;
           desk.querySelectorAll<HTMLInputElement>('input[type="radio"]').forEach((radio) => {
             radio.checked = radio.value === phase;
-          });
-          stationCards.forEach((card) => {
-            card.classList.toggle('is-chosen', card.dataset.phase === phase);
           });
         }
 
         if (topic) {
           selectTopicChip(topic);
+        }
+
+        if (phase && topic) {
+          showContext(`${phase} · ${topic}`);
+        } else if (topic) {
           showContext(topic);
         } else if (phase) {
           showContext(`${desk.dataset.phaseContext}: ${phase}`);
@@ -270,12 +492,14 @@ const stepsAfterSubmit = L.talk.steps;
 
         const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
         desk.scrollIntoView({ behavior, block: 'start' });
+        highlightDesk();
         window.setTimeout(() => {
           if (question && textarea) {
             textarea.focus({ preventScroll: true });
             textarea.setSelectionRange(textarea.value.length, textarea.value.length);
           } else {
-            desk.querySelector<HTMLInputElement>('input')?.focus({ preventScroll: true });
+            const firstEmpty = Array.from(desk.querySelectorAll<HTMLInputElement>('input[required]')).find((input) => !input.value.trim());
+            (firstEmpty ?? desk.querySelector<HTMLInputElement>('#lr-name'))?.focus({ preventScroll: true });
           }
         }, behavior === 'smooth' ? 600 : 0);
         history.replaceState(null, '', '#anfrage');

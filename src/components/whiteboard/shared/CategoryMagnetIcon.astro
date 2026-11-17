@@ -1,0 +1,79 @@
+---
+/**
+ * Reusable 3D-styled round Ginstergelb category magnet from the whiteboard collages:
+ * - 'gs': Grundschulen (pencil)
+ * - 'ms': Mittel- & Musikschulen (joined music notes)
+ * - 'kb': Kindergarten & Bibliothek (open book)
+ */
+interface Props {
+  kind: 'gs' | 'ms' | 'kb';
+  size?: number;
+  uid?: string;
+  class?: string;
+}
+
+const { kind, size = 36, uid = kind, class: className } = Astro.props;
+const id = `cm-${kind}-${uid}`;
+---
+
+<svg
+  class:list={['cat-magnet', className]}
+  width={size}
+  height={size}
+  viewBox="0 0 60 60"
+  aria-hidden="true"
+>
+  <defs>
+    <radialGradient id={`${id}-face`} cx=".4" cy=".35" r=".7">
+      <stop offset="0" stop-color="#f8d362" />
+      <stop offset="1" stop-color="#e2a300" />
+    </radialGradient>
+    <linearGradient id={`${id}-gloss`} x1="0" y1="0" x2="1" y2="1">
+      <stop offset=".25" stop-color="#fff" stop-opacity="0" />
+      <stop offset=".4" stop-color="#fff" stop-opacity=".55" />
+      <stop offset=".5" stop-color="#fff" stop-opacity="0" />
+    </linearGradient>
+    <clipPath id={`${id}-clip`}><circle cx="30" cy="30" r="26" /></clipPath>
+  </defs>
+  <circle cx="30.6" cy="33.2" r="27.6" fill="#34332f" />
+  <circle cx="30" cy="31.6" r="27.6" fill="#d6cfbd" />
+  <circle cx="30" cy="30" r="26" fill={`url(#${id}-face)`} stroke="#fbf7ec" stroke-width="3.2" />
+  <g fill="none" stroke="#2c2b28" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+    {kind === 'gs' && (
+      <>
+        <path d="M19 41L21 34L37 18L42 23L26 39Z" fill="#fbf7ec" />
+        <path d="M33 22L38 27M19 41L21 34L26 39Z" />
+        <path d="M19 41L21 34L26 39Z" fill="#2c2b28" />
+      </>
+    )}
+    {kind === 'ms' && (
+      <>
+        <path d="M25 39V19L40 16V36" />
+        <ellipse cx="21.5" cy="39.5" rx="4.2" ry="3.2" fill="#2c2b28" transform="rotate(-18 21.5 39.5)" />
+        <ellipse cx="36.5" cy="36.5" rx="4.2" ry="3.2" fill="#2c2b28" transform="rotate(-18 36.5 36.5)" />
+        <path d="M25 24L40 21" />
+      </>
+    )}
+    {kind === 'kb' && (
+      <>
+        <path d="M30 22Q24 18 16 19V39Q24 38 30 42Q36 38 44 39V19Q36 18 30 22Z" fill="#fbf7ec" />
+        <path d="M30 22V42M20 25Q24 25 27 27M20 30Q24 30 27 32M33 27Q36 25 40 25M33 32Q36 30 40 30" stroke-width="1.6" />
+      </>
+    )}
+  </g>
+  <g clip-path={`url(#${id}-clip)`}>
+    <rect class="cat-magnet-gloss" x="-60" y="0" width="120" height="60" fill={`url(#${id}-gloss)`} />
+  </g>
+</svg>
+
+<style>
+  .cat-magnet {
+    display: block;
+    overflow: visible;
+    filter: drop-shadow(1px 3px 2px rgba(32, 32, 29, 0.25));
+    flex: none;
+  }
+  .cat-magnet-gloss {
+    transition: transform 700ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+</style>

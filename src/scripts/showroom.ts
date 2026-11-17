@@ -21,6 +21,9 @@ async function initShowroom(root: HTMLElement) {
   const buttons = [...root.querySelectorAll<HTMLButtonElement>('[data-piece]')];
   const nameEl = root.querySelector<HTMLElement>('[data-piece-name]');
   const specEl = root.querySelector<HTMLElement>('[data-piece-spec]');
+  const section = root.closest('.showroom');
+  const inquireLink = section?.querySelector<HTMLAnchorElement>('[data-showroom-inquire]');
+  const inquireLabel = section?.querySelector<HTMLElement>('[data-showroom-inquire-label]');
 
   const [THREE, { Workshop }] = await Promise.all([import('three'), import('./showroom-models')]);
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -138,6 +141,8 @@ async function initShowroom(root: HTMLElement) {
       specEl.textContent = button.dataset.spec ?? '';
       canvas.setAttribute('aria-label', button.dataset.label ?? '');
     }
+    if (button && inquireLink) inquireLink.dataset.topic = button.dataset.name ?? '';
+    if (button && inquireLabel && button.dataset.inquireLabel) inquireLabel.textContent = button.dataset.inquireLabel;
     if (instant || reduceMotion || !current) {
       place(id);
       Object.assign(view, goal);
@@ -266,6 +271,9 @@ export function setupShowrooms() {
     const nameEl = root.querySelector<HTMLElement>('[data-piece-name]');
     const specEl = root.querySelector<HTMLElement>('[data-piece-spec]');
     const canvas = root.querySelector<HTMLCanvasElement>('[data-showroom-canvas]');
+    const section = root.closest('.showroom');
+    const inquireLink = section?.querySelector<HTMLAnchorElement>('[data-showroom-inquire]');
+    const inquireLabel = section?.querySelector<HTMLElement>('[data-showroom-inquire-label]');
     if (!activate || !status) return;
     let pending = false;
 
@@ -274,6 +282,8 @@ export function setupShowrooms() {
       if (nameEl) nameEl.textContent = button.dataset.name ?? '';
       if (specEl) specEl.textContent = button.dataset.spec ?? '';
       if (canvas) canvas.setAttribute('aria-label', button.dataset.label ?? '');
+      if (inquireLink) inquireLink.dataset.topic = button.dataset.name ?? '';
+      if (inquireLabel && button.dataset.inquireLabel) inquireLabel.textContent = button.dataset.inquireLabel;
     };
 
     const launch = async (moveFocus: boolean) => {

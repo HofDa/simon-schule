@@ -31,7 +31,7 @@ const vsSchoolCatalog = 'https://web-media.vs.de/file/p1/pdf/45-057-49_V2026-01_
 const penColors = ['#20201d', '#2b4f9e', '#c23a2c', '#2f7a4c'].map((value, i) => ({ name: B.tools.colourNames[i], value }));
 // the magnet's own outline, used as a mask so the gloss only lies on the magnet
 const house70Mask = await getImage({ src: house70Magnet, width: 320, format: 'webp' });
-const topics = (['leistungen', ...(hasLearning ? ['lernformen'] : []), 'projekte', 'menschen', 'vs-moebel', 'phasen', 'kontakt'] as (keyof typeof B.topics)[]).map((id) => ({ id, label: B.topics[id] }));
+const topics = (['projekte', ...(hasLearning ? ['lernformen'] : []), 'leistungen', 'vs-moebel', 'kontakt'] as (keyof typeof B.topics)[]).map((id) => ({ id, label: B.topics[id] }));
 ---
 
 <section class="board-home" aria-labelledby="board-title" data-board-home data-say={JSON.stringify({ ...B.say, penHint: B.tools.penHint, rulerHint: B.tools.rulerHint })}>
@@ -194,7 +194,7 @@ const topics = (['leistungen', ...(hasLearning ? ['lernformen'] : []), 'projekte
   <div class="board-bottom">
     <span>{B.bottom}</span>
     <button class="board-reset" type="button" data-board-reset hidden>{B.reset} <span aria-hidden="true">↺</span></button>
-    <a href={hasLearning ? '#einstieg' : '#leistungen'} data-board-scroll>{B.scroll} <span aria-hidden="true">↓</span></a>
+    <a href="#projekte" data-board-scroll>{B.scroll} <span aria-hidden="true">↓</span></a>
   </div>
   <p id="board-drag-hint" class="sr-only">{B.dragHint}</p>
   <p id="board-draw-hint" class="sr-only">{B.drawHint}</p>

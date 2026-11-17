@@ -1,51 +1,341 @@
 ---
 /**
- * The customers' answers from src/data/feedback.ts in the page flow. On the board they are letters
- * under a magnet, but the board only exists on wide screens: here every visitor reads them, and
- * the inquiry is one step away. Renders nothing while there is no feedback.
+ * The customers' answers from src/data/feedback.ts in the page flow, rendered as
+ * compact unfolded lined-paper letters pinned with whiteboard magnets (matching BoardFeedback.astro),
+ * topped with the yellow speech-bubble quotation magnet and closed with one conversion bar.
  */
 import { feedbackFor } from '../../data/feedback';
 import { getLang } from '../../i18n/ui';
 import { lernraumCopy } from '../../i18n/lernraum';
+import Magnet from './Magnet.astro';
 
 const lang = getLang(Astro.currentLocale);
 const V = lernraumCopy(lang).voices;
 const feedback = feedbackFor(lang);
+const bubble = 'M24 4H96Q114 4 114 22V50Q114 68 96 68H52L27 88L33 68H24Q6 68 6 50V22Q6 4 24 4Z';
+const tilts = ['-0.7deg', '0.6deg', '0.5deg', '-0.6deg'];
 ---
 
 {feedback.length > 0 && (
-  <section id="stimmen" class="voices bg-paper" aria-labelledby="voices-title">
+  <section id="stimmen" class="voices" aria-labelledby="voices-title" data-lr-voices>
     <div class="shell">
-      <h2 id="voices-title" class="max-w-[16ch] text-headline leading-[0.98] tracking-[-0.03em]">{V.title}</h2>
-      <div class="voices-grid mt-12 lg:mt-16">
-        {feedback.map((f) => (
-          <figure class="voice m-0">
-            <svg class="h-5 w-7" viewBox="0 0 36 28" aria-hidden="true"><path d="M0 28V16C0 7 5 1.5 14 0l1.5 3.5C10 5 7.5 8.5 7.5 13H14v15H0Zm21 0V16c0-9 5-14.5 14-16l1 3.5c-5.5 1.5-8 5-8 9.5H35v15H21Z" fill="var(--color-ginster)" /></svg>
-            <blockquote class="m-0 mt-6">
-              <p class="text-body leading-[1.65] lg:text-lead">{f.quote}</p>
-            </blockquote>
-            <figcaption class="mt-6 flex flex-wrap gap-x-3 gap-y-1 text-meta">
-              <span class="font-semibold">{f.name}</span>
-              <span class="text-muted">{f.role}, {f.organisation}</span>
-              {f.translated && <span class="basis-full text-label text-muted">{V.translated}</span>}
-            </figcaption>
+      <div class="voices-head" data-wb-reveal>
+        <div class="voices-title-wrap">
+          <div class="voices-magnet" aria-hidden="true">
+            <svg viewBox="0 0 120 96">
+              <defs>
+                <linearGradient id="fq-face" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#f6cc4c" />
+                  <stop offset="1" stop-color="#e2a300" />
+                </linearGradient>
+                <linearGradient id="fq-gloss" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset=".25" stop-color="#fff" stop-opacity="0" />
+                  <stop offset=".4" stop-color="#fff" stop-opacity=".55" />
+                  <stop offset=".5" stop-color="#fff" stop-opacity="0" />
+                </linearGradient>
+                <clipPath id="fq-clip"><path d={bubble} /></clipPath>
+              </defs>
+              <path d={bubble} fill="#34332f" transform="translate(.6 3.2)" />
+              <path d={bubble} fill="#d6cfbd" transform="translate(0 1.6)" />
+              <path d={bubble} fill="url(#fq-face)" stroke="#fbf7ec" stroke-width="3.2" stroke-linejoin="round" />
+              <path d={bubble} fill="none" stroke="#fff" stroke-opacity=".45" stroke-width="1" transform="translate(60 36) scale(.93) translate(-60 -36)" />
+              <g style="font-family: Georgia, 'Times New Roman', serif; font-weight: 700" font-size="78" text-anchor="middle" letter-spacing="2">
+                <text x="61" y="88" fill="#fff6d6" fill-opacity=".75">&#8220;&#8221;</text>
+                <text x="60" y="89.6" fill="#20201d">&#8220;&#8221;</text>
+              </g>
+              <g clip-path="url(#fq-clip)">
+                <rect class="voices-magnet-gloss" x="-120" y="0" width="240" height="96" fill="url(#fq-gloss)" />
+              </g>
+            </svg>
+          </div>
+          <div>
+            <p class="voices-eyebrow marker" aria-hidden="true">{V.eyebrow}</p>
+            <h2 id="voices-title" class="max-w-[16ch] text-headline leading-[0.98] tracking-[-0.03em]">{V.title}</h2>
+          </div>
+        </div>
+        <p class="voices-lead">{V.lead}</p>
+      </div>
+
+      <div class="voices-grid mt-10">
+        {feedback.map((f, i) => (
+          <figure
+            class="letter-card m-0"
+            style={`--letter-tilt: ${tilts[i % tilts.length]}; --wb-d: ${i * 95}ms`}
+            data-wb-pin
+          >
+            <Magnet />
+            <div class="letter-sheet">
+              <div class="letter-crease letter-crease-top" aria-hidden="true"></div>
+              <div class="letter-crease letter-crease-bottom" aria-hidden="true"></div>
+
+              <header class="letter-head">
+                <span class="letter-tag">{V.tags[i] ?? ''}</span>
+                <time class="letter-date">{f.date}</time>
+              </header>
+
+              <blockquote class="letter-quote m-0">
+                <p>„{f.quote}“</p>
+              </blockquote>
+
+              <figcaption class="letter-from">
+                <span class="letter-name">{f.name}</span>
+                <span class="letter-role">{f.role}, {f.organisation}</span>
+                {f.translated && <span class="letter-translated">{V.translated}</span>}
+              </figcaption>
+            </div>
           </figure>
         ))}
       </div>
-      <p class="voices-next">
-        <span class="text-muted">{V.next}</span>
-        <a href="#anfrage" class="link-line font-semibold" data-open-form>{V.cta} <span aria-hidden="true">→</span></a>
-      </p>
+
+      <div class="voices-next" data-wb-reveal>
+        <p class="voices-next-text">{V.next}</p>
+        <a href="#anfrage" class="btn btn-ink" data-open-form>
+          {V.cta} <span aria-hidden="true">↓</span>
+        </a>
+      </div>
     </div>
   </section>
 )}
 
 <style>
-  .voices { padding-block: clamp(88px, 10vw, 160px); }
-  .voices-grid { display: grid; gap: 56px; }
-  .voices-next { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: clamp(40px, 5vw, 72px); padding-top: 20px; border-top: 1px solid var(--color-line); font-size: var(--text-meta); }
-  .voice { max-width: 60ch; padding-top: 28px; border-top: 1px solid var(--color-line); }
+  .voices {
+    padding-block: clamp(56px, 6.5vw, 96px);
+    background: var(--color-warm);
+  }
+
+  .voices-head {
+    display: grid;
+    gap: 16px;
+    align-items: end;
+  }
+  .voices-title-wrap {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .voices-magnet {
+    flex: none;
+    width: clamp(50px, 4.5vw, 66px);
+    padding-top: 4px;
+    rotate: -6deg;
+    filter: drop-shadow(1px 4px 4px rgba(32, 32, 29, 0.25));
+  }
+  .voices-magnet svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+  .voices-magnet-gloss {
+    transition: transform 750ms cubic-bezier(0.2, 0.8, 0.2, 1) 200ms;
+  }
+  .voices-eyebrow {
+    font-size: var(--text-marker);
+    color: var(--color-ginster-deep);
+    margin-bottom: 6px;
+  }
+  .voices-lead {
+    max-width: 44ch;
+    color: var(--color-muted);
+    font-size: var(--text-body);
+    line-height: 1.58;
+  }
+
+  .voices-grid {
+    display: grid;
+    gap: clamp(22px, 2.8vw, 32px);
+  }
+
+  .letter-card {
+    position: relative;
+    display: flex;
+    transform: rotate(var(--letter-tilt, 0deg));
+    transition: transform 240ms var(--ease-draw);
+  }
+  .letter-card:hover {
+    transform: rotate(0deg) translateY(-2px);
+  }
+
+  /* Compact unfolded lined-paper sheet with red margin line and blue ruling */
+  .letter-sheet {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 20px 20px 18px 38px;
+    border: 0;
+    box-shadow: 0 3px 6px rgba(32, 32, 29, 0.05), 3px 14px 22px -14px rgba(32, 32, 29, 0.35);
+    color: #22305f;
+    transform-origin: top center;
+    background:
+      linear-gradient(90deg, transparent 26px, #e3a3a5 26px, #e3a3a5 27.5px, transparent 27.5px),
+      repeating-linear-gradient(180deg, transparent 0 29px, #c9d6e8 29px 30px) 0 8px / 100% 100% no-repeat,
+      #fffef9;
+  }
+  .letter-crease {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 7px;
+    pointer-events: none;
+  }
+  .letter-crease-top {
+    top: 33.3%;
+    background: linear-gradient(180deg, rgba(32, 32, 29, 0.045), transparent);
+  }
+  .letter-crease-bottom {
+    top: 66.6%;
+    background: linear-gradient(180deg, rgba(32, 32, 29, 0.045), transparent);
+  }
+
+  .letter-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 6px 12px;
+    padding-bottom: 8px;
+  }
+  .letter-tag {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-ginster-deep);
+  }
+  .letter-date {
+    font-size: 0.74rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-muted);
+  }
+
+  .letter-quote {
+    margin-top: 12px;
+  }
+  .letter-quote p {
+    font-size: 0.96rem;
+    line-height: 1.56;
+    color: var(--color-ink);
+  }
+
+  .letter-from {
+    margin-top: auto;
+    padding-top: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+  .letter-name {
+    font-family: var(--font-hand);
+    font-size: 1.45rem;
+    font-weight: 700;
+    line-height: 1.05;
+    color: #22305f;
+    rotate: -1.5deg;
+    transform-origin: left;
+    display: inline-block;
+    width: fit-content;
+  }
+  .letter-role {
+    font-size: var(--text-label);
+    font-weight: 600;
+    color: #4d4b45;
+  }
+  .letter-translated {
+    font-size: 0.72rem;
+    color: var(--color-muted);
+    margin-top: 2px;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .voices-head.is-in .voices-magnet {
+      animation: wb-magnet-in 300ms var(--ease-draw) 80ms both;
+    }
+    .voices-head.is-in .voices-magnet-gloss {
+      transform: translateX(180px);
+    }
+
+    :global(html.js) .letter-card:not(.is-in) .letter-sheet {
+      transform: perspective(1200px) rotateX(-10deg);
+    }
+    .letter-sheet {
+      transition: transform 480ms var(--ease-draw) calc(var(--wb-d, 0ms) + 80ms);
+    }
+
+    :global(html.js) .letter-card:not(.is-in) .letter-name {
+      clip-path: inset(-20% 100% -20% 0);
+    }
+    .letter-card.is-in .letter-name {
+      animation: letter-sign-write 550ms ease-out calc(var(--wb-d, 0ms) + 280ms) both;
+    }
+    @keyframes letter-sign-write {
+      from { clip-path: inset(-20% 100% -20% 0); }
+      to { clip-path: inset(-20% 0 -20% 0); }
+    }
+  }
+
+  :global(.board-reader-body) .letter-sheet,
+  :global(.board-reader-body) .letter-name,
+  :global(.board-reader-body) .voices-magnet {
+    transform: none !important;
+    clip-path: none !important;
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .voices-next {
+    margin-top: clamp(32px, 4vw, 48px);
+    padding: 4px 0 4px 16px;
+    background: transparent;
+    border: 0;
+    border-left: 3px solid var(--color-ginster);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px 24px;
+  }
+  .voices-next-text {
+    font-size: var(--text-lead);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--color-ink);
+  }
+
   @media (min-width: 900px) {
-    .voices-grid { grid-template-columns: 1fr 1fr; gap: 72px; }
+    .voices-head {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: clamp(24px, 2.6vw, 44px);
+    }
+    .voices-title-wrap { grid-column: 1 / 8; }
+    .voices-lead { grid-column: 8 / 13; }
+    .voices-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(22px, 2.6vw, 32px);
+      align-items: start;
+    }
+    .letter-card:nth-child(even) {
+      margin-top: 22px;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .letter-sheet {
+      padding: 18px 16px 16px 32px;
+      background:
+        linear-gradient(90deg, transparent 20px, #e3a3a5 20px, #e3a3a5 21.5px, transparent 21.5px),
+        repeating-linear-gradient(180deg, transparent 0 29px, #c9d6e8 29px 30px) 0 8px / 100% 100% no-repeat,
+        #fffef9;
+    }
   }
 </style>
+
+<script>
+  import { revealOnce } from '../../scripts/motion';
+
+  const section = document.querySelector<HTMLElement>('[data-lr-voices]');
+  if (section) {
+    revealOnce(section.querySelectorAll('[data-wb-reveal], [data-wb-pin]'));
+  }
+</script>
