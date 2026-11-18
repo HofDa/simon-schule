@@ -23,15 +23,15 @@ type Stack = {
 };
 
 if (roots.length && gallery) {
-  // Keep the gallery dialog outside `.board-home` so mobile viewports
-  // (< 1024px, where `.board-home` is `display: none`) can still open any reference project.
+  // Keep the reference gallery available even on pages with a hidden board.
   if (gallery.parentElement !== document.body) document.body.append(gallery);
 
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const desktop = window.matchMedia('(min-width: 1024px)');
+  const responsive = Boolean(document.querySelector('[data-board-responsive]'));
   const photoCount = (slug: string) => gallery.querySelectorAll(`[data-gallery-set="${slug}"] [data-slide]`).length;
   const loadPrint = (print: HTMLElement) => {
-    if (!desktop.matches) return;
+    if (!responsive && !desktop.matches) return;
     const template = print.querySelector<HTMLTemplateElement>('[data-collage-image]');
     template?.replaceWith(template.content.cloneNode(true));
   };
@@ -42,6 +42,8 @@ if (roots.length && gallery) {
     if (!openButton) return null;
     const openHint = root.querySelector<HTMLElement>('[data-collage-open-hint]');
     const prints = Array.from(root.querySelectorAll<HTMLElement>('[data-collage-print]'));
+
+    const loadStack = () => order.slice(0, desktop.matches ? 3 : 1).forEach(loadPrint);
 
     const layout = () => {
       order.forEach((print, pos) => {
@@ -54,7 +56,7 @@ if (roots.length && gallery) {
       });
       openButton.setAttribute('aria-label', order[0].dataset.openLabel ?? '');
       if (openHint) openHint.textContent = (words.view ?? '').replace('{n}', String(photoCount(order[0].dataset.slug!)));
-      order.slice(0, 3).forEach(loadPrint);
+      loadStack();
     };
     const rotateTo = (k: number) => [...prints.slice(k), ...prints.slice(0, k)];
 
@@ -62,7 +64,7 @@ if (roots.length && gallery) {
     const start = Math.floor(Math.random() * prints.length);
     let order = rotateTo(start);
     layout();
-    desktop.addEventListener('change', () => order.slice(0, 3).forEach(loadPrint));
+    desktop.addEventListener('change', loadStack);
     root.closest('[data-board-home]')?.addEventListener('whiteboard:reset', () => {
       order = rotateTo(start);
       layout();
@@ -241,7 +243,11 @@ if (roots.length && gallery) {
     stack.openButton.addEventListener('click', (event) => openGallery(stack, event));
   }
   // "oder erst Projekte ansehen" under the board's headline opens the gallery at the first stack
-  document.querySelectorAll<HTMLElement>('[data-open-collages]').forEach((el) => el.addEventListener('click', (event) => openGallery(stacks[0], event)));
+  document.querySelectorAll<HTMLElement>('[data-open-collages]').forEach((el) => el.addEventListener('click', (event) => {
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    event.preventDefault();
+    openGallery(stacks[0], event);
+  }));
   // Reference cards in the page body open the matching project on both desktop and mobile
   document.querySelectorAll<HTMLElement>('[data-open-project]').forEach((el) =>
     el.addEventListener('click', () => openProject(el.dataset.openProject!, el)),

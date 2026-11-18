@@ -3,13 +3,14 @@
  * "Der Lernraum" – Section 1 below the Whiteboard: Compact South Tyrol Reference Showcase.
  * Pairs the verified 234-facility track record (2015–2026) with the 10 real reference collages
  * grouped by the three whiteboard category magnets (Grundschulen, Mittel- & Musikschulen,
- * Kindergarten & Bibliothek), followed by a single clean conversion bar.
+ * Kindergarten & Bibliothek).
  */
 import { collagesFor } from '../../../data/collages';
 import { experience } from '../../../data/experience';
 import { getLang, useTranslations } from '../../../i18n/ui';
 import ResponsiveImage from '../ResponsiveImage.astro';
 import Magnet from '../Magnet.astro';
+import SwipeControls from '../shared/SwipeControls.astro';
 import CategoryMagnetIcon from '../shared/CategoryMagnetIcon.astro';
 import { lernraumCopy } from '../../../i18n/lernraum';
 
@@ -17,6 +18,7 @@ const lang = getLang(Astro.currentLocale);
 const t = useTranslations(lang).projects;
 const collages = collagesFor(lang);
 const totalFacilities = experience.categories.reduce((sum, category) => sum + category.count, 0);
+const largestCategory = Math.max(...experience.categories.map(({ count }) => count));
 
 const L = lernraumCopy(lang);
 const P = L.projects;
@@ -51,32 +53,39 @@ const tilts = [-1.4, 1.1, -0.8, 1.5, -1.1];
         <p class="sub">{P.referencesSub}</p>
       </div>
 
-      <div class="experience-strip" aria-labelledby="experience-title" data-wb-reveal data-experience-strip style="--wb-d: 80ms">
+      <div class="experience-strip" role="group" aria-labelledby="experience-title" data-wb-reveal data-stats style="--wb-d: 80ms">
         <div class="experience-total">
-          <span class="total-num" data-count-target={totalFacilities}>{totalFacilities}</span>
+          <span class="total-num" data-count-to={totalFacilities} style={`--digits: ${String(totalFacilities).length}`}>{totalFacilities}</span>
           <div>
             <h3 id="experience-title" class="experience-title">{experience.heading[lang]}</h3>
             <span class="experience-period">{experience.period}</span>
           </div>
         </div>
-        <div class="experience-breakdown">
-          {experience.categories.map((category) => (
-            <span class="exp-pill"><strong data-count-target={category.count}>{category.count}</strong> {category.label[lang]}</span>
+        <ul class="experience-breakdown" role="list">
+          {experience.categories.map((category, ci) => (
+            <li class="experience-row" style={`--i: ${ci}`}>
+              <span>{category.label[lang]}</span>
+              <strong data-count-to={category.count}>{category.count}</strong>
+              <span class="experience-bar" style={`--bar-width: ${category.count / largestCategory * 100}%`} aria-hidden="true"></span>
+            </li>
           ))}
-        </div>
+        </ul>
       </div>
     </div>
 
-    <div class="ref-groups">
+    <div class="projects-browse">
+      <SwipeControls railId="project-gallery" labelId="projects-title" />
+    </div>
+    <div id="project-gallery" class="ref-groups swipe-rail">
       {groups.map((group) => (
         <div class={`ref-group ref-group-${group.key}`}>
           <div class="ref-group-head" data-wb-reveal>
             <CategoryMagnetIcon kind={group.key} size={30} uid={`proj-${group.key}`} />
-            <h4 class="ref-group-title">{group.name}</h4>
+            <h4 id={`reference-title-${group.key}`} class="ref-group-title">{group.name}</h4>
           </div>
-          <ul class="references-grid">
+          <ul class="references-grid" role="list" aria-labelledby={`reference-title-${group.key}`}>
             {group.items.map((c, ci) => (
-              <li class="ref-item" style={`--print-tilt: ${tilts[ci % tilts.length]}deg`}>
+              <li class="ref-item" data-swipe-card style={`--print-tilt: ${tilts[ci % tilts.length]}deg`}>
                 <button
                   type="button"
                   class="reference-print"
@@ -84,7 +93,7 @@ const tilts = [-1.4, 1.1, -0.8, 1.5, -1.1];
                   data-wb-pin
                   data-open-project={c.slug}
                   aria-haspopup="dialog"
-                  aria-label={G.open(c.name, c.photos.length)}
+                  aria-label={`${G.open(c.name, c.photos.length)} · ${group.name}`}
                 >
                   <Magnet />
                   <span class="reference-thumb">
@@ -92,8 +101,8 @@ const tilts = [-1.4, 1.1, -0.8, 1.5, -1.1];
                       src={c.collage}
                       alt={c.alt}
                       width={480}
-                      widths={[240, 360, 480]}
-                      sizes="(min-width: 1200px) 220px, (min-width: 640px) 30vw, 46vw"
+                      widths={[240, 360, 480, 640]}
+                      sizes="(min-width: 1200px) 220px, (min-width: 768px) 30vw, 78vw"
                       loading="lazy"
                       draggable="false"
                     />
@@ -104,6 +113,7 @@ const tilts = [-1.4, 1.1, -0.8, 1.5, -1.1];
                     </span>
                   </span>
                   <span class="reference-body">
+                    <span class="reference-category">{group.name}</span>
                     <strong class="reference-name marker">{c.name}</strong>
                     <span class="reference-highlight">{P.referenceHighlights[c.slug] ?? ''}</span>
                   </span>
@@ -113,18 +123,6 @@ const tilts = [-1.4, 1.1, -0.8, 1.5, -1.1];
           </ul>
         </div>
       ))}
-    </div>
-
-    <div class="projects-funnel" data-wb-reveal>
-      <p class="funnel-lead">{L.narrative.bridgeLead}</p>
-      <div class="funnel-actions">
-        <a href="#lernformen" class="btn btn-ink">
-          {L.narrative.bridgeCta} <span aria-hidden="true">↓</span>
-        </a>
-        <a href="#anfrage" class="link-line text-meta font-semibold" data-open-form data-topic={L.form.topics[0]}>
-          {P.cta} <span aria-hidden="true">→</span>
-        </a>
-      </div>
     </div>
   </div>
 </section>
@@ -149,25 +147,21 @@ const tilts = [-1.4, 1.1, -0.8, 1.5, -1.1];
     line-height: 1.55;
   }
 
-  /* Compact 234 South Tyrol experience strip */
   .experience-strip {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 14px;
-    padding: 0;
-    margin-bottom: 0;
-    background: transparent;
-    border: 0;
+    min-width: 0;
+    border: 1px solid var(--color-line);
   }
   .experience-total {
     display: flex;
     align-items: center;
     gap: 14px;
+    padding: 14px 16px;
     border-left: 3px solid var(--color-ginster);
-    padding-left: 14px;
+    border-bottom: 1px solid var(--color-line);
+    background: var(--color-warm);
   }
   .total-num {
+    min-width: calc(var(--digits, 3) * 0.62em);
     font-size: clamp(2.5rem, 4vw, 3.5rem);
     font-weight: 700;
     line-height: 0.95;
@@ -186,28 +180,48 @@ const tilts = [-1.4, 1.1, -0.8, 1.5, -1.1];
     font-variant-numeric: tabular-nums;
   }
   .experience-breakdown {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 8px 18px;
-    font-size: var(--text-label);
+    margin: 0;
+    padding: 8px 16px;
+    list-style: none;
+    font-size: 0.875rem;
     color: var(--color-muted);
     line-height: 1.4;
   }
-  .exp-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    padding: 0;
-    background: transparent;
-    border: 0;
-    white-space: nowrap;
+  .experience-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 4ch;
+    align-items: baseline;
+    gap: 5px 12px;
+    padding-block: 6px;
   }
-  .exp-pill strong {
+  .experience-row strong {
     color: var(--color-ink);
+    text-align: end;
     font-variant-numeric: tabular-nums;
   }
+  .experience-bar {
+    grid-column: 1 / -1;
+    height: 5px;
+    border-radius: 3px;
+    background: var(--color-surface);
+  }
+  .experience-bar::before {
+    content: '';
+    display: block;
+    width: var(--bar-width);
+    height: 100%;
+    border-radius: inherit;
+    background: var(--color-ginster);
+    transform-origin: left center;
+    transition: transform 1100ms cubic-bezier(.2, .8, .2, 1) calc(260ms + var(--i, 0) * 120ms);
+  }
+  /* before the strip scrolls in, the bars wait empty and the numbers at zero (set by the script) */
+  .experience-strip.is-pending .experience-bar::before { transform: scaleX(0); }
+  @media (prefers-reduced-motion: reduce) {
+    .experience-bar::before { transition: none; }
+  }
 
+  .projects-browse, .reference-category { display: none; }
   .ref-groups {
     display: grid;
     gap: 28px 16px;
@@ -260,8 +274,17 @@ const tilts = [-1.4, 1.1, -0.8, 1.5, -1.1];
     .ref-group-ms .references-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     .ref-group-kb .references-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
-  @media (max-width: 479px) {
-    .references-grid { grid-template-columns: 1fr; }
+  @media (max-width: 767px) {
+    .projects-browse { display: flex; }
+    .ref-group-head { display: none; }
+    .ref-group, .references-grid { display: contents; }
+    .ref-group:last-child .ref-item:last-child { scroll-snap-align: end; }
+    .reference-category {
+      display: block;
+      font-size: var(--text-label);
+      font-weight: 600;
+      color: var(--color-ginster-deep);
+    }
   }
 
   .ref-item {
@@ -395,37 +418,11 @@ const tilts = [-1.4, 1.1, -0.8, 1.5, -1.1];
     color: var(--color-muted);
   }
 
-  /* Open conversion prompt */
-  .projects-funnel {
-    margin-top: clamp(32px, 4vw, 48px);
-    padding: 4px 0 4px 16px;
-    background: transparent;
-    border: 0;
-    border-left: 3px solid var(--color-ginster);
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 14px 24px;
-  }
-  .funnel-lead {
-    font-size: var(--text-lead);
-    font-weight: 600;
-    letter-spacing: -0.02em;
-    color: var(--color-ink);
-  }
-  .funnel-actions {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 14px 24px;
-  }
-
   @media (min-width: 1024px) {
     .head {
       grid-template-columns: repeat(12, minmax(0, 1fr));
       column-gap: clamp(24px, 2.6vw, 44px);
-      align-items: end;
+      align-items: center;
     }
     .head-copy { grid-column: 1 / 8; }
     .experience-strip { grid-column: 8 / 13; }
@@ -433,33 +430,43 @@ const tilts = [-1.4, 1.1, -0.8, 1.5, -1.1];
 </style>
 
 <script>
-  import { isMotionAllowed, revealOnce } from '../../../scripts/motion';
+  import { revealOnce, isMotionAllowed, easeOut } from '../../../scripts/motion';
 
   const section = document.querySelector<HTMLElement>('[data-lr-projects]');
   if (section) {
-    revealOnce(section.querySelectorAll('[data-wb-reveal], [data-wb-pin]'));
+    const stats = section.querySelector<HTMLElement>('[data-stats]');
+    revealOnce(Array.from(section.querySelectorAll('[data-wb-reveal], [data-wb-pin]')).filter((el) => el !== stats));
 
-    const strip = section.querySelector<HTMLElement>('[data-experience-strip]');
-    if (strip) {
-      const counters = Array.from(strip.querySelectorAll<HTMLElement>('[data-count-target]'));
-      revealOnce([strip], '0px 0px -6% 0px', (el) => {
-        if (!isMotionAllowed() || el.closest('[data-board-reader]')) {
-          counters.forEach((node) => { node.textContent = node.dataset.countTarget ?? ''; });
-          return;
-        }
-        const duration = 650;
+    if (stats) {
+      const numbers = Array.from(stats.querySelectorAll<HTMLElement>('[data-count-to]'));
+      const target = (el: HTMLElement) => Number(el.dataset.countTo) || 0;
+      const showFinal = () => {
+        numbers.forEach((el) => { el.textContent = String(target(el)); });
+        stats.classList.remove('is-pending');
+      };
+      // count up from zero, the total first and each category a beat later
+      const countUp = () => {
+        if (!isMotionAllowed() || stats.closest('[data-board-reader]')) return showFinal();
+        stats.classList.remove('is-pending');
         const start = performance.now();
-        const targets = counters.map((node) => Number(node.dataset.countTarget ?? 0));
         const tick = (now: number) => {
-          const progress = Math.min(1, (now - start) / duration);
-          const eased = 1 - Math.pow(1 - progress, 3);
-          counters.forEach((node, i) => {
-            node.textContent = String(Math.round(targets[i] * eased));
+          let running = false;
+          numbers.forEach((el, i) => {
+            const t = Math.min(1, Math.max(0, (now - start - 180 - i * 120) / 1300));
+            if (t < 1) running = true;
+            const value = String(Math.round(easeOut(t) * target(el)));
+            if (el.textContent !== value) el.textContent = value;
           });
-          if (progress < 1) requestAnimationFrame(tick);
+          if (running) requestAnimationFrame(tick);
         };
         requestAnimationFrame(tick);
-      });
+      };
+
+      if (isMotionAllowed() && !stats.closest('[data-board-reader]')) {
+        stats.classList.add('is-pending');
+        numbers.forEach((el) => { el.textContent = '0'; });
+      }
+      revealOnce([stats], undefined, countUp);
     }
   }
 </script>

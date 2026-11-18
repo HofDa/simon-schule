@@ -29,12 +29,12 @@ const alternates = { de: homeFor('de'), it: homeFor('it') };
 <Layout canonical={alternates[lang]} alternates={alternates} homepage>
   <Navbar alternates={alternates} />
   <main id="inhalt">
-    <WhiteboardHero />
+    <WhiteboardHero responsiveBoard />
     <AnnotatedProjects />
     <InteractiveScenes />
     <Services />
     <VSFloorplan />
-    <FeedbackQuotes />
+    <FeedbackQuotes swipeable />
     <TalkContact />
   </main>
   <Footer />

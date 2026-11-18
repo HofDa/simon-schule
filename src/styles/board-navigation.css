@@ -14,27 +14,6 @@
     padding: 0 28px;
     background: #f3f2ed;
   }
-  .board-frame {
-    position: relative;
-    flex: 1;
-    min-height: 0;
-    padding: 8px;
-    border: 1px solid #c1c5c5;
-    border-radius: 7px;
-    background: linear-gradient(135deg, #f8f9f9, #cbd0d0 48%, #edf0ef 50%, #c3c7c7);
-    box-shadow: 0 18px 35px -28px #20201d70, inset 0 1px 1px #fff;
-  }
-  .board-canvas {
-    position: relative;
-    height: 100%;
-    overflow: hidden;
-    container-type: size;
-    /* the drawing layer's z-index stays inside the board; the tray's tools and hint sit above it */
-    isolation: isolate;
-    border-radius: 2px;
-    background: linear-gradient(115deg, transparent 25%, #ffffffa6 43%, transparent 64%), #fafbf9;
-    box-shadow: inset 0 1px 5px #20201d12;
-  }
   /* Sidebar overview: retain the canvas coordinates and pull all artwork inward together. */
   html.site-menu-fit .board-home {
     transition: padding-right var(--dur-menu, 500ms) var(--ease-menu, cubic-bezier(0.22, 1, 0.36, 1));
@@ -61,6 +40,31 @@
   .board-drawing { position: absolute; inset: 0; z-index: 2147483647; display: block; width: 100%; height: 100%; overflow: hidden; pointer-events: none; }
   .board-drawing path { fill: none; stroke: var(--color-ink); stroke-width: 7; stroke-linecap: round; stroke-linejoin: round; }
   .is-drawing .board-drawing { pointer-events: auto; cursor: crosshair; touch-action: none; user-select: none; }
+}
+
+:where(.board-home) {
+  .board-frame {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    padding: 8px;
+    border: 1px solid #c1c5c5;
+    border-radius: 7px;
+    background: linear-gradient(135deg, #f8f9f9, #cbd0d0 48%, #edf0ef 50%, #c3c7c7);
+    box-shadow: 0 18px 35px -28px #20201d70, inset 0 1px 1px #fff;
+  }
+  .board-canvas {
+    position: relative;
+    height: 100%;
+    overflow: hidden;
+    container-type: size;
+    /* the drawing layer's z-index stays inside the board; the tray's tools and hint sit above it */
+    isolation: isolate;
+    border-radius: 2px;
+    background: linear-gradient(115deg, transparent 25%, #ffffffa6 43%, transparent 64%), #fafbf9;
+    box-shadow: inset 0 1px 5px #20201d12;
+  }
+
   .board-intro { position: absolute; left: 5%; top: 6%; width: 33%; }
   .board-wordmark { display: inline-flex; align-items: center; min-height: 44px; color: var(--color-ink); }
   .board-wordmark .logo { height: clamp(26px, 4.3cqh, 36px); width: auto; }
@@ -76,7 +80,7 @@
     transform: rotate(-2deg);
   }
   /* the Italian claim is longer: written smaller, so it stays clear of the prints and the path */
-  :root[lang='it'] .board-intro .board-title { font-size: clamp(32px, min(3.7cqw, 8.4cqh), 64px); }
+  :root[lang='it'] & .board-intro .board-title { font-size: clamp(32px, min(3.7cqw, 8.4cqh), 64px); }
   .board-intro .board-title::after { content: ''; display: block; height: 5px; margin-top: -6px; background: var(--color-ginster); border-radius: 50%; transform: rotate(-1deg); }
   .board-intro .board-title > span { color: var(--color-ginster-deep); }
   .board-description { margin-top: 2.8cqh; font-size: clamp(12px, 1.05cqw, 17px); line-height: 1.65; color: #5c5c54; }
@@ -107,6 +111,8 @@
   .board-cta-main:active { translate: 0 1px; box-shadow: 0 6px 14px -8px rgba(32, 32, 29, 0.4); }
   .board-cta-main:focus-visible { outline: 3px dashed var(--color-ginster-deep); outline-offset: 6px; }
   .board-cta-second {
+    display: inline-flex;
+    align-items: center;
     min-height: 44px;
     padding: 0;
     border: 0;
@@ -129,8 +135,8 @@
   .object-house70 { left: 5.5%; top: 61%; width: min(12.5%, 20cqh); rotate: -2.5deg; }
   /* HOUSE70 as a souvenir fridge magnet: an ivory die-cut rim along the outline, a visible edge and
      dark magnetic backing, a soft shadow on the board and a satin sheen that lies only on the magnet */
-  .house70-magnet { filter: none; }
-  .house70-magnet:hover, .house70-magnet:focus-visible { filter: none; }
+  .house70-magnet { position: relative; width: 100%; min-height: 44px; }
+  .house70-handle { position: absolute; inset: 0; }
   .magnet-body { position: relative; display: block; transition: translate 160ms ease; }
   .house70-magnet img {
     filter:
@@ -151,8 +157,8 @@
     transition: background-position 700ms cubic-bezier(.2, .8, .2, 1);
     pointer-events: none;
   }
-  .house70-magnet:hover .magnet-body, .house70-magnet:focus-visible .magnet-body { translate: 0 -2px; }
-  .house70-magnet:hover .magnet-gloss, .house70-magnet:focus-visible .magnet-gloss { background-position: 0 0; }
+  .house70-magnet:has(.house70-handle:is(:hover, :focus-visible)) .magnet-body { translate: 0 -2px; }
+  .house70-magnet:has(.house70-handle:is(:hover, :focus-visible)) .magnet-gloss { background-position: 0 0; }
   .object-house70.is-dragging .magnet-body { translate: 0 -4px; }
 
   /* the souvenir plaque on the magnet: Trias, linked to the parent brand's site */
@@ -178,10 +184,10 @@
   .plaque-place span { color: var(--color-ginster-deep); letter-spacing: 0; }
   .house70-plaque:hover { translate: 0 -2px; box-shadow: 0 0 0 1.5px #fbf7ec, 0 1.5px 0 1.5px #d6cfbd, .5px 3px 0 1px #34332f, 3px 12px 10px -2px #20201d50; }
   .house70-plaque:focus-visible { outline: 2px dashed var(--color-ginster-deep); outline-offset: 4px; }
-  .house70-magnet, .vs-logo-magnet { display: block; width: 100%; min-height: 44px; padding: 0; border: 0; border-radius: 2px; background: none; cursor: grab; touch-action: none; filter: drop-shadow(1px 2px 0 #25292570) drop-shadow(2px 6px 4px #20201d32); transition: filter 160ms ease; }
+  .vs-logo-magnet, .house70-handle { display: block; width: 100%; min-height: 44px; padding: 0; border: 0; border-radius: 2px; background: none; cursor: grab; touch-action: none; filter: drop-shadow(1px 2px 0 #25292570) drop-shadow(2px 6px 4px #20201d32); transition: filter 160ms ease; }
   .house70-magnet img, .vs-logo-magnet img { display: block; width: 100%; height: auto; -webkit-user-drag: none; user-select: none; }
-  .house70-magnet:hover, .house70-magnet:focus-visible, .vs-logo-magnet:hover, .vs-logo-magnet:focus-visible { filter: drop-shadow(1px 3px 0 #25292570) drop-shadow(2px 8px 5px #20201d40); }
-  .house70-magnet:focus-visible, .vs-logo-magnet:focus-visible { outline: 2px dashed var(--color-ginster-deep); outline-offset: 6px; }
+  .vs-logo-magnet:hover, .vs-logo-magnet:focus-visible { filter: drop-shadow(1px 3px 0 #25292570) drop-shadow(2px 8px 5px #20201d40); }
+  .house70-handle:focus-visible, .vs-logo-magnet:focus-visible { outline: 2px dashed var(--color-ginster-deep); outline-offset: 6px; }
   .board-object-link { display: flex; width: 100%; flex-direction: column; align-items: center; cursor: pointer; transition: filter 200ms ease; -webkit-user-drag: none; }
   .board-object-link:hover { filter: drop-shadow(0 4px 4px #20201d12); }
   .board-object-link:focus-visible { outline: 3px solid var(--color-ginster-deep); outline-offset: 10px; border-radius: 2px; }
@@ -191,7 +197,6 @@
   .board-magnet:focus-visible { outline: 2px dashed var(--color-ginster-deep); outline-offset: 0; }
   .board-magnet:hover .magnet, .board-magnet:focus-visible .magnet { box-shadow: inset 0 -1px 1px #78500059, 0 2px 2px #20201d38, 0 5px 12px #20201d40; }
   .board-object.is-dragging { filter: drop-shadow(0 10px 10px #20201d25); }
-  html.whiteboard-dragging, html.whiteboard-dragging * { cursor: grabbing !important; user-select: none !important; }
   .object-caption { display: block; font-family: var(--font-marker); font-size: clamp(20px, 2cqw, 32px); font-weight: 600; line-height: 1.02; }
   .object-caption > span[aria-hidden] { display: inline-block; color: var(--color-ginster-deep); transition: translate 200ms; }
   .board-object:hover .object-caption > span[aria-hidden] { translate: 3px -3px; }
@@ -316,6 +321,8 @@
   .board-bottom a { display: inline-flex; align-items: center; gap: 16px; min-height: 40px; font-weight: 600; color: var(--color-ink); }
   .board-bottom a > span { font-size: 22px; color: var(--color-ginster-deep); }
 }
+
+html.whiteboard-dragging, html.whiteboard-dragging * { cursor: grabbing !important; user-select: none !important; }
 
 @media (min-width: 1024px) and (hover: hover) and (pointer: fine) {
   .board-catalog-link:hover .curl-unavailable .catalog-cover-flat { opacity: 0; }
@@ -442,3 +449,118 @@ html.whiteboard-reading { overflow: hidden; }
 .board-reader-body .contact .c-inner { min-height: 0; padding-block: 16px 0; }
 .board-reader .board-reader-body .contact .c-form { display: block; opacity: 1; visibility: visible; transition: none; }
 .board-reader-body .contact .c-form-inner { padding-top: 32px; }
+
+.board-feedback-link { display: none; }
+
+@media (max-width: 1023px) {
+  .board-home-responsive {
+    padding: calc(var(--nav-h) + 8px) clamp(12px, 3vw, 28px) 0;
+    display: block;
+    background: #f3f2ed;
+  }
+  .board-home-responsive .board-frame { padding: 5px; }
+  .board-home-responsive .board-canvas {
+    height: auto;
+    padding: clamp(18px, 5vw, 42px) clamp(14px, 3.5vw, 36px) 24px;
+    overflow: visible;
+    container-type: inline-size;
+  }
+  .board-home-responsive .board-intro { position: static; width: auto; }
+  /* The fixed mobile header already supplies the wordmark. */
+  .board-home-responsive .board-wordmark,
+  .board-home-responsive .board-tray > *,
+  .board-home-responsive .board-bottom > span,
+  .board-home-responsive .board-reset,
+  .board-home-responsive .board-corner-note,
+  .board-home-responsive :is(.house70-handle, .object-card .board-magnet, .card-lead-arrow, .vs-plaque),
+  .board-home-responsive :is(.feedback-backdrop, .feedback-caption, .letter-open, .face-in, .catalog-first-page) {
+    display: none;
+  }
+  .board-home-responsive .board-intro .board-title {
+    width: fit-content;
+    max-width: 100%;
+    margin-top: 0;
+    font-size: clamp(38px, 12cqw, 74px);
+  }
+  :root[lang='it'] .board-home-responsive .board-intro .board-title {
+    font-size: clamp(30px, 8.8cqw, 58px);
+  }
+  .board-home-responsive .board-description {
+    margin-top: 16px;
+    max-width: 43ch;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+  .board-home-responsive .board-description br { display: none; }
+  .board-home-responsive .board-cta { margin-top: 16px; gap: 4px 18px; }
+  .board-home-responsive .board-cta-main { min-height: 48px; line-height: 1.2; animation: none; }
+  .board-home-responsive :is(.board-cta-main, .board-cta-second) { font-size: var(--text-meta); }
+
+  .board-home-responsive .board-objects {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: start;
+    gap: 22px clamp(10px, 3vw, 28px);
+    margin-top: 34px;
+  }
+  .board-home-responsive .board-object {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    min-width: 0;
+    translate: none;
+  }
+  .board-home-responsive .object-projects { --print-h: clamp(52px, 19cqw, 160px); }
+  .board-home-responsive .collage-stack { width: 100%; height: calc(var(--print-h) + 27px); }
+  .board-home-responsive .print { padding: 4px 4px 0; }
+  .board-home-responsive .print figcaption { gap: 3px; }
+  .board-home-responsive .collage-open-hint,
+  .board-home-responsive .print-number { display: none; }
+  .board-home-responsive :is(.stack-magnet, .feedback-magnet, .catalog-magnet) {
+    pointer-events: none;
+    touch-action: auto;
+  }
+  .board-home-responsive .stack-magnet { top: -16px; left: calc(50% - 16px); width: 32px; min-height: 0; }
+  .board-home-responsive .collage-actions { margin-top: 5px; }
+
+  .board-home-responsive :is(.object-house70, .object-feedback, .object-furniture) {
+    --object-h: clamp(60px, 19cqw, 116px);
+    display: grid;
+    grid-template-rows: var(--object-h) auto;
+    justify-items: center;
+  }
+  .board-home-responsive .house70-magnet { width: min(100%, 110px); align-self: center; }
+  .board-home-responsive .house70-plaque {
+    justify-content: center;
+    align-self: start;
+    margin-top: 0;
+    min-height: 44px;
+  }
+  .board-home-responsive .plaque-place { white-space: normal; line-height: 1.2; }
+  .board-home-responsive .object-feedback { --letter-w: min(84%, 126px); }
+  .board-home-responsive .feedback-anchor { align-self: end; margin-bottom: 6px; pointer-events: none; }
+  .board-home-responsive .feedback-magnet { top: 0; left: calc(50% - 21px); width: 42px; min-height: 0; }
+  .board-home-responsive .board-feedback-link { display: flex; }
+  .board-home-responsive .board-feedback-link::after { content: ''; position: absolute; inset: 0; }
+  .board-home-responsive .object-furniture { --catalog-h: var(--object-h); }
+  .board-home-responsive .catalog-magnet { top: -12px; width: 44px; min-height: 0; }
+  .board-home-responsive .catalog-caption { white-space: normal; margin-top: 0; }
+  .board-home-responsive :is(.collage-link, .board-feedback-link, .catalog-caption) {
+    justify-content: center;
+    align-items: center;
+    min-height: 44px;
+    font-family: var(--font-sans);
+    font-size: clamp(.75rem, 2.8cqw, .9375rem);
+    line-height: 1.3;
+  }
+  .board-home-responsive .collage-link .object-caption { font-size: inherit; line-height: inherit; text-wrap: balance; }
+  .board-home-responsive .board-feedback-link span { color: var(--color-ginster-deep); margin-inline-start: 4px; }
+
+  .board-home-responsive .object-card { grid-column: 1 / -1; max-width: 560px; justify-self: center; rotate: 0deg; }
+  .board-home-responsive .business-card { padding: 14px 16px 16px 20px; }
+  .board-home-responsive .card-person { gap: 12px; margin-top: 8px; }
+  .board-home-responsive .card-role { font-size: .8125rem; }
+  .board-home-responsive .card-actions { margin-top: 8px; padding-top: 0; }
+  .board-home-responsive :is(.card-lines a, .card-cta) { min-height: 44px; font-size: .875rem; }
+  .board-home-responsive .board-bottom a { min-height: 44px; font-size: var(--text-meta); }
+}

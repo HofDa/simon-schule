@@ -8,6 +8,9 @@ import { feedbackFor } from '../../data/feedback';
 import { getLang } from '../../i18n/ui';
 import { lernraumCopy } from '../../i18n/lernraum';
 import Magnet from './Magnet.astro';
+import SwipeControls from './shared/SwipeControls.astro';
+
+const { swipeable = false } = Astro.props;
 
 const lang = getLang(Astro.currentLocale);
 const V = lernraumCopy(lang).voices;
@@ -56,10 +59,12 @@ const tilts = ['-0.7deg', '0.6deg', '0.5deg', '-0.6deg'];
         <p class="voices-lead">{V.lead}</p>
       </div>
 
-      <div class="voices-grid mt-10">
+      {swipeable && <div class="voices-browse"><SwipeControls railId="voices-letters" labelId="voices-title" /></div>}
+      <div id="voices-letters" class:list={['voices-grid mt-10', { 'swipe-rail': swipeable }]} role={swipeable ? 'region' : undefined} aria-labelledby={swipeable ? 'voices-title' : undefined}>
         {feedback.map((f, i) => (
           <figure
             class="letter-card m-0"
+            data-swipe-card={swipeable ? '' : undefined}
             style={`--letter-tilt: ${tilts[i % tilts.length]}; --wb-d: ${i * 95}ms`}
             data-wb-pin
           >
@@ -141,6 +146,7 @@ const tilts = ['-0.7deg', '0.6deg', '0.5deg', '-0.6deg'];
     line-height: 1.58;
   }
 
+  .voices-browse { display: none; }
   .voices-grid {
     display: grid;
     gap: clamp(22px, 2.8vw, 32px);
@@ -318,6 +324,11 @@ const tilts = ['-0.7deg', '0.6deg', '0.5deg', '-0.6deg'];
     .letter-card:nth-child(even) {
       margin-top: 22px;
     }
+  }
+
+  @media (max-width: 767px) {
+    .voices-browse { display: flex; margin-top: 20px; }
+    .voices-grid.swipe-rail { --swipe-card-width: 88%; margin-top: 0; }
   }
 
   @media (max-width: 520px) {

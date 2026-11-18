@@ -298,3 +298,27 @@
     scroll-behavior: auto !important;
   }
 }
+
+@media (max-width: 767px) {
+  :root .swipe-rail[id] {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    min-width: 0;
+    margin-inline: -8px;
+    padding: 16px 8px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 8px;
+  }
+
+  .swipe-rail [data-swipe-card] {
+    flex: 0 0 var(--swipe-card-width, 82%);
+    min-width: 0;
+    scroll-snap-align: start;
+  }
+
+  .swipe-rail > [data-swipe-card]:last-child { scroll-snap-align: end; }
+}

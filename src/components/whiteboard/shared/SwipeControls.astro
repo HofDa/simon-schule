@@ -1,0 +1,155 @@
+---
+import { getLang } from '../../../i18n/ui';
+
+interface Props {
+  railId: string;
+  labelId: string;
+}
+
+const { railId, labelId } = Astro.props;
+const it = getLang(Astro.currentLocale) === 'it';
+---
+
+<div class="swipe-controls" data-swipe-controls={railId} role="group" aria-labelledby={labelId}>
+  <button type="button" data-swipe-step="-1" aria-controls={railId} aria-label={it ? 'Scheda precedente' : 'Vorherige Karte'}>
+    <span class="swipe-face"><svg class="swipe-arrow" viewBox="0 0 24 24" aria-hidden="true" style="transform: scaleX(-1)"><path d="M4.5 12.6C9 12 14 11.7 18.6 12.1" /><path d="M13.8 7.2C15.6 8.9 17.4 10.6 19 12.2C17.3 13.7 15.6 15.3 14.1 17" /></svg></span>
+  </button>
+  <span class="swipe-count">
+    <span data-swipe-count></span>
+    <svg class="swipe-scribble" viewBox="0 0 60 8" preserveAspectRatio="none" aria-hidden="true"><path d="M2 5.2C14 3.4 28 3 40 3.9C46 4.3 52 4.9 58 4.1" /></svg>
+  </span>
+  <button type="button" data-swipe-step="1" aria-controls={railId} aria-label={it ? 'Scheda successiva' : 'Nächste Karte'}>
+    <span class="swipe-face"><svg class="swipe-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 12.6C9 12 14 11.7 18.6 12.1" /><path d="M13.8 7.2C15.6 8.9 17.4 10.6 19 12.2C17.3 13.7 15.6 15.3 14.1 17" /></svg></span>
+  </button>
+</div>
+
+<style>
+  .swipe-controls { display: none; }
+
+  /* whiteboard magnets with a marker-drawn arrow; the count is written by hand between them */
+  @media (max-width: 767px) {
+    .swipe-controls[data-swipe-ready] {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      flex: none;
+      margin-inline-start: auto;
+    }
+    .swipe-controls button {
+      display: grid;
+      place-items: center;
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      border: 0;
+      background: none;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .swipe-face {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      border: 2.5px solid #fbf7ec;
+      border-radius: 50%;
+      background: radial-gradient(circle at 38% 32%, #f8d362, #e2a300 72%);
+      box-shadow: 0 2px 0 #d6cfbd, 1px 3.5px 0 #34332f, 1px 6px 6px -2px #20201d55;
+      transition: translate 140ms ease, box-shadow 140ms ease, filter 160ms ease;
+    }
+    .swipe-controls button:first-child .swipe-face { rotate: -6deg; }
+    .swipe-controls button:last-of-type .swipe-face { rotate: 5deg; }
+    .swipe-arrow {
+      width: 20px;
+      height: 20px;
+      fill: none;
+      stroke: #2c2b28;
+      stroke-width: 2.6;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .swipe-controls button:not([aria-disabled='true']):active .swipe-face {
+      translate: 0 2px;
+      box-shadow: 0 1px 0 #d6cfbd, 1px 1.5px 0 #34332f, 1px 2px 3px -1px #20201d55;
+    }
+    .swipe-controls button[aria-disabled='true'] { cursor: default; }
+    .swipe-controls button[aria-disabled='true'] .swipe-face { filter: grayscale(1) opacity(.45); box-shadow: 0 1px 0 #d6cfbd; }
+    .swipe-controls button:focus-visible { outline: none; }
+    .swipe-controls button:focus-visible .swipe-face { outline: 2px dashed var(--color-ginster-deep); outline-offset: 3px; }
+
+    .swipe-count {
+      position: relative;
+      display: inline-block;
+      min-width: 4.2ch;
+      padding: 0 2px 4px;
+      font-family: var(--font-marker);
+      font-size: 1.25rem;
+      font-weight: 600;
+      line-height: 1;
+      text-align: center;
+      color: var(--color-ink);
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+    .swipe-scribble {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -1px;
+      width: 100%;
+      height: 6px;
+      fill: none;
+      stroke: var(--color-ginster);
+      stroke-width: 2.4;
+      stroke-linecap: round;
+      vector-effect: non-scaling-stroke;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .swipe-face { transition: none; }
+  }
+</style>
+
+<script>
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  document.querySelectorAll<HTMLElement>('[data-swipe-controls]').forEach((controls) => {
+    const rail = document.getElementById(controls.dataset.swipeControls ?? '');
+    const previous = controls.querySelector<HTMLButtonElement>('[data-swipe-step="-1"]');
+    const next = controls.querySelector<HTMLButtonElement>('[data-swipe-step="1"]');
+    const count = controls.querySelector<HTMLElement>('[data-swipe-count]');
+    if (!rail || !previous || !next || !count) return;
+
+    const cards = Array.from(rail.querySelectorAll<HTMLElement>('[data-swipe-card]'));
+    if (cards.length < 2) return;
+
+    const stops = () => {
+      const max = rail.scrollWidth - rail.clientWidth;
+      return cards.map((card) => Math.min(card.offsetLeft - cards[0].offsetLeft, max));
+    };
+    const current = (positions: number[]) => positions.reduce((closest, position, index) =>
+      Math.abs(position - rail.scrollLeft) < Math.abs(positions[closest] - rail.scrollLeft) ? index : closest, 0);
+
+    const update = () => {
+      const index = current(stops());
+      previous.setAttribute('aria-disabled', String(index === 0));
+      next.setAttribute('aria-disabled', String(index === cards.length - 1));
+      const label = `${index + 1}/${cards.length}`;
+      if (count.textContent !== label) count.textContent = label;
+    };
+    const move = (step: number) => {
+      const positions = stops();
+      const destination = positions[current(positions) + step];
+      if (destination === undefined) return;
+      rail.scrollTo({ left: destination, behavior: reduced.matches ? 'instant' : 'smooth' });
+    };
+
+    previous.addEventListener('click', () => move(-1));
+    next.addEventListener('click', () => move(1));
+    rail.addEventListener('scroll', update, { passive: true });
+    new ResizeObserver(update).observe(rail);
+    update();
+    controls.dataset.swipeReady = '';
+  });
+</script>

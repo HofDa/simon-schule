@@ -11,6 +11,7 @@ import { collagesFor } from '../../data/collages';
 import { getLang } from '../../i18n/ui';
 import { lernraumCopy } from '../../i18n/lernraum';
 
+const { responsive = false } = Astro.props;
 const lang = getLang(Astro.currentLocale);
 const copy = lernraumCopy(lang);
 const G = copy.board.collages;
@@ -88,9 +89,9 @@ const words = { view: G.view('{n}'), photo: G.photo, project: G.project, credit:
       {g.items.map((c, i) => (
         <figure class="print" data-collage-print data-slug={c.slug} data-name={c.name} data-open-label={openLabel(c)} data-depth={i < 3 ? String(i) : 'deep'} style={`--pos: ${i}; --tilt: ${tilts[i % tilts.length]}deg`} aria-hidden={i === 0 ? undefined : 'true'}>
           <template data-collage-image>
-            <ResponsiveImage desktopOnly src={c.collage} alt={c.alt} width={960} widths={[360, 540, 720, 960]} sizes="(max-height: 800px) 260px, 22vw" loading="eager" draggable="false" />
+            <ResponsiveImage desktopOnly={!responsive} src={c.collage} alt={c.alt} width={960} widths={[360, 540, 720, 960]} sizes="(max-width: 1023px) 30vw, (max-height: 800px) 260px, 22vw" loading="eager" draggable="false" />
           </template>
-          {i === 0 && <noscript><ResponsiveImage desktopOnly src={c.collage} alt={c.alt} width={960} widths={[360, 540, 720, 960]} sizes="(max-height: 800px) 260px, 22vw" loading="eager" draggable="false" /></noscript>}
+          {i === 0 && <noscript><ResponsiveImage desktopOnly={!responsive} src={c.collage} alt={c.alt} width={960} widths={[360, 540, 720, 960]} sizes="(max-width: 1023px) 30vw, (max-height: 800px) 260px, 22vw" loading="eager" draggable="false" /></noscript>}
           <figcaption><span>{c.name}</span><span class="print-number">{i + 1}/{g.items.length}</span></figcaption>
         </figure>
       ))}
@@ -477,11 +478,27 @@ const words = { view: G.view('{n}'), photo: G.photo, project: G.project, credit:
 
   @media (max-width: 1023px) {
     .gallery { inset: 0; border: 0; border-radius: 0; }
-    .gallery-header { padding: 10px 12px 8px 16px; }
-    .slide { padding-inline: 12px; }
-    .gallery-step { top: auto; bottom: 8px; translate: none; width: 48px; height: 48px; }
+    /* the close button stays in the top corner; title, facts and the CTA wrap beside and below it */
+    .gallery-header { position: relative; gap: 6px 12px; padding: 12px 60px 8px 16px; }
+    .gallery-close { position: absolute; top: 6px; right: 6px; }
+    .gallery-header-actions { margin-left: 0; }
+    /* a band under each photo is kept free for the arrows, so they never sit on the caption */
+    .slide { gap: 8px; padding: 4px 12px 68px; }
+    .slide figcaption { font-size: 13px; line-height: 1.4; }
+    /* the photo rests on its caption instead of floating mid-stage */
+    .slide :global(img) { object-position: center bottom; }
+    .gallery-step { top: auto; bottom: 10px; translate: none; width: 48px; height: 48px; font-size: 30px; }
+    .gallery-prev { left: 12px; }
+    .gallery-next { right: 12px; }
+    .gallery-step[data-crossing] { min-height: 48px; max-width: calc(100% - 84px); padding: 6px 14px; }
+    .step-project { font-size: 16px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .gallery-credit { position: static; }
-    .gallery-footer { flex-direction: column; gap: 8px; }
+    .gallery-footer { flex-direction: column; align-items: stretch; gap: 8px; padding: 8px 12px 12px; }
+    /* photo thumbnails: smaller, and scrollable instead of running off the edge */
+    .gallery-thumbs { gap: 6px; max-width: 100%; overflow-x: auto; padding: 4px 2px; scrollbar-width: none; justify-content: safe center; }
+    .thumb { flex: none; width: 56px; height: 40px; }
+    .project { width: 92px; }
+    .project :global(picture) { width: 92px; height: 61px; }
   }
   @media (max-width: 520px) {
     .gallery-inquire { min-height: 44px; padding: 0 12px; font-size: 12px; }

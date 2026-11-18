@@ -78,7 +78,7 @@ if (board && reader && body && title && pageLink) {
   document.addEventListener('click', (event) => {
     if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     const link = (event.target as Element | null)?.closest<HTMLAnchorElement>('a[href]');
-    if (!link) return;
+    if (!link || link.hasAttribute('data-open-collages')) return;
     if (link.matches('[data-board-scroll], [data-board-read-page]')) {
       if (reader.open) close(true, false);
       return;

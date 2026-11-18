@@ -22,6 +22,7 @@ if (board && canvas && item) {
   const backdrop = board.querySelector<HTMLElement>('[data-feedback-backdrop]');
   const panels = Array.from(item.querySelectorAll<HTMLElement>('[data-feedback-panel]'));
   const total = new Set(panels.map((p) => p.dataset.feedbackPanel)).size;
+  const desktop = window.matchMedia('(min-width: 1024px)');
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   let index = 0;
   let open = false;
@@ -112,7 +113,7 @@ if (board && canvas && item) {
   let onScreen = true;
   let resting = false;
   const rotate = () => {
-    if (open || resting || !onScreen || total < 2 || document.hidden || reduceMotion.matches || item.classList.contains('is-dragging')) return;
+    if (!desktop.matches || open || resting || !onScreen || total < 2 || document.hidden || reduceMotion.matches || item.classList.contains('is-dragging')) return;
     const nextIndex = (index + 1) % total;
     const name = panels.find((p) => Number(p.dataset.feedbackPanel) === nextIndex)?.querySelector('.entry-name')?.textContent;
     if (!from || !name) return;
@@ -135,5 +136,6 @@ if (board && canvas && item) {
   handle?.addEventListener('pointerdown', () => setOpen(false), { capture: true });
   board.addEventListener('whiteboard:reset', () => setOpen(false));
   board.querySelector('[data-board-pen]')?.addEventListener('click', () => setOpen(false));
+  desktop.addEventListener('change', () => { if (!desktop.matches) setOpen(false, false); });
   new ResizeObserver(() => { if (open) measure(); }).observe(canvas);
 }

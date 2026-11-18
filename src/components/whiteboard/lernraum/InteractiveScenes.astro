@@ -21,7 +21,7 @@ const scenes = S.items.map((item, i) => ({ ...item, scene: order[i], id: `lr-sce
 const size = sceneSize();
 ---
 
-<section id="lernformen" class="lr-scenes" aria-labelledby="lr-scenes-title" data-lr-scenes>
+<section id="lernformen" class="lr-scenes" aria-labelledby="lr-scenes-title" data-lr-scenes data-scenes-expanded="false">
   <div class="shell">
     <div class="scenes-frame" data-wb-reveal>
       <div class="scenes-board">
@@ -35,96 +35,111 @@ const size = sceneSize();
               {S.title}
             </h2>
           </div>
-          <p class="scenes-intro">
-            {S.intro}
-          </p>
-        </div>
-
-      <!-- Interactive magnetic switcher rail -->
-      <div class="scenes-tabs" role="tablist" aria-label={S.tablist}>
-        {scenes.map((s, i) => (
-          <button
-            type="button"
-            role="tab"
-            id={`tab-${s.id}`}
-            aria-controls={`panel-${s.id}`}
-            aria-selected={i === 0 ? 'true' : 'false'}
-            tabindex={i === 0 ? 0 : -1}
-            class={`scene-tab ${i === 0 ? 'is-active' : ''}`}
-            data-scene-tab={i}
-          >
-            <span class="tab-magnet" aria-hidden="true"></span>
-            <span class="tab-num">{String(i + 1).padStart(2, '0')}</span>
-            <span class="tab-copy">
-              <span class="tab-name">{s.name}</span>
-              <span class="tab-short">{s.short}</span>
-            </span>
+          <p class="scenes-intro">{S.intro}</p>
+          <p class="scenes-mobile-intro">{S.mobileIntro}</p>
+          <button type="button" class="scenes-toggle btn btn-ink" data-scenes-toggle aria-expanded="false" aria-controls="room-arrangements">
+            <span data-scenes-open>{S.expand}</span>
+            <span data-scenes-close>{S.collapse}</span>
+            <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m3 6 5 5 5-5" /></svg>
           </button>
-        ))}
-      </div>
-
-      <!-- Stage with the room arrangements -->
-      <div class="scenes-stage">
-        {scenes.map((s, i) => (
-          <div
-            role="tabpanel"
-            id={`panel-${s.id}`}
-            aria-labelledby={`tab-${s.id}`}
-            class={`scene-panel ${i === 0 ? 'is-active' : ''}`}
-            data-scene-panel={i}
-            data-scene-name={s.scene}
-            data-canvas-label={S.canvas(s.name)}
-          >
-            <div class="scene-copy">
-              <div class="scene-badge">
-                <span class="scene-step">{S.step} {String(i + 1).padStart(2, '0')} / {String(scenes.length).padStart(2, '0')}</span>
-                <span class="scene-setup">{s.setup}</span>
-              </div>
-              <h3>{s.name}</h3>
-              <p class="scene-text">{s.text}</p>
-
-              <div class="scene-sticky">
-                <Magnet />
-                <span class="sticky-label">{S.system}</span>
-                <strong class="marker sticky-product">{s.product}</strong>
-              </div>
-
-              <div class="scene-actions">
-                <a
-                  href="#anfrage"
-                  class="btn btn-ink"
-                  data-open-form
-                  data-topic={s.topic}
-                >
-                  {S.reserve}
-                  <svg class="btn-arrow h-3.5 w-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" /></svg>
-                </a>
-                <button type="button" class="next-scene link-line" data-scene-next>
-                  {S.next(scenes[(i + 1) % scenes.length].name)} →
-                </button>
-              </div>
-            </div>
-
-            <figure class="scene-figure">
-              <img
-                class="iso"
-                src={asset(`scenes/${s.scene}.svg`)}
-                width={size.width}
-                height={size.height}
-                alt={S.alt(s.name, s.product)}
-                loading={i === 0 ? 'eager' : 'lazy'}
-                decoding="async"
-                data-lr-scene-src
-              />
-            </figure>
-          </div>
-        ))}
-        <!-- the 3D room: one canvas, moved into the open panel's frame once three.js has loaded -->
-        <div class="room-3d" data-room-3d hidden>
-          <canvas data-room-canvas tabindex="0" role="img" aria-label=""></canvas>
-          <p class="room-hint" aria-hidden="true"><span class="room-hint-icon">⇄</span> <span class="marker">{S.hint}</span></p>
         </div>
-      </div>
+
+        <div id="room-arrangements" class="scenes-demo">
+          <div class="scenes-picker">
+            <button type="button" data-scenes-step="-1" aria-label={S.previous} aria-controls="room-stage"><span aria-hidden="true">←</span></button>
+            <select data-scenes-select aria-label={S.tablist} aria-controls="room-stage">
+              {scenes.map((s, i) => <option value={i}>{S.mobileNames[s.scene] ?? s.name}</option>)}
+            </select>
+            <button type="button" data-scenes-step="1" aria-label={S.nextShort} aria-controls="room-stage"><span aria-hidden="true">→</span></button>
+          </div>
+
+          <!-- Interactive magnetic switcher rail -->
+          <div class="scenes-tabs" role="tablist" aria-label={S.tablist}>
+            {scenes.map((s, i) => (
+              <button
+                type="button"
+                role="tab"
+                id={`tab-${s.id}`}
+                aria-controls={`panel-${s.id}`}
+                aria-selected={i === 0 ? 'true' : 'false'}
+                tabindex={i === 0 ? 0 : -1}
+                class={`scene-tab ${i === 0 ? 'is-active' : ''}`}
+                data-scene-tab={i}
+              >
+                <span class="tab-magnet" aria-hidden="true"></span>
+                <span class="tab-num">{String(i + 1).padStart(2, '0')}</span>
+                <span class="tab-copy">
+                  <span class="tab-name">{s.name}</span>
+                  <span class="tab-short">{s.short}</span>
+                </span>
+              </button>
+            ))}
+          </div>
+
+          <!-- Stage with the room arrangements -->
+          <div id="room-stage" class="scenes-stage">
+            {scenes.map((s, i) => (
+              <div
+                role="tabpanel"
+                id={`panel-${s.id}`}
+                aria-labelledby={`tab-${s.id}`}
+                class={`scene-panel ${i === 0 ? 'is-active' : ''}`}
+                data-scene-panel={i}
+                data-scene-name={s.scene}
+                data-canvas-label={S.canvas(s.name)}
+              >
+                <div class="scene-copy">
+                  <div class="scene-badge">
+                    <span class="scene-step">{S.step} {String(i + 1).padStart(2, '0')} / {String(scenes.length).padStart(2, '0')}</span>
+                    <span class="scene-setup">{s.setup}</span>
+                  </div>
+                  <h3>{s.name}</h3>
+                  <p class="scene-text">{s.text}</p>
+                  <p class="scene-mobile-copy">{s.short} <span>{s.product}</span></p>
+
+                  <div class="scene-sticky">
+                    <Magnet />
+                    <span class="sticky-label">{S.system}</span>
+                    <strong class="marker sticky-product">{s.product}</strong>
+                  </div>
+
+                  <div class="scene-actions">
+                    <a
+                      href="#anfrage"
+                      class="btn btn-ink"
+                      data-open-form
+                      data-topic={s.topic}
+                    >
+                      {S.reserve}
+                      <svg class="btn-arrow h-3.5 w-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" /></svg>
+                    </a>
+                    <button type="button" class="next-scene link-line" data-scene-next>
+                      {S.next(scenes[(i + 1) % scenes.length].name)} →
+                    </button>
+                  </div>
+                </div>
+
+                <figure class="scene-figure">
+                  <img
+                    class="iso"
+                    src={asset(`scenes/${s.scene}.svg`)}
+                    width={size.width}
+                    height={size.height}
+                    alt={S.alt(s.name, s.product)}
+                    loading="lazy"
+                    decoding="async"
+                    data-lr-scene-src
+                  />
+                </figure>
+              </div>
+            ))}
+            <!-- the 3D room: one canvas, moved into the open panel's frame once three.js has loaded -->
+            <div class="room-3d" data-room-3d hidden>
+              <canvas data-room-canvas tabindex="0" role="img" aria-label=""></canvas>
+              <p class="room-hint" aria-hidden="true"><span class="room-hint-icon">⇄</span> <span class="marker">{S.hint}</span></p>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="scenes-tray" aria-hidden="true">
         <span class="scenes-tray-marker"></span>
@@ -160,6 +175,7 @@ const size = sceneSize();
     gap: 20px;
     padding-bottom: clamp(24px, 3vw, 36px);
   }
+  .scenes-mobile-intro, .scenes-toggle, .scenes-picker, .scene-mobile-copy { display: none; }
   .scenes-kicker {
     display: flex;
     flex-wrap: wrap;
@@ -517,6 +533,59 @@ const size = sceneSize();
     }
   }
 
+  @media (max-width: 767px) {
+    .lr-scenes { padding-block: 40px; }
+    .scenes-head { gap: 12px; padding-bottom: 0; }
+    .scenes-head h2 { margin-top: 0; }
+    .scenes-kicker, .scenes-intro { display: none; }
+    .scenes-mobile-intro {
+      display: block;
+      color: var(--color-muted);
+    }
+    :global(html.js) .scenes-toggle {
+      display: inline-flex;
+      justify-self: start;
+      margin-top: 4px;
+    }
+    .scenes-toggle[aria-expanded='false'] [data-scenes-close],
+    .scenes-toggle[aria-expanded='true'] [data-scenes-open],
+    :global(html.js) .lr-scenes[data-scenes-expanded='false'] .scenes-demo { display: none; }
+    .scenes-toggle[aria-expanded='true'] svg { rotate: 180deg; }
+
+    .scenes-demo { margin-top: 20px; }
+    .scenes-tabs { display: none; }
+    :global(html.js) .scenes-picker {
+      display: grid;
+      grid-template-columns: 44px minmax(0, 1fr) 44px;
+      gap: 8px;
+    }
+    .scenes-picker :is(button, select) {
+      min-width: 0;
+      min-height: 44px;
+      border: 1px solid var(--color-line);
+      border-radius: 3px;
+      background: var(--color-paper);
+      color: var(--color-ink);
+    }
+    .scenes-picker button { cursor: pointer; }
+    .scenes-picker select { appearance: auto; padding-inline: 8px; font-weight: 600; }
+    .scenes-stage { margin-top: 12px; }
+    .scene-panel { gap: 12px; }
+    .scene-figure {
+      display: grid;
+      grid-template: minmax(0, 1fr) / minmax(0, 1fr);
+      order: -1;
+      aspect-ratio: 3 / 2;
+      max-height: 380px;
+    }
+    .scene-figure > :global(*) { grid-area: 1 / 1; height: 100%; }
+    .scene-badge, .scene-text, .scene-sticky, .next-scene, .room-hint,
+    :global(html.js) .scene-copy h3 { display: none; }
+    .scene-mobile-copy { display: block; font-size: var(--text-meta); }
+    .scene-mobile-copy span { display: block; margin-top: 2px; color: var(--color-muted); }
+    .scene-actions { margin-top: 12px; }
+  }
+
   @media (min-width: 1024px) {
     .scenes-head {
       grid-template-columns: repeat(12, minmax(0, 1fr));
@@ -548,6 +617,9 @@ const size = sceneSize();
     const tabs = Array.from(section.querySelectorAll<HTMLButtonElement>('[data-scene-tab]'));
     const panels = Array.from(section.querySelectorAll<HTMLElement>('[data-scene-panel]'));
     const nextButtons = Array.from(section.querySelectorAll<HTMLButtonElement>('[data-scene-next]'));
+    const mobile = window.matchMedia('(max-width: 767px)');
+    const toggle = section.querySelector<HTMLButtonElement>('[data-scenes-toggle]');
+    const picker = section.querySelector<HTMLSelectElement>('[data-scenes-select]');
     let current = 0;
 
     // Inline the SVG files once near the viewport so individual furniture pieces animate cleanly
@@ -597,6 +669,7 @@ const size = sceneSize();
         room = made;
         section.classList.add('is-3d');
         // the visitor may have switched while it loaded
+        seat();
         room.show(panels[current].dataset.sceneName, true);
       } catch {
         host.hidden = true;
@@ -604,12 +677,21 @@ const size = sceneSize();
       }
     };
 
+    let nearby = !('IntersectionObserver' in window);
+    let started = false;
+    const maybeLoad = () => {
+      if (started || !nearby || (mobile.matches && section.dataset.scenesExpanded !== 'true')) return;
+      started = true;
+      void load3d();
+    };
+
     if ('IntersectionObserver' in window) {
       const io = new IntersectionObserver(
         (entries) => {
           if (entries.some((e) => e.isIntersecting)) {
+            nearby = true;
             io.disconnect();
-            load3d();
+            maybeLoad();
           }
         },
         { rootMargin: '600px 0px' },
@@ -617,14 +699,24 @@ const size = sceneSize();
       io.observe(section);
     }
 
+    const setExpanded = (expanded: boolean) => {
+      section.dataset.scenesExpanded = String(expanded);
+      toggle?.setAttribute('aria-expanded', String(expanded));
+      maybeLoad();
+    };
+    toggle?.addEventListener('click', () => setExpanded(section.dataset.scenesExpanded !== 'true'));
+    mobile.addEventListener('change', maybeLoad);
+    maybeLoad();
+
     const selectScene = (index: number, focusTarget: 'tab' | 'next' | 'none' = 'none') => {
       current = (index + tabs.length) % tabs.length;
+      if (picker) picker.value = String(current);
       tabs.forEach((tab, i) => {
         const active = i === current;
         tab.classList.toggle('is-active', active);
         tab.setAttribute('aria-selected', String(active));
         tab.tabIndex = active ? 0 : -1;
-        if (active) {
+        if (active && !mobile.matches) {
           // scroll only the tab rail sideways; the page stays where the reader is
           const rail = tab.parentElement;
           if (rail) {
@@ -662,6 +754,11 @@ const size = sceneSize();
           selectScene(i - 1, 'tab');
         }
       });
+    });
+
+    picker?.addEventListener('change', () => selectScene(Number(picker.value)));
+    section.querySelectorAll<HTMLButtonElement>('[data-scenes-step]').forEach((button) => {
+      button.addEventListener('click', () => selectScene(current + Number(button.dataset.scenesStep)));
     });
 
     nextButtons.forEach((btn) => {

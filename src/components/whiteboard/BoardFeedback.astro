@@ -12,6 +12,7 @@ import { feedbackFor } from '../../data/feedback';
 import { getLang } from '../../i18n/ui';
 import { lernraumCopy } from '../../i18n/lernraum';
 
+const { responsive = false } = Astro.props;
 const lang = getLang(Astro.currentLocale);
 const copy = lernraumCopy(lang);
 const F = copy.board.feedback;
@@ -106,11 +107,11 @@ const bubble = 'M24 4H96Q114 4 114 22V50Q114 68 96 68H52L27 88L33 68H24Q6 68 6 5
     </button>
   </div>
   <button type="button" class="object-caption feedback-caption" data-feedback-caption tabindex="-1" aria-hidden="true">{F.heading} <span aria-hidden="true">↗</span></button>
+  {responsive && <a class="board-feedback-link" href="#stimmen">{F.heading} <span aria-hidden="true">↗</span></a>}
   <p id="feedback-hint" class="sr-only">{F.hint}</p>
 </div>
 
 <style>
-  /* the board only exists from 1024px; everything here lives inside it */
   .feedback-backdrop {
     position: absolute;
     inset: 0;

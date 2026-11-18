@@ -10,6 +10,10 @@ const status = board?.querySelector<HTMLElement>('[data-board-drag-status]');
 
 if (board && canvas && reset && status) {
   const desktop = window.matchMedia('(min-width: 1024px)');
+  const handles = canvas.querySelectorAll<HTMLButtonElement>('[data-board-handle]');
+  const syncHandles = () => handles.forEach((handle) => { handle.inert = !desktop.matches; });
+  syncHandles();
+  desktop.addEventListener('change', syncHandles);
   const items = Array.from(canvas.querySelectorAll<HTMLElement>('[data-board-object]'));
   const positions = new Map(items.map((item) => [item, { x: 0, y: 0 }]));
   let layer = 1;
