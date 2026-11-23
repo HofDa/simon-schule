@@ -102,11 +102,11 @@ const topics = (['projekte', ...(hasLearning ? ['lernformen'] : []), 'leistungen
         <div class="board-object object-furniture" data-board-object>
           <a class="board-object-link board-catalog-link" href={vsSchoolCatalog} target="_blank" rel="noopener" aria-label={B.catalog.open} draggable="false">
             <span class="board-catalog-sheet" data-path-node="3">
-              <ResponsiveImage desktopOnly avif={false} class="catalog-first-page" src={vsCatalogFirstPage} alt={B.catalog.firstPage} width={240} widths={[120, 180, 240, 360, 480]} sizes="(max-height: 800px) 100px, 180px" quality={90} loading="eager" draggable="false" />
+              <ResponsiveImage desktopOnly avif={false} class="catalog-first-page" src={vsCatalogFirstPage} alt={B.catalog.firstPage} width={240} widths={[120, 180, 240, 360, 480]} sizes="(max-height: 800px) 100px, 180px" quality={90} loading="lazy" draggable="false" />
               <span class="catalog-cover-flat" aria-hidden="true">
                 <ResponsiveImage desktopOnly={!responsive} avif={false} src={vsCatalogCover} alt="" data-catalog-front width={240} widths={[120, 180, 240, 360, 480]} sizes="(max-width: 1023px) 105px, (max-height: 800px) 100px, 180px" quality={90} loading="eager" draggable="false" />
               </span>
-              <ResponsiveImage desktopOnly avif={false} class="catalog-inside-texture" src={vsCatalogInsideCover} alt="" data-catalog-back width={360} loading="eager" hidden />
+              <ResponsiveImage desktopOnly avif={false} class="catalog-inside-texture" src={vsCatalogInsideCover} alt="" data-catalog-back width={360} loading="lazy" hidden />
               <canvas class="catalog-curl-canvas" data-catalog-curl-canvas aria-hidden="true"></canvas>
             </span>
           </a>

@@ -4,9 +4,10 @@
  * decimetres with u forward, v across and z up; here 1 unit = 1 m, x = v, y = z, z = u.
  */
 import type * as THREE_NS from 'three';
+import type * as ThreeSubset from './three-subset';
 import { tanoOutline, tanoOffset } from '../lib/tano-layouts';
 
-type Three = typeof THREE_NS;
+type Three = typeof ThreeSubset;
 type V3 = [number, number, number];
 
 export type PieceId = 'pantoswing' | 'hokki' | 'tano' | 'puzzle';

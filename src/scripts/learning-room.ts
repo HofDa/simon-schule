@@ -27,8 +27,9 @@ const STAGGER = 0.022; // s between pieces
 const ROOM = { w: 8.6, d: 7.0 };
 
 export async function createLearningRoom(host: HTMLElement, canvas: HTMLCanvasElement, first: SceneName): Promise<LearningRoom | null> {
-  const [THREE, { Workshop }, { roomScene }] = await Promise.all([import('three'), import('./showroom-models'), import('./room-scenes')]);
+  const [THREE, { Workshop }, { roomScene }] = await Promise.all([import('./three-subset'), import('./showroom-models'), import('./room-scenes')]);
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const shadowSize = window.matchMedia('(min-width: 1024px)').matches ? 2048 : 1024;
 
   let renderer: THREE_NS.WebGLRenderer;
   try {
@@ -50,7 +51,7 @@ export async function createLearningRoom(host: HTMLElement, canvas: HTMLCanvasEl
   const key = new THREE.DirectionalLight(0xffffff, 2.3);
   key.position.set(4.5, 9, 5);
   key.castShadow = true;
-  key.shadow.mapSize.set(2048, 2048);
+  key.shadow.mapSize.set(shadowSize, shadowSize);
   key.shadow.radius = 5;
   key.shadow.bias = -0.0005;
   Object.assign(key.shadow.camera, { left: -6.5, right: 6.5, top: 6.5, bottom: -6.5, near: 0.5, far: 30 });

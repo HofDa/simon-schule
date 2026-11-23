@@ -35,8 +35,7 @@ const roots = Array.from(document.querySelectorAll<HTMLElement>('[data-collages]
 const gallery = document.querySelector<HTMLDialogElement>('[data-gallery]');
 // the gallery's words in the page's language, rendered by BoardCollages.astro
 const words: Record<string, string> = JSON.parse(gallery?.dataset.words ?? '{}');
-const dataScript = gallery?.querySelector<HTMLScriptElement>('[data-gallery-data]');
-const projects: GalleryProject[] = JSON.parse(dataScript?.textContent ?? '[]');
+const galleryUrl = gallery?.dataset.galleryUrl ?? '';
 
 type Stack = {
   root: HTMLElement;
@@ -46,15 +45,41 @@ type Stack = {
   bringToTop: (slug: string) => void;
 };
 
-if (roots.length && gallery && projects.length) {
+if (roots.length && gallery && galleryUrl) {
   // Keep the reference gallery available even on pages with a hidden board.
   if (gallery.parentElement !== document.body) document.body.append(gallery);
 
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const desktop = window.matchMedia('(min-width: 1024px)');
   const responsive = Boolean(document.querySelector('[data-board-responsive]'));
-  const bySlug = new Map(projects.map((p) => [p.slug, p]));
-  const slugs = projects.map((p) => p.slug);
+
+  let projects: GalleryProject[] = [];
+  let bySlug = new Map<string, GalleryProject>();
+  let slugs: string[] = [];
+  let manifestPromise: Promise<GalleryProject[]> | null = null;
+
+  const ensureManifest = (): Promise<GalleryProject[]> => {
+    if (projects.length) return Promise.resolve(projects);
+    if (!manifestPromise) {
+      manifestPromise = fetch(galleryUrl)
+        .then((res) => {
+          if (!res.ok) throw new Error(`Gallery manifest HTTP ${res.status}`);
+          return res.json() as Promise<GalleryProject[]>;
+        })
+        .then((data) => {
+          projects = data;
+          bySlug = new Map(data.map((p) => [p.slug, p]));
+          slugs = data.map((p) => p.slug);
+          return data;
+        })
+        .catch(() => {
+          manifestPromise = null;
+          return [];
+        });
+    }
+    return manifestPromise;
+  };
+
   const photoCount = (slug: string) => bySlug.get(slug)?.photos.length ?? 0;
 
   const loadPrint = (print: HTMLElement) => {
@@ -63,7 +88,7 @@ if (roots.length && gallery && projects.length) {
     template?.replaceWith(template.content.cloneNode(true));
   };
 
-  /** One stack on the board: its order (top first), with a random project on top. */
+  /** One stack on the board: starts on the SSR top print for instant LCP, then shuffles through all projects. */
   const makeStack = (root: HTMLElement): Stack | null => {
     const openButton = root.querySelector<HTMLButtonElement>('[data-collage-open]');
     if (!openButton) return null;
@@ -85,18 +110,17 @@ if (roots.length && gallery && projects.length) {
         mapPin.style.transform = `translate(${order[0].dataset.pinX}px, ${order[0].dataset.pinY}px)`;
       }
       openButton.setAttribute('aria-label', order[0].dataset.openLabel ?? '');
-      if (openHint) openHint.textContent = (words.view ?? '').replace('{n}', String(photoCount(order[0].dataset.slug!)));
+      const count = order[0].dataset.photoCount ?? String(photoCount(order[0].dataset.slug!));
+      if (openHint) openHint.textContent = (words.view ?? '').replace('{n}', count);
       loadStack();
     };
-    const rotateTo = (k: number) => [...prints.slice(k), ...prints.slice(0, k)];
 
-    // Keep the other prints inert, even when the browser considers the stack near the viewport.
-    const start = Math.floor(Math.random() * prints.length);
-    let order = rotateTo(start);
+    // Keep print 0 on top at load so the HTML-preloaded LCP photo never flashes or double-fetches.
+    let order = [...prints];
     layout();
     desktop.addEventListener('change', loadStack);
     root.closest('[data-board-home]')?.addEventListener('whiteboard:reset', () => {
-      order = rotateTo(start);
+      order = [...prints];
       layout();
     });
 
@@ -377,19 +401,20 @@ if (roots.length && gallery && projects.length) {
   };
 
   const step = (d: number) => {
+    if (!slugs.length) return;
     const [p, i] = neighbour(project, index, d);
     show(p, i, d);
   };
 
   let opener: HTMLElement = stacks[0].openButton;
-  const openProject = (slug: string, trigger?: HTMLElement | null, sourceEl?: HTMLElement | null) => {
-    ensureProjectStrip();
+  let openToken = 0;
+  const openProject = async (slug: string, trigger?: HTMLElement | null, sourceEl?: HTMLElement | null) => {
+    const token = ++openToken;
     opener = trigger ?? stacks[0].openButton;
     current = null;
     sets.forEach((set) => (set.hidden = true));
     document.documentElement.classList.add('whiteboard-reading');
     if (!gallery.open) gallery.showModal();
-    show(Math.max(0, slugs.indexOf(slug)), 0);
 
     // the photos grow out of the print (or card) they belong to when visible
     if (!reduceMotion.matches) {
@@ -407,34 +432,53 @@ if (roots.length && gallery && projects.length) {
       }
       gallery.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 220, easing: 'ease-out' });
     }
+
+    const loaded = await ensureManifest();
+    if (!loaded.length || !gallery.open || token !== openToken) return;
+    ensureProjectStrip();
+    show(Math.max(0, slugs.indexOf(slug)), 0);
   };
 
   const openGallery = (stack: Stack, event?: Event) => {
     const print = stack.top();
-    openProject(print.dataset.slug!, (event?.currentTarget as HTMLElement | null) ?? stack.openButton, print);
+    void openProject(print.dataset.slug!, (event?.currentTarget as HTMLElement | null) ?? stack.openButton, print);
+  };
+
+  const warmSlug = (slug: string) => {
+    void ensureManifest().then((loaded) => {
+      if (!loaded.length) return;
+      const p = slugs.indexOf(slug);
+      if (p < 0) return;
+      warmPhoto(p, 0);
+      warmPhoto(p, 1);
+    });
   };
 
   for (const stack of stacks) {
-    // hovering or focusing a stack starts loading its top project's first photos
-    const warm = () => {
-      const p = slugs.indexOf(stack.top().dataset.slug!);
-      warmPhoto(p, 0);
-      warmPhoto(p, 1);
-    };
+    // hovering or focusing a stack prefetches the manifest and its top project's first photos
+    const warm = () => warmSlug(stack.top().dataset.slug!);
     stack.openButton.addEventListener('pointerenter', warm);
     stack.openButton.addEventListener('focus', warm);
     stack.openButton.addEventListener('click', (event) => openGallery(stack, event));
   }
   // "oder erst Projekte ansehen" under the board's headline opens the gallery at the first stack
-  document.querySelectorAll<HTMLElement>('[data-open-collages]').forEach((el) => el.addEventListener('click', (event) => {
-    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-    event.preventDefault();
-    openGallery(stacks[0], event);
-  }));
+  document.querySelectorAll<HTMLElement>('[data-open-collages]').forEach((el) => {
+    const warm = () => warmSlug(stacks[0].top().dataset.slug!);
+    el.addEventListener('pointerenter', warm, { once: true });
+    el.addEventListener('focus', warm, { once: true });
+    el.addEventListener('click', (event) => {
+      if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      event.preventDefault();
+      openGallery(stacks[0], event);
+    });
+  });
   // Reference cards in the page body open the matching project on both desktop and mobile
-  document.querySelectorAll<HTMLElement>('[data-open-project]').forEach((el) =>
-    el.addEventListener('click', () => openProject(el.dataset.openProject!, el)),
-  );
+  document.querySelectorAll<HTMLElement>('[data-open-project]').forEach((el) => {
+    const warm = () => { void ensureManifest(); };
+    el.addEventListener('pointerenter', warm, { once: true });
+    el.addEventListener('focus', warm, { once: true });
+    el.addEventListener('click', () => void openProject(el.dataset.openProject!, el));
+  });
 
   let closingForInquiry = false;
   galleryInquire?.addEventListener('click', () => {

@@ -366,16 +366,32 @@ const nav = t.nav.items.map((item) => ({ ...item, href: `${home}${item.href}` })
   const menu = document.querySelector<HTMLDialogElement>('#mobile-menu');
   const label = document.querySelector<HTMLElement>('[data-menu-label]');
 
+  const board = document.querySelector<HTMLElement>('[data-board-home]');
+
   if (header) {
     const subpage = header.classList.contains('is-subpage');
-    const onScroll = () => {
-      header.classList.toggle('is-scrolled', subpage || window.scrollY > 8);
-      const board = document.querySelector<HTMLElement>('[data-board-home]');
-      header.classList.toggle('is-below-board', subpage || (Boolean(board) && window.scrollY >= (board?.offsetHeight ?? window.innerHeight) - header.offsetHeight));
+    let belowThreshold = 0;
+    const measureThreshold = () => {
+      belowThreshold = board ? Math.max(0, board.offsetHeight - header.offsetHeight) : 0;
     };
+    const onScroll = () => {
+      const y = window.scrollY;
+      header.classList.toggle('is-scrolled', subpage || y > 8);
+      header.classList.toggle('is-below-board', subpage || (Boolean(board) && y >= belowThreshold));
+    };
+    measureThreshold();
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll);
+    window.addEventListener('resize', () => {
+      measureThreshold();
+      onScroll();
+    }, { passive: true });
+    if (board && 'ResizeObserver' in window) {
+      new ResizeObserver(() => {
+        measureThreshold();
+        onScroll();
+      }).observe(board);
+    }
   }
 
   const syncMenu = () => {
@@ -388,7 +404,6 @@ const nav = t.nav.items.map((item) => ({ ...item, href: `${home}${item.href}` })
   };
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
   const root = document.documentElement;
-  const board = document.querySelector<HTMLElement>('[data-board-home]');
   const desktop = window.matchMedia('(min-width: 1024px)');
   const fitBoardToMenu = () => {
     const frame = board?.querySelector<HTMLElement>('.board-frame');

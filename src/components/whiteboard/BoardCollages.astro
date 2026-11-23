@@ -6,9 +6,9 @@
  * book). A click on the top print opens the gallery at that project, and the gallery browses all
  * projects. The caption leads to the projects section. Data: src/data/collages.ts; behaviour: src/scripts/board-collages.ts.
  */
-import { getImage } from 'astro:assets';
 import ResponsiveImage from './ResponsiveImage.astro';
 import { collagesFor } from '../../data/collages';
+import { asset } from '../../lib/paths';
 import { getLang } from '../../i18n/ui';
 import { lernraumCopy } from '../../i18n/lernraum';
 
@@ -28,12 +28,11 @@ const groupOf: Record<string, string> = {
   'kiga-tisens': 'kb', 'bibliothek-terlan': 'kb',
 };
 const groups = (['gs', 'ms', 'kb'] as const).map((key) => ({ key, name: G.groups[key] })).map((g) => ({ ...g, items: collages.filter((c) => (groupOf[c.slug] ?? 'gs') === g.key) }));
-// the gallery runs through the projects group by group
-const ordered = groups.flatMap((g) => g.items);
 // the stack deals them round-robin, so the kind of building changes from print to print
 const dealt = Array.from({ length: Math.max(...groups.map((g) => g.items.length)) }, (_, i) => groups.flatMap((g) => (g.items[i] ? [{ ...g.items[i], group: g.key }] : []))).flat();
 const openLabel = (c: (typeof collages)[number]) => G.open(c.name, c.photos.length);
 const words = { view: G.view('{n}'), photo: G.photo, photos: G.photos, project: G.project, credit: lang === 'de' ? 'Fotos' : 'Foto', prev: G.prev, next: G.next, prevProject: G.prevProject, nextProject: G.nextProject };
+const galleryUrl = asset(`gallery/${lang}.json`);
 
 // Geographic pin coordinates inside the South Tyrol magnet (viewBox 0 0 116 86, WGS84 projected)
 const southTyrolOutline =
@@ -52,47 +51,6 @@ const schoolPins: Record<string, [number, number]> = {
   'bibliothek-terlan': [49.4, 50.4],
 };
 const firstPin = schoolPins[dealt[0].slug] ?? [54.5, 43.0];
-
-// Defer the gallery's ~150 hidden <picture> nodes out of initial HTML; board-collages.ts builds
-// each project's slides and thumbnails on demand when the dialog opens.
-const useAvif = !import.meta.env.DEV;
-const galleryData = await Promise.all(
-  ordered.map(async (c) => {
-    const [projThumb, photos] = await Promise.all([
-      getImage({ src: c.collage, width: 320, widths: [160, 320], format: 'webp', quality: 70 }),
-      Promise.all(
-        c.photos.map(async (p) => {
-          const [webp, avif, thumb] = await Promise.all([
-            getImage({ src: p.image, widths: [640, 960, 1280, 1600, 2000], format: 'webp', quality: 82 }),
-            useAvif ? getImage({ src: p.image, widths: [640, 960, 1280, 1600, 2000], format: 'avif', quality: 55 }) : undefined,
-            getImage({ src: p.image, width: 240, widths: [120, 240], format: 'webp', quality: 70 }),
-          ]);
-          return {
-            alt: p.alt,
-            ...(p.vs?.length ? { vs: p.vs } : {}),
-            src: webp.src,
-            w: webp.attributes.width,
-            h: webp.attributes.height,
-            webp: webp.srcSet.attribute || webp.src,
-            ...(avif ? { avif: avif.srcSet.attribute || avif.src } : {}),
-            thumb: thumb.src,
-            thumbSet: thumb.srcSet.attribute || thumb.src,
-          };
-        }),
-      ),
-    ]);
-    return {
-      slug: c.slug,
-      name: c.name,
-      credit: c.credit ?? '',
-      highlight: copy.projects.referenceHighlights[c.slug] ?? '',
-      collage: projThumb.src,
-      collageSet: projThumb.srcSet.attribute || projThumb.src,
-      photos,
-    };
-  }),
-);
-const galleryJson = JSON.stringify(galleryData).replace(/</g, '\\u003c');
 ---
 
 <div class="board-object object-projects" data-board-object data-collages data-path-node="2" data-top-group={dealt[0].group}>
@@ -130,11 +88,14 @@ const galleryJson = JSON.stringify(galleryData).replace(/</g, '\\u003c');
     {dealt.map((c, i) => {
       const pin = schoolPins[c.slug] ?? [54.5, 43.0];
       return (
-        <figure class="print" data-collage-print data-slug={c.slug} data-name={c.name} data-group={c.group} data-pin-x={String(pin[0])} data-pin-y={String(pin[1])} data-open-label={openLabel(c)} data-depth={i < 3 ? String(i) : 'deep'} style={`--pos: ${i}; --tilt: ${tilts[i % tilts.length]}deg`} aria-hidden={i === 0 ? undefined : 'true'}>
-          <template data-collage-image>
-            <ResponsiveImage desktopOnly={!responsive} src={c.collage} alt={c.alt} width={960} widths={[360, 540, 720, 960]} sizes="(max-width: 1023px) 80vw, (max-height: 800px) 360px, 30vw" loading="eager" draggable="false" />
-          </template>
-          {i === 0 && <noscript><ResponsiveImage desktopOnly={!responsive} src={c.collage} alt={c.alt} width={960} widths={[360, 540, 720, 960]} sizes="(max-width: 1023px) 80vw, (max-height: 800px) 360px, 30vw" loading="eager" draggable="false" /></noscript>}
+        <figure class="print" data-collage-print data-slug={c.slug} data-name={c.name} data-group={c.group} data-photo-count={String(c.photos.length)} data-pin-x={String(pin[0])} data-pin-y={String(pin[1])} data-open-label={openLabel(c)} data-depth={i < 3 ? String(i) : 'deep'} style={`--pos: ${i}; --tilt: ${tilts[i % tilts.length]}deg`} aria-hidden={i === 0 ? undefined : 'true'}>
+          {i === 0 ? (
+            <ResponsiveImage desktopOnly={!responsive} src={c.collage} alt={c.alt} width={960} widths={[360, 540, 720, 960]} sizes="(max-width: 1023px) 80vw, (max-height: 800px) 360px, 30vw" loading="eager" fetchpriority="high" draggable="false" />
+          ) : (
+            <template data-collage-image>
+              <ResponsiveImage desktopOnly={!responsive} src={c.collage} alt={c.alt} width={960} widths={[360, 540, 720, 960]} sizes="(max-width: 1023px) 80vw, (max-height: 800px) 360px, 30vw" loading="eager" draggable="false" />
+            </template>
+          )}
           <figcaption><span>{c.name}</span><span class="print-group">{G.groups[c.group]}</span></figcaption>
         </figure>
       );
@@ -150,7 +111,7 @@ const galleryJson = JSON.stringify(galleryData).replace(/</g, '\\u003c');
   </div>
 </div>
 
-<dialog class="gallery" aria-labelledby="gallery-title" data-gallery data-words={JSON.stringify(words)}>
+<dialog class="gallery" aria-labelledby="gallery-title" data-gallery data-gallery-url={galleryUrl} data-words={JSON.stringify(words)}>
   <header class="gallery-header">
     <p id="gallery-title" class="gallery-title" data-gallery-title></p>
     <span class="gallery-count" data-gallery-count aria-live="polite"></span>
@@ -173,7 +134,6 @@ const galleryJson = JSON.stringify(galleryData).replace(/</g, '\\u003c');
     <div class="gallery-thumbs-wrap" data-gallery-thumbs-wrap></div>
     <nav class="gallery-projects" data-gallery-projects aria-label={G.projects}></nav>
   </footer>
-  <script type="application/json" data-gallery-data set:html={galleryJson}></script>
 </dialog>
 
 <style>
