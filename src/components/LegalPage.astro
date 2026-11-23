@@ -1,8 +1,8 @@
 ---
 /** Imprint and privacy notice: a quiet reading page in the site's frame (nav, footer). */
-import Layout from '../layouts/Layout.astro';
-import Navbar from './shared/Navbar.astro';
-import Footer from './shared/Footer.astro';
+import Layout from '../layouts/WhiteboardLayout.astro';
+import Navbar from './whiteboard/shared/Navbar.astro';
+import Footer from './whiteboard/shared/Footer.astro';
 import { legal } from '../i18n/legal';
 import { getLang, useTranslations } from '../i18n/ui';
 import { homeFor, legalFor, type LegalPage as Page } from '../lib/paths';
@@ -18,7 +18,7 @@ const alternates = { de: legalFor('de', page), it: legalFor('it', page) };
 ---
 
 <Layout title={`${doc.title} | Trias Schule`} description={doc.description} alternates={alternates} canonical={legalFor(lang, page)}>
-  <Navbar alternates={alternates} />
+  <Navbar alternates={alternates} onHome={false} />
   <main id="inhalt" class="legal shell">
     <a class="back link-line text-meta font-semibold" href={homeFor(lang)}>
       <svg class="h-3.5 w-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M14 8H3M7 4 3 8l4 4" /></svg>
@@ -64,7 +64,7 @@ const alternates = { de: legalFor('de', page), it: legalFor('it', page) };
 
     {doc.updated && <p class="updated">{doc.updated}</p>}
   </main>
-  <Footer />
+  <Footer onHome={false} />
 </Layout>
 
 <style>
@@ -72,14 +72,16 @@ const alternates = { de: legalFor('de', page), it: legalFor('it', page) };
   .back { display: inline-flex; align-items: center; gap: 0.5em; }
   .legal-title {
     margin-top: 36px;
-    font-size: var(--text-headline);
-    line-height: 0.98;
-    letter-spacing: -0.045em;
+    font-family: var(--font-hand);
+    font-weight: 700;
+    font-size: clamp(2.4rem, 4.8vw, 4.2rem);
+    line-height: 1.04;
+    letter-spacing: -0.005em;
   }
   .legal-intro { margin-top: 28px; max-width: 52ch; font-size: var(--text-lead); line-height: 1.55; color: var(--color-muted); }
 
   .legal-section { display: grid; gap: 14px; margin-top: 56px; padding-top: 28px; border-top: 1px solid var(--color-line); }
-  .legal-heading { font-size: var(--text-focal); line-height: 1.1; letter-spacing: -0.03em; }
+  .legal-heading { font-size: clamp(1.35rem, 2vw, 1.75rem); line-height: 1.1; letter-spacing: -0.03em; }
   .legal-body { display: grid; gap: 16px; max-width: 65ch; }
   .legal-body p { line-height: 1.65; }
   .legal-body dl { margin: 0; display: grid; gap: 8px; }

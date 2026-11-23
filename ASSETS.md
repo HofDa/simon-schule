@@ -1,16 +1,16 @@
 # Trias Schule – offene Inhalte & Assets
 
-Offene Inhalte und ihre Quellen. Abgeglichene Aktualisierungen aus dem Desktop-Ordner vom 11.11.2026 sind in `docs/content-update-2026-11-11.md` dokumentiert.
+Offene Inhalte und ihre Quellen. Abgeglichene Aktualisierungen aus dem Desktop-Ordner sind in `docs/content-update-2026-11-11.md` und `docs/content-update-2026-11-23.md` dokumentiert.
 
 ## Fakten (`src/data/site.ts`)
-- [x] Allgemeine Firmenrufnummer (`contact.phone`): +39 0472 971 206, laut Firmendatenblatt. Simons direkte Telefonnummer bleibt offen.
+- [x] Allgemeine Firmenrufnummer (`contact.phone`): +39 0472 971 206, laut Firmendatenblatt. Simons direkte Nummer: +39 338 9342398 (Änderungen 23.11.2026).
 - [x] Büro Trias Schule: Romstraße 77, 39012 Meran. Firmensitz / Showroom: Julius-Durst-Straße 70, 39042 Brixen.
 - [ ] Rene: Nachname, Rolle/Zuständigkeit, Telefon, E-Mail (`people[1]`)
-- [ ] Simon Brugger: Rolle/Zuständigkeit, Telefon, E-Mail (`people[0]`)
+- [x] Simon Brugger: Telefon, E-Mail und Portrait (`people[0]`); Rolle noch bestätigen
 - [x] VS-Deep-Links pro Produktkategorie (`src/i18n/ui.ts`, geprüft 14.10.2026): Sitzen, Tische, Stauraum, Flexible Lernlandschaften. Italienisch verlinkt die englischen VS-Seiten.
 - [ ] Kindergarten: VS hat keine eigene Kindergarten-Seite (`/de/LP-Kita`, `/de/LP-Kindergarten` gibt es nicht). Ziel mit VS klären, bis dahin ohne Link
 - [ ] Impressum- und Datenschutz-Seiten (Footer verlinkt `#impressum` / `#datenschutz`)
-- [ ] Formspree-Formular für `beratung@trias.it` anlegen, Empfängeradresse bestätigen und die Formular-URL als GitHub-Actions-Variable `PUBLIC_INQUIRY_ENDPOINT` setzen (lokal: `.env`). Ohne URL bleibt der vorbereitete E-Mail-Fallback aktiv. Danach Datenschutzhinweis rechtlich prüfen.
+- [x] ~~Formspree-Formular~~: entfällt, die Seite hat kein Anfrageformular mehr (Änderungen 23.11.2026); Kontakt nur per Telefon und E-Mail. Datenschutzhinweis entsprechend angepasst, rechtliche Prüfung steht weiter aus.
 - [ ] Finaler Web-Farbwert für VS Ginstergelb (RAL 1032) – aktuell `#E2A300` in `src/styles/global.css`
 
 ## Italienische Version (`/it/`)
@@ -48,4 +48,5 @@ Produktfreisteller: `public/images/products/vs-pantomove-lupo-gelb.webp` (PantoM
 
 ## Zeichnungen, die durch Fotos ersetzt werden können
 - [ ] **VS-Stuhl ginstergelb** (VS-Sektion): `src/components/art/VSChair.astro` ist eine schematische Seitenansicht, die beim Scrollen schwingt. Ideal: freigestelltes PNG/WebP `public/images/products/vs-pantoswing-ginstergelb.webp` (offizielles VS-Material mit Nutzungsrechten).
-- [ ] **Portraits Simon & Rene** (Menschen-Sektion): `public/images/team/simon-portrait.webp`, `rene-portrait.webp`, 4:5. Danach in `src/data/site.ts` bei der Person `photo: 'simon-portrait'` eintragen; bis dahin zeigt die Sektion nur die Namen.
+- [x] **Portrait Simon** aus `Simi.png`: `public/images/team/simon-portrait.webp` (4:5, für die Visitenkarte) und der Freisteller `src/assets/whiteboard/simon-standing.webp` (Kontaktbereich).
+- [ ] **Portrait Rene**: `public/images/team/rene-portrait.webp`, 4:5.

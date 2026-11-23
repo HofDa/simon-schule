@@ -129,7 +129,7 @@ const de = {
   },
   contact: {
     title: 'Sprechen wir über Ihre Schule oder Ihren Kindergarten.',
-    lead: 'Schreiben Sie kurz, worum es geht. Simon Brugger meldet sich persönlich bei Ihnen.',
+    lead: 'Ein Anruf oder eine kurze E-Mail genügt. Simon Brugger kümmert sich persönlich um Ihr Projekt.',
     chat: '… und die Gruppentische ans Fenster?',
     cta: 'Projekt anfragen',
     call: 'Direkt anrufen',
@@ -304,7 +304,7 @@ const it: UI = {
   },
   contact: {
     title: 'Parliamo della vostra scuola o scuola dell’infanzia.',
-    lead: 'Scriveteci in breve di cosa si tratta. Simon Brugger vi ricontatterà personalmente.',
+    lead: 'Basta una telefonata o una breve e-mail. Simon Brugger segue personalmente il vostro progetto.',
     chat: '… e i tavoli di gruppo vicino alla finestra?',
     cta: 'Richiedi un progetto',
     call: 'Chiamateci',

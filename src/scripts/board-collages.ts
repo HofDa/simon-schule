@@ -1,18 +1,42 @@
 /**
- * The collage stacks on the whiteboard (BoardCollages.astro), sharing one gallery.
- * - The stacks do not flip by themselves: on every page load each one shows a randomly chosen
- *   project on top, so a returning visitor sees other schools.
- * - A click on a stack opens the gallery at the project on top. The gallery browses everything:
- *   the arrows (or arrow keys, or a swipe) run through a project's photos and on into the next
- *   project; the strip of collages jumps straight to any project. Closing it leaves the last
- *   project seen on top of its stack.
+ * The collage stack on the whiteboard (BoardCollages.astro) and its gallery.
+ * - Each page load starts with a randomly chosen project on top. While the stack is on screen and
+ *   nobody is pointing at it, it shuffles: every few seconds the top print slides aside and is
+ *   tucked underneath. Hover, focus, an open gallery, a drag or reduced motion pause it.
+ * - A click on a stack opens the gallery at the project on top. The gallery builds each project's
+ *   slides and thumbnails on demand from the JSON manifest in [data-gallery-data] so initial HTML
+ *   and DOM stay small. Closing it leaves the last project seen on top of its stack.
  */
 export {};
+
+type GalleryPhoto = {
+  alt: string;
+  vs?: string[];
+  src: string;
+  w?: number | string;
+  h?: number | string;
+  webp: string;
+  avif?: string;
+  thumb: string;
+  thumbSet: string;
+};
+
+type GalleryProject = {
+  slug: string;
+  name: string;
+  credit: string;
+  highlight: string;
+  collage: string;
+  collageSet: string;
+  photos: GalleryPhoto[];
+};
 
 const roots = Array.from(document.querySelectorAll<HTMLElement>('[data-collages]'));
 const gallery = document.querySelector<HTMLDialogElement>('[data-gallery]');
 // the gallery's words in the page's language, rendered by BoardCollages.astro
 const words: Record<string, string> = JSON.parse(gallery?.dataset.words ?? '{}');
+const dataScript = gallery?.querySelector<HTMLScriptElement>('[data-gallery-data]');
+const projects: GalleryProject[] = JSON.parse(dataScript?.textContent ?? '[]');
 
 type Stack = {
   root: HTMLElement;
@@ -22,14 +46,17 @@ type Stack = {
   bringToTop: (slug: string) => void;
 };
 
-if (roots.length && gallery) {
+if (roots.length && gallery && projects.length) {
   // Keep the reference gallery available even on pages with a hidden board.
   if (gallery.parentElement !== document.body) document.body.append(gallery);
 
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const desktop = window.matchMedia('(min-width: 1024px)');
   const responsive = Boolean(document.querySelector('[data-board-responsive]'));
-  const photoCount = (slug: string) => gallery.querySelectorAll(`[data-gallery-set="${slug}"] [data-slide]`).length;
+  const bySlug = new Map(projects.map((p) => [p.slug, p]));
+  const slugs = projects.map((p) => p.slug);
+  const photoCount = (slug: string) => bySlug.get(slug)?.photos.length ?? 0;
+
   const loadPrint = (print: HTMLElement) => {
     if (!responsive && !desktop.matches) return;
     const template = print.querySelector<HTMLTemplateElement>('[data-collage-image]');
@@ -49,11 +76,10 @@ if (roots.length && gallery) {
       order.forEach((print, pos) => {
         print.style.setProperty('--pos', String(pos));
         print.dataset.depth = pos < 3 ? String(pos) : 'deep';
-        const number = print.querySelector<HTMLElement>('.print-number');
-        if (number) number.textContent = `${pos + 1}/${order.length}`;
         if (pos === 0) print.removeAttribute('aria-hidden');
         else print.setAttribute('aria-hidden', 'true');
       });
+      root.dataset.topGroup = order[0].dataset.group ?? '';
       openButton.setAttribute('aria-label', order[0].dataset.openLabel ?? '');
       if (openHint) openHint.textContent = (words.view ?? '').replace('{n}', String(photoCount(order[0].dataset.slug!)));
       loadStack();
@@ -70,6 +96,35 @@ if (roots.length && gallery) {
       layout();
     });
 
+    // the shuffle -------------------------------------------------------------------------------
+    const SHUFFLE_EVERY = 4200;
+    let onScreen = false;
+    let held = false; // pointer or keyboard focus on the stack
+    let leaving: HTMLElement | null = null;
+    const paused = () =>
+      reduceMotion.matches || !onScreen || held || document.hidden || Boolean(gallery?.open) ||
+      root.classList.contains('is-dragging') || Boolean(root.closest('[data-board-reader]'));
+    const shuffle = () => {
+      if (paused() || leaving || order.length < 2) return;
+      loadPrint(order[1]); // the next print is ready before it is uncovered
+      const top = order[0];
+      leaving = top;
+      top.classList.add('is-leaving');
+      window.setTimeout(() => {
+        order = [...order.slice(1), top];
+        layout();
+        top.classList.remove('is-leaving');
+        leaving = null;
+        loadPrint(order[1]);
+      }, 560);
+    };
+    window.setInterval(shuffle, SHUFFLE_EVERY);
+    new IntersectionObserver(([entry]) => { onScreen = entry.isIntersecting; }, { threshold: 0.4 }).observe(root);
+    root.addEventListener('pointerenter', () => (held = true));
+    root.addEventListener('pointerleave', () => (held = false));
+    root.addEventListener('focusin', () => (held = true));
+    root.addEventListener('focusout', () => (held = false));
+
     return {
       root,
       openButton,
@@ -85,12 +140,13 @@ if (roots.length && gallery) {
     };
   };
   const stacks = roots.map(makeStack).filter((s): s is Stack => Boolean(s));
-  // the gallery runs through every project, in the order of its sets (stack by stack)
-  const slugs = Array.from(gallery.querySelectorAll<HTMLElement>('[data-gallery-set]')).map((s) => s.dataset.gallerySet!);
 
   // gallery ---------------------------------------------------------------------------------------
 
   const stage = gallery.querySelector<HTMLElement>('[data-gallery-stage]')!;
+  const setsHost = gallery.querySelector<HTMLElement>('[data-gallery-sets]')!;
+  const thumbsHost = gallery.querySelector<HTMLElement>('[data-gallery-thumbs-wrap]')!;
+  const projectsHost = gallery.querySelector<HTMLElement>('[data-gallery-projects]')!;
   const title = gallery.querySelector<HTMLElement>('[data-gallery-title]')!;
   const counter = gallery.querySelector<HTMLElement>('[data-gallery-count]')!;
   const highlight = gallery.querySelector<HTMLElement>('[data-gallery-highlight]');
@@ -98,10 +154,131 @@ if (roots.length && gallery) {
   const galleryInquire = gallery.querySelector<HTMLAnchorElement>('[data-gallery-inquire]');
   const prev = gallery.querySelector<HTMLButtonElement>('[data-gallery-step="-1"]')!;
   const next = gallery.querySelector<HTMLButtonElement>('[data-gallery-step="1"]')!;
-  const projectButtons = Array.from(gallery.querySelectorAll<HTMLButtonElement>('[data-project]'));
-  const sets = new Map(slugs.map((slug) => [slug, gallery.querySelector<HTMLElement>(`[data-gallery-set="${slug}"]`)!]));
-  const slidesOf = (slug: string) => Array.from(sets.get(slug)!.querySelectorAll<HTMLElement>('[data-slide]'));
-  const nameOf = (slug: string) => sets.get(slug)!.dataset.name ?? '';
+
+  const sets = new Map<string, HTMLElement>();
+  const thumbSets = new Map<string, HTMLElement>();
+  let projectButtons: HTMLButtonElement[] = [];
+
+  const makePicture = (opts: { src: string; webp: string; avif?: string; sizes: string; alt: string; w?: number | string; h?: number | string; lazy?: boolean }) => {
+    const picture = document.createElement('picture');
+    picture.style.display = 'contents';
+    if (opts.avif) {
+      const s = document.createElement('source');
+      s.type = 'image/avif';
+      s.srcset = opts.avif;
+      s.sizes = opts.sizes;
+      picture.append(s);
+    }
+    const s = document.createElement('source');
+    s.type = 'image/webp';
+    s.srcset = opts.webp;
+    s.sizes = opts.sizes;
+    picture.append(s);
+
+    const img = document.createElement('img');
+    img.src = opts.src;
+    img.alt = opts.alt;
+    img.decoding = 'async';
+    img.draggable = false;
+    if (opts.w) img.width = Number(opts.w);
+    if (opts.h) img.height = Number(opts.h);
+    if (opts.lazy) img.loading = 'lazy';
+    picture.append(img);
+    return picture;
+  };
+
+  const ensureProjectStrip = () => {
+    if (projectButtons.length) return;
+    const frag = document.createDocumentFragment();
+    for (const c of projects) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'project';
+      btn.dataset.project = c.slug;
+      btn.setAttribute('aria-label', `${c.name}, ${c.photos.length} ${words.photos ?? ''}`);
+      btn.title = c.name;
+      btn.append(makePicture({ src: c.collage, webp: c.collageSet, sizes: '112px', alt: '', w: 320, h: 213 }));
+      const label = document.createElement('span');
+      label.textContent = c.name;
+      btn.append(label);
+      btn.addEventListener('click', () => {
+        const p = slugs.indexOf(c.slug);
+        if (p !== project) show(p, 0, p > project ? 1 : -1);
+      });
+      projectButtons.push(btn);
+      frag.append(btn);
+    }
+    projectsHost.append(frag);
+  };
+
+  const ensureSet = (slug: string) => {
+    const existing = sets.get(slug);
+    if (existing) return existing;
+    const c = bySlug.get(slug)!;
+    const set = document.createElement('div');
+    set.className = 'gallery-set';
+    set.dataset.gallerySet = c.slug;
+    set.hidden = true;
+
+    c.photos.forEach((p, k) => {
+      const fig = document.createElement('figure');
+      fig.className = 'slide';
+      fig.dataset.slide = '';
+      fig.hidden = k !== 0;
+      fig.append(makePicture({
+        src: p.src,
+        webp: p.webp,
+        avif: p.avif,
+        sizes: '(min-width: 1024px) 82vw, 100vw',
+        alt: `${c.name} – ${p.alt}`,
+        w: p.w,
+        h: p.h,
+        lazy: true,
+      }));
+      const cap = document.createElement('figcaption');
+      const text = document.createElement('span');
+      text.textContent = p.alt;
+      cap.append(text);
+      if (p.vs?.length) {
+        const list = document.createElement('ul');
+        list.className = 'slide-vs';
+        list.setAttribute('aria-label', 'VS Möbel');
+        for (const model of p.vs) {
+          const item = document.createElement('li');
+          item.textContent = model;
+          list.append(item);
+        }
+        cap.append(list);
+      }
+      fig.append(cap);
+      set.append(fig);
+    });
+    setsHost.append(set);
+    sets.set(slug, set);
+
+    const thumbs = document.createElement('div');
+    thumbs.className = 'gallery-thumbs';
+    thumbs.dataset.thumbSet = c.slug;
+    thumbs.hidden = true;
+    c.photos.forEach((p, k) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'thumb';
+      btn.dataset.thumb = String(k);
+      btn.setAttribute('aria-label', `${words.photo} ${k + 1}: ${p.alt}`);
+      btn.append(makePicture({ src: p.thumb, webp: p.thumbSet, sizes: '120px', alt: '', w: 240, h: 160 }));
+      btn.addEventListener('click', () => {
+        if (k !== index) show(project, k, k > index ? 1 : -1);
+      });
+      thumbs.append(btn);
+    });
+    thumbsHost.append(thumbs);
+    thumbSets.set(slug, thumbs);
+    return set;
+  };
+
+  const slidesOf = (slug: string) => Array.from(ensureSet(slug).querySelectorAll<HTMLElement>('[data-slide]'));
+  const nameOf = (slug: string) => bySlug.get(slug)?.name ?? '';
   let project = 0; // index into slugs
   let index = 0; // photo within the project
   let current: HTMLElement | null = null;
@@ -114,33 +291,32 @@ if (roots.length && gallery) {
 
   /** Load a photo before it is needed. */
   const warmPhoto = (p: number, i: number) => {
-    const slides = slidesOf(slugs[(p + slugs.length) % slugs.length]);
+    const slug = slugs[(p + slugs.length) % slugs.length];
+    const slides = slidesOf(slug);
     eagerImage(slides[(i + slides.length) % slides.length]?.querySelector('img'));
   };
 
   /** The photo before / after the current one, running on across projects. */
   const neighbour = (p: number, i: number, d: number): [number, number] => {
-    const count = slidesOf(slugs[p]).length;
+    const count = photoCount(slugs[p]);
     if (i + d >= 0 && i + d < count) return [p, i + d];
     const q = (p + d + slugs.length) % slugs.length;
-    return [q, d > 0 ? 0 : slidesOf(slugs[q]).length - 1];
+    return [q, d > 0 ? 0 : photoCount(slugs[q]) - 1];
   };
 
   const updateChrome = () => {
     const slug = slugs[project];
-    const count = slidesOf(slug).length;
-    title.textContent = nameOf(slug);
-    if (highlight) highlight.textContent = sets.get(slug)!.dataset.highlight ?? '';
-    if (galleryInquire) galleryInquire.dataset.topic = nameOf(slug);
+    const meta = bySlug.get(slug)!;
+    const count = meta.photos.length;
+    title.textContent = meta.name;
+    if (highlight) highlight.textContent = meta.highlight;
+    if (galleryInquire) galleryInquire.dataset.topic = meta.name;
     counter.textContent = `${words.photo} ${index + 1} / ${count} · ${words.project} ${project + 1} / ${slugs.length}`;
-    credit.textContent = sets.get(slug)!.dataset.credit ? `${words.credit}: ${sets.get(slug)!.dataset.credit}` : '';
-    gallery.querySelectorAll<HTMLElement>('[data-thumb-set]').forEach((t) => {
-      const active = t.dataset.thumbSet === slug;
-      t.hidden = !active;
-      if (active) t.querySelectorAll<HTMLImageElement>('img').forEach(eagerImage);
+    credit.textContent = meta.credit ? `${words.credit}: ${meta.credit}` : '';
+    thumbSets.forEach((t, key) => {
+      t.hidden = key !== slug;
     });
-    gallery.querySelectorAll<HTMLImageElement>('.gallery-projects img').forEach(eagerImage);
-    gallery.querySelectorAll<HTMLButtonElement>(`[data-thumb-set="${slug}"] [data-thumb]`).forEach((t, k) => t.setAttribute('aria-current', String(k === index)));
+    thumbSets.get(slug)?.querySelectorAll<HTMLButtonElement>('[data-thumb]').forEach((t, k) => t.setAttribute('aria-current', String(k === index)));
     projectButtons.forEach((b) => b.setAttribute('aria-current', String(b.dataset.project === slug)));
     projectButtons.find((b) => b.dataset.project === slug)?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
     // at the ends of a project the arrows name the project they lead into
@@ -163,11 +339,13 @@ if (roots.length && gallery) {
     const slides = slidesOf(slugs[project]);
     index = (i + slides.length) % slides.length;
     const to = slides[index];
-    gallery.querySelectorAll<HTMLElement>('[data-slide]').forEach((s) => {
-      if (s !== to && s !== from) {
-        s.getAnimations().forEach((a) => a.cancel());
-        s.hidden = true;
-      }
+    sets.forEach((set) => {
+      set.querySelectorAll<HTMLElement>('[data-slide]').forEach((s) => {
+        if (s !== to && s !== from) {
+          s.getAnimations().forEach((a) => a.cancel());
+          s.hidden = true;
+        }
+      });
     });
     from?.getAnimations().forEach((a) => a.cancel());
     to.getAnimations().forEach((a) => a.cancel());
@@ -201,6 +379,7 @@ if (roots.length && gallery) {
 
   let opener: HTMLElement = stacks[0].openButton;
   const openProject = (slug: string, trigger?: HTMLElement | null, sourceEl?: HTMLElement | null) => {
+    ensureProjectStrip();
     opener = trigger ?? stacks[0].openButton;
     current = null;
     sets.forEach((set) => (set.hidden = true));
@@ -275,18 +454,6 @@ if (roots.length && gallery) {
   });
   prev.addEventListener('click', () => step(-1));
   next.addEventListener('click', () => step(1));
-  gallery.querySelectorAll<HTMLButtonElement>('[data-thumb]').forEach((t) =>
-    t.addEventListener('click', () => {
-      const k = Number(t.dataset.thumb);
-      if (k !== index) show(project, k, k > index ? 1 : -1);
-    }),
-  );
-  projectButtons.forEach((b) =>
-    b.addEventListener('click', () => {
-      const p = slugs.indexOf(b.dataset.project!);
-      if (p !== project) show(p, 0, p > project ? 1 : -1);
-    }),
-  );
   gallery.addEventListener('keydown', (event) => {
     if (event.key === 'ArrowRight') step(1);
     else if (event.key === 'ArrowLeft') step(-1);

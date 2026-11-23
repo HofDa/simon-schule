@@ -1,7 +1,7 @@
 ---
 /**
  * "Der Lernraum" – Section 1 below the Whiteboard: Compact South Tyrol Reference Showcase.
- * Pairs the verified 234-facility track record (2015–2026) with the 10 real reference collages
+ * Pairs the verified 234-facility track record (2015–2026) with the real reference collages
  * grouped by the three whiteboard category magnets (Grundschulen, Mittel- & Musikschulen,
  * Kindergarten & Bibliothek).
  */
@@ -18,7 +18,13 @@ const lang = getLang(Astro.currentLocale);
 const t = useTranslations(lang).projects;
 const collages = collagesFor(lang);
 const totalFacilities = experience.categories.reduce((sum, category) => sum + category.count, 0);
-const largestCategory = Math.max(...experience.categories.map(({ count }) => count));
+// two groups are enough to read at a glance (three libraries alone looked thin, so they join the
+// kindergartens and Kitas); the detailed split stays in src/data/experience.ts
+const sum = (...labels: string[]) => experience.categories.filter((c) => labels.includes(c.label.de)).reduce((n, c) => n + c.count, 0);
+const statGroups = [
+  { count: sum('Grundschulen', 'Mittelschulen', 'Oberschulen', 'Berufs- & Fachschulen'), label: lang === 'it' ? 'Scuole' : 'Schulen' },
+  { count: sum('Kindergärten', 'Kitas', 'Bibliotheken'), label: lang === 'it' ? 'Infanzia, nidi e biblioteche' : 'Kindergärten, Kitas & Bibliotheken' },
+];
 
 const L = lernraumCopy(lang);
 const P = L.projects;
@@ -30,6 +36,7 @@ const groupOf: Record<string, 'gs' | 'ms' | 'kb'> = {
   'gs-sarnthein': 'gs',
   'gs-st-jakob': 'gs',
   'gs-st-martin-gsies': 'gs',
+  'gs-riffian': 'gs',
   'ms-lana': 'ms',
   'ms-sterzing': 'ms',
   'musikschule-brixen': 'ms',
@@ -62,11 +69,10 @@ const tilts = [-1.4, 1.1, -0.8, 1.5, -1.1];
           </div>
         </div>
         <ul class="experience-breakdown" role="list">
-          {experience.categories.map((category, ci) => (
-            <li class="experience-row" style={`--i: ${ci}`}>
-              <span>{category.label[lang]}</span>
-              <strong data-count-to={category.count}>{category.count}</strong>
-              <span class="experience-bar" style={`--bar-width: ${category.count / largestCategory * 100}%`} aria-hidden="true"></span>
+          {statGroups.map((group) => (
+            <li class="experience-row">
+              <strong data-count-to={group.count}>{group.count}</strong>
+              <span>{group.label}</span>
             </li>
           ))}
         </ul>
@@ -81,7 +87,7 @@ const tilts = [-1.4, 1.1, -0.8, 1.5, -1.1];
         <div class={`ref-group ref-group-${group.key}`}>
           <div class="ref-group-head" data-wb-reveal>
             <CategoryMagnetIcon kind={group.key} size={30} uid={`proj-${group.key}`} />
-            <h4 id={`reference-title-${group.key}`} class="ref-group-title">{group.name}</h4>
+            <h3 id={`reference-title-${group.key}`} class="ref-group-title">{group.name}</h3>
           </div>
           <ul class="references-grid" role="list" aria-labelledby={`reference-title-${group.key}`}>
             {group.items.map((c, ci) => (
@@ -102,7 +108,7 @@ const tilts = [-1.4, 1.1, -0.8, 1.5, -1.1];
                       alt={c.alt}
                       width={480}
                       widths={[240, 360, 480, 640]}
-                      sizes="(min-width: 1200px) 220px, (min-width: 768px) 30vw, 78vw"
+                      sizes="(min-width: 1200px) 200px, (min-width: 768px) 30vw, 78vw"
                       loading="lazy"
                       draggable="false"
                     />
@@ -180,45 +186,29 @@ const tilts = [-1.4, 1.1, -0.8, 1.5, -1.1];
     font-variant-numeric: tabular-nums;
   }
   .experience-breakdown {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     margin: 0;
-    padding: 8px 16px;
+    padding: 0;
     list-style: none;
-    font-size: 0.875rem;
-    color: var(--color-muted);
-    line-height: 1.4;
   }
   .experience-row {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 4ch;
-    align-items: baseline;
-    gap: 5px 12px;
-    padding-block: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 12px 16px 14px;
+    font-size: var(--text-label);
+    line-height: 1.3;
+    color: var(--color-muted);
   }
+  .experience-row + .experience-row { border-left: 1px solid var(--color-line); }
   .experience-row strong {
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
     color: var(--color-ink);
-    text-align: end;
     font-variant-numeric: tabular-nums;
-  }
-  .experience-bar {
-    grid-column: 1 / -1;
-    height: 5px;
-    border-radius: 3px;
-    background: var(--color-surface);
-  }
-  .experience-bar::before {
-    content: '';
-    display: block;
-    width: var(--bar-width);
-    height: 100%;
-    border-radius: inherit;
-    background: var(--color-ginster);
-    transform-origin: left center;
-    transition: transform 1100ms cubic-bezier(.2, .8, .2, 1) calc(260ms + var(--i, 0) * 120ms);
-  }
-  /* before the strip scrolls in, the bars wait empty and the numbers at zero (set by the script) */
-  .experience-strip.is-pending .experience-bar::before { transform: scaleX(0); }
-  @media (prefers-reduced-motion: reduce) {
-    .experience-bar::before { transition: none; }
   }
 
   .projects-browse, .reference-category { display: none; }
@@ -263,16 +253,18 @@ const tilts = [-1.4, 1.1, -0.8, 1.5, -1.1];
     .references-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   }
   @media (min-width: 1100px) {
+    /* six columns: the six primary schools in one row, then the three middle and music schools
+       beside kindergarten and library */
     .ref-groups {
-      grid-template-columns: repeat(5, minmax(0, 1fr));
+      grid-template-columns: repeat(6, minmax(0, 1fr));
       gap: 28px 14px;
     }
     .ref-group-gs { grid-column: 1 / -1; }
     .ref-group-ms { grid-column: 1 / span 3; }
-    .ref-group-kb { grid-column: 4 / span 2; }
-    .ref-group-gs .references-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
-    .ref-group-ms .references-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-    .ref-group-kb .references-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .ref-group-kb { grid-column: 4 / span 3; }
+    .ref-group-gs .references-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+    .ref-group-ms .references-grid,
+    .ref-group-kb .references-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   }
   @media (max-width: 767px) {
     .projects-browse { display: flex; }
@@ -442,12 +434,10 @@ const tilts = [-1.4, 1.1, -0.8, 1.5, -1.1];
       const target = (el: HTMLElement) => Number(el.dataset.countTo) || 0;
       const showFinal = () => {
         numbers.forEach((el) => { el.textContent = String(target(el)); });
-        stats.classList.remove('is-pending');
       };
       // count up from zero, the total first and each category a beat later
       const countUp = () => {
         if (!isMotionAllowed() || stats.closest('[data-board-reader]')) return showFinal();
-        stats.classList.remove('is-pending');
         const start = performance.now();
         const tick = (now: number) => {
           let running = false;
@@ -463,7 +453,6 @@ const tilts = [-1.4, 1.1, -0.8, 1.5, -1.1];
       };
 
       if (isMotionAllowed() && !stats.closest('[data-board-reader]')) {
-        stats.classList.add('is-pending');
         numbers.forEach((el) => { el.textContent = '0'; });
       }
       revealOnce([stats], undefined, countUp);

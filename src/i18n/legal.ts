@@ -4,10 +4,9 @@
  * `value: null` is a fact Trias has not confirmed yet: it renders as an open marker, never
  * as an invented value. The privacy notice is a draft (see `draft`) and describes the site
  * as it is built today: no cookies or tracking, self-hosted fonts, hosting on GitHub Pages,
- * and an inquiry form that either composes an e-mail (mailto) or, when configured,
- * submits through Formspree.
+ * and contact by telephone or e-mail only (the inquiry form was removed in November 2026).
  */
-import { company, contact, inquiry, photoCredits } from '../data/site';
+import { company, contact, photoCredits } from '../data/site';
 import type { Lang } from './ui';
 
 export interface LegalRow {
@@ -59,14 +58,14 @@ const de: Record<'imprint' | 'privacy', LegalDoc> = {
       {
         title: 'Bilder und Zeichnungen',
         paragraphs: [
-          'Die Projektfotos sind vorläufige Platzhalter aus den Katalogen der VS Vereinigte Spezialmöbelfabriken, mit deren Genehmigung verwendet. Die Zeichnungen von Stühlen, Hockern und Personen sind schematische Darstellungen.',
+          'Die Referenzfotos zeigen eingerichtete Schulen, Kindergärten und Bibliotheken in Südtirol (Trias; Fotografie u. a. Jaist, jeweils in der Bildansicht angegeben). Katalog- und Produktabbildungen stammen aus den Katalogen der VS Vereinigte Spezialmöbelfabriken und werden mit deren Genehmigung verwendet. Die Raumdarstellungen und Symbole sind schematische Zeichnungen.',
         ],
         links: credits,
       },
       {
         title: 'Schriften',
         paragraphs: [
-          'Archivo (Omnibus-Type), SIL Open Font License 1.1.',
+          'Archivo (Omnibus-Type), Kalam (Indian Type Foundry) und Caveat (Impallari Type), jeweils unter SIL Open Font License 1.1. Alle Schriften werden direkt von dieser Website ausgeliefert.',
         ],
       },
       {
@@ -83,15 +82,11 @@ const de: Record<'imprint' | 'privacy', LegalDoc> = {
     sections: [
       { title: 'Verantwortlich', rows: [{ label: 'Unternehmen', value: company.name }, { label: 'Anschrift', value: company.address }, mail] },
       {
-        title: 'Anfrageformular',
+        title: 'Kontakt per E-Mail oder Telefon',
         paragraphs: [
-          'Wenn Sie das Anfrageformular nutzen, verarbeiten wir die Angaben, die Sie eintragen: Name, Schule, Kindergarten oder Gemeinde, E-Mail, auf Wunsch Telefon, Projektort, Projektphase und Ihre Nachricht.',
-          inquiry.endpoint
-            ? 'Beim Absenden werden die Angaben an Formspree, Inc. gesendet, um sie an Trias zu übermitteln und im Formspree-Postfach bereitzustellen. Formspree kann außerdem technische Verbindungsdaten wie IP-Adresse, Browsertyp, Zeitpunkt und verweisende Website verarbeiten. Laut Datenschutzerklärung kann Formspree Daten in den USA und weiteren Ländern verarbeiten.'
-            : `Das Formular sendet nichts an diese Website. Es bereitet eine E-Mail an ${contact.email} vor, die Sie in Ihrem eigenen E-Mail-Programm absenden.`,
+          'Diese Website hat kein Kontaktformular. Wenn Sie uns per E-Mail schreiben oder anrufen, verarbeiten wir die Angaben, die Sie uns dabei mitteilen, etwa Name, Kontaktdaten, Schule, Kindergarten oder Gemeinde und Ihr Anliegen. Eine E-Mail senden Sie aus Ihrem eigenen E-Mail-Programm; diese Website übermittelt dabei nichts.',
           'Trias verwendet die Angaben, um Ihre Anfrage zu beantworten und ein mögliches Projekt vorzubereiten (Art. 6 Abs. 1 lit. b DSGVO), und löscht sie, sobald sie dafür nicht mehr gebraucht werden und keine gesetzliche Aufbewahrungspflicht besteht.',
         ],
-        links: inquiry.endpoint ? [{ label: 'Datenschutzerklärung von Formspree', href: inquiry.privacyUrl! }] : undefined,
       },
       {
         title: 'Hosting',
@@ -106,7 +101,7 @@ const de: Record<'imprint' | 'privacy', LegalDoc> = {
       },
       {
         title: 'Links zu anderen Websites',
-        paragraphs: ['Links zu VS (vs.de) öffnen eine andere Website. Dort gilt deren Datenschutzerklärung.'],
+        paragraphs: ['Links zu VS (vs.de) und zur Muttermarke Trias (trias.it) öffnen andere Websites. Dort gelten deren jeweiligen Datenschutzerklärungen.'],
       },
       {
         title: 'Ihre Rechte',
@@ -117,7 +112,7 @@ const de: Record<'imprint' | 'privacy', LegalDoc> = {
         links: [{ label: 'garanteprivacy.it', href: 'https://www.garanteprivacy.it/' }],
       },
     ],
-    updated: 'Stand: September 2026',
+    updated: 'Stand: November 2026',
   },
 };
 
@@ -145,14 +140,14 @@ const it: Record<'imprint' | 'privacy', LegalDoc> = {
       {
         title: 'Immagini e disegni',
         paragraphs: [
-          'Le foto dei progetti sono segnaposto provvisori tratti dai cataloghi di VS Vereinigte Spezialmöbelfabriken, utilizzati con la loro autorizzazione. I disegni di sedie, sgabelli e persone sono rappresentazioni schematiche.',
+          'Le foto di riferimento mostrano scuole, scuole dell’infanzia e biblioteche arredate in Alto Adige (Trias; fotografia tra gli altri Jaist, indicata nella rispettiva galleria). Le immagini di catalogo e prodotto provengono dai cataloghi di VS Vereinigte Spezialmöbelfabriken e sono utilizzate con la loro autorizzazione. Le viste d’aula e i simboli sono rappresentazioni schematiche.',
         ],
         links: credits,
       },
       {
         title: 'Caratteri',
         paragraphs: [
-          'Archivo (Omnibus-Type), SIL Open Font License 1.1.',
+          'Archivo (Omnibus-Type), Kalam (Indian Type Foundry) e Caveat (Impallari Type), ciascuno con licenza SIL Open Font License 1.1. Tutti i caratteri sono ospitati direttamente su questo sito.',
         ],
       },
       {
@@ -169,15 +164,11 @@ const it: Record<'imprint' | 'privacy', LegalDoc> = {
     sections: [
       { title: 'Titolare del trattamento', rows: [{ label: 'Impresa', value: company.name }, { label: 'Indirizzo', value: company.address }, mail] },
       {
-        title: 'Modulo di richiesta',
+        title: 'Contatto via e-mail o telefono',
         paragraphs: [
-          'Se utilizzate il modulo di richiesta, trattiamo i dati che inserite: nome, scuola, scuola dell’infanzia o Comune, e-mail, facoltativamente telefono, luogo e fase del progetto e il vostro messaggio.',
-          inquiry.endpoint
-            ? 'Quando inviate il modulo, i dati vengono trasmessi a Formspree, Inc. per inoltrare la richiesta a Trias e renderla disponibile nella casella Formspree. Formspree può trattare anche dati tecnici di connessione, come indirizzo IP, browser, orario e sito di provenienza. Secondo la sua informativa, i dati possono essere trattati negli Stati Uniti e in altri Paesi.'
-            : `Il modulo non invia nulla a questo sito: prepara un’e-mail a ${contact.email} che inviate dal vostro programma di posta.`,
+          'Questo sito non ha un modulo di contatto. Se ci scrivete un’e-mail o ci chiamate, trattiamo i dati che ci comunicate, ad esempio nome, recapiti, scuola, scuola dell’infanzia o Comune e la vostra richiesta. L’e-mail viene inviata dal vostro programma di posta; questo sito non trasmette nulla.',
           'Trias usa i dati per rispondere alla richiesta e preparare un eventuale progetto (art. 6, par. 1, lett. b GDPR) e li cancella quando non servono più, salvo obblighi di conservazione previsti dalla legge.',
         ],
-        links: inquiry.endpoint ? [{ label: 'Informativa privacy di Formspree', href: inquiry.privacyUrl! }] : undefined,
       },
       {
         title: 'Hosting',
@@ -192,7 +183,7 @@ const it: Record<'imprint' | 'privacy', LegalDoc> = {
       },
       {
         title: 'Link ad altri siti',
-        paragraphs: ['I link a VS (vs.de) aprono un altro sito, a cui si applica la sua informativa privacy.'],
+        paragraphs: ['I link a VS (vs.de) e al marchio principale Trias (trias.it) aprono altri siti, ai quali si applicano le rispettive informative privacy.'],
       },
       {
         title: 'I vostri diritti',
@@ -203,7 +194,7 @@ const it: Record<'imprint' | 'privacy', LegalDoc> = {
         links: [{ label: 'garanteprivacy.it', href: 'https://www.garanteprivacy.it/' }],
       },
     ],
-    updated: 'Aggiornamento: settembre 2026',
+    updated: 'Aggiornamento: novembre 2026',
   },
 };
 

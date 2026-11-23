@@ -21,11 +21,6 @@ const geoCoordinates = [
   { latitude: 46.7035, longitude: 11.6512 },
 ] as const;
 
-const toIsoDate = (date: string) => {
-  const [day, month, year] = date.split('.');
-  return day && month && year ? `${year}-${month}-${day}` : date;
-};
-
 /** Build Schema.org JSON-LD graph for indexable pages (rich entity graph on homepages). */
 export function buildStructuredData({
   site,
@@ -151,7 +146,6 @@ export function buildStructuredData({
   const reviews = feedbackFor(lang).map((entry) => ({
     '@type': 'Review',
     reviewBody: entry.quote,
-    datePublished: toIsoDate(entry.date),
     inLanguage: lang === 'it' ? 'it-IT' : 'de-IT',
     author: {
       '@type': 'Person',
@@ -225,6 +219,7 @@ export function buildStructuredData({
           name: fullName(person),
           ...(roleFor(person, lang) ? { jobTitle: roleFor(person, lang) } : {}),
           ...(person.email ? { email: person.email } : {}),
+          ...(person.phone ? { telephone: person.phone } : {}),
         })),
         review: reviews,
       },

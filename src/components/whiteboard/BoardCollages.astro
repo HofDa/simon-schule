@@ -1,11 +1,12 @@
 ---
 /**
- * The project collages on the whiteboard: three stacks of prints (Grundschulen, Mittel- & Musikschulen,
- * Kindergarten & Bibliothek), each held by a round magnet with an icon for its kind of building (pencil, music note, book), in the board's upper right corner. A click on the top
- * print opens the gallery at that project, and the gallery browses all projects. Each visit chooses a
- * different top print; only that print loads until another project is brought to the top. The caption leads to the projects
- * section. Data: src/data/collages.ts; behaviour: src/scripts/board-collages.ts.
+ * The project collages on the whiteboard: one stack of prints held by a round magnet, in the board's
+ * upper right corner. The stack shuffles itself: every few seconds the top print slides aside and is
+ * tucked underneath, and the magnet's icon follows the kind of building on top (pencil, music note,
+ * book). A click on the top print opens the gallery at that project, and the gallery browses all
+ * projects. The caption leads to the projects section. Data: src/data/collages.ts; behaviour: src/scripts/board-collages.ts.
  */
+import { getImage } from 'astro:assets';
 import ResponsiveImage from './ResponsiveImage.astro';
 import { collagesFor } from '../../data/collages';
 import { getLang } from '../../i18n/ui';
@@ -22,91 +23,125 @@ const collages = collagesFor(lang);
 const tilts = [-2.4, 1.6, -1.1, 2.3, -1.8, 0.9, -2.8, 1.9, -0.6, 2.7];
 // three stacks by kind of building, side by side in the board's upper right corner
 const groupOf: Record<string, string> = {
-  'gs-gais': 'gs', 'gs-deflorian-meran': 'gs', 'gs-sarnthein': 'gs', 'gs-st-jakob': 'gs', 'gs-st-martin-gsies': 'gs',
+  'gs-gais': 'gs', 'gs-deflorian-meran': 'gs', 'gs-sarnthein': 'gs', 'gs-st-jakob': 'gs', 'gs-st-martin-gsies': 'gs', 'gs-riffian': 'gs',
   'ms-lana': 'ms', 'ms-sterzing': 'ms', 'musikschule-brixen': 'ms',
   'kiga-tisens': 'kb', 'bibliothek-terlan': 'kb',
 };
 const groups = (['gs', 'ms', 'kb'] as const).map((key) => ({ key, name: G.groups[key] })).map((g) => ({ ...g, items: collages.filter((c) => (groupOf[c.slug] ?? 'gs') === g.key) }));
-// the gallery runs through the projects in the same order, stack by stack
+// the gallery runs through the projects group by group
 const ordered = groups.flatMap((g) => g.items);
+// the stack deals them round-robin, so the kind of building changes from print to print
+const dealt = Array.from({ length: Math.max(...groups.map((g) => g.items.length)) }, (_, i) => groups.flatMap((g) => (g.items[i] ? [{ ...g.items[i], group: g.key }] : []))).flat();
 const openLabel = (c: (typeof collages)[number]) => G.open(c.name, c.photos.length);
-const words = { view: G.view('{n}'), photo: G.photo, project: G.project, credit: lang === 'de' ? 'Fotos' : 'Foto', prev: G.prev, next: G.next, prevProject: G.prevProject, nextProject: G.nextProject };
+const words = { view: G.view('{n}'), photo: G.photo, photos: G.photos, project: G.project, credit: lang === 'de' ? 'Fotos' : 'Foto', prev: G.prev, next: G.next, prevProject: G.prevProject, nextProject: G.nextProject };
+
+// Defer the gallery's ~150 hidden <picture> nodes out of initial HTML; board-collages.ts builds
+// each project's slides and thumbnails on demand when the dialog opens.
+const useAvif = !import.meta.env.DEV;
+const galleryData = await Promise.all(
+  ordered.map(async (c) => {
+    const [projThumb, photos] = await Promise.all([
+      getImage({ src: c.collage, width: 320, widths: [160, 320], format: 'webp', quality: 70 }),
+      Promise.all(
+        c.photos.map(async (p) => {
+          const [webp, avif, thumb] = await Promise.all([
+            getImage({ src: p.image, widths: [640, 960, 1280, 1600, 2000], format: 'webp', quality: 82 }),
+            useAvif ? getImage({ src: p.image, widths: [640, 960, 1280, 1600, 2000], format: 'avif', quality: 55 }) : undefined,
+            getImage({ src: p.image, width: 240, widths: [120, 240], format: 'webp', quality: 70 }),
+          ]);
+          return {
+            alt: p.alt,
+            ...(p.vs?.length ? { vs: p.vs } : {}),
+            src: webp.src,
+            w: webp.attributes.width,
+            h: webp.attributes.height,
+            webp: webp.srcSet.attribute || webp.src,
+            ...(avif ? { avif: avif.srcSet.attribute || avif.src } : {}),
+            thumb: thumb.src,
+            thumbSet: thumb.srcSet.attribute || thumb.src,
+          };
+        }),
+      ),
+    ]);
+    return {
+      slug: c.slug,
+      name: c.name,
+      credit: c.credit ?? '',
+      highlight: copy.projects.referenceHighlights[c.slug] ?? '',
+      collage: projThumb.src,
+      collageSet: projThumb.srcSet.attribute || projThumb.src,
+      photos,
+    };
+  }),
+);
+const galleryJson = JSON.stringify(galleryData).replace(/</g, '\\u003c');
 ---
 
-{groups.map((g, gi) => (
-  <div class={`board-object object-projects object-projects-${g.key}`} data-board-object data-collages data-path-node={gi === 0 ? '2' : undefined}>
-    <button class="stack-magnet" type="button" data-board-handle data-label={g.name} aria-label={G.move(g.name)} aria-describedby="board-drag-hint" title={G.moveTitle}>
-      <svg viewBox="0 0 60 60" aria-hidden="true">
-        <defs>
-          <radialGradient id={`sm-face-${g.key}`} cx=".4" cy=".35" r=".7">
-            <stop offset="0" stop-color="#f8d362" />
-            <stop offset="1" stop-color="#e2a300" />
-          </radialGradient>
-          <linearGradient id={`sm-gloss-${g.key}`} x1="0" y1="0" x2="1" y2="1">
-            <stop offset=".25" stop-color="#fff" stop-opacity="0" />
-            <stop offset=".4" stop-color="#fff" stop-opacity=".55" />
-            <stop offset=".5" stop-color="#fff" stop-opacity="0" />
-          </linearGradient>
-          <clipPath id={`sm-clip-${g.key}`}><circle cx="30" cy="30" r="26" /></clipPath>
-        </defs>
-        <!-- the magnet's thickness: dark magnetic backing, then the ivory edge -->
-        <circle cx="30.6" cy="33.2" r="27.6" fill="#34332f" />
-        <circle cx="30" cy="31.6" r="27.6" fill="#d6cfbd" />
-        <!-- the face with its ivory rim -->
-        <circle cx="30" cy="30" r="26" fill={`url(#sm-face-${g.key})`} stroke="#fbf7ec" stroke-width="3.2" />
-        <g class="sm-icon" fill="none" stroke="#2c2b28" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
-          {g.key === 'gs' && (
-            <>
-              <!-- a pencil -->
-              <path d="M19 41L21 34L37 18L42 23L26 39Z" fill="#fbf7ec" />
-              <path d="M33 22L38 27M19 41L21 34L26 39Z" />
-              <path d="M19 41L21 34L26 39Z" fill="#2c2b28" />
-            </>
-          )}
-          {g.key === 'ms' && (
-            <>
-              <!-- two joined music notes -->
-              <path d="M25 39V19L40 16V36" />
-              <ellipse cx="21.5" cy="39.5" rx="4.2" ry="3.2" fill="#2c2b28" transform="rotate(-18 21.5 39.5)" />
-              <ellipse cx="36.5" cy="36.5" rx="4.2" ry="3.2" fill="#2c2b28" transform="rotate(-18 36.5 36.5)" />
-              <path d="M25 24L40 21" />
-            </>
-          )}
-          {g.key === 'kb' && (
-            <>
-              <!-- an open book -->
-              <path d="M30 22Q24 18 16 19V39Q24 38 30 42Q36 38 44 39V19Q36 18 30 22Z" fill="#fbf7ec" />
-              <path d="M30 22V42M20 25Q24 25 27 27M20 30Q24 30 27 32M33 27Q36 25 40 25M33 32Q36 30 40 30" stroke-width="1.6" />
-            </>
-          )}
+<div class="board-object object-projects" data-board-object data-collages data-path-node="2" data-top-group={dealt[0].group}>
+  <button class="stack-magnet" type="button" data-board-handle data-label={G.projects} aria-label={G.move(G.projects)} aria-describedby="board-drag-hint" title={G.moveTitle}>
+    <svg viewBox="0 0 60 60" aria-hidden="true">
+      <defs>
+        <radialGradient id="sm-face" cx=".4" cy=".35" r=".7">
+          <stop offset="0" stop-color="#f8d362" />
+          <stop offset="1" stop-color="#e2a300" />
+        </radialGradient>
+        <linearGradient id="sm-gloss" x1="0" y1="0" x2="1" y2="1">
+          <stop offset=".25" stop-color="#fff" stop-opacity="0" />
+          <stop offset=".4" stop-color="#fff" stop-opacity=".55" />
+          <stop offset=".5" stop-color="#fff" stop-opacity="0" />
+        </linearGradient>
+        <clipPath id="sm-clip"><circle cx="30" cy="30" r="26" /></clipPath>
+      </defs>
+      <!-- the magnet's thickness: dark magnetic backing, then the ivory edge -->
+      <circle cx="30.6" cy="33.2" r="27.6" fill="#34332f" />
+      <circle cx="30" cy="31.6" r="27.6" fill="#d6cfbd" />
+      <!-- the face with its ivory rim -->
+      <circle cx="30" cy="30" r="26" fill="url(#sm-face)" stroke="#fbf7ec" stroke-width="3.2" />
+      <g class="sm-icon" fill="none" stroke="#2c2b28" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+        <!-- a pencil -->
+        <g data-icon="gs">
+          <path d="M19 41L21 34L37 18L42 23L26 39Z" fill="#fbf7ec" />
+          <path d="M33 22L38 27M19 41L21 34L26 39Z" />
+          <path d="M19 41L21 34L26 39Z" fill="#2c2b28" />
         </g>
-        <g clip-path={`url(#sm-clip-${g.key})`}>
-          <rect class="sm-gloss" x="-60" y="0" width="120" height="60" fill={`url(#sm-gloss-${g.key})`} />
+        <!-- two joined music notes -->
+        <g data-icon="ms">
+          <path d="M25 39V19L40 16V36" />
+          <ellipse cx="21.5" cy="39.5" rx="4.2" ry="3.2" fill="#2c2b28" transform="rotate(-18 21.5 39.5)" />
+          <ellipse cx="36.5" cy="36.5" rx="4.2" ry="3.2" fill="#2c2b28" transform="rotate(-18 36.5 36.5)" />
+          <path d="M25 24L40 21" />
         </g>
-      </svg>
+        <!-- an open book -->
+        <g data-icon="kb">
+          <path d="M30 22Q24 18 16 19V39Q24 38 30 42Q36 38 44 39V19Q36 18 30 22Z" fill="#fbf7ec" />
+          <path d="M30 22V42M20 25Q24 25 27 27M20 30Q24 30 27 32M33 27Q36 25 40 25M33 32Q36 30 40 30" stroke-width="1.6" />
+        </g>
+      </g>
+      <g clip-path="url(#sm-clip)">
+        <rect class="sm-gloss" x="-60" y="0" width="120" height="60" fill="url(#sm-gloss)" />
+      </g>
+    </svg>
+  </button>
+  <div class="collage-stack" data-collage-stack>
+    {dealt.map((c, i) => (
+      <figure class="print" data-collage-print data-slug={c.slug} data-name={c.name} data-group={c.group} data-open-label={openLabel(c)} data-depth={i < 3 ? String(i) : 'deep'} style={`--pos: ${i}; --tilt: ${tilts[i % tilts.length]}deg`} aria-hidden={i === 0 ? undefined : 'true'}>
+        <template data-collage-image>
+          <ResponsiveImage desktopOnly={!responsive} src={c.collage} alt={c.alt} width={960} widths={[360, 540, 720, 960]} sizes="(max-width: 1023px) 80vw, (max-height: 800px) 360px, 30vw" loading="eager" draggable="false" />
+        </template>
+        {i === 0 && <noscript><ResponsiveImage desktopOnly={!responsive} src={c.collage} alt={c.alt} width={960} widths={[360, 540, 720, 960]} sizes="(max-width: 1023px) 80vw, (max-height: 800px) 360px, 30vw" loading="eager" draggable="false" /></noscript>}
+        <figcaption><span>{c.name}</span><span class="print-group">{G.groups[c.group]}</span></figcaption>
+      </figure>
+    ))}
+    <button type="button" class="collage-open" data-collage-open aria-haspopup="dialog" aria-label={openLabel(dealt[0])}>
+      <span class="collage-open-hint" aria-hidden="true" data-collage-open-hint>{G.view(dealt[0].photos.length)}</span>
     </button>
-    <div class="collage-stack" data-collage-stack>
-      {g.items.map((c, i) => (
-        <figure class="print" data-collage-print data-slug={c.slug} data-name={c.name} data-open-label={openLabel(c)} data-depth={i < 3 ? String(i) : 'deep'} style={`--pos: ${i}; --tilt: ${tilts[i % tilts.length]}deg`} aria-hidden={i === 0 ? undefined : 'true'}>
-          <template data-collage-image>
-            <ResponsiveImage desktopOnly={!responsive} src={c.collage} alt={c.alt} width={960} widths={[360, 540, 720, 960]} sizes="(max-width: 1023px) 30vw, (max-height: 800px) 260px, 22vw" loading="eager" draggable="false" />
-          </template>
-          {i === 0 && <noscript><ResponsiveImage desktopOnly={!responsive} src={c.collage} alt={c.alt} width={960} widths={[360, 540, 720, 960]} sizes="(max-width: 1023px) 30vw, (max-height: 800px) 260px, 22vw" loading="eager" draggable="false" /></noscript>}
-          <figcaption><span>{c.name}</span><span class="print-number">{i + 1}/{g.items.length}</span></figcaption>
-        </figure>
-      ))}
-      <button type="button" class="collage-open" data-collage-open aria-haspopup="dialog" aria-label={openLabel(g.items[0])}>
-        <span class="collage-open-hint" aria-hidden="true" data-collage-open-hint>{G.view(g.items[0].photos.length)}</span>
-      </button>
-    </div>
-    <div class="collage-actions">
-      <a class="board-object-link collage-link" href="#projekte" data-board-topic="projekte" draggable="false">
-        <span class="object-caption">{g.name} <span aria-hidden="true">↗</span></span>
-      </a>
-    </div>
-    <p class="sr-only" aria-live="polite" data-collage-status></p>
   </div>
-))}
+  <div class="collage-actions">
+    <a class="board-object-link collage-link" href="#projekte" data-board-topic="projekte" draggable="false">
+      <span class="object-caption">{G.all} <span aria-hidden="true">↗</span></span>
+    </a>
+  </div>
+</div>
 
 <dialog class="gallery" aria-labelledby="gallery-title" data-gallery data-words={JSON.stringify(words)}>
   <header class="gallery-header">
@@ -123,52 +158,22 @@ const words = { view: G.view('{n}'), photo: G.photo, project: G.project, credit:
     </div>
   </header>
   <div class="gallery-stage" data-gallery-stage>
-    {ordered.map((c) => (
-      <div class="gallery-set" data-gallery-set={c.slug} data-name={c.name} data-credit={c.credit ?? ''} data-highlight={copy.projects.referenceHighlights[c.slug] ?? ''} hidden>
-        {c.photos.map((p, k) => (
-          <figure class="slide" data-slide hidden={k !== 0}>
-            <ResponsiveImage src={p.image} alt={`${c.name} – ${p.alt}`} widths={[640, 960, 1280, 1600, 2000]} sizes="(min-width: 1024px) 82vw, 100vw" quality={82} loading="lazy" draggable="false" />
-            <figcaption>{p.alt}</figcaption>
-          </figure>
-        ))}
-      </div>
-    ))}
+    <div class="gallery-sets" data-gallery-sets></div>
     <button type="button" class="gallery-step gallery-prev" data-gallery-step="-1" aria-label={G.prev}><span class="step-arrow" aria-hidden="true">‹</span><span class="step-project" data-step-project aria-hidden="true"></span></button>
     <button type="button" class="gallery-step gallery-next" data-gallery-step="1" aria-label={G.next}><span class="step-project" data-step-project aria-hidden="true"></span><span class="step-arrow" aria-hidden="true">›</span></button>
   </div>
   <footer class="gallery-footer">
-    {ordered.map((c) => (
-      <div class="gallery-thumbs" data-thumb-set={c.slug} hidden>
-        {c.photos.map((p, k) => (
-          <button type="button" class="thumb" data-thumb={k} aria-label={`${G.photo} ${k + 1}: ${p.alt}`}>
-            <ResponsiveImage avif={false} src={p.image} alt="" width={240} widths={[120, 240]} sizes="120px" quality={70} loading="lazy" draggable="false" />
-          </button>
-        ))}
-      </div>
-    ))}
-    <nav class="gallery-projects" aria-label={G.projects}>
-      {ordered.map((c) => (
-        <button type="button" class="project" data-project={c.slug} aria-label={`${c.name}, ${c.photos.length} ${G.photos}`} title={c.name}>
-          <ResponsiveImage avif={false} src={c.collage} alt="" width={320} widths={[160, 320]} sizes="112px" quality={70} loading="lazy" draggable="false" />
-          <span>{c.name}</span>
-        </button>
-      ))}
-    </nav>
+    <div class="gallery-thumbs-wrap" data-gallery-thumbs-wrap></div>
+    <nav class="gallery-projects" data-gallery-projects aria-label={G.projects}></nav>
   </footer>
+  <script type="application/json" data-gallery-data set:html={galleryJson}></script>
 </dialog>
 
 <style>
-  .object-projects { --print-h: min(18cqh, 10.4cqw); width: auto; }
-  /* the three stacks, fanned out in a downward-stepping arc in the upper right */
-  .object-projects-gs { left: 42.5%; top: 7%; rotate: -2deg; }
-  .object-projects-ms { left: 61%; top: 5.5%; rotate: 1.4deg; }
-  .object-projects-kb { left: 79.5%; top: 9.5%; rotate: -1.2deg; }
-  /* narrow boards: a little smaller, so the three stay apart and on the board */
+  /* one stack in the upper right of the board */
+  .object-projects { --print-h: min(29cqh, 17cqw); left: 55%; top: 6%; width: auto; rotate: -1.5deg; }
   @container (max-width: 1120px) {
-    .object-projects { --print-h: min(15.5cqh, 9.6cqw); }
-    .object-projects-gs { left: 42%; }
-    .object-projects-ms { left: 60.5%; }
-    .object-projects-kb { left: 79%; }
+    .object-projects { --print-h: min(25cqh, 15.5cqw); left: 52%; }
   }
   /* the magnet holds the whole stack, so it sits above every print */
   /* a round button magnet holds each stack; its icon names the kind of building. It is the drag handle. */
@@ -187,9 +192,12 @@ const words = { view: G.view('{n}'), photo: G.photo, project: G.project, credit:
     filter: drop-shadow(1px 5px 4px #20201d40);
     transition: translate 160ms ease, filter 160ms ease;
   }
-  .object-projects-gs .stack-magnet { rotate: -8deg; }
-  .object-projects-ms .stack-magnet { rotate: 6deg; }
-  .object-projects-kb .stack-magnet { rotate: -3deg; }
+  .stack-magnet { rotate: -6deg; }
+  /* the magnet's icon names the kind of building on top of the stack */
+  .sm-icon [data-icon] { opacity: 0; transition: opacity 260ms ease; }
+  .object-projects[data-top-group='gs'] .sm-icon [data-icon='gs'],
+  .object-projects[data-top-group='ms'] .sm-icon [data-icon='ms'],
+  .object-projects[data-top-group='kb'] .sm-icon [data-icon='kb'] { opacity: 1; }
   .stack-magnet svg { display: block; width: 100%; height: auto; overflow: visible; }
   .sm-gloss { transition: transform 700ms cubic-bezier(.2, .8, .2, 1); }
   .stack-magnet:hover, .stack-magnet:focus-visible { translate: 0 -2px; filter: drop-shadow(2px 8px 5px #20201d4d); }
@@ -229,12 +237,17 @@ const words = { view: G.view('{n}'), photo: G.photo, project: G.project, credit:
     white-space: nowrap;
   }
   .print figcaption span:first-child { overflow: hidden; text-overflow: ellipsis; }
-  .print-number { color: var(--color-muted); font-size: .8em; }
+  /* only the top print's label is read; the ones underneath would overlap it */
+  .print figcaption { transition: opacity 200ms ease; }
+  .collage-stack :global(.print:not([data-depth='0'])) figcaption { opacity: 0; }
+  .print-group { flex: none; font-family: var(--font-sans); font-size: .62em; font-weight: 600; color: var(--color-muted); }
 
   /* the stack: the two prints under the top one peek out, everything further down hides under them */
   .collage-stack :global(.print[data-depth='1']) { --dx: 2.5%; --dy: 2.5%; }
   .collage-stack :global(.print[data-depth='2']) { --dx: -2%; --dy: 4.5%; }
   .collage-stack :global(.print[data-depth='deep']) { --dx: -2%; --dy: 4.5%; box-shadow: none; opacity: 0; }
+  /* the shuffle: the top print slides out to the side, then goes under the others */
+  .collage-stack :global(.print.is-leaving) { --dx: 62%; --dy: -6%; --lift: 1.02; --tilt: 8deg; z-index: 150; transition-duration: 520ms; }
 
   /* hover on the top print: it lifts towards the viewer, ready to be picked up */
   .collage-stack:has(.collage-open:hover) :global(.print[data-depth='0']),
@@ -343,9 +356,10 @@ const words = { view: G.view('{n}'), photo: G.photo, project: G.project, credit:
   .gallery-close:hover { background: #ffffff1a; }
 
   .gallery-stage { position: relative; min-height: 0; overflow: hidden; touch-action: pan-y; }
-  .gallery-set { position: absolute; inset: 0; }
-  .gallery-set[hidden], .slide[hidden], .gallery-thumbs[hidden] { display: none; }
-  .slide {
+  .gallery-sets { position: absolute; inset: 0; }
+  .gallery :global(.gallery-set) { position: absolute; inset: 0; }
+  .gallery :global(.gallery-set[hidden]), .gallery :global(.slide[hidden]), .gallery :global(.gallery-thumbs[hidden]) { display: none; }
+  .gallery :global(.slide) {
     position: absolute;
     inset: 0;
     display: grid;
@@ -356,7 +370,7 @@ const words = { view: G.view('{n}'), photo: G.photo, project: G.project, credit:
     margin: 0;
     padding: 8px clamp(72px, 10vw, 160px) 0;
   }
-  .slide :global(picture) {
+  .gallery :global(.slide picture) {
     display: block !important;
     position: relative;
     width: 100%;
@@ -365,7 +379,7 @@ const words = { view: G.view('{n}'), photo: G.photo, project: G.project, credit:
     min-height: 0;
     overflow: hidden;
   }
-  .slide :global(img) {
+  .gallery :global(.slide img) {
     position: absolute;
     inset: 0;
     display: block;
@@ -377,8 +391,50 @@ const words = { view: G.view('{n}'), photo: G.photo, project: G.project, credit:
     user-select: none;
   }
   /* Match the bright, colorful collage finish in full-size photos and their previews. */
-  .slide :global(img), .thumb :global(img) { filter: brightness(1.04) contrast(1.02) saturate(1.14); }
-  .slide figcaption { justify-self: center; max-width: 70ch; font-size: 14px; line-height: 1.45; text-align: center; color: #c9c7be; }
+  .gallery :global(.slide img), .gallery :global(.thumb img) { filter: brightness(1.04) contrast(1.02) saturate(1.14); }
+  .gallery :global(.slide figcaption) {
+    justify-self: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    max-width: 74ch;
+    font-size: 14px;
+    line-height: 1.45;
+    text-align: center;
+    color: #c9c7be;
+  }
+  .gallery :global(.slide-vs) {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .gallery :global(.slide-vs li) {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 2px 9px;
+    border: 1px solid #ffffff1f;
+    border-radius: 2px;
+    background: #ffffff0d;
+    color: #f4f3ee;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    line-height: 1.35;
+  }
+  .gallery :global(.slide-vs li::before) {
+    content: '';
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--color-ginster);
+    flex: none;
+  }
 
   .gallery-step {
     position: absolute;
@@ -403,11 +459,12 @@ const words = { view: G.view('{n}'), photo: G.photo, project: G.project, credit:
   .gallery-prev { left: 16px; }
   .gallery-next { right: 16px; }
   .gallery-step span { translate: 0 -2px; }
-  .gallery-close:focus-visible, .gallery-step:focus-visible, .thumb:focus-visible { outline: 2px solid var(--color-ginster-light); outline-offset: 3px; }
+  .gallery-close:focus-visible, .gallery-step:focus-visible, .gallery :global(.thumb:focus-visible) { outline: 2px solid var(--color-ginster-light); outline-offset: 3px; }
 
   .gallery-footer { display: flex; flex-direction: column; align-items: center; gap: 12px; min-width: 0; padding: 10px 24px 14px; }
-  .gallery-thumbs { display: flex; gap: 8px; }
-  .thumb {
+  .gallery-thumbs-wrap { display: flex; justify-content: center; max-width: 100%; min-width: 0; }
+  .gallery :global(.gallery-thumbs) { display: flex; gap: 8px; }
+  .gallery :global(.thumb) {
     width: 76px;
     height: 54px;
     padding: 0;
@@ -419,10 +476,10 @@ const words = { view: G.view('{n}'), photo: G.photo, project: G.project, credit:
     cursor: pointer;
     transition: opacity 150ms ease, translate 150ms ease;
   }
-  .thumb :global(picture) { display: block !important; width: 100%; height: 100%; }
-  .thumb :global(img) { display: block; width: 100%; height: 100%; object-fit: cover; }
-  .thumb:hover { opacity: .85; }
-  .thumb[aria-current='true'] { opacity: 1; translate: 0 -3px; box-shadow: 0 0 0 2px var(--color-ginster); }
+  .gallery :global(.thumb picture) { display: block !important; width: 100%; height: 100%; }
+  .gallery :global(.thumb img) { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .gallery :global(.thumb:hover) { opacity: .85; }
+  .gallery :global(.thumb[aria-current='true']) { opacity: 1; translate: 0 -3px; box-shadow: 0 0 0 2px var(--color-ginster); }
   .gallery-credit { font-size: 11px; color: #8e8c83; }
   .gallery-credit:empty { display: none; }
 
@@ -436,7 +493,7 @@ const words = { view: G.view('{n}'), photo: G.photo, project: G.project, credit:
     border-top: 1px solid #ffffff1a;
     scrollbar-width: thin;
   }
-  .project {
+  .gallery :global(.project) {
     flex: none;
     display: flex;
     flex-direction: column;
@@ -453,13 +510,13 @@ const words = { view: G.view('{n}'), photo: G.photo, project: G.project, credit:
     cursor: pointer;
     transition: opacity 150ms ease, color 150ms ease;
   }
-  .project :global(picture) { display: block !important; width: 112px; height: 75px; border-radius: 3px; overflow: hidden; }
-  .project :global(img) { display: block; width: 100%; height: 100%; border-radius: 3px; object-fit: cover; }
-  .project span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .project:hover { opacity: .9; }
-  .project[aria-current='true'] { opacity: 1; color: #fff; }
-  .project[aria-current='true'] :global(img) { box-shadow: 0 0 0 2px var(--color-ginster); }
-  .project:focus-visible { outline: 2px solid var(--color-ginster-light); outline-offset: 3px; }
+  .gallery :global(.project picture) { display: block !important; width: 112px; height: 75px; border-radius: 3px; overflow: hidden; }
+  .gallery :global(.project img) { display: block; width: 100%; height: 100%; border-radius: 3px; object-fit: cover; }
+  .gallery :global(.project span) { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .gallery :global(.project:hover) { opacity: .9; }
+  .gallery :global(.project[aria-current='true']) { opacity: 1; color: #fff; }
+  .gallery :global(.project[aria-current='true'] img) { box-shadow: 0 0 0 2px var(--color-ginster); }
+  .gallery :global(.project:focus-visible) { outline: 2px solid var(--color-ginster-light); outline-offset: 3px; }
 
   /* at the end of a project the arrow leads into the next one and says so */
   .step-project {
@@ -483,10 +540,11 @@ const words = { view: G.view('{n}'), photo: G.photo, project: G.project, credit:
     .gallery-close { position: absolute; top: 6px; right: 6px; }
     .gallery-header-actions { margin-left: 0; }
     /* a band under each photo is kept free for the arrows, so they never sit on the caption */
-    .slide { gap: 8px; padding: 4px 12px 68px; }
-    .slide figcaption { font-size: 13px; line-height: 1.4; }
+    .gallery :global(.slide) { gap: 8px; padding: 4px 12px 68px; }
+    .gallery :global(.slide figcaption) { font-size: 13px; line-height: 1.4; gap: 5px; }
+    .gallery :global(.slide-vs li) { font-size: 11px; padding: 2px 7px; }
     /* the photo rests on its caption instead of floating mid-stage */
-    .slide :global(img) { object-position: center bottom; }
+    .gallery :global(.slide img) { object-position: center bottom; }
     .gallery-step { top: auto; bottom: 10px; translate: none; width: 48px; height: 48px; font-size: 30px; }
     .gallery-prev { left: 12px; }
     .gallery-next { right: 12px; }
@@ -495,17 +553,17 @@ const words = { view: G.view('{n}'), photo: G.photo, project: G.project, credit:
     .gallery-credit { position: static; }
     .gallery-footer { flex-direction: column; align-items: stretch; gap: 8px; padding: 8px 12px 12px; }
     /* photo thumbnails: smaller, and scrollable instead of running off the edge */
-    .gallery-thumbs { gap: 6px; max-width: 100%; overflow-x: auto; padding: 4px 2px; scrollbar-width: none; justify-content: safe center; }
-    .thumb { flex: none; width: 56px; height: 40px; }
-    .project { width: 92px; }
-    .project :global(picture) { width: 92px; height: 61px; }
+    .gallery :global(.gallery-thumbs) { gap: 6px; max-width: 100%; overflow-x: auto; padding: 4px 2px; scrollbar-width: none; justify-content: safe center; }
+    .gallery :global(.thumb) { flex: none; width: 56px; height: 40px; }
+    .gallery :global(.project) { width: 92px; }
+    .gallery :global(.project picture) { width: 92px; height: 61px; }
   }
   @media (max-width: 520px) {
     .gallery-inquire { min-height: 44px; padding: 0 12px; font-size: 12px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .print, .collage-open-hint, .thumb, .project, .stack-magnet, .sm-gloss, .gallery-inquire, .gallery-inquire-arrow { transition: none; }
+    .print, .collage-open-hint, .sm-icon [data-icon], .gallery :global(.thumb), .gallery :global(.project), .stack-magnet, .sm-gloss, .gallery-inquire, .gallery-inquire-arrow { transition: none; }
   }
 </style>
 

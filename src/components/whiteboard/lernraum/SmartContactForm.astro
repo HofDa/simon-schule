@@ -2,7 +2,7 @@
 /**
  * Enhanced inquiry form for "Der Lernraum":
  * - Receives context from any section on the page (`data-phase`, `data-topic`, `data-question`)
- * - Offers clickable "Worum geht es?" topic chips and 1-click message starters to eliminate blank-textarea friction
+ * - Offers clickable "Worum geht es?" topic cards so the visitor never starts from an empty form
  * - Preserves full Formspree + mailto + clipboard fallback behavior.
  */
 import { inquiry } from '../../../data/site';
@@ -19,7 +19,6 @@ const copy = lernraumCopy(lang);
 const L = copy.form;
 const talk = copy.talk;
 const defaultTopics = L.topics;
-const messagePrompts = L.prompts;
 ---
 
 <form
@@ -92,13 +91,6 @@ const messagePrompts = L.prompts;
     <div class="field field-wide">
       <div class="msg-head">
         <label for="lr-msg">{f.msg.label} <span class="text-muted">{t.optional}</span></label>
-        <div class="prompt-row" aria-label={L.promptsLabel}>
-          {messagePrompts.map((p) => (
-            <button type="button" class="prompt-chip" data-insert-prompt={p.text}>
-              {p.label}
-            </button>
-          ))}
-        </div>
       </div>
       <textarea id="lr-msg" name={f.msg.key} rows="2" placeholder={f.msg.placeholder}></textarea>
     </div>

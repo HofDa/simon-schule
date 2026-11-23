@@ -29,7 +29,13 @@ const showProjectPath = false;
 const hasLearning = isHome(Astro.url.pathname, lang) || /\/(lernraum|whiteboard-ruhig|it)\/?$/.test(Astro.url.pathname);
 const vsSchoolCatalog = 'https://web-media.vs.de/file/p1/pdf/45-057-49_V2026-01_DE_Basics--Der-Katalog-fuer-die-Schule.archiv.pdf';
 // whiteboard marker colours for the pen and the ruler's arrows; the first is the default
-const penColors = ['#20201d', '#2b4f9e', '#c23a2c', '#2f7a4c'].map((value, i) => ({ name: B.tools.colourNames[i], value }));
+const penPalette = [
+  { key: 'black', value: '#20201d' },
+  { key: 'blue', value: '#2b4f9e' },
+  { key: 'red', value: '#c23a2c' },
+  { key: 'green', value: '#2f7a4c' },
+] as const;
+const penColors = penPalette.map((entry, i) => ({ ...entry, name: B.tools.colourNames[i] }));
 // the magnet's own outline, used as a mask so the gloss only lies on the magnet
 const house70Mask = await getImage({ src: house70Magnet, width: 320, format: 'webp' });
 const topics = (['projekte', ...(hasLearning ? ['lernformen'] : []), 'leistungen', 'vs-moebel', 'kontakt'] as (keyof typeof B.topics)[]).map((id) => ({ id, label: B.topics[id] }));
@@ -168,7 +174,7 @@ const topics = (['projekte', ...(hasLearning ? ['lernformen'] : []), 'leistungen
       <div class="board-tool-hint" data-board-tool-hint hidden>
         <span class="board-pen-colors" role="radiogroup" aria-label={B.tools.colours}>
           {penColors.map((c, i) => (
-            <button type="button" role="radio" aria-checked={i === 0 ? 'true' : 'false'} aria-label={c.name} title={c.name} data-board-color={c.value} style={`--swatch: ${c.value}`}></button>
+            <button type="button" role="radio" aria-checked={i === 0 ? 'true' : 'false'} aria-label={c.name} title={c.name} data-board-color={c.value} data-pen-key={c.key} style={`--swatch: ${c.value}`}></button>
           ))}
         </span>
         <span data-board-tool-hint-text>{B.tools.penHint}</span>
@@ -221,7 +227,22 @@ const topics = (['projekte', ...(hasLearning ? ['lernformen'] : []), 'leistungen
   import '../../scripts/catalog-curl';
   import '../../scripts/board-drag';
   import '../../scripts/board-drawing';
-  import '../../scripts/board-inter';
   import '../../scripts/board-navigation';
   import '../../scripts/board-path';
+
+  // Lazy-load the Inter match sheet easter egg only when the 5-click tool sequence is entered.
+  const board = document.querySelector<HTMLElement>('[data-board-home]');
+  if (board) {
+    const seq = ['ruler', 'eraser', 'pen', 'ruler', 'eraser'] as const;
+    let clicks: { tool: string; at: number }[] = [];
+    (['ruler', 'eraser', 'pen'] as const).forEach((tool) => {
+      board.querySelector(`[data-board-${tool}]`)?.addEventListener('click', () => {
+        clicks = [...clicks, { tool, at: performance.now() }].slice(-seq.length);
+        if (clicks.length === seq.length && clicks.every((c, i) => c.tool === seq[i]) && clicks[clicks.length - 1].at - clicks[0].at <= 5000) {
+          clicks = [];
+          void import('../../scripts/board-inter').then((m) => m.toggleInterTicker(board));
+        }
+      });
+    });
+  }
 </script>

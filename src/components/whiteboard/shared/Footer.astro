@@ -1,14 +1,19 @@
 ---
-import { contact, locations, photoCredits, vs } from '../../../data/site';
-import { legalFor } from '../../../lib/paths';
+import { contact, locations, people, photoCredits, vs } from '../../../data/site';
+import { homeFor, legalFor } from '../../../lib/paths';
 import { getLang, useTranslations } from '../../../i18n/ui';
+
+interface Props {
+  onHome?: boolean;
+}
 
 const lang = getLang(Astro.currentLocale);
 const t = useTranslations(lang);
 const f = t.footer;
 const year = new Date().getFullYear();
-// the Whiteboard pages are single pages: its section links stay in-page
-const home = '';
+const onHome = Astro.props.onHome ?? true;
+const home = onHome ? '' : homeFor(lang);
+const simonPhone = people[0]?.phone;
 ---
 
 <footer class="bg-warm pt-20 pb-10 text-meta">
@@ -28,8 +33,9 @@ const home = '';
         <ul class="touch-list space-y-2 text-muted">
           <li class="text-ink font-medium">Simon Brugger</li>
           <li><a class="link-line text-ink" href={`mailto:${contact.directEmail}`}>{contact.directEmail}</a></li>
+          {simonPhone && <li><a class="link-line text-ink" href={`tel:${simonPhone.replace(/\s/g, '')}`}>{simonPhone}</a></li>}
           <li><a class="link-line text-ink" href={`mailto:${contact.email}`}>{contact.email}</a></li>
-          {contact.phone && <li><a class="link-line text-ink" href={`tel:${contact.phone.replace(/\s/g, '')}`}>{contact.phone}</a></li>}
+          {contact.phone && contact.phone !== simonPhone && <li><a class="link-line text-ink" href={`tel:${contact.phone.replace(/\s/g, '')}`}>{contact.phone}</a></li>}
           {locations.map((loc) => (
             <li>{loc.city[lang]} · {loc.street[lang]}</li>
           ))}

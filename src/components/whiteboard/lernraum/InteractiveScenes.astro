@@ -37,6 +37,17 @@ const size = sceneSize();
           </div>
           <p class="scenes-intro">{S.intro}</p>
           <p class="scenes-mobile-intro">{S.mobileIntro}</p>
+          <button type="button" class="scenes-mobile-preview" data-scenes-preview aria-controls="room-arrangements" aria-label={S.expand}>
+            <img
+              src={asset(`scenes/${scenes[0].scene}.svg`)}
+              width={size.width}
+              height={size.height}
+              alt={S.alt(scenes[0].name, scenes[0].product)}
+              loading="lazy"
+              decoding="async"
+            />
+            <span class="preview-badge" aria-hidden="true">3D · 7 {S.step === 'Aufstellung' ? 'Aufstellungen' : 'disposizioni'}</span>
+          </button>
           <button type="button" class="scenes-toggle btn btn-ink" data-scenes-toggle aria-expanded="false" aria-controls="room-arrangements">
             <span data-scenes-open>{S.expand}</span>
             <span data-scenes-close>{S.collapse}</span>
@@ -175,7 +186,7 @@ const size = sceneSize();
     gap: 20px;
     padding-bottom: clamp(24px, 3vw, 36px);
   }
-  .scenes-mobile-intro, .scenes-toggle, .scenes-picker, .scene-mobile-copy { display: none; }
+  .scenes-mobile-intro, .scenes-mobile-preview, .scenes-toggle, .scenes-picker, .scene-mobile-copy { display: none; }
   .scenes-kicker {
     display: flex;
     flex-wrap: wrap;
@@ -542,6 +553,48 @@ const size = sceneSize();
       display: block;
       color: var(--color-muted);
     }
+    :global(html.js) .scenes-mobile-preview {
+      position: relative;
+      display: block;
+      width: 100%;
+      margin-top: 4px;
+      padding: 8px;
+      border: 1px solid var(--color-line);
+      border-radius: 3px;
+      background: var(--color-paper);
+      cursor: pointer;
+    }
+    :global(html.js) .scenes-mobile-preview img {
+      display: block;
+      width: 100%;
+      height: auto;
+      max-height: 240px;
+      object-fit: contain;
+      margin-inline: auto;
+    }
+    .preview-badge {
+      position: absolute;
+      right: 10px;
+      bottom: 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 9px;
+      border-radius: 2px;
+      background: rgba(32, 32, 29, 0.88);
+      color: #fff;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+    .preview-badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--color-ginster);
+    }
+    :global(html.js) .lr-scenes[data-scenes-expanded='true'] .scenes-mobile-preview { display: none; }
     :global(html.js) .scenes-toggle {
       display: inline-flex;
       justify-self: start;
@@ -619,6 +672,7 @@ const size = sceneSize();
     const nextButtons = Array.from(section.querySelectorAll<HTMLButtonElement>('[data-scene-next]'));
     const mobile = window.matchMedia('(max-width: 767px)');
     const toggle = section.querySelector<HTMLButtonElement>('[data-scenes-toggle]');
+    const preview = section.querySelector<HTMLButtonElement>('[data-scenes-preview]');
     const picker = section.querySelector<HTMLSelectElement>('[data-scenes-select]');
     let current = 0;
 
@@ -705,6 +759,7 @@ const size = sceneSize();
       maybeLoad();
     };
     toggle?.addEventListener('click', () => setExpanded(section.dataset.scenesExpanded !== 'true'));
+    preview?.addEventListener('click', () => setExpanded(true));
     mobile.addEventListener('change', maybeLoad);
     maybeLoad();
 

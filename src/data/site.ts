@@ -44,7 +44,7 @@ export const locations: Location[] = [
 export const contact = {
   email: 'beratung@trias.it',
   directEmail: 'simon.brugger@trias.it',
-  /** Company switchboard; Simon's direct number remains unconfirmed. */
+  /** Company switchboard; Simon's direct line is on his entry in `people`. */
   phone: company.phone as string | null,
   address: 'Romstraße 77, 39012 Meran, Italien' as string | null,
 };
@@ -84,9 +84,10 @@ export const people: Person[] = [
       de: 'Projektleitung Schule & Kindergarten · Südtirol',
       it: 'Responsabile progetti scuola e infanzia · Alto Adige',
     },
-    phone: null,
+    /** Simon's direct line, given for the whiteboard card (Änderungen, 23.11.2026). */
+    phone: '+39 338 9342398',
     email: 'simon.brugger@trias.it',
-    photo: null,
+    photo: 'simon-portrait',
   },
 ];
 

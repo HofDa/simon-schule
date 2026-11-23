@@ -2,7 +2,8 @@
  * Customer feedback for the whiteboard's "Feedback" letters. Collected by Simon in the
  * "Feedback-Runde" (Nov 2026): customers were asked in 1–2 sentences why they chose Trias and what
  * they value in the collaboration, for publication on the new website. Only answers that came
- * back go here, word for word; add new ones as they arrive.
+ * back go here, word for word; add new ones as they arrive. No dates on purpose: the letters should
+ * read as current, not as answers collected on one or two days.
  */
 
 import type { Lang } from '../i18n/ui';
@@ -12,8 +13,6 @@ export interface Feedback {
   name: string;
   role: string;
   organisation: string;
-  /** When the answer came in, as shown on the letter. */
-  date: string;
   /** The quote is shown in translation, not in the customer's own words. */
   translated?: boolean;
 }
@@ -25,7 +24,6 @@ export const feedback: Feedback[] = [
     name: 'Stefan Ganterer',
     role: 'Direktor',
     organisation: 'SSP Latsch',
-    date: '10.11.2026',
   },
   {
     // the "wir als Schule" version, which she preferred
@@ -34,7 +32,6 @@ export const feedback: Feedback[] = [
     name: 'Karin Mazzari',
     role: 'Direktorin',
     organisation: 'SSP St Leonhard',
-    date: '10.11.2026',
   },
   {
     quote:
@@ -42,7 +39,6 @@ export const feedback: Feedback[] = [
     name: 'Wolfgang Simmerle',
     role: 'Architekt',
     organisation: 'Bozen',
-    date: '11.11.2026',
   },
   {
     quote:
@@ -50,7 +46,21 @@ export const feedback: Feedback[] = [
     name: 'Brigitte Trienbacher',
     role: 'Kindergartenleiterin',
     organisation: 'Reinswald',
-    date: '10.11.2026',
+  },
+  {
+    // her answer has two paragraphs, one on Simon and one on René: one letter each, so both fit the board's page
+    quote:
+      'Mit Simon verbindet mich eine wertvolle Zusammenarbeit, die auf einem partnerschaftlichen und vertrauensvollen Austausch basiert. Besonders schätze ich das offene Miteinander und seine Expertise rund um unsere VS-Produkte, die er durch die langjährige Partnerschaft mit uns aufgebaut hat.',
+    name: 'Anna-Lena Liebler',
+    role: 'Vertriebsinnendienst Export',
+    organisation: 'VS Vereinigte Spezialmöbelfabriken',
+  },
+  {
+    quote:
+      'Die Zusammenarbeit mit René ist unkompliziert und jederzeit freundlich. Besonders die Bearbeitung von Ausschreibungen erfolgt sorgfältig und kompetent. Auch bei Rückfragen und Abstimmungen ist René ein zuverlässiger und lösungsorientierter Ansprechpartner.',
+    name: 'Anna-Lena Liebler',
+    role: 'Vertriebsinnendienst Export',
+    organisation: 'VS Vereinigte Spezialmöbelfabriken',
   },
 ];
 
@@ -75,6 +85,16 @@ const italian: { quote: string; role: string }[] = [
     quote:
       'Dico GRAZIE☺️… Tutto è venuto davvero benissimo/ bellissimo🍀🤗😊… un team fantastico, cordiale e paziente🤗Un lavoro splendido e pulito🤩',
     role: 'Responsabile della scuola dell’infanzia',
+  },
+  {
+    quote:
+      'Con Simon mi lega una collaborazione preziosa, basata su uno scambio di partnership e di fiducia. Apprezzo in particolare il rapporto aperto e la sua competenza sui nostri prodotti VS, maturata in una lunga collaborazione con noi.',
+    role: 'Ufficio vendite interno export',
+  },
+  {
+    quote:
+      'Lavorare con René è semplice e sempre cordiale. Soprattutto la gestione delle gare d’appalto avviene con cura e competenza. Anche per domande e chiarimenti René è un interlocutore affidabile e orientato alla soluzione.',
+    role: 'Ufficio vendite interno export',
   },
 ];
 

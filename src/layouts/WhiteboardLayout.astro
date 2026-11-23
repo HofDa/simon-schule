@@ -4,6 +4,7 @@ import { asset, homeFor } from '../lib/paths';
 import { getLang, langs, useTranslations, type Lang } from '../i18n/ui';
 import { buildStructuredData } from '../lib/seo';
 import archivoUrl from '../assets/fonts/whiteboard/archivo-latin-var.woff2?url';
+import kalamUrl from '../assets/fonts/whiteboard/kalam-700-latin.woff2?url';
 
 interface Props {
   title?: string;
@@ -81,6 +82,7 @@ const structuredData = !Astro.props.noindex
     {structuredData && <script type="application/ld+json" set:html={structuredData}></script>}
     <script is:inline>document.documentElement.classList.add('js');</script>
     <link rel="preload" href={archivoUrl} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={kalamUrl} as="font" type="font/woff2" crossorigin />
     {Astro.props.variantSwitcher && <link rel="stylesheet" href={asset('variant-switcher.css')} />}
   </head>
   <body>

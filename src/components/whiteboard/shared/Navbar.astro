@@ -8,25 +8,26 @@ import { lernraumCopy } from '../../../i18n/lernraum';
 interface Props {
   /** This page in each language, for the language switch (default: the home pages). */
   alternates?: Record<Lang, string>;
+  /** True on the single-page whiteboard home; false on legal subpages. */
+  onHome?: boolean;
 }
 
 const lang = getLang(Astro.currentLocale);
 const t = useTranslations(lang);
 const N = lernraumCopy(lang).nav;
 const alternates = Astro.props.alternates ?? { de: homeFor('de'), it: homeFor('it') };
-// the Whiteboard pages are single pages: its section links and the inquiry stay in-page
-const onHome = true;
+const onHome = Astro.props.onHome ?? true;
 const home = onHome ? '' : homeFor(lang);
 const nav = t.nav.items.map((item) => ({ ...item, href: `${home}${item.href}` }));
 ---
 
-<header class="site-nav fixed inset-x-0 top-0 z-[100] h-[var(--nav-h)]" data-nav>
+<header class:list={['site-nav fixed inset-x-0 top-0 z-[100] h-[var(--nav-h)]', { 'is-scrolled is-below-board is-subpage': !onHome }]} data-nav>
   <div class="shell flex h-full items-center justify-between gap-2.5 sm:gap-8">
     <div class="flex min-w-0 items-center gap-6">
       <a href={onHome ? '#top' : homeFor(lang)} class="wordmark flex shrink-0 items-center text-ink" aria-label={t.nav.home}>
         <Logo class="logo-nav" />
       </a>
-      <a href="#top" class="board-return" aria-label={N.backToBoard}><span aria-hidden="true">↑</span> {N.toBoard}</a>
+      {onHome && <a href="#top" class="board-return" aria-label={N.backToBoard}><span aria-hidden="true">↑</span> {N.toBoard}</a>}
     </div>
 
     <nav class="hidden items-center gap-9 lg:flex" aria-label={t.nav.main}>
@@ -86,7 +87,7 @@ const nav = t.nav.items.map((item) => ({ ...item, href: `${home}${item.href}` })
     </div>
     <nav class="menu-navigation" aria-label={t.nav.main}>
       <ul>
-        <li><a href="#top" data-menu-link>{N.board}</a></li>
+        <li><a href={onHome ? '#top' : homeFor(lang)} data-menu-link>{N.board}</a></li>
         {nav.map((item) => (
           <li>
             <a href={item.href} data-menu-link>
@@ -325,10 +326,11 @@ const nav = t.nav.items.map((item) => ({ ...item, href: `${home}${item.href}` })
   const label = document.querySelector<HTMLElement>('[data-menu-label]');
 
   if (header) {
+    const subpage = header.classList.contains('is-subpage');
     const onScroll = () => {
-      header.classList.toggle('is-scrolled', window.scrollY > 8);
+      header.classList.toggle('is-scrolled', subpage || window.scrollY > 8);
       const board = document.querySelector<HTMLElement>('[data-board-home]');
-      header.classList.toggle('is-below-board', Boolean(board) && window.scrollY >= (board?.offsetHeight ?? window.innerHeight) - header.offsetHeight);
+      header.classList.toggle('is-below-board', subpage || (Boolean(board) && window.scrollY >= (board?.offsetHeight ?? window.innerHeight) - header.offsetHeight));
     };
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });

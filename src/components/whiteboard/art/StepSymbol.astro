@@ -1,0 +1,124 @@
+---
+/**
+ * One symbol per project step, so the change from one step to the next shows at a glance
+ * (Änderungen 23.11.2026: "Beratung vor Ort – Stift, Planung – Plan, Lieferung/Montage – Hammer"):
+ * a ballpoint pen on a notepad, a floor plan, a ginstergelb VS school chair, a hammer driving a
+ * nail, and a ringing telephone for the care after handover.
+ * Drawn in the board's colours: ink outlines, ivory paper, Ginstergelb.
+ */
+export type StepKind = 'pen' | 'plan' | 'chair' | 'hammer' | 'phone';
+interface Props { kind: StepKind; }
+const { kind } = Astro.props;
+---
+
+<svg class={`step-symbol step-${kind}`} viewBox="0 0 160 124" aria-hidden="true">
+  <ellipse class="ground" cx="80" cy="116" rx="50" ry="5" />
+
+  {kind === 'pen' && (
+    <g>
+      <g transform="rotate(-6 69 68)">
+        <rect class="paper" x="30" y="26" width="78" height="84" rx="4" />
+        <path class="rule" d="M40 48 H98 M40 60 H98 M40 72 H98" />
+        <path class="ink-line" d="M42 22 V31 M54 22 V31 M66 22 V31 M78 22 V31 M90 22 V31" />
+        <path class="scribble" pathLength="1" d="M42 88 Q47 80 52 88 T62 88 T72 88 T82 86" />
+      </g>
+      <g class="pen"><g transform="translate(-24 4) rotate(30 105 53)">
+        <rect class="ginster" x="99" y="12" width="12" height="70" rx="3" />
+        <rect class="ink-fill" x="99" y="6" width="12" height="12" rx="3" />
+        <rect class="ink-fill" x="96" y="14" width="4" height="24" rx="2" />
+        <path class="steel" d="M99 82 H111 L105 96 Z" />
+      </g></g>
+    </g>
+  )}
+
+  {kind === 'plan' && (
+    <g>
+      <g transform="rotate(-4 74 62)">
+        <rect class="blueprint" x="20" y="24" width="104" height="78" rx="2" />
+        <path class="wall" d="M34 36 H110 V90 H34 Z M74 36 V58 M74 72 V90 M34 64 H54" />
+        <path class="door" d="M74 58 A14 14 0 0 1 88 72" />
+        <circle class="ginster" cx="50" cy="50" r="6" />
+        <rect class="ginster" x="86" y="44" width="16" height="9" rx="1.5" />
+        <rect class="ginster" x="86" y="76" width="16" height="9" rx="1.5" />
+        <rect class="ginster" x="42" y="74" width="20" height="9" rx="1.5" />
+      </g>
+      <rect class="roll" x="120" y="18" width="18" height="88" rx="9" />
+      <ellipse class="roll-end" cx="129" cy="20" rx="9" ry="3.5" />
+    </g>
+  )}
+
+  {kind === 'chair' && (
+    <g>
+      <path class="chair-legs" d="M54 74 L48 112 M106 74 L112 112 M64 78 L66 104 M96 78 L94 104" />
+      <path class="chair-post" d="M80 56 V66" />
+      <path class="ginster" fill-rule="evenodd" d="M52 12 H108 Q116 12 115 21 L111 50 Q109 58 100 58 H60 Q51 58 49 50 L45 21 Q44 12 52 12 Z M72 24 A8 5 0 1 0 88 24 A8 5 0 1 0 72 24 Z" />
+      <path class="chair-seat" d="M42 66 Q80 58 118 66 L116 76 Q80 84 44 76 Z" />
+    </g>
+  )}
+
+  {kind === 'hammer' && (
+    <g>
+      <!-- a plank with a nail half driven in, sparks where the face meets it -->
+      <rect class="plank" x="86" y="96" width="64" height="12" rx="2" />
+      <path class="plank-grain" d="M94 101 H112 M120 104 H142 M100 106 H108" />
+      <path class="nail-shaft" d="M118 88 V97" />
+      <rect class="steel" x="111" y="85" width="14" height="4" rx="1.2" />
+      <path class="impact" d="M104 90 L97 91 M131 81 L137 76 M133 89 L140 90" />
+      <!-- drawn upright (handle end at 60 113, face to the right), then turned onto the nail -->
+      <g class="hammer"><g transform="translate(-26 -9) rotate(55 60 113)">
+        <path class="wood" d="M56.5 40 H63.5 L66.5 106 Q66.5 113 60 113 Q53.5 113 53.5 106 Z" />
+        <path class="wood-grain" d="M59 48 L59.6 64 M61.6 70 L62 82" />
+        <path class="ginster" d="M54.5 86 H65.5 L66.5 106 Q66.5 113 60 113 Q53.5 113 53.5 106 Z" />
+        <path class="grip-ridges" d="M54.3 93 H65.8 M54 100 H66.1" />
+        <path class="steel" d="M52 25 C41 25 31 31 24 43 L28.5 45.5 C34 37 42 34 52 37 Z" />
+        <path class="steel-edge" d="M45 30.5 C38 33.5 32.5 38 28 43" />
+        <path class="steel" d="M68 25.5 H84 L87.5 23.5 Q91 23.5 91 27 V37 Q91 40.5 87.5 40.5 L84 38.5 H68 Z" />
+        <rect class="steel-dark" x="51" y="21" width="18" height="22" rx="2.5" />
+        <path class="steel-shine" d="M71 28.5 H83 M55 25 V31" />
+      </g></g>
+    </g>
+  )}
+
+  {kind === 'phone' && (
+    <g>
+      <path class="waves" d="M90 30 A22 22 0 0 1 112 52 M92 16 A36 36 0 0 1 126 50" />
+      <g class="handset">
+        <path class="ginster" d="M48 28 C40 28 32 38 34 52 C38 78 60 100 86 104 C98 106 108 98 108 90 V82 C108 78 104 75 100 75 H88 C84 75 81 77 80 82 C68 78 60 70 56 60 C61 58 63 56 63 51 V39 C63 34 59 28 54 28 Z" />
+      </g>
+    </g>
+  )}
+</svg>
+
+<style>
+  .step-symbol { display: block; width: 100%; height: auto; overflow: visible; }
+  .ground { fill: #20201d; opacity: 0.08; }
+  .paper { fill: #fbf7ec; stroke: #2c2b28; stroke-width: 2.6; }
+  .rule { fill: none; stroke: #c6c0b0; stroke-width: 1.6; }
+  .ink-line { fill: none; stroke: #2c2b28; stroke-width: 2.6; stroke-linecap: round; }
+  .ink-fill { fill: #2c2b28; }
+  .scribble { fill: none; stroke: #22305f; stroke-width: 2.8; stroke-linecap: round; stroke-linejoin: round; }
+  .ginster { fill: var(--color-ginster); stroke: #2c2b28; stroke-width: 2.6; stroke-linejoin: round; }
+  .steel { fill: #a4aaa7; stroke: #2c2b28; stroke-width: 2.6; stroke-linejoin: round; }
+  .steel-dark { fill: #7d8280; stroke: #2c2b28; stroke-width: 2.6; }
+  .wood { fill: #c9955a; stroke: #2c2b28; stroke-width: 2.4; stroke-linejoin: round; }
+  .blueprint { fill: #dfe9ef; stroke: #2c2b28; stroke-width: 2.6; }
+  .wall { fill: none; stroke: #2c2b28; stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; }
+  .door { fill: none; stroke: #2c2b28; stroke-width: 1.4; stroke-dasharray: 3 3; }
+  .roll { fill: #c5d5de; stroke: #2c2b28; stroke-width: 2.6; }
+  .roll-end { fill: #dfe9ef; stroke: #2c2b28; stroke-width: 2; }
+  .impact { fill: none; stroke: var(--color-ginster-deep); stroke-width: 3; stroke-linecap: round; }
+  .waves { fill: none; stroke: #2c2b28; stroke-width: 2.8; stroke-linecap: round; }
+
+  .chair-legs { fill: none; stroke: #969b99; stroke-width: 4.5; stroke-linecap: round; }
+  .chair-post { fill: none; stroke: #393a37; stroke-width: 6; }
+  .chair-seat { fill: #cb9400; stroke: #2c2b28; stroke-width: 2.6; stroke-linejoin: round; }
+  .plank { fill: #e6cfa6; stroke: #2c2b28; stroke-width: 2.4; }
+  .plank-grain { fill: none; stroke: #c9a56f; stroke-width: 1.4; stroke-linecap: round; }
+  .nail-shaft { fill: none; stroke: #2c2b28; stroke-width: 2.6; stroke-linecap: round; }
+  .wood-grain { fill: none; stroke: #a8743f; stroke-width: 1.4; stroke-linecap: round; }
+  .grip-ridges { fill: none; stroke: #a87a00; stroke-width: 1.4; }
+  .steel-edge { fill: none; stroke: #6f7472; stroke-width: 1.4; stroke-linecap: round; }
+  .steel-shine { fill: none; stroke: #fff; stroke-opacity: 0.7; stroke-width: 2; stroke-linecap: round; }
+
+  .pen, .hammer, .handset, .waves, .impact { transform-box: view-box; }
+</style>

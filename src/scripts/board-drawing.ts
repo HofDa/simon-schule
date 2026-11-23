@@ -28,10 +28,11 @@ if (board && surface && pen && ruler && eraser && hint && hintText && announceme
       b.tabIndex = b === button ? 0 : -1;
     });
     board.style.setProperty('--pen-ink', ink);
-    board.dataset.penColor = button.getAttribute('aria-label') ?? '';
-    announcement.textContent = `Stiftfarbe: ${button.getAttribute('aria-label')}.`;
+    board.dataset.penColor = button.dataset.penKey ?? '';
+    const colorName = button.getAttribute('aria-label') ?? '';
+    announcement.textContent = (say.penColor ?? 'Stiftfarbe: {color}.').replace('{color}', colorName);
   };
-  board.dataset.penColor = colorButtons[0]?.getAttribute('aria-label') ?? '';
+  board.dataset.penColor = colorButtons[0]?.dataset.penKey ?? '';
   colorButtons.forEach((button, i) => {
     button.addEventListener('click', () => setInk(button));
     // radio group: arrow keys move between the colours

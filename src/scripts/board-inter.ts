@@ -1,18 +1,9 @@
 /**
- * Easter egg: click the tray tools ruler → eraser → pen → ruler → eraser, all within 5 seconds,
- * and a little Inter Milan match sheet gets taped to the lower left of the whiteboard. While a
- * game is running it works as a live ticker (refreshes every 30 s); otherwise it shows the last
- * result with stats plus the next fixture. Repeat the sequence or press × to take it down.
- * Data: ESPN's public site API (CORS-open, no key). Nothing is fetched until the egg is found.
+ * Easter egg: triggered by clicking the tray tools ruler → eraser → pen → ruler → eraser within 5s.
+ * Lazy-loaded only when the sequence is discovered so nothing is bundled or fetched on normal visits.
  */
-type Tool = 'ruler' | 'eraser' | 'pen';
-const SEQUENCE: Tool[] = ['ruler', 'eraser', 'pen', 'ruler', 'eraser'];
-const WITHIN = 5000; // ms from the first to the last click of the sequence
 const API = 'https://site.api.espn.com/apis/site/v2/sports/soccer/all';
 const INTER = '110';
-
-const board = document.querySelector<HTMLElement>('[data-board-home]');
-const canvas = board?.querySelector<HTMLElement>('.board-canvas');
 
 type Json = any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
@@ -22,25 +13,16 @@ const L = it
   : { live: 'Live', last: 'Letztes Spiel', next: 'Nächstes', poss: 'Ballbesitz', shots: 'Schüsse (aufs Tor)', corners: 'Ecken', cards: 'Karten', close: 'Schließen', error: 'Gerade keine Daten.', loading: 'Lade…', ht: 'Halbzeit' };
 const locale = it ? 'it-IT' : 'de-DE';
 
-if (board && canvas) {
-  let clicks: { tool: Tool; at: number }[] = [];
-  let sheet: HTMLElement | null = null;
-  let timer = 0;
+let sheet: HTMLElement | null = null;
+let timer = 0;
 
-  const step = (tool: Tool) => {
-    clicks = [...clicks, { tool, at: performance.now() }].slice(-SEQUENCE.length);
-    const matches = clicks.length === SEQUENCE.length
-      && clicks.every((c, i) => c.tool === SEQUENCE[i])
-      && clicks[clicks.length - 1].at - clicks[0].at <= WITHIN;
-    if (matches) {
-      clicks = [];
-      if (sheet) close();
-      else open();
-    }
-  };
-
-  (['ruler', 'eraser', 'pen'] as Tool[]).forEach((tool) =>
-    board.querySelector(`[data-board-${tool}]`)?.addEventListener('click', () => step(tool)));
+export function toggleInterTicker(board: HTMLElement) {
+  const canvas = board.querySelector<HTMLElement>('.board-canvas');
+  if (!canvas) return;
+  if (sheet) {
+    close();
+    return;
+  }
 
   const el = <K extends keyof HTMLElementTagNameMap>(tag: K, cls?: string, text?: string) => {
     const node = document.createElement(tag);
@@ -55,22 +37,20 @@ if (board && canvas) {
     return res.json();
   };
 
-  function open() {
-    sheet = el('aside', 'inter-ticker');
-    sheet.setAttribute('aria-live', 'polite');
-    sheet.setAttribute('aria-label', 'Inter');
-    sheet.append(el('p', 'inter-loading', L.loading));
-    canvas!.append(sheet);
-    board!.classList.add('has-inter');
-    void refresh();
-  }
-
   function close() {
     window.clearTimeout(timer);
     sheet?.remove();
     sheet = null;
-    board!.classList.remove('has-inter');
+    board.classList.remove('has-inter');
   }
+
+  sheet = el('aside', 'inter-ticker');
+  sheet.setAttribute('aria-live', 'polite');
+  sheet.setAttribute('aria-label', 'Inter');
+  sheet.append(el('p', 'inter-loading', L.loading));
+  canvas.append(sheet);
+  board.classList.add('has-inter');
+  void refresh();
 
   async function refresh() {
     const current = sheet;

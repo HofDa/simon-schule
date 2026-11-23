@@ -1,25 +1,18 @@
 ---
 /**
- * "Der Lernraum" – Section 3 below the Whiteboard: Compact 5-step process + 3 Pinned Role Cards.
- * Shows the 5 steps in a single horizontal strip on desktop (`repeat(5, 1fr)`) with animated
- * desk illustrations, line-drawn rules, popping step badges, sticky-note deliverables, and 3
- * pinned decision-maker role cards that pre-fill phase and topic directly in `#anfrage`.
+ * "Der Lernraum" – Section 3 below the Whiteboard: the 5-step process, one line per step.
+ * Shows the 5 steps in a single horizontal strip on desktop (`repeat(5, 1fr)`), each with its own
+ * symbol (pen, plan, VS chair, hammer, telephone) and a numbered step badge.
  */
-import DeskBack, { type DeskItem } from '../art/DeskBack.astro';
-import Magnet from '../Magnet.astro';
+import StepSymbol, { type StepKind } from '../art/StepSymbol.astro';
 import { getLang, useTranslations } from '../../../i18n/ui';
 import { servicesFor } from '../../../data/services';
-import { lernraumCopy } from '../../../i18n/lernraum';
 
 const lang = getLang(Astro.currentLocale);
-const ui = useTranslations(lang);
-const t = ui.services;
-const phases = ui.form.phases;
+const t = useTranslations(lang).services;
 const services = servicesFor(lang);
-const items: DeskItem[] = ['mug', 'plan', 'catalogue', 'toolbox', 'plant'];
-
-const L = lernraumCopy(lang);
-const { deliverables, roles, rolesEyebrow, rolesNote } = L.services;
+// Beratung vor Ort, Planung, VS Möbel, Lieferung & Montage, Betreuung im Land
+const symbols: StepKind[] = ['pen', 'plan', 'chair', 'hammer', 'phone'];
 ---
 
 <section id="leistungen" class="lr-services" aria-labelledby="services-title" data-lr-services>
@@ -33,51 +26,16 @@ const { deliverables, roles, rolesEyebrow, rolesNote } = L.services;
       {services.map((service, index) => (
         <li class="desk" style={`--wb-d: ${index * 80}ms`} data-wb-reveal>
           <div class="desk-art" aria-hidden="true">
-            <DeskBack item={items[index]} />
+            <StepSymbol kind={symbols[index]} />
           </div>
           <div class="desk-card">
-            <div class="desk-meta">
-              <span class="desk-n" aria-hidden="true">{index + 1}</span>
-              <span class="desk-tag">{deliverables[index]}</span>
-            </div>
-            <h3>{service.title}</h3>
+            <h3><span class="desk-n" aria-hidden="true">{index + 1}</span>{service.title}</h3>
             <p>{service.text}</p>
           </div>
         </li>
       ))}
     </ol>
 
-    <div class="roles" aria-labelledby="roles-heading">
-      <div class="roles-head" data-wb-reveal>
-        <p id="roles-heading" class="roles-eyebrow">{rolesEyebrow}</p>
-        <p class="roles-note marker" aria-hidden="true">{rolesNote}</p>
-      </div>
-      <div class="roles-grid">
-        {roles.map((r, i) => (
-          <article
-            class="role-card"
-            style={`--card-tilt: ${i === 0 ? '-0.6deg' : i === 1 ? '0.4deg' : '-0.4deg'}; --wb-d: ${i * 100}ms`}
-            data-wb-pin
-          >
-            <Magnet />
-            <p class="role-audience">{r.audience}</p>
-            <h3 class="role-title">{r.title}</h3>
-            <p class="role-text">{r.text}</p>
-            <p class="role-deliverable">{r.deliverable}</p>
-            <a
-              href="#anfrage"
-              class="role-cta"
-              data-open-form
-              data-phase={phases[r.phase]}
-              data-topic={r.topic}
-            >
-              <span>{r.cta}</span>
-              <span class="role-arrow" aria-hidden="true">→</span>
-            </a>
-          </article>
-        ))}
-      </div>
-    </div>
   </div>
 </section>
 
@@ -94,13 +52,6 @@ const { deliverables, roles, rolesEyebrow, rolesNote } = L.services;
     margin-top: 12px;
     padding-top: 4px;
   }
-  .desk-meta {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 8px;
-  }
   .desk-n {
     display: grid;
     place-items: center;
@@ -114,18 +65,7 @@ const { deliverables, roles, rolesEyebrow, rolesNote } = L.services;
     font-weight: 800;
     font-variant-numeric: tabular-nums;
   }
-  .desk-tag {
-    display: inline-flex;
-    align-items: center;
-    font-size: 0.72rem;
-    font-weight: 600;
-    color: var(--color-ink);
-    background: #f6dc78;
-    padding: 3px 8px;
-    line-height: 1.25;
-    rotate: -0.8deg;
-  }
-  .desk h3 { font-size: clamp(1.18rem, 1.45vw, 1.45rem); font-weight: 600; letter-spacing: -0.03em; line-height: 1.12; }
+  .desk h3 { display: flex; align-items: center; gap: 10px; font-size: clamp(1.18rem, 1.45vw, 1.45rem); font-weight: 600; letter-spacing: -0.03em; line-height: 1.12; }
   .desk p { margin-top: 6px; color: var(--color-muted); font-size: 0.88rem; line-height: 1.52; }
 
   @media (prefers-reduced-motion: no-preference) {
@@ -151,172 +91,48 @@ const { deliverables, roles, rolesEyebrow, rolesNote } = L.services;
     .desk:hover .desk-n {
       transform: scale(1.1);
     }
-    :global(html.js) .desk:not(.is-in) .desk-tag {
-      opacity: 0;
-      translate: 0 -6px;
-      rotate: -3.5deg;
-    }
-    .desk-tag {
-      transition:
-        opacity 320ms var(--ease-draw) calc(var(--wb-d, 0ms) + 200ms),
-        translate 340ms var(--ease-draw) calc(var(--wb-d, 0ms) + 200ms),
-        rotate 340ms var(--ease-draw) calc(var(--wb-d, 0ms) + 200ms),
-        transform 200ms var(--ease-draw),
-        box-shadow 200ms var(--ease-draw);
-    }
-    .desk:hover .desk-tag {
-      transform: translateY(-2px);
-      box-shadow: 1px 6px 10px -5px rgba(32, 32, 29, 0.35);
-    }
 
-    /* Subtle desk-item life when in view */
-    .desk.is-in :global(.item-steam) {
-      animation: desk-steam 3.2s ease-in-out infinite;
-      transform-box: fill-box;
-      transform-origin: 50% 100%;
+    /* each symbol does its job once when it comes into view: the pen writes, the hammer strikes, the phone rings */
+    :global(html.js) .desk:not(.is-in) :global(.scribble) { stroke-dasharray: 1; stroke-dashoffset: 1; }
+    .desk.is-in :global(.scribble) {
+      stroke-dasharray: 1;
+      animation: step-write 900ms var(--ease-draw) calc(var(--wb-d, 0ms) + 350ms) both;
     }
-    .desk.is-in :global(.item-leaf) {
-      animation: desk-leaf 2.8s ease-in-out calc(var(--wb-d, 0ms) + 300ms) 2 alternate;
-      transform-box: fill-box;
-      transform-origin: 50% 100%;
+    .desk.is-in :global(.pen) {
+      transform-origin: 60px 96px;
+      animation: step-pen 900ms ease-in-out calc(var(--wb-d, 0ms) + 350ms) both;
     }
-    @keyframes desk-steam {
-      0%, 100% { transform: translateY(0); opacity: 0.65; }
-      50% { transform: translateY(-4px); opacity: 1; }
+    .desk.is-in :global(.hammer) {
+      transform-origin: 34px 104px;
+      animation: step-strike 520ms ease-in calc(var(--wb-d, 0ms) + 350ms) 2 both;
     }
-    @keyframes desk-leaf {
-      from { transform: rotate(-2deg); }
-      to { transform: rotate(2deg); }
+    .desk.is-in :global(.handset) {
+      transform-origin: 70px 66px;
+      animation: step-ring 700ms ease-in-out calc(var(--wb-d, 0ms) + 350ms) 2 both;
+    }
+    @keyframes step-write { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+    @keyframes step-pen {
+      0% { translate: -30px 0; }
+      100% { translate: 0 0; }
+    }
+    @keyframes step-strike {
+      0%, 100% { rotate: 0deg; }
+      45% { rotate: -16deg; }
+    }
+    @keyframes step-ring {
+      0%, 100% { rotate: 0deg; }
+      20%, 60% { rotate: -7deg; }
+      40%, 80% { rotate: 7deg; }
     }
   }
 
   :global(.board-reader-body) .desk-art,
-  :global(.board-reader-body) .desk-n,
-  :global(.board-reader-body) .desk-tag {
+  :global(.board-reader-body) .desk-n {
     opacity: 1 !important;
     translate: none !important;
     scale: 1 !important;
     transform: none !important;
     transition: none !important;
-  }
-
-  /* 3 pinned decision-maker perspectives */
-  .roles {
-    margin-top: clamp(44px, 5vw, 68px);
-  }
-  .roles-head {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 10px;
-    padding-bottom: 4px;
-  }
-  .roles-eyebrow {
-    font-size: var(--text-label);
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: #57554e;
-  }
-  .roles-note {
-    font-size: var(--text-marker);
-    color: var(--color-ink);
-    transform: rotate(-1.5deg);
-  }
-  .roles-grid {
-    display: grid;
-    gap: 24px;
-    margin-top: 24px;
-  }
-  .role-card {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 24px 22px 18px;
-    background: #fffefb;
-    border: 0;
-    box-shadow: inset 4px 0 0 var(--color-ginster), 2px 14px 24px -16px rgba(32, 32, 29, 0.24);
-    cursor: pointer;
-    transform: rotate(var(--card-tilt, 0deg));
-    transition: transform 220ms var(--ease-draw), box-shadow 220ms var(--ease-draw);
-  }
-  .role-card:hover,
-  .role-card:has(.role-cta:focus-visible) {
-    transform: rotate(0deg) translateY(-2px);
-    box-shadow: inset 4px 0 0 var(--color-ginster), 4px 18px 28px -14px rgba(32, 32, 29, 0.32);
-  }
-  .role-card:has(.role-cta:focus-visible) {
-    outline: 2px solid var(--color-ink);
-    outline-offset: 3px;
-  }
-  .role-audience {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-size: var(--text-label);
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--color-ginster-deep);
-  }
-  .role-title {
-    margin-top: 8px;
-    font-size: clamp(1.2rem, 1.5vw, 1.45rem);
-    font-weight: 600;
-    letter-spacing: -0.03em;
-    line-height: 1.15;
-  }
-  .role-text {
-    margin-top: 8px;
-    color: var(--color-muted);
-    font-size: var(--text-meta);
-    line-height: 1.55;
-  }
-  .role-deliverable {
-    margin-top: 14px;
-    margin-bottom: 16px;
-    padding: 4px 9px;
-    background: #f6dc78;
-    color: var(--color-ink);
-    font-family: var(--font-marker);
-    font-size: 1.1rem;
-    font-weight: 600;
-    line-height: 1.1;
-    rotate: -1deg;
-    box-shadow: 1px 3px 6px -3px rgba(32, 32, 29, 0.28);
-  }
-  .role-cta {
-    margin-top: auto;
-    padding-top: 8px;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    min-height: 44px;
-    border-top: 0;
-    font-size: var(--text-meta);
-    font-weight: 700;
-    color: var(--color-ink);
-  }
-  .role-cta::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-  }
-  .role-cta:focus-visible {
-    outline: none;
-  }
-  .role-arrow {
-    color: var(--color-ginster-deep);
-    transition: transform 200ms var(--ease-draw);
-  }
-  .role-card:hover .role-arrow,
-  .role-cta:focus-visible .role-arrow {
-    transform: translateX(4px);
   }
 
   @media (max-width: 639px) {
@@ -333,12 +149,6 @@ const { deliverables, roles, rolesEyebrow, rolesNote } = L.services;
     .desk:nth-child(5) { grid-column: 4 / 6; }
   }
 
-  @media (min-width: 768px) {
-    .roles-grid {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: clamp(18px, 2.2vw, 28px);
-    }
-  }
 
   @media (min-width: 1024px) {
     .head { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(24px, 2.6vw, 44px); align-items: end; }
@@ -353,6 +163,6 @@ const { deliverables, roles, rolesEyebrow, rolesNote } = L.services;
 
   const section = document.querySelector<HTMLElement>('[data-lr-services]');
   if (section) {
-    revealOnce(section.querySelectorAll('[data-wb-reveal], [data-wb-pin]'));
+    revealOnce(section.querySelectorAll('[data-wb-reveal]'));
   }
 </script>

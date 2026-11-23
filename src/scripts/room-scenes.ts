@@ -47,7 +47,7 @@ const chair = (x: number, y: number, a: number, colour: number) =>
 
 /** A Tano top whose centroid lies at x y, turned by a plan angle (0 = as the first top of an island). */
 const tanoTop = (x: number, y: number, planTurn: number) => piece('tano-top', x, y, (w) => w.tanoTop(), -planTurn);
-/** The same nine Tano tops and eighteen chairs move between these three arrangements. */
+/** The same twelve Tano tops and twelve chairs move between these three arrangements. */
 function tanoArrangement(name: TanoArrangement): Piece[] {
   const colours = [SKY, RED, GINSTER];
   return tanoLayout(name).flatMap((desk) => [

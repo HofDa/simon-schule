@@ -75,7 +75,6 @@ const tilts = ['-0.7deg', '0.6deg', '0.5deg', '-0.6deg'];
 
               <header class="letter-head">
                 <span class="letter-tag">{V.tags[i] ?? ''}</span>
-                <time class="letter-date">{f.date}</time>
               </header>
 
               <blockquote class="letter-quote m-0">
@@ -92,12 +91,6 @@ const tilts = ['-0.7deg', '0.6deg', '0.5deg', '-0.6deg'];
         ))}
       </div>
 
-      <div class="voices-next" data-wb-reveal>
-        <p class="voices-next-text">{V.next}</p>
-        <a href="#anfrage" class="btn btn-ink" data-open-form>
-          {V.cta} <span aria-hidden="true">↓</span>
-        </a>
-      </div>
     </div>
   </section>
 )}
@@ -209,12 +202,6 @@ const tilts = ['-0.7deg', '0.6deg', '0.5deg', '-0.6deg'];
     text-transform: uppercase;
     color: var(--color-ginster-deep);
   }
-  .letter-date {
-    font-size: 0.74rem;
-    font-weight: 600;
-    font-variant-numeric: tabular-nums;
-    color: var(--color-muted);
-  }
 
   .letter-quote {
     margin-top: 12px;
@@ -290,24 +277,6 @@ const tilts = ['-0.7deg', '0.6deg', '0.5deg', '-0.6deg'];
     transition: none !important;
   }
 
-  .voices-next {
-    margin-top: clamp(32px, 4vw, 48px);
-    padding: 4px 0 4px 16px;
-    background: transparent;
-    border: 0;
-    border-left: 3px solid var(--color-ginster);
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 14px 24px;
-  }
-  .voices-next-text {
-    font-size: var(--text-lead);
-    font-weight: 600;
-    letter-spacing: -0.02em;
-    color: var(--color-ink);
-  }
 
   @media (min-width: 900px) {
     .voices-head {

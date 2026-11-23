@@ -63,7 +63,7 @@ const bubble = 'M24 4H96Q114 4 114 22V50Q114 68 96 68H52L27 88L33 68H24Q6 68 6 5
             <div class="page" style={`--slice: ${k}`}>
               {entries.map((e, i) => (
                 <article class="entry" data-feedback-panel={i} data-org={e.organisation} hidden={i !== 0} aria-label={k === 1 ? copy.voices.feedbackLabel(e.name, e.role, e.organisation) : undefined}>
-                  <header class="entry-head"><span>{F.heading}</span><time>{e.date}</time></header>
+                  <header class="entry-head"><span>{F.heading}</span></header>
                   <blockquote class="entry-quote"><p>{e.quote}</p></blockquote>
                   <footer class="entry-from">
                     <span class="entry-name">{e.name}</span>
@@ -225,7 +225,6 @@ const bubble = 'M24 4H96Q114 4 114 22V50Q114 68 96 68H52L27 88L33 68H24Q6 68 6 5
   .entry { display: flex; flex-direction: column; height: calc(100cqi * 1.414 - 3.6cqi); }
   .entry-head { height: 4.1cqi; padding-right: 9cqi; display: flex; align-items: baseline; justify-content: space-between; color: #6e6c65; font-size: 3.4cqi; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
   .entry-head span { color: var(--color-ginster-deep); }
-  .entry-head time { letter-spacing: .04em; font-weight: 600; }
   .entry-quote { margin: 7cqi 0 0; } /* keeps the handwriting's baselines on the ruled lines */
   .entry-quote p { font-family: var(--font-hand); font-size: 5.3cqi; line-height: 6.4cqi; }
   .entry-from { display: flex; flex-direction: column; gap: 1cqi; margin-top: 6.4cqi; }
