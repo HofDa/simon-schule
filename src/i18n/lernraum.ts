@@ -233,8 +233,8 @@ const de = {
     } as Record<string, { topic: string; callout: string; pins: { title: string; detail: string }[] }>,
   },
   voices: {
-    eyebrow: 'Original-Rückmeldungen vom Whiteboard',
-    title: 'Was unsere Kunden über uns sagen.',
+    eyebrow: 'Stimmen aus der Praxis',
+    title: 'Was Kunden & Partner über uns sagen.',
     lead: 'Echte Briefe von Schuldirektionen, Kindergärten, Architekturbüros und unserem Partner VS – Wort für Wort aus unserer Feedback-Runde.',
     tags: [
       'Schuldirektion · >10 Jahre Partner',
@@ -268,7 +268,7 @@ const de = {
     sample: 'Musterstuhl oder Beratung vor Ort anfragen',
     sampleTopic: 'VS Möbel / Produktauswahl',
     catalogBadge: 'VS-Schulkatalog 2026',
-    catalogSub: 'Direkt vom Whiteboard: Blättern Sie im aktuellen VS-Katalog (PDF) oder bestellen Sie ein Musterstück zum Probesitzen an Ihre Schule.',
+    catalogSub: 'Blättern Sie im aktuellen VS-Schulkatalog 2026 (PDF) oder bestellen Sie ein Musterstück zum Probesitzen an Ihre Schule.',
     catalogPdf: 'VS-Schulkatalog 2026 öffnen (PDF)',
   },
   stations: {
@@ -386,6 +386,7 @@ const de = {
       magnetAlt: 'Küchenmagnet aus elfenbeinfarbenem Kunststoff mit erhabenem schwarzem VS-Logo, der die Titelseite am oberen Rand festhält',
     },
     corner: ['Magnete greifen & verschieben.', 'Ideen anklicken & entdecken.'],
+    proofNote: (n: number) => [`${n} Einrichtungen`, 'in Südtirol'] as [string, string],
     magnet: { move: (label: string) => `${label} verschieben`, title: 'Magnet greifen und verschieben · Pfeiltasten zum Bewegen' },
     tools: {
       colours: 'Stiftfarbe',
@@ -407,17 +408,18 @@ const de = {
     arrowHint: 'Das Lineal anklicken und vom Startpunkt zum Ziel ziehen, um einen geraden Pfeil zu zeichnen. Beim Loslassen bleibt der Pfeil auf dem Board. Das Lineal erneut anklicken oder Escape drücken, um wieder zu navigieren. Der Schwamm löscht auch die Pfeile.',
     reader: { back: 'Zurück zum Whiteboard', page: 'Im Seitenverlauf ansehen', topics: 'Weitere Themen auf dem Whiteboard' },
     topics: { leistungen: 'Leistungen', lernformen: 'Lernformen', projekte: 'Schule & Kindergarten', menschen: 'Ansprechpartner', 'vs-moebel': 'VS Möbel', phasen: 'Ihr Projektweg', kontakt: 'Kontakt' },
-    card: { eyebrow: 'Ihr Ansprechpartner', magnet: 'Ansprechpartner', note: 'Persönlich für Sie da.', cta: 'Projekt anfragen', portrait: (name: string) => `Porträt von ${name}` },
+    card: { eyebrow: 'Ihr Ansprechpartner', magnet: 'Ansprechpartner', leadNote: 'Direkt zu Simon', note: 'Persönlich für Sie da.', cta: 'Projekt anfragen', portrait: (name: string) => `Porträt von ${name}` },
     feedback: {
       magnet: 'Feedback',
       move: 'Feedback-Magnet verschieben',
       title: 'Magnet greifen und das Feedback verschieben',
       heading: 'Feedback',
+      caption: 'Das sagen Schulen & Partner',
       from: 'von',
       close: 'Feedback schließen und zurück an das Whiteboard',
       prev: 'Vorheriges Feedback',
       next: 'Nächstes Feedback',
-      read: (n: number) => `Feedback lesen: ${n} Rückmeldungen von Kundinnen und Kunden`,
+      read: (n: number) => `Feedback lesen: ${n} Rückmeldungen von Kunden & Partnern`,
       hint: 'Escape schließt das Feedback wieder.',
     },
     collages: {
@@ -464,12 +466,17 @@ const de = {
       {
         question: 'Wie viele Schulen und Kindergärten hat Trias Schule bereits eingerichtet?',
         answer:
-          'Zwischen 2015 und 2026 hat Trias 234 Bildungseinrichtungen in Südtirol eingerichtet: 112 Grundschulen, 53 Mittelschulen, 23 Oberschulen, 23 Berufs- & Fachschulen, 15 Kindergärten, 5 Kitas sowie 3 Bibliotheken – unter anderem in Meran, Brixen, Lana, Sterzing, Sarnthein, Gais, Tisens und Terlan.',
+          'Zwischen 2015 und 2026 hat Trias 234 Bildungseinrichtungen in ganz Südtirol eingerichtet: 112 Grundschulen, 53 Mittelschulen, 23 Oberschulen, 23 Berufs- & Fachschulen, 15 Kindergärten, 5 Kitas sowie 3 Bibliotheken – unter anderem in Meran, Brixen, Leifers, Lana, Sterzing, Sarnthein, Gais, Gsies, Tisens, Riffian und Terlan.',
       },
       {
         question: 'Wie läuft ein Einrichtungsprojekt – auch bei Ausschreibungen – ab?',
         answer:
           'Jedes Projekt beginnt mit einer Vor-Ort-Begehung in Südtirol. Darauf folgen Raum- und Möblierungskonzept sowie bei Bedarf klare Leistungsverzeichnisse für Gemeinden und Ausschreibungen, die Auswahl aus dem VS-Systembaukasten mit Bemusterung, termingerechte Montage und feste Betreuung danach.',
+      },
+      {
+        question: 'Erfüllen die VS-Schulmöbel die Normen EN 1729 und CAM für öffentliche Ausschreibungen?',
+        answer:
+          'Ja. Schulstühle und Schülertische von VS sind nach DIN EN 1729 ergonomisch abgestuft und zertifiziert (unter anderem GS und Blauer Engel) und erfüllen die Anforderungen an öffentliche Ausschreibungen in Italien – einschließlich CAM-Kriterien (Criteri Ambientali Minimi) sowie Ausschreibungsunterlagen für Südtiroler Gemeinden und das Landesportal ISOV.',
       },
       {
         question: 'Wann findet die Montage statt und lassen sich bestehende Möbel integrieren?',
@@ -486,6 +493,7 @@ const de = {
       { label: 'Musterstuhl oder VS-Beratung anfragen', topic: 'VS Möbel / Produktauswahl' },
       { label: 'Passendes Referenzprojekt besprechen', topic: 'Referenzprojekt Südtirol' },
       { label: 'Ausschreibung oder Begehung klären', topic: 'Ausschreibung / Gemeindeprojekt' },
+      { label: 'Unterlagen zu EN 1729, CAM oder Ausschreibung anfragen', topic: 'Normen / Ausschreibung (EN 1729 / CAM)' },
       { label: 'Montagetermin oder Bestandseinbindung prüfen', topic: 'Umbau / Bestandsintegration' },
       { label: 'Direkt einen Termin in Meran, Brixen oder vor Ort vereinbaren', topic: 'Vor-Ort-Begehung' },
     ],
@@ -721,8 +729,8 @@ const it: LernraumCopy = {
     },
   },
   voices: {
-    eyebrow: 'Riscontri originali dalla lavagna',
-    title: 'Che cosa dicono di noi i nostri clienti.',
+    eyebrow: 'Voci dalla pratica',
+    title: 'Cosa dicono di noi clienti e partner.',
     lead: 'Lettere reali di direzioni scolastiche, scuole dell’infanzia, architetti e del nostro partner VS – parola per parola.',
     tags: [
       'Direzione scolastica · >10 anni partner',
@@ -755,7 +763,7 @@ const it: LernraumCopy = {
     sample: 'Richiedere una sedia campione o una consulenza sul posto',
     sampleTopic: 'VS Möbel / scelta dei prodotti',
     catalogBadge: 'Catalogo scuola VS 2026',
-    catalogSub: 'Direttamente dalla lavagna: sfogliate il catalogo VS 2026 (PDF) o richiedete un campione in prova nella vostra scuola.',
+    catalogSub: 'Sfogliate il catalogo scuola VS 2026 (PDF) o richiedete un campione in prova nella vostra scuola.',
     catalogPdf: 'Aprire il catalogo scuola VS 2026 (PDF)',
   },
   stations: {
@@ -873,6 +881,7 @@ const it: LernraumCopy = {
       magnetAlt: 'Magnete da cucina in plastica avorio con il logo VS nero in rilievo, che tiene la copertina per il bordo superiore',
     },
     corner: ['Afferrare e spostare i magneti.', 'Cliccare le idee e scoprirle.'],
+    proofNote: (n: number) => [`${n} strutture`, 'in Alto Adige'] as [string, string],
     magnet: { move: (label: string) => `Spostare: ${label}`, title: 'Afferrare e spostare il magnete · tasti freccia per muoverlo' },
     tools: {
       colours: 'Colore del pennarello',
@@ -894,17 +903,18 @@ const it: LernraumCopy = {
     arrowHint: 'Cliccare il righello e trascinare dal punto di partenza alla destinazione per disegnare una freccia diritta. Al rilascio la freccia resta sulla lavagna. Cliccare di nuovo il righello o premere Esc per tornare a navigare. La spugna cancella anche le frecce.',
     reader: { back: 'Torna alla lavagna', page: 'Vedere nella pagina', topics: 'Altri temi sulla lavagna' },
     topics: { leistungen: 'Servizi', lernformen: 'Modi di imparare', projekte: 'Scuola e infanzia', menschen: 'Referente', 'vs-moebel': 'VS Möbel', phasen: 'Il vostro percorso', kontakt: 'Contatto' },
-    card: { eyebrow: 'Il vostro referente', magnet: 'Referente', note: 'Personalmente a vostra disposizione.', cta: 'Richiedi un progetto', portrait: (name: string) => `Ritratto di ${name}` },
+    card: { eyebrow: 'Il vostro referente', magnet: 'Referente', leadNote: 'Diretto a Simon', note: 'Personalmente a vostra disposizione.', cta: 'Richiedi un progetto', portrait: (name: string) => `Ritratto di ${name}` },
     feedback: {
       magnet: 'Feedback',
       move: 'Spostare il magnete del feedback',
       title: 'Afferrare il magnete e spostare il feedback',
       heading: 'Feedback',
+      caption: 'La parola a scuole e partner',
       from: 'di',
       close: 'Chiudere il feedback e tornare alla lavagna',
       prev: 'Feedback precedente',
       next: 'Feedback successivo',
-      read: (n: number) => `Leggere il feedback: ${n} riscontri di clienti`,
+      read: (n: number) => `Leggere il feedback: ${n} riscontri di clienti e partner`,
       hint: 'Esc richiude il feedback.',
     },
     collages: {
@@ -950,12 +960,17 @@ const it: LernraumCopy = {
       {
         question: 'Quante scuole e scuole dell’infanzia ha già arredato Trias Schule?',
         answer:
-          'Tra il 2015 e il 2026 Trias ha arredato 234 strutture formative in Alto Adige: 112 scuole primarie, 53 scuole medie, 23 scuole superiori, 23 scuole professionali e di specializzazione, 15 scuole dell’infanzia, 5 asili nido e 3 biblioteche – tra cui a Merano, Bressanone, Lana, Vipiteno, Sarentino, Gais, Tesimo e Terlano.',
+          'Tra il 2015 e il 2026 Trias ha arredato 234 strutture formative in tutto l’Alto Adige: 112 scuole primarie, 53 scuole medie, 23 scuole superiori, 23 scuole professionali e di specializzazione, 15 scuole dell’infanzia, 5 asili nido e 3 biblioteche – tra cui a Merano, Bressanone, Laives, Lana, Vipiteno, Sarentino, Gais, Casies, Tesimo, Rifiano e Terlano.',
       },
       {
         question: 'Come si svolge un progetto di arredo, anche in caso di gara d’appalto?',
         answer:
           'Ogni progetto inizia con un sopralluogo in Alto Adige. Seguono il concetto di spazio e arredo (e, su richiesta, capitolati chiari per Comuni e gare pubbliche), la scelta dal sistema modulare VS con campionatura, la consegna e il montaggio puntuale e l’assistenza diretta anche dopo la consegna.',
+      },
+      {
+        question: 'Gli arredi scolastici VS rispettano la norma EN 1729 e i criteri CAM per le gare pubbliche?',
+        answer:
+          'Sì. Sedute e banchi VS sono ergonomicamente calibrati secondo la norma UNI EN 1729, certificati (tra cui GS e Blauer Engel) e conformi ai Criteri Ambientali Minimi (CAM) richiesti per le gare pubbliche in Italia. Prepariamo capitolati e documentazione tecnica per Comuni, scuole, portale ISOV e studi di architettura in Alto Adige.',
       },
       {
         question: 'Quando avviene il montaggio ed è possibile integrare arredi esistenti?',
@@ -972,6 +987,7 @@ const it: LernraumCopy = {
       { label: 'Richiedere sedia campione o consulenza VS', topic: 'VS Möbel / scelta dei prodotti' },
       { label: 'Parlare di un progetto di riferimento adatto', topic: 'Progetto di riferimento Alto Adige' },
       { label: 'Chiarire gara d’appalto o sopralluogo', topic: 'Gara d’appalto / progetto comunale' },
+      { label: 'Richiedere documentazione EN 1729, CAM o capitolato', topic: 'Normative / gara pubblica (EN 1729 / CAM)' },
       { label: 'Verificare tempi di montaggio o arredi esistenti', topic: 'Ristrutturazione / integrazione arredi' },
       { label: 'Fissare un appuntamento a Merano, Bressanone o sul posto', topic: 'Sopralluogo' },
     ],

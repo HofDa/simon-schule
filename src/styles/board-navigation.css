@@ -9,8 +9,8 @@
   .board-home {
     display: flex;
     flex-direction: column;
-    height: 100svh;
-    min-height: 650px;
+    height: min(100svh, max(680px, 76vw));
+    min-height: 680px;
     padding: 0 28px;
     background: #f3f2ed;
   }
@@ -65,10 +65,38 @@
     box-shadow: inset 0 1px 5px #20201d12;
   }
 
-  .board-intro { position: absolute; left: 5%; top: 6%; width: 33%; }
+  .board-intro { position: absolute; left: 5%; top: 5.5%; width: 33%; }
+  .board-brand-row { display: flex; flex-wrap: nowrap; align-items: center; gap: 14px; width: max-content; }
   .board-wordmark { display: inline-flex; align-items: center; min-height: 44px; color: var(--color-ink); }
   .board-wordmark .logo { height: clamp(26px, 4.3cqh, 36px); width: auto; }
   .board-wordmark:focus-visible { outline: 2px dashed var(--color-ginster-deep); outline-offset: 6px; }
+  .board-parent-link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    min-height: 44px;
+    padding-left: 14px;
+    font-size: clamp(11px, .82cqw, 13px);
+    font-weight: 600;
+    color: #5c5c54;
+    white-space: nowrap;
+    transition: color 150ms ease;
+  }
+  .board-parent-link::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 1px;
+    height: 18px;
+    translate: 0 -50%;
+    background: #d6d3c8;
+  }
+  .board-parent-link .board-parent-arrow { color: var(--color-ginster-deep); transition: translate 160ms ease; }
+  .board-parent-link:hover { color: var(--color-ink); text-decoration: underline; text-decoration-color: var(--color-ginster); text-decoration-thickness: 2px; text-underline-offset: 4px; }
+  .board-parent-link:hover .board-parent-arrow { translate: 2px -2px; }
+  .board-parent-link:focus-visible { outline: 2px dashed var(--color-ginster-deep); outline-offset: 4px; }
   .board-intro .board-title {
     width: max-content;
     margin-top: 2cqh;
@@ -85,7 +113,7 @@
   .board-intro .board-title > span { color: var(--color-ginster-deep); }
   .board-description { margin-top: 2.8cqh; font-size: clamp(12px, 1.05cqw, 17px); line-height: 1.65; color: #5c5c54; }
   /* the board's call to action: a hand-drawn Ginstergelb marker sign, and a quiet second way in */
-  .board-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 22px; margin-top: 3.4cqh; }
+  .board-cta { display: flex; flex-wrap: nowrap; align-items: center; gap: 10px 20px; width: max-content; margin-top: 3cqh; }
   .board-cta-main {
     display: inline-flex;
     align-items: center;
@@ -132,18 +160,9 @@
   .board-cta-second:focus-visible { outline: 2px dashed var(--color-ginster-deep); outline-offset: 4px; }
   @keyframes board-cta-in { from { opacity: 0; transform: scale(.92) translateY(6px); } }
   .board-object { position: absolute; z-index: var(--board-layer, 1); display: flex; flex-direction: column; align-items: center; text-align: center; translate: var(--board-x, 0px) var(--board-y, 0px); }
-  .object-house70 { left: 5.5%; top: 61%; width: min(12.5%, 20cqh); rotate: -2.5deg; }
-  /* HOUSE70 as a souvenir fridge magnet: an ivory die-cut rim along the outline, a visible edge and
-     dark magnetic backing, a soft shadow on the board and a satin sheen that lies only on the magnet */
-  .house70-magnet { position: relative; width: 100%; min-height: 44px; }
+  /* HOUSE70 souvenir fridge magnet helpers (shared by BoardContactCard) */
   .house70-handle { position: absolute; inset: 0; }
   .magnet-body { position: relative; display: block; transition: translate 160ms ease; }
-  .house70-magnet img {
-    filter:
-      drop-shadow(1.5px 0 0 #fbf7ec) drop-shadow(-1.5px 0 0 #fbf7ec) drop-shadow(0 1.5px 0 #fbf7ec) drop-shadow(0 -1.5px 0 #fbf7ec)
-      drop-shadow(0 1.5px 0 #d6cfbd) drop-shadow(.5px 1.5px 0 #34332f)
-      drop-shadow(2px 7px 5px #20201d45);
-  }
   .magnet-gloss {
     position: absolute;
     inset: 0;
@@ -157,35 +176,8 @@
     transition: background-position 700ms cubic-bezier(.2, .8, .2, 1);
     pointer-events: none;
   }
-  .house70-magnet:has(.house70-handle:is(:hover, :focus-visible)) .magnet-body { translate: 0 -2px; }
-  .house70-magnet:has(.house70-handle:is(:hover, :focus-visible)) .magnet-gloss { background-position: 0 0; }
-  .object-house70.is-dragging .magnet-body { translate: 0 -4px; }
-
-  /* the souvenir plaque on the magnet: Trias, linked to the parent brand's site */
-  .house70-plaque {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: -7%;
-    padding: 4px 10px 5px;
-    border-radius: 5px;
-    background: linear-gradient(#fffdf6, #f3eedf);
-    box-shadow: 0 0 0 1.5px #fbf7ec, 0 1.5px 0 1.5px #d6cfbd, .5px 3px 0 1px #34332f, 2px 8px 8px -2px #20201d45;
-    color: var(--color-ink);
-    line-height: 1;
-    rotate: 4deg;
-    transition: translate 160ms ease, box-shadow 160ms ease;
-    -webkit-user-drag: none;
-  }
-  .plaque-brand { font-size: clamp(14px, min(1.15cqw, 2.3cqh), 19px); font-weight: 800; letter-spacing: -.03em; color: var(--color-ginster-deep); }
-  .plaque-place { margin-top: 2px; font-size: clamp(8px, min(.6cqw, 1.2cqh), 10px); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; color: #5c5a52; }
-  .plaque-place span { color: var(--color-ginster-deep); letter-spacing: 0; }
-  .house70-plaque:hover { translate: 0 -2px; box-shadow: 0 0 0 1.5px #fbf7ec, 0 1.5px 0 1.5px #d6cfbd, .5px 3px 0 1px #34332f, 3px 12px 10px -2px #20201d50; }
-  .house70-plaque:focus-visible { outline: 2px dashed var(--color-ginster-deep); outline-offset: 4px; }
   .vs-logo-magnet, .house70-handle { display: block; width: 100%; min-height: 44px; padding: 0; border: 0; border-radius: 2px; background: none; cursor: grab; touch-action: none; filter: drop-shadow(1px 2px 0 #25292570) drop-shadow(2px 6px 4px #20201d32); transition: filter 160ms ease; }
-  .house70-magnet img, .vs-logo-magnet img { display: block; width: 100%; height: auto; -webkit-user-drag: none; user-select: none; }
+  .vs-logo-magnet img { display: block; width: 100%; height: auto; -webkit-user-drag: none; user-select: none; }
   .vs-logo-magnet:hover, .vs-logo-magnet:focus-visible { filter: drop-shadow(1px 3px 0 #25292570) drop-shadow(2px 8px 5px #20201d40); }
   .house70-handle:focus-visible, .vs-logo-magnet:focus-visible { outline: 2px dashed var(--color-ginster-deep); outline-offset: 6px; }
   .board-object-link { display: flex; width: 100%; flex-direction: column; align-items: center; cursor: pointer; transition: filter 200ms ease; -webkit-user-drag: none; }
@@ -210,7 +202,7 @@
   .object-learning { left: 77%; top: 29%; width: 18%; rotate: 3deg; }
   .learning-plan { height: 13cqh; width: 80%; margin-bottom: 1.5cqh; stroke: var(--color-ink); stroke-width: 2.5; }
   .object-learning .object-caption { font-size: clamp(19px, 1.75cqw, 27px); }
-  .object-furniture { --catalog-h: 23cqh; left: 25%; top: 52%; width: 15%; rotate: -2deg; }
+  .object-furniture { --catalog-h: min(22cqh, 15cqw); left: 6%; top: 58.5%; width: auto; rotate: -2deg; }
   .board-catalog-sheet { --catalog-curl-progress: 0; display: block; position: relative; height: var(--catalog-h); aspect-ratio: 1230 / 1744; background: white; box-shadow: 1px 2px 0 #d9d6ca, 2px 3px 0 #fff, 3px 10px 13px -7px #20201d55; }
   .board-catalog-sheet img { display: block; width: 100%; height: 100%; object-fit: contain; }
   .catalog-first-page { position: absolute; inset: 0; }
@@ -225,25 +217,7 @@
   .catalog-magnet { position: absolute; top: -20px; left: 50%; z-index: 5; translate: -50% 0; display: grid; place-items: center; width: clamp(44px, calc(var(--catalog-h) * .4), 88px); min-height: 44px; rotate: 4deg; filter: drop-shadow(0 2px 0 #29251d70) drop-shadow(1px 3px 2px #20201d45); }
   .catalog-magnet:hover, .catalog-magnet:focus-visible { filter: drop-shadow(0 2px 0 #29251d70) drop-shadow(1px 4px 3px #20201d55); }
   .catalog-caption { white-space: nowrap; }
-  .object-furniture .object-caption { margin-top: 1cqh; }
-  /* the VS claim: a small plaque just below the catalog (clear of its cover) */
-  .vs-plaque {
-    position: relative;
-    z-index: 3;
-    display: block;
-    margin-top: 1.4cqh;
-    padding: 4px 10px 5px;
-    border-radius: 4px;
-    background: linear-gradient(#fffdf6, #f3eedf);
-    box-shadow: 0 0 0 1.5px #fbf7ec, 0 1.5px 0 1.5px #d6cfbd, .5px 3px 0 1px #34332f, 2px 8px 8px -2px #20201d45;
-    font-size: clamp(9px, min(.72cqw, 1.45cqh), 11px);
-    line-height: 1.25;
-    color: #4d4b45;
-    white-space: nowrap;
-    rotate: 3deg;
-    pointer-events: none;
-  }
-  .vs-plaque strong { display: block; font-size: 1.18em; font-weight: 800; color: var(--color-ink); }
+  .object-furniture .object-caption { margin-top: 1.4cqh; }
 
   /* the project path between the objects: marker arrows and hand-written phase labels */
   .board-path { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
@@ -290,7 +264,69 @@
   .phase-line i { display: block; width: 9px; height: 9px; background: var(--color-ginster); border: 2px solid #fafbf9; border-radius: 50%; transform: translateY(-4px); box-sizing: content-box; }
   .phase-labels { display: flex; justify-content: space-between; margin-top: 9px; font-size: clamp(10px, .9cqw, 14px); }
   .object-phases .object-caption { margin-top: 5px; font-size: clamp(19px, 1.6cqw, 25px); }
-  .board-corner-note { position: absolute; left: 5.5%; top: 88%; color: #63615a; font-family: var(--font-marker); font-size: clamp(17px, 1.6cqw, 25px); line-height: 1.1; rotate: 1deg; }
+  .board-proof-note {
+    position: absolute;
+    left: 39%;
+    top: 16%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+    color: #5c5a52;
+    rotate: -3deg;
+    pointer-events: none;
+  }
+  .proof-note-text {
+    font-family: var(--font-marker);
+    font-size: clamp(15px, min(1.35cqw, 2.7cqh), 22px);
+    font-weight: 600;
+    line-height: 1.05;
+    white-space: nowrap;
+  }
+  .proof-note-text strong {
+    font-weight: 700;
+    color: var(--color-ink);
+    text-decoration: underline;
+    text-decoration-color: var(--color-ginster);
+    text-decoration-thickness: 2.5px;
+    text-underline-offset: 3px;
+  }
+  .proof-note-arrow {
+    width: clamp(54px, 5.2cqw, 82px);
+    height: auto;
+    margin-left: 18px;
+    color: var(--color-ginster-deep);
+  }
+  .board-vs-note {
+    position: absolute;
+    left: calc(100% + 12px);
+    top: 8%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    color: #5c5a52;
+    text-align: left;
+    rotate: 3.5deg;
+    pointer-events: none;
+  }
+  .vs-note-arrow {
+    width: clamp(38px, 3.6cqw, 56px);
+    height: auto;
+    margin-left: -6px;
+    color: var(--color-ginster-deep);
+  }
+  @container (max-width: 1080px) {
+    .board-proof-note { left: 37.5%; top: 16.5%; }
+    .proof-note-text { font-size: clamp(13px, 1.3cqw, 16px); }
+    .proof-note-arrow { width: 44px; margin-left: 8px; }
+    .board-vs-note { left: calc(100% + 8px); top: 4%; }
+    .vs-note-arrow { width: 34px; margin-left: -4px; }
+  }
+  @container (max-height: 680px) {
+    .board-corner-note { display: none; }
+  }
+  .board-corner-note { position: absolute; left: 36.5%; top: 87.5%; color: #63615a; font-family: var(--font-marker); font-size: clamp(16px, 1.45cqw, 22px); line-height: 1.1; rotate: 1deg; }
   .board-tray { position: absolute; left: 5%; right: 5%; bottom: -10px; height: 11px; border-radius: 0 0 5px 5px; background: linear-gradient(#e6e9e8, #bdc4c2); box-shadow: 0 6px 9px -6px #20201d80; }
   .board-marker-tool, .board-ruler-tool, .board-eraser-tool { position: absolute; bottom: -12px; height: 44px; padding: 0; border: 0; background: none; cursor: pointer; }
   .board-marker-tool { right: 10%; width: 110px; }
@@ -332,11 +368,10 @@ html.whiteboard-dragging, html.whiteboard-dragging * { cursor: grabbing !importa
   .board-object {
     animation: board-obj-in 420ms var(--ease-draw) var(--obj-d, 120ms) backwards;
   }
-  .object-projects { --obj-d: 120ms; }
-  .object-house70 { --obj-d: 360ms; }
-  .object-furniture { --obj-d: 440ms; }
-  .object-feedback { --obj-d: 520ms; }
-  .object-card { --obj-d: 620ms; }
+  .object-projects { --obj-d: 140ms; }
+  .object-furniture { --obj-d: 280ms; }
+  .object-feedback { --obj-d: 400ms; }
+  .object-card { --obj-d: 540ms; }
 }
 html.hero-skip .board-object {
   animation: none !important;
@@ -348,7 +383,7 @@ html.hero-skip .board-object {
 
 @media (prefers-reduced-motion: reduce) {
   .board-cta-main, .board-cta-main span { animation: none; transition: none; }
-  .magnet-body, .magnet-gloss, .house70-plaque { transition: none; }
+  .magnet-body, .magnet-gloss { transition: none; }
   .board-catalog-link:focus-visible .catalog-cover-flat { opacity: 0; }
   html.site-menu-fit .board-home, html.site-menu-fit .board-canvas { transition: none; }
 }
@@ -365,7 +400,7 @@ html.hero-skip .board-object {
   .board-note { padding-block: 2cqh; }
   .note-plan { height: 6cqh; }
   .note-title { font-size: clamp(24px, min(2.7cqw, 5.5cqh), 36px); }
-  .object-furniture { --catalog-h: 20cqh; top: 53%; left: 25%; }
+  .object-furniture { --catalog-h: min(20cqh, 14.5cqw); top: 58%; left: 6%; }
   .object-furniture .object-caption, .object-people .object-caption { font-size: clamp(19px, min(2cqw, 4cqh), 28px); }
   .object-people { top: 55%; }
   .board-person { height: 15cqh; }
@@ -464,12 +499,14 @@ html.whiteboard-reading { overflow: hidden; }
   }
   .board-home-responsive .board-intro { position: static; width: auto; }
   /* The fixed mobile header already supplies the wordmark. */
-  .board-home-responsive .board-wordmark,
+  .board-home-responsive .board-brand-row,
   .board-home-responsive .board-tray > *,
   .board-home-responsive .board-bottom > span,
   .board-home-responsive .board-reset,
   .board-home-responsive .board-corner-note,
-  .board-home-responsive :is(.house70-handle, .object-card .board-magnet, .card-lead-arrow, .vs-plaque),
+  .board-home-responsive .board-proof-note,
+  .board-home-responsive .board-vs-note,
+  .board-home-responsive :is(.house70-handle, .card-house70-magnet, .card-lead-arrow, .card-lead-note),
   .board-home-responsive :is(.feedback-backdrop, .feedback-caption, .letter-open, .face-in, .catalog-first-page) {
     display: none;
   }
@@ -489,7 +526,7 @@ html.whiteboard-reading { overflow: hidden; }
     line-height: 1.5;
   }
   .board-home-responsive .board-description br { display: none; }
-  .board-home-responsive .board-cta { margin-top: 16px; gap: 4px 18px; }
+  .board-home-responsive .board-cta { flex-wrap: wrap; width: auto; margin-top: 16px; gap: 4px 18px; }
   .board-home-responsive .board-cta-main { min-height: 48px; line-height: 1.2; animation: none; }
   .board-home-responsive :is(.board-cta-main, .board-cta-second) { font-size: var(--text-meta); }
 
@@ -507,9 +544,9 @@ html.whiteboard-reading { overflow: hidden; }
     min-width: 0;
     translate: none;
   }
-  /* phones and tablets: the hero keeps only the shuffling project stack; the furniture, feedback,
-     HOUSE70 and contact objects have their own sections further down */
-  .board-home-responsive .board-objects > :is(.object-house70, .object-feedback, .object-furniture, .object-card) { display: none; }
+  /* phones and tablets: the hero keeps only the shuffling project stack; the furniture, feedback
+     and contact objects have their own sections further down */
+  .board-home-responsive .board-objects > :is(.object-feedback, .object-furniture, .object-card) { display: none; }
   .board-home-responsive .board-objects { grid-template-columns: minmax(0, 1fr); justify-items: center; margin-top: 40px; }
   .board-home-responsive .object-projects { --print-h: min(50cqw, 300px); width: min(86%, 470px); rotate: -1.5deg; }
   .board-home-responsive .collage-stack { width: 100%; height: calc(var(--print-h) + 38px); }
@@ -521,18 +558,47 @@ html.whiteboard-reading { overflow: hidden; }
     pointer-events: none;
     touch-action: auto;
   }
-  .board-home-responsive .stack-magnet { top: -20px; left: calc(50% - 20px); width: 40px; min-height: 0; }
+  .board-home-responsive .stack-magnet { top: -28px; left: calc(50% - 34px); width: 68px; min-height: 0; }
   .board-home-responsive .collage-actions { margin-top: 5px; }
   .board-home-responsive .collage-link {
     justify-content: center;
     align-items: center;
     min-height: 44px;
-    font-family: var(--font-sans);
-    font-size: clamp(.75rem, 2.8cqw, .9375rem);
-    line-height: 1.3;
+    font-family: var(--font-marker);
+    font-size: clamp(1.15rem, 5cqw, 1.5rem);
+    font-weight: 600;
+    line-height: 1.1;
   }
   .board-home-responsive .collage-link .object-caption { font-size: inherit; line-height: inherit; text-wrap: balance; }
   .board-home-responsive .board-bottom a { min-height: 44px; font-size: var(--text-meta); }
+}
+
+/* Portrait & mid-size tablets (768–1023px): balanced 2-column whiteboard hero */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .board-home-responsive .board-canvas {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    align-items: center;
+    gap: 28px 32px;
+    padding: 40px 32px 34px;
+  }
+  .board-home-responsive .board-intro .board-title {
+    font-size: clamp(42px, 6.2vw, 58px);
+  }
+  :root[lang='it'] .board-home-responsive .board-intro .board-title {
+    font-size: clamp(34px, 4.9vw, 46px);
+  }
+  .board-home-responsive .board-objects {
+    margin-top: 16px;
+  }
+  .board-home-responsive .object-projects {
+    --print-h: clamp(200px, 27vw, 260px);
+    width: 100%;
+    max-width: 390px;
+  }
+  .board-home-responsive .collage-link {
+    font-size: 1.25rem;
+  }
 }
 
 /* Easter egg: Inter match sheet (ruler → eraser → pen), see src/scripts/board-inter.ts */

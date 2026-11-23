@@ -39,12 +39,12 @@ const nav = t.nav.items.map((item) => ({ ...item, href: `${home}${item.href}` })
     </nav>
 
     <div class="nav-right flex items-center gap-3 sm:gap-5">
-      <nav class="lang-switch hidden items-center text-label font-semibold uppercase tracking-[0.08em] sm:flex" aria-label={t.nav.switchLabel}>
+      <nav class="lang-switch hidden items-center text-label font-semibold uppercase tracking-[0.08em] min-[420px]:flex" aria-label={t.nav.switchLabel}>
         {langs.map((l, i) => (
           <>
-            {i > 0 && <span class="px-1 opacity-40" aria-hidden="true">/</span>}
+            {i > 0 && <span class="lang-sep px-1 opacity-40" aria-hidden="true">/</span>}
             {l === lang ? (
-              <span class="inline-flex min-h-11 items-center px-1 text-ink" aria-current="true">{l}</span>
+              <span class="lang-current inline-flex min-h-11 items-center px-1 text-ink" aria-current="true">{l}</span>
             ) : (
               <a class="lang-other inline-flex min-h-11 items-center px-1 text-muted transition-colors hover:text-ink" href={alternates[l]} hreflang={useTranslations(l).hreflang} lang={l} title={useTranslations(l).langName}>{l}</a>
             )}
@@ -110,7 +110,33 @@ const nav = t.nav.items.map((item) => ({ ...item, href: `${home}${item.href}` })
     .site-nav:not(.is-below-board) .wordmark { display: none; }
     .site-nav:not(.is-below-board) > div > nav,
     .site-nav:not(.is-below-board) .nav-cta { display: none; }
-    .site-nav:not(.is-below-board) .nav-right { margin-left: auto; margin-right: max(0px, calc(60px + 45px + 20px - var(--gutter))); pointer-events: auto; }
+    .site-nav:not(.is-below-board) .nav-right { margin-left: auto; margin-right: 0; pointer-events: none; }
+    /* Anchor the DE / IT switch right next to the menu icon in the whiteboard's upper-right corner */
+    .site-nav:not(.is-below-board) .lang-switch {
+      position: absolute;
+      top: 24px;
+      right: 126px;
+      height: 44px;
+      padding: 0 12px;
+      border: 1px solid #d9d6ca;
+      border-radius: 999px;
+      background: rgba(255, 254, 250, 0.92);
+      box-shadow: 0 3px 10px -6px rgba(32, 32, 29, 0.22);
+      pointer-events: auto;
+    }
+    .site-nav:not(.is-below-board) .lang-current {
+      position: relative;
+    }
+    .site-nav:not(.is-below-board) .lang-current::after {
+      content: '';
+      position: absolute;
+      left: 4px;
+      right: 4px;
+      bottom: 10px;
+      height: 2px;
+      border-radius: 1px;
+      background: var(--color-ginster);
+    }
     .site-nav.is-below-board > div > nav { gap: clamp(12px, 2vw, 30px); }
     .site-nav.is-below-board {
       animation: nav-reveal 340ms var(--ease-menu) both;
@@ -156,7 +182,11 @@ const nav = t.nav.items.map((item) => ({ ...item, href: `${home}${item.href}` })
 
   /* a compact button in the header; on touch a full 44px target at every width */
   .nav-cta { min-height: 40px; }
-  /* with the sheet open its own inquiry button takes over, and "Schließen" needs the room */
+  .lang-switch,
+  .menu-toggle {
+    transition: opacity 200ms var(--ease-draw), visibility 200ms var(--ease-draw);
+  }
+  /* with the drawer open its own language switch, inquiry button and × close button take over */
   .site-nav.is-open .nav-cta { display: none; }
   @media (pointer: coarse) {
     .nav-cta { min-height: 44px; }
@@ -212,6 +242,10 @@ const nav = t.nav.items.map((item) => ({ ...item, href: `${home}${item.href}` })
       translate: none;
       pointer-events: auto;
     }
+    @media (max-width: 1180px) {
+      .site-nav:not(.is-below-board) .menu-toggle { right: 48px; }
+      .site-nav:not(.is-below-board) .lang-switch { right: 110px; }
+    }
     .site-nav:not(.is-below-board) .site-menu { pointer-events: auto; }
     .menu-icon { width: 45px; height: 26px; }
     .menu-icon span { height: 3.5px; }
@@ -224,6 +258,13 @@ const nav = t.nav.items.map((item) => ({ ...item, href: `${home}${item.href}` })
     [aria-expanded='true'] .menu-icon span:nth-child(3) { top: 22px; width: 64%; transform: none; background: var(--color-ginster); }
     /* the header's button keeps clear of the hamburger */
     .nav-right { margin-right: max(0px, calc(40px + 45px + 28px - var(--gutter))); }
+  }
+  /* Hide the header/board language switcher & hamburger while the drawer is open (it has its own switcher and ×) */
+  .site-nav.is-open .lang-switch,
+  .site-nav.is-open .menu-toggle {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
   }
 
   /* The menu, after trias.it: a dark panel at the right; opening pushes the whole page to the left
@@ -313,7 +354,7 @@ const nav = t.nav.items.map((item) => ({ ...item, href: `${home}${item.href}` })
   @media (prefers-reduced-motion: reduce) {
     .site-menu, .menu-navigation li, .menu-footer { transition: none; }
     .site-nav.is-below-board { animation: none; }
-    .menu-icon span, .menu-navigation a { transition: none; }
+    .lang-switch, .menu-toggle, .menu-icon span, .menu-navigation a { transition: none; }
     :global(html.site-menu-push body > *:not(dialog)) { transform: none; }
     :global(html.site-menu-push) .site-menu[open] { transform: none; }
   }

@@ -30,6 +30,7 @@ const absolute = (path: string) => (site ? new URL(path, site).href : path);
 const canonicalPath = Astro.props.canonical ?? homeFor(lang);
 const canonical = site ? absolute(canonicalPath) : undefined;
 const socialImage = site ? absolute(asset('images/social-preview.jpg')) : undefined;
+const logoImage = site ? absolute(asset('images/trias-schule-logo.png')) : undefined;
 const socialImageAlt = lang === 'it'
   ? 'Spazio di apprendimento aperto con tavoli, sedie e aree di lavoro'
   : 'Offene Lernlandschaft mit Tischgruppen und verschiedenen Arbeitsbereichen';
@@ -41,6 +42,7 @@ const structuredData = !Astro.props.noindex
       title,
       description,
       socialImage,
+      logoImage,
       homepage: Astro.props.homepage,
     })
   : undefined;

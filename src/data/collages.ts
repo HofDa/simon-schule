@@ -19,12 +19,30 @@ export interface CollagePhoto {
 export interface Collage {
   slug: string;
   name: string;
+  /** Localized town & region in South Tyrol for structured data and image sitemaps. */
+  location: string;
   collage: ImageMetadata;
   alt: string;
   photos: CollagePhoto[];
+  /** Deduplicated VS Möbel product families verified across this project's photos. */
+  vsProducts: string[];
   /** Photographer, where the source files name one. */
   credit?: string;
 }
+
+const projectLocations: Record<string, Record<Lang, string>> = {
+  'gs-gais': { de: 'Gais, Südtirol', it: 'Gais, Alto Adige' },
+  'kiga-tisens': { de: 'Tisens, Südtirol', it: 'Tesimo, Alto Adige' },
+  'ms-lana': { de: 'Lana, Südtirol', it: 'Lana, Alto Adige' },
+  'musikschule-brixen': { de: 'Brixen, Südtirol', it: 'Bressanone, Alto Adige' },
+  'gs-deflorian-meran': { de: 'Meran, Südtirol', it: 'Merano, Alto Adige' },
+  'ms-sterzing': { de: 'Sterzing, Südtirol', it: 'Vipiteno, Alto Adige' },
+  'gs-sarnthein': { de: 'Sarnthein, Südtirol', it: 'Sarentino, Alto Adige' },
+  'gs-st-jakob': { de: 'St. Jakob, Leifers, Südtirol', it: 'San Giacomo, Laives, Alto Adige' },
+  'gs-st-martin-gsies': { de: 'St. Martin in Gsies, Südtirol', it: 'San Martino in Casies, Alto Adige' },
+  'gs-riffian': { de: 'Riffian, Südtirol', it: 'Rifiano, Alto Adige' },
+  'bibliothek-terlan': { de: 'Terlan, Südtirol', it: 'Terlano, Alto Adige' },
+};
 
 interface PhotoSource {
   alt: string;
@@ -310,13 +328,16 @@ const build = (lang: Lang): Collage[] =>
       alt: it?.photos[i] ?? p.alt,
       vs: p.vs,
     }));
+    const vsProducts = [...new Set(c.photos.flatMap((p) => p.vs ?? []))];
     return {
       slug: c.slug,
       name: it?.name ?? c.name,
+      location: projectLocations[c.slug]?.[lang] ?? (lang === 'it' ? 'Alto Adige' : 'Südtirol'),
       alt: it?.alt ?? c.alt,
       credit: c.credit,
       collage: collageOf(c.slug),
       photos: photosOf(c.slug, photos),
+      vsProducts,
     };
   });
 

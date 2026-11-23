@@ -68,6 +68,7 @@ if (roots.length && gallery && projects.length) {
     const openButton = root.querySelector<HTMLButtonElement>('[data-collage-open]');
     if (!openButton) return null;
     const openHint = root.querySelector<HTMLElement>('[data-collage-open-hint]');
+    const mapPin = root.querySelector<SVGGElement>('[data-map-pin]');
     const prints = Array.from(root.querySelectorAll<HTMLElement>('[data-collage-print]'));
 
     const loadStack = () => order.slice(0, desktop.matches ? 3 : 1).forEach(loadPrint);
@@ -80,6 +81,9 @@ if (roots.length && gallery && projects.length) {
         else print.setAttribute('aria-hidden', 'true');
       });
       root.dataset.topGroup = order[0].dataset.group ?? '';
+      if (mapPin && order[0].dataset.pinX && order[0].dataset.pinY) {
+        mapPin.style.transform = `translate(${order[0].dataset.pinX}px, ${order[0].dataset.pinY}px)`;
+      }
       openButton.setAttribute('aria-label', order[0].dataset.openLabel ?? '');
       if (openHint) openHint.textContent = (words.view ?? '').replace('{n}', String(photoCount(order[0].dataset.slug!)));
       loadStack();

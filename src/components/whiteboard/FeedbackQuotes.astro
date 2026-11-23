@@ -15,7 +15,15 @@ const { swipeable = false } = Astro.props;
 const lang = getLang(Astro.currentLocale);
 const V = lernraumCopy(lang).voices;
 const feedback = feedbackFor(lang);
-const bubble = 'M24 4H96Q114 4 114 22V50Q114 68 96 68H52L27 88L33 68H24Q6 68 6 50V22Q6 4 24 4Z';
+const sign = 'M13 10H98L127 29.6Q129.5 31 127 32.4L98 52H13Q8 52 8 47V15Q8 10 13 10Z';
+const topStripe = 'M93 10H98L118 24H93Z';
+const midStripe = 'M93 24H118L127 29.6Q129.5 31 127 32.4L118 38H93Z';
+const botStripe = 'M93 38H118L98 52H93Z';
+const quotes =
+  'M37.5 31.5a4.8 4.8 0 1 1 0 9.6a4.8 4.8 0 0 1-4.8-4.8c0-6.2 3.2-10.8 8.2-13.2l1.6 2.8c-3.1 1.6-4.7 3.5-5 5.6Z' +
+  'M49.5 31.5a4.8 4.8 0 1 1 0 9.6a4.8 4.8 0 0 1-4.8-4.8c0-6.2 3.2-10.8 8.2-13.2l1.6 2.8c-3.1 1.6-4.7 3.5-5 5.6Z' +
+  'M65.5 30.5a4.8 4.8 0 1 1 0-9.6a4.8 4.8 0 0 1 4.8 4.8c0 6.2-3.2 10.8-8.2 13.2l-1.6-2.8c3.1-1.6 4.7-3.5 5-5.6Z' +
+  'M77.5 30.5a4.8 4.8 0 1 1 0-9.6a4.8 4.8 0 0 1 4.8 4.8c0 6.2-3.2 10.8-8.2 13.2l-1.6-2.8c3.1-1.6 4.7-3.5 5-5.6Z';
 const tilts = ['-0.7deg', '0.6deg', '0.5deg', '-0.6deg'];
 ---
 
@@ -25,29 +33,35 @@ const tilts = ['-0.7deg', '0.6deg', '0.5deg', '-0.6deg'];
       <div class="voices-head" data-wb-reveal>
         <div class="voices-title-wrap">
           <div class="voices-magnet" aria-hidden="true">
-            <svg viewBox="0 0 120 96">
+            <svg viewBox="0 0 138 66">
               <defs>
                 <linearGradient id="fq-face" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#fffdf6" />
+                  <stop offset="1" stop-color="#f2ecdc" />
+                </linearGradient>
+                <linearGradient id="fq-ginster" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0" stop-color="#f6cc4c" />
                   <stop offset="1" stop-color="#e2a300" />
                 </linearGradient>
                 <linearGradient id="fq-gloss" x1="0" y1="0" x2="1" y2="1">
                   <stop offset=".25" stop-color="#fff" stop-opacity="0" />
-                  <stop offset=".4" stop-color="#fff" stop-opacity=".55" />
+                  <stop offset=".4" stop-color="#fff" stop-opacity=".6" />
                   <stop offset=".5" stop-color="#fff" stop-opacity="0" />
                 </linearGradient>
-                <clipPath id="fq-clip"><path d={bubble} /></clipPath>
+                <clipPath id="fq-clip"><path d={sign} /></clipPath>
               </defs>
-              <path d={bubble} fill="#34332f" transform="translate(.6 3.2)" />
-              <path d={bubble} fill="#d6cfbd" transform="translate(0 1.6)" />
-              <path d={bubble} fill="url(#fq-face)" stroke="#fbf7ec" stroke-width="3.2" stroke-linejoin="round" />
-              <path d={bubble} fill="none" stroke="#fff" stroke-opacity=".45" stroke-width="1" transform="translate(60 36) scale(.93) translate(-60 -36)" />
-              <g style="font-family: Georgia, 'Times New Roman', serif; font-weight: 700" font-size="78" text-anchor="middle" letter-spacing="2">
-                <text x="61" y="88" fill="#fff6d6" fill-opacity=".75">&#8220;&#8221;</text>
-                <text x="60" y="89.6" fill="#20201d">&#8220;&#8221;</text>
-              </g>
+              <path d={sign} fill="#34332f" stroke="#34332f" stroke-width="4.2" stroke-linejoin="round" transform="translate(.8 3.2)" />
+              <path d={sign} fill="#d6cfbd" stroke="#d6cfbd" stroke-width="4" stroke-linejoin="round" transform="translate(0 1.6)" />
+              <path d={sign} fill="url(#fq-face)" stroke="#fbf7ec" stroke-width="3.4" stroke-linejoin="round" />
+              <path d={topStripe} fill="url(#fq-ginster)" />
+              <path d={midStripe} fill="#fbf7ec" />
+              <path d={botStripe} fill="url(#fq-ginster)" />
+              <line x1="93" y1="10.5" x2="93" y2="51.5" stroke="#20201d" stroke-opacity=".16" stroke-width="1" />
+              <circle cx="19" cy="31" r="2.8" fill="#d6cfbd" stroke="#20201d" stroke-opacity=".4" stroke-width="1" />
+              <path d={sign} fill="none" stroke="#20201d" stroke-opacity=".75" stroke-width="1.6" stroke-linejoin="round" />
+              <path d={quotes} fill="#20201d" />
               <g clip-path="url(#fq-clip)">
-                <rect class="voices-magnet-gloss" x="-120" y="0" width="240" height="96" fill="url(#fq-gloss)" />
+                <rect class="voices-magnet-gloss" x="-140" y="0" width="280" height="66" fill="url(#fq-gloss)" />
               </g>
             </svg>
           </div>
@@ -113,9 +127,9 @@ const tilts = ['-0.7deg', '0.6deg', '0.5deg', '-0.6deg'];
   }
   .voices-magnet {
     flex: none;
-    width: clamp(50px, 4.5vw, 66px);
-    padding-top: 4px;
-    rotate: -6deg;
+    width: clamp(68px, 6vw, 88px);
+    padding-top: 8px;
+    rotate: -4deg;
     filter: drop-shadow(1px 4px 4px rgba(32, 32, 29, 0.25));
   }
   .voices-magnet svg {
