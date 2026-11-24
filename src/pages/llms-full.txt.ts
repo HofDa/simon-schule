@@ -68,7 +68,7 @@ export const GET: APIRoute = ({ site }) => {
   const lines = [
     '# Trias Schule — Full Context (DE & IT)',
     '',
-    '> Comprehensive bilingual machine-readable reference for Trias Schule (Trias KG der Anders GmbH), specialist in equipping schools, kindergartens, daycare centers, and open learning environments in South Tyrol / Alto Adige, Italy, and exclusive VS Möbel partner in South Tyrol.',
+    '> Comprehensive bilingual machine-readable reference for Trias Schule (Trias KG der Anders GmbH), specialist in equipping schools, kindergartens, daycare centers, and open learning environments in South Tyrol / Alto Adige, Italy, and exclusive VS Möbel partner in South Tyrol, also carrying furniture from further manufacturers.',
     '',
     '## Core Entity & Legal Metadata',
     `- Legal Entity: ${company.name}`,
@@ -79,6 +79,7 @@ export const GET: APIRoute = ({ site }) => {
     `- Company E-Mail: ${company.email}`,
     `- Parent Brand: ${trias.url.de} (DE) | ${trias.url.it} (IT)`,
     `- Exclusive Furniture Partner: VS Vereinigte Spezialmöbelfabriken (${vs.catalogUrl.de} / ${vs.catalogUrl.it})`,
+    '- Product Range: VS Möbel plus furniture from further manufacturers (multi-brand, not VS-only)',
     `- Primary Advisor: ${people.map((person) => `${fullName(person)} (${[roleFor(person, 'de'), roleFor(person, 'it')].filter(Boolean).join(' / ')}, ${[person.email, person.phone].filter(Boolean).join(', ')})`).join('; ')}`,
     `- Showrooms / Offices: ${locations.map((loc) => `${loc.city.de} / ${loc.city.it}: ${loc.street.de} / ${loc.street.it}`).join(' | ')}`,
     `- Canonical Pages: ${url(homeFor('de'))} (de-IT) | ${url(homeFor('it'))} (it-IT)`,

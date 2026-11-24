@@ -20,7 +20,7 @@ const de = {
   meta: {
     title: 'Trias Schule | Schulmöbel & Kindergärten einrichten in Südtirol',
     description:
-      'Schulen & Kindergärten einrichten in Südtirol: Beratung, Planung & Montage mit VS Möbel. Persönliche Begleitung aus Meran & Brixen seit 2015.',
+      'Schulen & Kindergärten einrichten in Südtirol: Beratung, Planung & Montage mit VS Möbel und weiteren Herstellern. Aus Meran & Brixen seit 2015.',
   },
   skip: 'Zum Inhalt springen',
   /** One quiet line for facts that are not confirmed yet, e.g. "Rolle und Telefon folgen". */
@@ -50,7 +50,7 @@ const de = {
     headline: 'Lernräume für Südtirol.',
     sub: 'Seit über zehn Jahren richtet Trias Schule Schulen, Kindergärten und Bildungseinrichtungen in ganz Südtirol ein. Vom einzelnen Raum bis zum Neubau, persönlich betreut von Simon Brugger mit Möbeln von VS.',
     /** the short line under the handwritten claim (Whiteboard) */
-    subShort: 'Vom einzelnen Raum bis zum Neubau: Wir richten Schulen und Kindergärten in ganz Südtirol ein, persönlich betreut von Simon Brugger und mit Möbeln von VS.',
+    subShort: 'Vom einzelnen Raum bis zum Neubau: Wir richten Schulen und Kindergärten in ganz Südtirol ein, persönlich betreut von Simon und mit Möbeln von VS.',
     primary: 'Raumlösungen ansehen',
     secondary: 'Projekt anfragen',
     notes: { flex: 'Flexibilität', acoustics: 'Akustik?', groups: 'Gruppenarbeit' },
@@ -98,7 +98,7 @@ const de = {
   },
   people: {
     title: 'Ein verlässlicher Partner im Land.',
-    intro: 'Gemeinden, Direktionen und Architekturbüros in ganz Südtirol schätzen kurze Wege und Handschlagqualität. Simon Brugger begleitet Ihr Projekt persönlich, vom ersten Gespräch vor Ort bis weit nach der Montage.',
+    intro: 'Gemeinden, Direktionen und Architekturbüros in ganz Südtirol schätzen kurze Wege und Handschlagqualität. Simon begleitet Ihr Projekt persönlich, vom ersten Gespräch vor Ort bis weit nach der Montage.',
     portraitAlt: (name: string) => `Portrait von ${name}`,
     teamTitle: 'Trias Meran & Brixen',
     teamRole: 'Planung, Bemusterung & eigenes Montageteam in ganz Südtirol',
@@ -113,7 +113,7 @@ const de = {
   },
   vs: {
     title: 'Möbel für Schulen und Kindergärten in Bewegung.',
-    intro: 'Als langjähriger Exklusivpartner von VS Möbel in Südtirol verbinden wir bewährte Schul- und Kindergartenmöbel mit durchdachter Planung, Ausschreibungskompetenz und eigener Montage.',
+    intro: 'Als langjähriger Exklusivpartner von VS Möbel in Südtirol und mit weiteren bewährten Herstellern im Sortiment verbinden wir bewährte Schul- und Kindergartenmöbel mit durchdachter Planung, Ausschreibungskompetenz und eigener Montage.',
     caption: 'Schulstuhl von VS in Ginstergelb · schematische Darstellung',
     newTab: '(öffnet vs.de in neuem Tab)',
     all: 'Gesamtes VS Sortiment entdecken',
@@ -129,7 +129,7 @@ const de = {
   },
   contact: {
     title: 'Sprechen wir über Ihre Schule oder Ihren Kindergarten.',
-    lead: 'Ob einzelner Raum, Umbau oder Schulneubau: Ein kurzer Anruf oder eine Mail genügt. Simon Brugger kommt persönlich bei Ihnen vorbei.',
+    lead: 'Ob einzelner Raum, Umbau oder Schulneubau: Ein kurzer Anruf oder eine Mail genügt. Simon schaut gern persönlich bei Ihnen vorbei.',
     chat: '… und die Gruppentische ans Fenster?',
     cta: 'Projekt anfragen',
     call: 'Direkt anrufen',
@@ -154,7 +154,7 @@ const de = {
     orderOption: 'Bestellung / Nachbestellung',
     /** Whiteboard form: e-mail or phone is enough */
     reach: { hint: 'E-Mail oder Telefon: eines von beiden genügt.', error: 'Bitte eine gültige E-Mail-Adresse oder eine Telefonnummer angeben, damit wir Sie erreichen.', callback: '(für einen Rückruf)' },
-    reassure: 'Unverbindlich. Simon Brugger meldet sich persönlich bei Ihnen.',
+    reassure: 'Unverbindlich. Simon meldet sich persönlich bei Ihnen.',
     submit: 'Anfrage senden',
     status: {
       invalid: 'Bitte prüfen Sie die markierten Felder.',
@@ -174,7 +174,7 @@ const de = {
   },
   legal: { back: 'Zur Startseite', pending: 'folgt' },
   footer: {
-    claim: 'Ihr verlässlicher Partner für Schul- und Kindergarteneinrichtung in Südtirol. Exklusivvertretung von VS Möbel.',
+    claim: 'Ihr verlässlicher Partner für Schul- und Kindergarteneinrichtung in Südtirol. Exklusivvertretung von VS Möbel, ergänzt durch weitere Hersteller.',
     contact: 'Kontakt & Standorte',
     page: 'Seite',
     legal: 'Rechtliches',
@@ -196,7 +196,7 @@ const it: UI = {
   meta: {
     title: 'Trias Schule | Arredi per scuole e infanzia in Alto Adige',
     description:
-      'Arredi per scuole e scuole dell’infanzia in Alto Adige: consulenza, progettazione e montaggio con VS Möbel. Sedi a Merano e Bressanone.',
+      'Arredi per scuole e scuole dell’infanzia in Alto Adige: consulenza, progettazione e montaggio con VS Möbel e altri produttori. Sedi a Merano e Bressanone.',
   },
   skip: 'Vai al contenuto',
   pending: (items: string[]) => {
@@ -227,7 +227,7 @@ const it: UI = {
     headline: 'Spazi per imparare in Alto Adige.',
     sub: 'Da oltre dieci anni Trias Schule arreda scuole, scuole dell’infanzia e strutture formative in tutto l’Alto Adige. Dalla singola aula alla nuova scuola, seguiti personalmente da Simon Brugger con i mobili di VS.',
     /** the short line under the handwritten claim (Whiteboard) */
-    subShort: 'Dalla singola aula alla nuova scuola: arrediamo scuole e scuole dell’infanzia in tutto l’Alto Adige, seguiti personalmente da Simon Brugger e con i mobili di VS.',
+    subShort: 'Dalla singola aula alla nuova scuola: arrediamo scuole e scuole dell’infanzia in tutto l’Alto Adige, seguiti personalmente da Simon e con i mobili di VS.',
     primary: 'Vedi le soluzioni',
     secondary: 'Richiedi un progetto',
     notes: { flex: 'Flessibilità', acoustics: 'Acustica?', groups: 'Lavoro di gruppo' },
@@ -274,7 +274,7 @@ const it: UI = {
   },
   people: {
     title: 'Un partner affidabile sul territorio.',
-    intro: 'Comuni, direzioni scolastiche e studi di architettura in tutto l’Alto Adige apprezzano la vicinanza e l’affidabilità di Trias. Simon Brugger segue personalmente il vostro progetto dal primo sopralluogo al montaggio.',
+    intro: 'Comuni, direzioni scolastiche e studi di architettura in tutto l’Alto Adige apprezzano la vicinanza e l’affidabilità di Trias. Simon segue personalmente il vostro progetto dal primo sopralluogo al montaggio.',
     portraitAlt: (name: string) => `Ritratto di ${name}`,
     teamTitle: 'Trias Merano & Bressanone',
     teamRole: 'Progettazione, campionatura e squadra di montaggio interna in tutto l’Alto Adige',
@@ -289,7 +289,7 @@ const it: UI = {
   },
   vs: {
     title: 'Mobili per scuole e scuole dell’infanzia in movimento.',
-    intro: 'Come storico partner esclusivo di VS Möbel in Alto Adige uniamo arredi collaudati per scuole e scuole dell’infanzia a progettazione dedicata, competenza nelle gare e montaggio interno.',
+    intro: 'Come storico partner esclusivo di VS Möbel in Alto Adige, con altri produttori affidabili in assortimento, uniamo arredi collaudati per scuole e scuole dell’infanzia a progettazione dedicata, competenza nelle gare e montaggio interno.',
     caption: 'Sedia scolastica VS in giallo ginestra · rappresentazione schematica',
     newTab: '(apre vs.de in una nuova scheda)',
     all: 'Scopri l’assortimento VS completo',
@@ -304,7 +304,7 @@ const it: UI = {
   },
   contact: {
     title: 'Parliamo della vostra scuola o scuola dell’infanzia.',
-    lead: 'Che si tratti di una singola aula, di una ristrutturazione o di una nuova scuola: basta una chiamata o una breve e-mail. Simon Brugger passa volentieri di persona.',
+    lead: 'Che si tratti di una singola aula, di una ristrutturazione o di una nuova scuola: basta una chiamata o una breve e-mail. Simon passa volentieri di persona.',
     chat: '… e i tavoli di gruppo vicino alla finestra?',
     cta: 'Richiedi un progetto',
     call: 'Chiamateci',
@@ -327,7 +327,7 @@ const it: UI = {
     phases: ['Prima idea', 'Progettazione in corso', 'Arredamento concreto', 'Gara d’appalto', 'Ristrutturazione / ampliamento'],
     orderOption: 'Ordine / riordino',
     reach: { hint: 'E-mail o telefono: basta uno dei due.', error: 'Indicate un indirizzo e-mail valido o un numero di telefono per potervi ricontattare.', callback: '(per essere richiamati)' },
-    reassure: 'Senza impegno. Simon Brugger vi ricontatterà personalmente.',
+    reassure: 'Senza impegno. Simon vi ricontatterà personalmente.',
     submit: 'Invia richiesta',
     status: {
       invalid: 'Controllate i campi evidenziati.',
@@ -347,7 +347,7 @@ const it: UI = {
   },
   legal: { back: 'Torna alla home', pending: 'in arrivo' },
   footer: {
-    claim: 'Il vostro partner affidabile per l’arredo di scuole e scuole dell’infanzia in Alto Adige. Rappresentanza esclusiva di VS Möbel.',
+    claim: 'Il vostro partner affidabile per l’arredo di scuole e scuole dell’infanzia in Alto Adige. Rappresentanza esclusiva di VS Möbel, insieme ad altri produttori.',
     contact: 'Contatti e sedi',
     page: 'Pagina',
     legal: 'Note legali',

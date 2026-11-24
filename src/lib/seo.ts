@@ -265,7 +265,7 @@ export function buildStructuredData({
       ? [
           {
             '@type': 'ContactPoint',
-            contactType: lang === 'it' ? 'Diretto responsabile progetti' : 'Direktkontakt Projektleitung',
+            contactType: lang === 'it' ? 'Contatto diretto scuola e istituzioni educative' : 'Direktkontakt Schule & Bildungseinrichtungen',
             name: fullName(primaryAdvisor),
             email: primaryAdvisor.email,
             telephone: primaryAdvisor.phone,

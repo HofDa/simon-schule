@@ -15,7 +15,7 @@ import Magnet from '../Magnet.astro';
 
 const lang = getLang(Astro.currentLocale);
 const S = lernraumCopy(lang).scenes;
-const order: SceneName[] = ['frontal', 'uform', 'gruppen', 'bewegung', 'landschaft', 'rueckzug', 'boden'];
+const order: SceneName[] = ['frontal', 'uform', 'gruppen', 'projekt', 'bewegung', 'landschaft', 'rueckzug', 'boden'];
 const scenes = S.items.map((item, i) => ({ ...item, scene: order[i], id: `lr-scene-${order[i]}` }));
 
 const size = sceneSize();
@@ -46,7 +46,7 @@ const size = sceneSize();
               loading="lazy"
               decoding="async"
             />
-            <span class="preview-badge" aria-hidden="true">3D · 7 {S.step === 'Aufstellung' ? 'Aufstellungen' : 'disposizioni'}</span>
+            <span class="preview-badge" aria-hidden="true">3D · {scenes.length} {S.step === 'Aufstellung' ? 'Aufstellungen' : 'disposizioni'}</span>
           </button>
           <button type="button" class="scenes-toggle btn btn-ink" data-scenes-toggle aria-expanded="false" aria-controls="room-arrangements">
             <span data-scenes-open>{S.expand}</span>
@@ -97,6 +97,7 @@ const size = sceneSize();
                 class={`scene-panel ${i === 0 ? 'is-active' : ''}`}
                 data-scene-panel={i}
                 data-scene-name={s.scene}
+                data-scene-product={s.product}
                 data-canvas-label={S.canvas(s.name)}
               >
                 <div class="scene-copy">
@@ -256,8 +257,8 @@ const size = sceneSize();
   @media (min-width: 1180px) {
     .scenes-tabs {
       display: grid;
-      grid-template-columns: repeat(7, minmax(0, 1fr));
-      gap: 12px;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px 16px;
       overflow-x: visible;
       padding-bottom: 0;
     }
@@ -495,19 +496,48 @@ const size = sceneSize();
         opacity 320ms var(--ease-draw) 160ms;
     }
 
-    .scenes-frame.is-in .scene-panel.is-active .scene-copy {
+    /* Initial reveal when the section enters the viewport */
+    .lr-scenes:not(.has-switched) .scenes-frame.is-in .scene-panel.is-active .scene-copy {
       animation: lr-copy-in 320ms var(--ease-draw) both;
     }
-    .scenes-frame.is-in .scene-panel.is-active .scene-sticky {
+    .lr-scenes:not(.has-switched) .scenes-frame.is-in .scene-panel.is-active .scene-sticky {
       animation: wb-pin-in 380ms var(--ease-draw) 80ms both;
     }
-    .scenes-frame.is-in .scene-panel.is-active .scene-sticky > :global(.magnet) {
+    .lr-scenes:not(.has-switched) .scenes-frame.is-in .scene-panel.is-active .scene-sticky > :global(.magnet) {
       animation: wb-magnet-in 220ms var(--ease-draw) 220ms both;
+    }
+
+    /* Calm tab switches: only the changed text cross-fades; sticky note only updates when the VS product changes */
+    .lr-scenes.has-switched .scene-panel.is-active :is(.scene-badge, .scene-copy h3, .scene-text) {
+      animation: lr-text-fade 220ms var(--ease-draw) both;
+    }
+    .lr-scenes.has-switched:not(.is-same-product) .scene-panel.is-active .scene-sticky {
+      animation: lr-sticky-swap 260ms var(--ease-draw) both;
     }
     @keyframes lr-copy-in {
       from {
         opacity: 0;
         translate: 0 10px;
+      }
+      to {
+        opacity: 1;
+        translate: 0 0;
+      }
+    }
+    @keyframes lr-text-fade {
+      from {
+        opacity: 0;
+        translate: 0 3px;
+      }
+      to {
+        opacity: 1;
+        translate: 0 0;
+      }
+    }
+    @keyframes lr-sticky-swap {
+      from {
+        opacity: 0.35;
+        translate: 0 4px;
       }
       to {
         opacity: 1;
@@ -652,6 +682,9 @@ const size = sceneSize();
       grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
       gap: clamp(32px, 4vw, 56px);
     }
+    .scene-text {
+      min-height: 6.4em;
+    }
     .scene-figure,
     .scene-panel > :global(.room-3d) {
       order: -1;
@@ -764,7 +797,12 @@ const size = sceneSize();
     maybeLoad();
 
     const selectScene = (index: number, focusTarget: 'tab' | 'next' | 'none' = 'none') => {
-      current = (index + tabs.length) % tabs.length;
+      const next = (index + tabs.length) % tabs.length;
+      if (next === current) return;
+      const sameProduct = panels[next]?.dataset.sceneProduct === panels[current]?.dataset.sceneProduct;
+      current = next;
+      section.classList.add('has-switched');
+      section.classList.toggle('is-same-product', sameProduct);
       if (picker) picker.value = String(current);
       tabs.forEach((tab, i) => {
         const active = i === current;

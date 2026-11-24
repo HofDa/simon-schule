@@ -6,7 +6,7 @@
  * link on the page ([data-open-form]) leads here, and its `data-topic` becomes the e-mail's subject.
  * Next to it: the HOUSE70 Meran & Brixen card and a compact closed-by-default FAQ accordion.
  */
-import { contact, fullName, locations, people, roleFor } from '../../../data/site';
+import { contact, fullName, locations, people, roleFor, trias } from '../../../data/site';
 import { getLang, useTranslations } from '../../../i18n/ui';
 import Magnet from '../Magnet.astro';
 import ResponsiveImage from '../ResponsiveImage.astro';
@@ -40,9 +40,16 @@ const subjectPrefix = L.talk.mailSubject('·').slice(0, -1);
       <!-- Open HOUSE70 Meran & Brixen Block -->
       <div class="house-row" data-wb-reveal style="--wb-d: 100ms">
         <div class="house-card-head">
-          <div class="house-thumb" aria-hidden="true">
-            <ResponsiveImage src={house70Magnet} alt="" width={100} widths={[80, 120]} sizes="48px" quality={88} loading="lazy" draggable="false" />
-          </div>
+          <a
+            class="house-thumb"
+            href={trias.url[lang]}
+            target="_blank"
+            rel="noopener"
+            aria-label={L.board.house.link}
+            title="trias.it"
+          >
+            <ResponsiveImage src={house70Magnet} alt="" width={180} widths={[120, 180, 240]} sizes="84px" quality={90} loading="lazy" draggable="false" />
+          </a>
           <div class="min-w-0">
             <p class="talk-eyebrow">{L.board.house.place}</p>
             <h3 class="house-title">{pt.teamTitle}</h3>
@@ -209,19 +216,48 @@ const subjectPrefix = L.talk.mailSubject('·').slice(0, -1);
   .house-card-head {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 16px;
   }
-  .house-thumb img {
+  .house-thumb {
+    flex: none;
     display: block;
-    width: 44px;
-    height: auto;
+    width: clamp(68px, 6vw, 84px);
+    min-height: 44px;
+    border-radius: 3px;
     rotate: -3deg;
+    transition: transform 200ms var(--ease-draw);
+  }
+  .house-thumb :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
     filter:
       drop-shadow(1.5px 0 0 #fbf7ec)
       drop-shadow(-1.5px 0 0 #fbf7ec)
       drop-shadow(0 1.5px 0 #fbf7ec)
       drop-shadow(0 -1.5px 0 #fbf7ec)
       drop-shadow(1px 5px 4px rgba(32, 32, 29, 0.25));
+    transition: filter 200ms var(--ease-draw);
+  }
+  .house-thumb:hover,
+  .house-thumb:focus-visible {
+    transform: translateY(-2px) rotate(1.5deg) scale(1.04);
+  }
+  .house-thumb:hover :global(img),
+  .house-thumb:focus-visible :global(img) {
+    filter:
+      drop-shadow(1.5px 0 0 #fbf7ec)
+      drop-shadow(-1.5px 0 0 #fbf7ec)
+      drop-shadow(0 1.5px 0 #fbf7ec)
+      drop-shadow(0 -1.5px 0 #fbf7ec)
+      drop-shadow(2px 8px 6px rgba(32, 32, 29, 0.34));
+  }
+  .house-thumb:focus-visible {
+    outline: 2px dashed var(--color-ginster-deep);
+    outline-offset: 6px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .house-thumb, .house-thumb :global(img) { transition: none; }
   }
   .house-title {
     margin-top: 2px;

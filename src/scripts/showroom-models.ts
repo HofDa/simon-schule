@@ -5,7 +5,7 @@
  */
 import type * as THREE_NS from 'three';
 import type * as ThreeSubset from './three-subset';
-import { tanoOutline, tanoOffset } from '../lib/tano-layouts';
+import { tanoOutline, tanoOffset, tanoPinwheel, tanoSeats } from '../lib/tano-layouts';
 
 type Three = typeof ThreeSubset;
 type V3 = [number, number, number];
@@ -292,47 +292,56 @@ export class Workshop {
 
   // tables --------------------------------------------------------------------------------------
 
-  /** Tano: three five-sided beech tops forming an island, square grey legs, blue trays; three PantoSwings round it. */
+  /** A plan outline with softly rounded corners (x, z in metres) extruded upwards from y0 by height. */
+  roundedSlab(outline: [number, number][], y0: number, height: number, cornerRadius = 0.024, bevel = 0.003): THREE_NS.BufferGeometry {
+    const { THREE } = this;
+    const pts = outline.map(([x, z]) => new THREE.Vector2(x, -z));
+    const shape = new THREE.Shape();
+    const n = pts.length;
+    for (let i = 0; i < n; i++) {
+      const prev = pts[(i - 1 + n) % n];
+      const curr = pts[i];
+      const next = pts[(i + 1) % n];
+      const v1 = prev.clone().sub(curr);
+      const v2 = next.clone().sub(curr);
+      const r = Math.min(cornerRadius, v1.length() * 0.35, v2.length() * 0.35);
+      const p1 = curr.clone().add(v1.normalize().multiplyScalar(r));
+      const p2 = curr.clone().add(v2.normalize().multiplyScalar(r));
+      if (i === 0) shape.moveTo(p1.x, p1.y);
+      else shape.lineTo(p1.x, p1.y);
+      shape.quadraticCurveTo(curr.x, curr.y, p2.x, p2.y);
+    }
+    shape.closePath();
+    const geometry = new THREE.ExtrudeGeometry(shape, {
+      depth: height - bevel * 2,
+      bevelEnabled: bevel > 0,
+      bevelThickness: bevel,
+      bevelSize: bevel,
+      bevelSegments: 2,
+      curveSegments: 6,
+    });
+    geometry.rotateX(-Math.PI / 2);
+    geometry.translate(0, y0 + bevel, 0);
+    return geometry;
+  }
+
+  /** Tano: four asymmetrical right-trapezoid tops in a pinwheel island (VS Config B), round grey legs, four PantoSwings. */
   tanoIsland(chairColour: number, chairs = true): THREE_NS.Group {
     const { THREE } = this;
     const island = new THREE.Group();
-    const R = 7.6 * dm;
-    const height = 7.3 * dm;
-    const at = (deg: number, r: number): [number, number] => [Math.cos((deg * Math.PI) / 180) * r, Math.sin((deg * Math.PI) / 180) * r];
-    const vertex = (k: number) => at(60 * k + 30, R);
-    const middle = (k: number) => at(60 * k + 60, R * 0.866);
-    const centroid = (pts: [number, number][]) =>
-      pts.reduce(([sx, sy], [x, y]) => [sx + x / pts.length, sy + y / pts.length], [0, 0]) as [number, number];
-    const towards = ([x, y]: [number, number], [cx, cy]: [number, number], t: number): [number, number] => [x + (cx - x) * t, y + (cy - y) * t];
-
-    const beech = this.material(COLOURS.beech, 'wood');
-    const legMat = this.material(COLOURS.greyLeg, 'metal');
-    const trayMat = this.material(COLOURS.tray);
-    for (let k = 0; k < 3; k++) {
-      const raw: [number, number][] = [[0, 0], middle(2 * k), vertex(2 * k + 1), vertex(2 * k + 2), middle(2 * k + 2)];
-      const c = centroid(raw);
-      const top = raw.map((p) => towards(p, c, 0.03));
-      island.add(this.mesh(this.slab(top, height - 0.03, 0.03, 0.004), beech));
-      for (const corner of top.slice(1)) {
-        const [lx, lz] = towards(corner, c, 0.1);
-        const leg = this.mesh(new THREE.BoxGeometry(0.036, height - 0.03, 0.036), legMat);
-        leg.position.set(lx, (height - 0.03) / 2, lz);
-        island.add(leg);
+    const desks = tanoPinwheel(0, 0, 0, [0, 0, 0, 0]);
+    for (const d of desks) {
+      const top = this.tanoTop();
+      top.position.set(d.x * dm, 0, d.y * dm);
+      top.rotation.y = -d.turn;
+      island.add(top);
+      if (chairs) {
+        const [seat] = tanoSeats(d);
+        const chair = this.pantoSwing(chairColour);
+        chair.position.set(seat.x * dm, 0, seat.y * dm);
+        chair.rotation.y = Math.atan2(Math.cos(seat.angle), Math.sin(seat.angle));
+        island.add(chair);
       }
-      const [tx, tz] = at(120 * k + 120, R * 0.55);
-      const tray = this.mesh(new THREE.BoxGeometry(0.28, 0.09, 0.24), trayMat);
-      tray.position.set(tx, height - 0.125 + 0.045, tz);
-      tray.rotation.y = -((120 * k + 120) * Math.PI) / 180;
-      island.add(tray);
-    }
-    if (chairs) for (let k = 0; k < 3; k++) {
-      const t = ((120 * k + 120) * Math.PI) / 180;
-      const dist = R * 0.866 + 0.24;
-      const chair = this.pantoSwing(chairColour);
-      chair.position.set(Math.cos(t) * dist, 0, Math.sin(t) * dist);
-      // seat faces the island's centre
-      chair.rotation.y = Math.atan2(-Math.cos(t), -Math.sin(t));
-      island.add(chair);
     }
     return island;
   }
@@ -381,9 +390,8 @@ export class Workshop {
   }
 
   /**
-   * One five-sided Tano top with its legs and tray, round its own centroid. Three of them, turned
-   * by 0°, 120° and 240° round the island's centre, form an island; `tanoTopOffset` is where the
-   * centroid lies from that centre.
+   * One real VS Tano (01492, 70 × 66/43 cm) right-trapezoid tabletop around its centroid,
+   * on a welded four-legged round-tube steel frame with floor glides and an under-table apron.
    */
   static tanoTopOutline(): { outline: [number, number][]; offset: [number, number] } {
     return {
@@ -396,19 +404,52 @@ export class Workshop {
     const { THREE } = this;
     const group = new THREE.Group();
     const height = 7.2 * dm;
-    const { outline, offset } = Workshop.tanoTopOutline();
-    group.add(this.mesh(this.slab(outline, height - 0.03, 0.03), this.material(COLOURS.beech, 'wood')));
+    const topThickness = 0.026;
+    const { outline } = Workshop.tanoTopOutline();
+
+    // Rounded-corner asymmetrical beech tabletop
+    const topGeo = this.roundedSlab(outline, height - topThickness, topThickness, 0.025, 0.003);
+    const topMesh = new THREE.Mesh(topGeo, [
+      this.material(COLOURS.beech, 'wood'),
+      this.material(COLOURS.beechEdge, 'wood'),
+    ]);
+    topMesh.castShadow = true;
+    topMesh.receiveShadow = true;
+    group.add(topMesh);
+
     const legMat = this.material(COLOURS.greyLeg, 'metal');
-    for (const [x, z] of outline.slice(1)) {
-      const leg = this.mesh(new THREE.BoxGeometry(0.036, height - 0.03, 0.036), legMat);
-      leg.position.set(x * 0.9, (height - 0.03) / 2, z * 0.9);
+    const glideMat = this.material(COLOURS.glide);
+    const legH = height - topThickness - 0.016;
+    const legGeo = new THREE.CylinderGeometry(0.016, 0.016, legH, 14);
+    const glideGeo = new THREE.CylinderGeometry(0.017, 0.0185, 0.016, 12);
+
+    // Inset each of the four round tubular legs cleanly under its corner
+    const legPts: [number, number][] = outline.map(([x, z]) => {
+      const len = Math.hypot(x, z) || 1;
+      const pull = Math.min(0.068, len * 0.22);
+      return [x - (x / len) * pull, z - (z / len) * pull];
+    });
+    for (const [lx, lz] of legPts) {
+      const leg = this.mesh(legGeo, legMat);
+      leg.position.set(lx, 0.016 + legH / 2, lz);
       group.add(leg);
+      const glide = this.mesh(glideGeo, glideMat);
+      glide.position.set(lx, 0.008, lz);
+      group.add(glide);
     }
-    const R = 7.6 * dm;
-    const tray = this.mesh(new THREE.BoxGeometry(0.28, 0.09, 0.24), this.material(COLOURS.tray));
-    tray.position.set(Math.cos((2 * Math.PI) / 3) * R * 0.55 - offset[0], height - 0.125 + 0.045, Math.sin((2 * Math.PI) / 3) * R * 0.55 - offset[1]);
-    tray.rotation.y = -(2 * Math.PI) / 3;
-    group.add(tray);
+
+    // Welded steel under-frame apron connecting the four legs
+    const apronY = height - topThickness - 0.024;
+    for (let i = 0; i < legPts.length; i++) {
+      const [x0, z0] = legPts[i];
+      const [x1, z1] = legPts[(i + 1) % legPts.length];
+      const railLen = Math.hypot(x1 - x0, z1 - z0);
+      const rail = this.mesh(new THREE.BoxGeometry(railLen, 0.026, 0.02), legMat);
+      rail.position.set((x0 + x1) / 2, apronY, (z0 + z1) / 2);
+      rail.rotation.y = -Math.atan2(z1 - z0, x1 - x0);
+      group.add(rail);
+    }
+
     return group;
   }
 

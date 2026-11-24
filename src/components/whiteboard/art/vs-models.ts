@@ -107,18 +107,22 @@ export function hokki(x: number, y: number, colour: string, tall = false): Item 
 const square = (x: number, y: number, s = 0.36): Pt[] => rect(x - s / 2, y - s / 2, s, s);
 const towards = ([x, y]: Pt, [cx, cy]: Pt, t: number): Pt => [x + (cx - x) * t, y + (cy - y) * t];
 
-/** Tano: tops forming an island (each top starting at the island's centre), square legs, blue trays. */
-export function tanoIsland(tops: Pt[][], trays: Pt[] = []): Item {
+/** Tano (01492): asymmetrical right-trapezoid beech top on four round tubular grey legs with floor glides. */
+export function tanoIsland(tops: Pt[][]): Item {
   const c = centroid(tops.flat());
-  const height = 7.3;
+  const height = 7.2;
   const legs = tops.flatMap((top) => {
     const tc = centroid(top);
-    // a leg under every outer corner; the corner at the island's centre has none
-    return top.slice(1).map((v) => render(extrude(square(...towards(v, tc, 0.1)), 0, height - 0.3), GREY_LEG));
+    return top.flatMap((v) => {
+      const [lx, ly] = towards(v, tc, 0.16);
+      return [
+        render(lathe(lx, ly, 0, [[0.18, 0], [0.18, 0.18]], 10), '#3a3b38'),
+        render(lathe(lx, ly, 0.18, [[0.16, 0], [0.16, height - 0.44]], 10), GREY_LEG),
+      ];
+    });
   });
-  const trayShapes = trays.map(([tx, ty]) => render(extrude(rect(tx - 1.4, ty - 1.2, 2.8, 2.4), height - 1.25, 0.9), '#9cc6dc'));
-  const top = tops.map((t) => render(extrude(t, height - 0.3, 0.3), (n) => (n[2] > 0.9 ? '#dec196' : '#c4a273'), { edge: '#b8976a' }));
-  return item(c, 0, ...legs, ...trayShapes, ...top);
+  const top = tops.map((t) => render(extrude(t, height - 0.26, 0.26), (n) => (n[2] > 0.9 ? '#dec196' : '#c4a273'), { edge: '#b8976a' }));
+  return item(c, 0, ...legs, ...top);
 }
 
 /** Puzzle: a free-form top with a grey edge on splayed anthracite legs. */

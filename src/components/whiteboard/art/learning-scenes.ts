@@ -6,10 +6,10 @@
  * Units are decimetres on an 8 × 6.4 m footprint; the board side is y = 0.
  */
 import { circle, rect, sector, type Item, type Pt, type Shape } from './iso';
-import { tanoLayout, tanoSeats, tanoPolygon, tanoPoint, tanoOffset, type TanoArrangement } from '../../../lib/tano-layouts';
+import { tanoLayout, tanoSeats, tanoPolygon, type TanoArrangement } from '../../../lib/tano-layouts';
 import { pantoSwing, hokki, tanoIsland, puzzle, desk, roundTable, shiftSeat, pouf, cushion, backRoll, vancouver, vancouverBench, trayShelf, drum } from './vs-models';
 
-export type SceneName = 'frontal' | 'uform' | 'gruppen' | 'bewegung' | 'landschaft' | 'rueckzug' | 'boden';
+export type SceneName = 'frontal' | 'uform' | 'gruppen' | 'projekt' | 'bewegung' | 'landschaft' | 'rueckzug' | 'boden';
 
 // colours sampled from the catalogue photographs
 const GINSTER = '#e2a300';
@@ -25,9 +25,8 @@ const toBoard = -Math.PI / 2;
 /** Use the exact same finished tops, joins and seats as the interactive 3D room. */
 function tanoArrangement(name: TanoArrangement): Item[] {
   const colours = [SKY, RED, GINSTER];
-  const tray: Pt = [Math.cos(2 * Math.PI / 3) * 7.6 * 0.55 - tanoOffset[0], Math.sin(2 * Math.PI / 3) * 7.6 * 0.55 - tanoOffset[1]];
   return tanoLayout(name).flatMap((desk) => [
-    tanoIsland([tanoPolygon(desk)], [tanoPoint(desk, tray)]),
+    tanoIsland([tanoPolygon(desk)]),
     ...tanoSeats(desk).map((seat) => pantoSwing(seat.x, seat.y, seat.angle, colours[seat.colour])),
   ]);
 }
@@ -86,13 +85,13 @@ function landschaft(): Item[] {
 
 function rueckzug(): Item[] {
   const items: Item[] = [];
-  items.push(vancouver(58, 2, 14, 10, ROYAL));
-  // a vis-à-vis: two high-backed benches and a table between
-  items.push(vancouverBench(4, 27, 14, 1, PINK));
-  items.push(desk(5.5, 34, 11, 6));
-  items.push(vancouverBench(4, 48, 14, -1, PINK));
-  // the rest of the class at their desks, facing the board
-  for (const [x, y] of [[26, 12], [37, 12], [48, 12], [31, 27], [42, 27], [53, 27]]) {
+  // quiet retreat zone across the back of the room, well away from the whiteboard
+  items.push(vancouverBench(8, 39, 14, 1, PINK));
+  items.push(desk(9.5, 46, 11, 6));
+  items.push(vancouverBench(8, 59, 14, -1, PINK));
+  items.push(vancouver(58, 46, 14, 10, ROYAL));
+  // the rest of the class at their desks, centred cleanly in front of the whiteboard
+  for (const [x, y] of [[21, 9], [34, 9], [47, 9], [21, 22], [34, 22], [47, 22]]) {
     items.push(desk(x, y));
     items.push(pantoSwing(x + 3.5, y + 6.3, toBoard, GINSTER));
   }
@@ -135,7 +134,16 @@ function boden(): Item[] {
   return items;
 }
 
-const builders: Record<SceneName, () => Item[]> = { frontal: () => tanoArrangement('frontal'), uform: () => tanoArrangement('uform'), gruppen: () => tanoArrangement('gruppen'), bewegung, landschaft, rueckzug, boden };
+const builders: Record<SceneName, () => Item[]> = {
+  frontal: () => tanoArrangement('frontal'),
+  uform: () => tanoArrangement('uform'),
+  gruppen: () => tanoArrangement('gruppen'),
+  projekt: () => tanoArrangement('projekt'),
+  bewegung,
+  landschaft,
+  rueckzug,
+  boden,
+};
 
 /** The furniture of a scene, back to front. */
 export const furniture = (name: SceneName) => builders[name]().sort((a, b) => a.depth - b.depth);

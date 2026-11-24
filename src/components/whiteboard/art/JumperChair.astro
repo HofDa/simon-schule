@@ -1,0 +1,65 @@
+---
+/**
+ * Front view of a VS JUMPER Air Four (design Jean Nouvel). The geometry is the traced
+ * 'jumper-air' elevation from ServiceChair.astro (source: VS product sheet, see
+ * service-chair-references.md); the treatment follows the step symbols in the Leistungen
+ * section (StepSymbol.astro): Ginstergelb shell with an ink outline, flat steel legs without
+ * one, dark glides and a faint ground ellipse. viewBox 0 0 400 500, the glides stand on y = 488.
+ *
+ * Hooks for the jump animation: [data-jp-body] (everything that leaves the floor; squashes from
+ * the feet), [data-jp-spin] inside it (turns about the chair's middle for the salto),
+ * [data-jp-shadow] (stays on the floor) and [data-jp-dust] (puffs on landing).
+ */
+interface Props {
+  class?: string;
+  label: string;
+}
+const { class: className = '', label } = Astro.props;
+---
+
+<svg class={`jumper-chair ${className}`} viewBox="0 0 400 500" role="img" aria-label={label}>
+  <ellipse class="jp-shadow" data-jp-shadow cx="200" cy="492" rx="160" ry="11" />
+
+  <g class="jp-dust" data-jp-dust opacity="0">
+    <path d="M36 482 q-22 -12 -34 -4 M48 458 q-16 -22 -38 -22 M364 482 q22 -12 34 -4 M352 458 q16 -22 38 -22" />
+  </g>
+
+  <g class="jp-body" data-jp-body>
+    <g class="jp-spin" data-jp-spin>
+      <g class="steel">
+        <path d="M58 485 L62 290 Q62 270 82 270 H115 M342 485 L338 290 Q338 270 318 270 H285" />
+        <path d="M78 474 L81 297 M322 474 L319 297" />
+      </g>
+      <path class="glides" d="M55 488 H63 M337 488 H345 M75 477 H83 M317 477 H325" />
+
+      <path class="shell" fill-rule="evenodd" d="M93 45 Q95 24 126 20 Q200 9 274 20 Q305 24 307 45 L328 158 Q332 179 314 194 L275 218 Q262 227 259 247 L256 276 H144 L141 247 Q138 227 125 218 L86 194 Q68 179 72 158 Z M161 227 Q200 238 239 227 Q243 230 238 235 L212 252 Q200 261 188 252 L162 235 Q157 230 161 227 Z" />
+      <path class="shell-shade" d="M90 234 Q100 242 112 244 L137 259 L144 276 H256 L263 259 L288 244 Q300 242 310 234 L294 281 Q200 313 106 281 Z" />
+      <path class="shell" d="M90 264 Q100 282 132 286 Q200 299 268 286 Q300 282 310 264 L311 279 Q310 291 289 297 Q200 317 111 297 Q90 291 89 279 Z" />
+      <path class="seat-edge" d="M107 282 Q200 309 293 282" />
+    </g>
+  </g>
+</svg>
+
+<style>
+  .jumper-chair { overflow: visible; }
+
+  /* same vocabulary as the step symbols: ink-outlined Ginstergelb, flat steel, dark glides */
+  .shell { fill: var(--color-ginster); stroke: #2c2b28; stroke-width: 7; stroke-linejoin: round; }
+  .shell-shade { fill: #cb9400; stroke: #2c2b28; stroke-width: 7; stroke-linejoin: round; }
+  .seat-edge { fill: none; stroke: #a87a00; stroke-width: 3.5; stroke-linecap: round; }
+  .steel { fill: none; stroke: #969b99; stroke-width: 12; stroke-linecap: round; stroke-linejoin: round; }
+  .glides { fill: none; stroke: #393a37; stroke-width: 9; stroke-linecap: round; }
+  .jp-shadow { fill: #20201d; opacity: 0.08; }
+  .jp-dust path { fill: none; stroke: #2c2b28; stroke-width: 5; stroke-linecap: round; }
+
+  .jp-body,
+  .jp-shadow,
+  .jp-dust,
+  .jp-spin {
+    transform-box: fill-box;
+  }
+  .jp-body { transform-origin: 50% 100%; }
+  .jp-shadow { transform-origin: 50% 50%; }
+  .jp-dust { transform-origin: 50% 100%; }
+  .jp-spin { transform-origin: 50% 55%; }
+</style>

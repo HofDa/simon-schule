@@ -81,8 +81,8 @@ export const people: Person[] = [
     firstName: 'Simon',
     lastName: 'Brugger',
     role: {
-      de: 'Projektleitung Schule & Kindergarten · Südtirol',
-      it: 'Responsabile progetti scuola e infanzia · Alto Adige',
+      de: 'Verantwortlicher Schule & Bildungseinrichtungen bei Trias',
+      it: 'Responsabile area scuola e istituzioni educative presso Trias',
     },
     /** Simon's direct line, given for the whiteboard card (Änderungen, 23.11.2026). */
     phone: '+39 338 9342398',

@@ -18,7 +18,7 @@ export const GET: APIRoute = ({ site }) => {
   const lines = [
     '# Trias Schule',
     '',
-    '> Einrichtung für Schulen, Kindergärten, Kitas und offene Lernlandschaften in Südtirol / Alto Adige (Italien) – ein Geschäftsbereich der Trias KG der Anders GmbH und Exklusivpartner von VS Möbel (VS Vereinigte Spezialmöbelfabriken) in Südtirol.',
+    '> Einrichtung für Schulen, Kindergärten, Kitas und offene Lernlandschaften in Südtirol / Alto Adige (Italien) – ein Geschäftsbereich der Trias KG der Anders GmbH und Exklusivpartner von VS Möbel (VS Vereinigte Spezialmöbelfabriken) in Südtirol, mit Möbeln weiterer Hersteller im Sortiment.',
     '',
     '## Canonical Pages',
     `- [Startseite (Deutsch · de-IT)](${url(homeFor('de'))}): ${de.meta.description}`,
@@ -32,6 +32,7 @@ export const GET: APIRoute = ({ site }) => {
     `- Parent Brand: [Trias (DE)](${trias.url.de}) / [Trias (IT)](${trias.url.it})`,
     `- VAT / UID: ${company.vat}`,
     `- Exclusive Partner: [VS Vereinigte Spezialmöbelfabriken](${vs.catalogUrl.de})`,
+    '- Product Range: VS Möbel plus furniture from further manufacturers (multi-brand, not VS-only)',
     `- Primary Advisor: ${people.map((person) => `${fullName(person)} (${[roleFor(person, 'de'), person.email, person.phone].filter(Boolean).join(', ')})`).join('; ')}`,
     `- General Contact: ${contact.email}, ${company.phone}`,
     `- Showrooms / Locations: ${locations.map((loc) => `${loc.city.de} / ${loc.city.it} (${loc.street.de} / ${loc.street.it})`).join('; ')}`,

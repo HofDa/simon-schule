@@ -10,10 +10,12 @@ import ResponsiveImage from '../ResponsiveImage.astro';
 import vsLogoMagnet from '../../../assets/whiteboard/vs-logo-kitchen-magnet.webp';
 import vsCatalogCover from '../../../assets/whiteboard/vs-school-catalog-cover-2026-nomark.webp';
 import { lernraumCopy } from '../../../i18n/lernraum';
+import JumperChair from '../art/JumperChair.astro';
 
 const lang = getLang(Astro.currentLocale);
 const t = useTranslations(lang).vs;
 const L = lernraumCopy(lang);
+const J = L.vs.jumper;
 const categories: { name: string; text: string; url?: string }[] = t.categories;
 const catalogUrl = vs.catalogUrl[lang];
 const vsSchoolCatalog = 'https://web-media.vs.de/file/p1/pdf/45-057-49_V2026-01_DE_Basics--Der-Katalog-fuer-die-Schule.archiv.pdf';
@@ -38,6 +40,7 @@ const areas = ['sit', 'tab', 'store', 'flex', 'kg'];
         </div>
       </div>
 
+      <div class="head-aside">
       <!-- Pinned VS School Catalog 2026 + VS Kitchen Magnet -->
       <div class="catalog-box" data-wb-reveal style="--wb-d: 80ms">
         <a class="catalog-pin" data-lr-catalog-pin href={vsSchoolCatalog} target="_blank" rel="noopener" aria-label={L.board.catalog.open}>
@@ -56,6 +59,27 @@ const areas = ['sit', 'tab', 'store', 'flex', 'kg'];
             {L.vs.catalogPdf} <span aria-hidden="true">↗</span>
           </a>
         </div>
+      </div>
+
+      <!-- JUMPER by Jean Nouvel: hover makes it itch to jump, a click lets it jump (every third a salto) -->
+      <div class="jumper" data-wb-reveal style="--wb-d: 160ms" data-lr-jumper>
+        <button class="jumper-btn" type="button" aria-label={J.button} data-jumper-btn data-says={JSON.stringify(J.says)}>
+          <span class="jumper-say marker" aria-hidden="true" data-jumper-say></span>
+          <JumperChair class="jumper-art" label={J.alt} />
+          <span class="jumper-hint marker" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 22 C10 18 8 11 11 3 M11 3 l-5 5 M11 3 l4 6" /></svg>
+            {J.hint}
+          </span>
+        </button>
+        <div class="jumper-meta">
+          <p class="jumper-kicker">{J.kicker}</p>
+          <p class="jumper-title marker">{J.title}</p>
+          <p class="jumper-sub">{J.sub}</p>
+          <a href="#anfrage" class="link-line text-label font-semibold" data-open-form data-topic={J.topic}>
+            {J.cta} <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
       </div>
     </div>
 
@@ -207,6 +231,119 @@ const areas = ['sit', 'tab', 'store', 'flex', 'kg'];
     color: var(--color-muted);
   }
 
+  /* Catalog and JUMPER share the left column */
+  .head-aside {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(28px, 3vw, 40px);
+  }
+
+  /* JUMPER: a drawn chair that hops when clicked */
+  .jumper {
+    display: flex;
+    align-items: flex-end;
+    gap: 22px;
+    padding-bottom: 22px;
+  }
+  .jumper-btn {
+    position: relative;
+    flex: none;
+    width: 92px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .jumper-btn:focus-visible {
+    outline: 2px solid var(--color-ginster);
+    outline-offset: 6px;
+  }
+  .jumper-btn :global(.jumper-art) {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .jumper-btn:not(.is-jumping):hover :global(.jp-body) {
+      animation: jp-itch 640ms var(--ease-draw) infinite;
+    }
+    .jumper-btn:not(.is-jumping):hover :global(.jp-shadow) {
+      animation: jp-itch-shadow 640ms var(--ease-draw) infinite;
+    }
+  }
+  @keyframes jp-itch {
+    0%, 100% { transform: none; }
+    30% { transform: scale(1.05, 0.93); }
+    55% { transform: translateY(-5px) scale(0.98, 1.03) rotate(-2deg); }
+    75% { transform: translateY(-2px) rotate(1.5deg); }
+  }
+  @keyframes jp-itch-shadow {
+    0%, 100% { transform: none; }
+    30% { transform: scaleX(1.06); }
+    55% { transform: scaleX(0.9); }
+  }
+
+  .jumper-say {
+    position: absolute;
+    z-index: 4;
+    left: 50%;
+    bottom: 100%;
+    padding: 2px 10px 4px;
+    background: #f6dc78;
+    color: var(--color-ink);
+    font-size: 1.35rem;
+    line-height: 1;
+    white-space: nowrap;
+    rotate: -6deg;
+    box-shadow: 1px 2px 0 rgba(32, 32, 29, 0.18);
+    opacity: 0;
+    translate: -50% 0;
+    pointer-events: none;
+  }
+  .jumper-hint {
+    position: absolute;
+    left: 50%;
+    top: calc(100% + 2px);
+    display: inline-flex;
+    align-items: flex-end;
+    gap: 2px;
+    color: var(--color-ginster-deep);
+    font-size: 1.05rem;
+    line-height: 1;
+    white-space: nowrap;
+    translate: -30% 0;
+    rotate: -4deg;
+    transition: opacity 260ms var(--ease-draw);
+  }
+  .jumper-hint svg {
+    width: 18px;
+    height: 18px;
+    margin-bottom: 4px;
+  }
+  .jumper-btn.was-jumped .jumper-hint { opacity: 0; }
+
+  .jumper-meta { min-width: 0; padding-top: 18px; }
+  .jumper-kicker {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+  .jumper-title {
+    margin-top: 2px;
+    font-size: var(--text-marker);
+    color: var(--color-ginster-deep);
+  }
+  .jumper-sub {
+    margin: 6px 0 12px;
+    max-width: 42ch;
+    font-size: var(--text-label);
+    line-height: 1.5;
+    color: var(--color-muted);
+  }
+
   /* Compact 5-zone architectural grid */
   .floor {
     position: relative;
@@ -289,7 +426,7 @@ const areas = ['sit', 'tab', 'store', 'flex', 'kg'];
       column-gap: 28px;
       align-items: center;
     }
-    .catalog-box { grid-column: 1; grid-row: 1; }
+    .head-aside { grid-column: 1; grid-row: 1; }
     .head-copy { grid-column: 2; grid-row: 1; }
   }
 
@@ -298,7 +435,7 @@ const areas = ['sit', 'tab', 'store', 'flex', 'kg'];
       grid-template-columns: repeat(12, minmax(0, 1fr));
       column-gap: clamp(24px, 2.6vw, 44px);
     }
-    .catalog-box { grid-column: 1 / 6; grid-row: 1; }
+    .head-aside { grid-column: 1 / 6; grid-row: 1; }
     .head-copy { grid-column: 6 / 13; grid-row: 1; }
     .floor {
       grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -367,6 +504,8 @@ const areas = ['sit', 'tab', 'store', 'flex', 'kg'];
   if (section) {
     revealOnce(section.querySelectorAll('[data-wb-reveal]'));
 
+    setupJumper(section);
+
     const pin = section.querySelector<HTMLElement>('[data-lr-catalog-pin]');
     if (pin) {
       addScene({
@@ -380,5 +519,98 @@ const areas = ['sit', 'tab', 'store', 'flex', 'kg'];
         },
       });
     }
+  }
+
+  /** JUMPER hops on click: crouch, launch, land with a squash and a puff of dust.
+      Every third click it lands a salto. Reduced motion: only the speech bubble appears. */
+  function setupJumper(root: HTMLElement) {
+    const btn = root.querySelector<HTMLButtonElement>('[data-jumper-btn]');
+    const body = btn?.querySelector<SVGGElement>('[data-jp-body]');
+    const shadow = btn?.querySelector<SVGElement>('[data-jp-shadow]');
+    const dust = btn?.querySelector<SVGGElement>('[data-jp-dust]');
+    const spinner = btn?.querySelector<SVGGElement>('[data-jp-spin]');
+    const say = btn?.querySelector<HTMLElement>('[data-jumper-say]');
+    if (!btn || !body || !spinner || !shadow || !dust || !say) return;
+    const lines: string[] = JSON.parse(btn.dataset.says ?? '[]');
+    let count = 0;
+    let busy = false;
+
+    btn.addEventListener('click', () => {
+      if (busy) return;
+      const step = count % 3;
+      count += 1;
+      btn.classList.add('was-jumped');
+      say.textContent = lines[step] ?? '';
+
+      if (!isMotionAllowed()) {
+        say.animate([{ opacity: 0 }, { opacity: 1, offset: 0.15 }, { opacity: 1, offset: 0.8 }, { opacity: 0 }], { duration: 1200 });
+        return;
+      }
+
+      busy = true;
+      btn.classList.add('is-jumping');
+      const height = [-46, -78, -92][step];
+      const spin = step === 2 ? -360 : 0;
+      const duration = [820, 980, 1180][step];
+      const at = (y: number, sx: number, sy: number, r = 0) => `translateY(${y}px) rotate(${r}deg) scale(${sx}, ${sy})`;
+      if (spin) {
+        spinner.animate(
+          [
+            { transform: 'rotate(0deg)' },
+            { transform: 'rotate(0deg)', offset: 0.22, easing: 'cubic-bezier(0.3, 0, 0.3, 1)' },
+            { transform: `rotate(${spin}deg)`, offset: 0.68 },
+            { transform: `rotate(${spin}deg)` },
+          ],
+          { duration },
+        );
+      }
+
+      const jump = body.animate(
+        [
+          { transform: at(0, 1, 1), easing: 'ease-out' },
+          { transform: at(0, 1.14, 0.8), offset: 0.16, easing: 'cubic-bezier(0.2, 0.8, 0.4, 1)' },
+          { transform: at(height * 0.7, 0.9, 1.12, -4), offset: 0.34, easing: 'ease-out' },
+          { transform: at(height, 1, 1, 3), offset: 0.5, easing: 'ease-in' },
+          { transform: at(0, 0.94, 1.08), offset: 0.7, easing: 'ease-out' },
+          { transform: at(0, 1.18, 0.78), offset: 0.78, easing: 'ease-out' },
+          { transform: at(0, 0.96, 1.05), offset: 0.9 },
+          { transform: at(0, 1, 1) },
+        ],
+        { duration },
+      );
+      shadow.animate(
+        [
+          { transform: 'scaleX(1)', opacity: 0.08 },
+          { transform: 'scaleX(1.12)', opacity: 0.1, offset: 0.16 },
+          { transform: 'scaleX(0.45)', opacity: 0.04, offset: 0.5 },
+          { transform: 'scaleX(1.2)', opacity: 0.1, offset: 0.78 },
+          { transform: 'scaleX(1)', opacity: 0.08 },
+        ],
+        { duration },
+      );
+      dust.animate(
+        [
+          { opacity: 0, transform: 'scale(0.6)' },
+          { opacity: 0, transform: 'scale(0.6)', offset: 0.74 },
+          { opacity: 1, transform: 'scale(1)', offset: 0.8 },
+          { opacity: 0, transform: 'scale(1.35) translateY(-4px)' },
+        ],
+        { duration },
+      );
+      say.animate(
+        [
+          { opacity: 0, transform: 'translateY(8px) scale(0.6)' },
+          { opacity: 0, transform: 'translateY(8px) scale(0.6)', offset: 0.2 },
+          { opacity: 1, transform: `translateY(${height * 0.28}px) scale(1.08)`, offset: 0.4 },
+          { opacity: 1, transform: `translateY(${height * 0.34}px) scale(1)`, offset: 0.85 },
+          { opacity: 0, transform: `translateY(${height * 0.4}px) scale(0.95)` },
+        ],
+        { duration: duration + 400 },
+      );
+      jump.finished.finally(() => {
+        busy = false;
+        btn.classList.remove('is-jumping');
+      });
+    });
   }
 </script>

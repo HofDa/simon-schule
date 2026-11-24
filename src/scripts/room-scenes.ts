@@ -10,7 +10,7 @@ import { COLOURS, Workshop } from './showroom-models';
 import { circle, rect, sector, type Pt } from '../components/whiteboard/art/iso';
 import { tanoLayout, tanoSeats, type TanoArrangement } from '../lib/tano-layouts';
 
-export type SceneName = 'frontal' | 'uform' | 'gruppen' | 'bewegung' | 'landschaft' | 'rueckzug' | 'boden';
+export type SceneName = 'frontal' | 'uform' | 'gruppen' | 'projekt' | 'bewegung' | 'landschaft' | 'rueckzug' | 'boden';
 
 export interface Piece {
   key: string;
@@ -97,13 +97,15 @@ function landschaft(): Piece[] {
 
 function rueckzug(): Piece[] {
   const pieces: Piece[] = [];
-  pieces.push(piece('booth', 58 + 7, 2 + 5, (w) => w.booth(1.4, 1.0, ROYAL)));
-  // a vis-à-vis: two high-backed benches and a table between
-  pieces.push(piece('bench:0', 4 + 7, 27, (w) => w.bench(1.4, PINK)));
-  pieces.push(piece('desk-wide', 5.5 + 5.5, 34 + 3, (w) => w.desk(1.1, 0.6)));
-  pieces.push(piece('bench:1', 4 + 7, 48, (w) => w.bench(1.4, PINK), Math.PI));
-  // the rest of the class at their desks, facing the board
-  for (const [x, y] of [[26, 12], [37, 12], [48, 12], [31, 27], [42, 27], [53, 27]]) {
+  // quiet retreat zone across the back of the room, well away from the whiteboard:
+  // back-left pink vis-à-vis (two high-backed benches with a table between)
+  pieces.push(piece('bench:0', 15, 39, (w) => w.bench(1.4, PINK)));
+  pieces.push(piece('desk-wide', 15, 49, (w) => w.desk(1.1, 0.6)));
+  pieces.push(piece('bench:1', 15, 59, (w) => w.bench(1.4, PINK), Math.PI));
+  // back-right royal-blue acoustic booth, turned gently inward towards the quiet zone
+  pieces.push(piece('booth', 65, 51, (w) => w.booth(1.4, 1.0, ROYAL), -0.45));
+  // the rest of the class at their desks, centred cleanly in front of the whiteboard
+  for (const [x, y] of [[21, 9], [34, 9], [47, 9], [21, 22], [34, 22], [47, 22]]) {
     pieces.push(piece('desk', x + 3.5, y + 2.5, (w) => w.desk()));
     pieces.push(chair(x + 3.5, y + 6.3, -Math.PI / 2, GINSTER));
   }
@@ -144,6 +146,15 @@ function boden(): Piece[] {
   return pieces;
 }
 
-const builders: Record<SceneName, () => Piece[]> = { frontal: () => tanoArrangement('frontal'), uform: () => tanoArrangement('uform'), gruppen: () => tanoArrangement('gruppen'), bewegung, landschaft, rueckzug, boden };
+const builders: Record<SceneName, () => Piece[]> = {
+  frontal: () => tanoArrangement('frontal'),
+  uform: () => tanoArrangement('uform'),
+  gruppen: () => tanoArrangement('gruppen'),
+  projekt: () => tanoArrangement('projekt'),
+  bewegung,
+  landschaft,
+  rueckzug,
+  boden,
+};
 
 export const roomScene = (name: SceneName): Piece[] => builders[name]();

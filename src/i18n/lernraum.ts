@@ -45,7 +45,7 @@ const de = {
     deliverables: [
       'Vor-Ort-Begehung in Südtirol',
       'Raum- & Möblierungskonzept',
-      'Auswahl aus dem VS-System',
+      'Möbelauswahl: VS & weitere Hersteller',
       'Bestellung & Terminmontage',
       'Fester Kontakt auch nach Übergabe',
     ],
@@ -64,7 +64,7 @@ const de = {
       {
         audience: 'Gemeinde & Auftraggeber',
         title: 'Verlässlich in Ausschreibung & Montage.',
-        text: 'Klare Leistungsverzeichnisse, langlebige VS-Qualität und eine sauber koordinierte Lieferung und Montage, abgestimmt auf Bauzeitpläne und Schulferien.',
+        text: 'Klare Leistungsverzeichnisse, langlebige Qualität von VS und weiteren Herstellern und eine sauber koordinierte Lieferung und Montage, abgestimmt auf Bauzeitpläne und Schulferien.',
         deliverable: 'Leistungsverzeichnis & Ferienmontage',
         cta: 'Ausschreibung & Ablauf klären',
         phase: 3,
@@ -72,9 +72,9 @@ const de = {
       },
       {
         audience: 'Architektur & Planung',
-        title: 'Fachplanung mit dem VS-Systembaukasten.',
-        text: 'Wir übersetzen Ihren Grundriss in konkrete Möblierungspläne, Zonierungen und Akustiklösungen, als direkter Südtiroler Partner von VS Möbel.',
-        deliverable: 'CAD-Zonierung & VS-Bemusterung',
+        title: 'Fachplanung über Herstellergrenzen hinweg.',
+        text: 'Wir übersetzen Ihren Grundriss in konkrete Möblierungspläne, Zonierungen und Akustiklösungen: als Exklusivpartner von VS Möbel in Südtirol und mit weiteren bewährten Herstellern im Sortiment.',
+        deliverable: 'CAD-Zonierung & Bemusterung',
         cta: 'Planung abstimmen',
         phase: 1,
         topic: 'Fachplanung / Architektur',
@@ -87,8 +87,8 @@ const de = {
     note: '… und in der nächsten Stunde?',
     boardBadge: 'Live am Grundriss testen',
     title: 'Ein Raum, viele Arten zu lernen.',
-    intro: 'Ein Klick stellt den Raum um: Sehen Sie, wie dieselben Tische und Stühle von Reihen zur offenen U-Form und zu Gruppeninseln wechseln und wie weitere VS-Möbel Raum für Rückzug oder Bewegung schaffen.',
-    mobileIntro: 'Sieben Aufstellungen für Unterricht, Gruppenarbeit und Rückzug.',
+    intro: 'Ein Klick stellt den Raum um: Sehen Sie, wie dieselben zwölf Tano-Tische in vier verschiedenen Aufstellungen stehen und wie weitere VS-Möbel Raum für Rückzug oder Bewegung schaffen.',
+    mobileIntro: 'Acht Aufstellungen für Unterricht, Gruppenarbeit und Rückzug.',
     expand: 'Raumaufstellungen ansehen',
     collapse: 'Raumaufstellungen ausblenden',
     previous: 'Vorherige Aufstellung',
@@ -125,12 +125,21 @@ const de = {
       },
       {
         name: 'Gruppenarbeit',
-        short: 'Tischinseln für 4–6 Kinder',
-        text: 'Mehrecktische lassen sich auf Rollen in wenigen Augenblicken zu großen Arbeitsinseln zusammenschieben und für Einzelarbeit wieder trennen.',
+        short: '4er-Inseln im Windrad',
+        text: 'Vier Tano-Tische fügen sich im Handumdrehen zu kompakten Viererinseln zusammen, an denen alle Kinder einander gegenübersitzen.',
         benefit: 'Schneller Wechsel zwischen Plenums- und Teamphasen ohne Lärm.',
         setup: 'Umbau in ca. 2 Minuten',
         product: 'VS Tano & PantoSwing-LuPo',
         topic: 'Gruppenarbeit (VS Tano)',
+      },
+      {
+        name: 'Projekttische',
+        short: '2 große 6er-Tafeln',
+        text: 'An der 18°-Schräge aneinandergestellt schließen sich die Tano-Tische zu zwei großen, geraden Projekttischen für je sechs Personen zusammen.',
+        benefit: 'Viel zusammenhängende Arbeitsfläche für Modelle, Plakate und Werkphasen.',
+        setup: 'Gerade Rechteckform durch Schrägstoß',
+        product: 'VS Tano & PantoSwing-LuPo',
+        topic: 'Projekttische (VS Tano)',
       },
       {
         name: 'Bewegtes Lernen',
@@ -265,11 +274,22 @@ const de = {
   vs: {
     direct: 'Direkt anfragen',
     kgTopic: 'Kindergarten-Ausstattung',
-    sample: 'Musterstuhl oder Beratung vor Ort anfragen',
+    sample: 'Beratung zu VS Möbel anfragen',
     sampleTopic: 'VS Möbel / Produktauswahl',
     catalogBadge: 'VS-Schulkatalog 2026',
-    catalogSub: 'Blättern Sie im aktuellen VS-Schulkatalog 2026 (PDF) oder lassen Sie sich von Simon einen Musterstuhl direkt an Ihre Schule mitbringen.',
+    catalogSub: 'Blättern Sie im aktuellen VS-Schulkatalog 2026 (PDF) oder besprechen Sie Ihr Raumkonzept direkt mit Simon.',
     catalogPdf: 'VS-Schulkatalog 2026 öffnen (PDF)',
+    jumper: {
+      kicker: 'Design · Jean Nouvel',
+      title: 'JUMPER von VS',
+      sub: 'Der Schulstuhl, der seinem Namen alle Ehre macht: sechs Größen nach EN 1729, als Vierbeiner, Freischwinger oder Drehstuhl.',
+      cta: 'Beratung zum JUMPER',
+      topic: 'VS JUMPER',
+      hint: 'Klick mich!',
+      button: 'JUMPER-Stuhl springen lassen',
+      says: ['Hopp!', 'Höher!', 'Salto!'],
+      alt: 'Gezeichneter JUMPER-Schulstuhl von VS in Ginstergelb, Vorderansicht',
+    },
   },
   stations: {
     phase: 'Phase',
@@ -283,7 +303,7 @@ const de = {
     ],
   },
   talk: {
-    directEyebrow: 'Ihr direkter Draht',
+    directEyebrow: 'Direkt zu Simon',
     directTitle: 'Rufen Sie mich einfach an.',
     call: 'Anrufen',
     mail: 'E-Mail schreiben',
@@ -298,20 +318,20 @@ const de = {
     quickTopics: [
       { label: 'Termin vor Ort', topic: 'Termin vor Ort' },
       { label: 'Neubau & Ausschreibung', topic: 'Neubau / Ausschreibung' },
-      { label: 'Musterstuhl testen', topic: 'Musterstuhl / Probesitzen' },
+      { label: 'Raumkonzept & Möbelauswahl', topic: 'Möbel / Produktauswahl' },
     ],
     mailSubject: (topic?: string) => (topic ? `Anfrage: ${topic}` : 'Anfrage über trias-schule.it'),
     photoAlt: (name: string) => `${name}, Ansprechpartner von Trias Schule`,
-    stepsHeading: 'So unkompliziert geht’s weiter:',
+    stepsHeading: 'So geht’s weiter:',
     steps: [
-      'Kurz schildern, worum es geht: vom einzelnen Raum bis zum Neubau oder zur Ausschreibung.',
-      'Auf Wunsch komme ich direkt an Ihre Schule, in den Kindergarten oder zur Gemeinde, gern mit Musterstuhl.',
-      'Gemeinsam mit unserem Team in Meran und Brixen erstellen wir Raumkonzept, Bemusterung oder klare LV-Unterlagen.',
+      'Erzählen Sie kurz, worum es geht: vom einzelnen Raum bis zum Neubau oder zur Ausschreibung.',
+      'Wenn es passt, schaue ich direkt bei Ihnen an der Schule, im Kindergarten oder in der Gemeinde vorbei.',
+      'Gemeinsam mit unserem Team in Meran und Brixen kümmern wir uns um Planung, Auswahl und Unterlagen für Ihre Ausschreibung.',
     ],
     direct: 'Lieber direkt per E-Mail?',
     you: 'Ihr Platz am Tisch',
     phaseContext: 'Projektphase',
-    responsePromise: 'Kurzer Weg, rasche Antwort. Direkt bei Simon.',
+    responsePromise: 'Kurzer Weg, schnelle Antwort. Ganz unkompliziert.',
     cardNote: 'Direktkontakt Südtirol',
   },
   form: {
@@ -330,10 +350,10 @@ const de = {
         prompt: 'Wir würden unsere Räume gerne gemeinsam vor Ort anschauen. ',
       },
       {
-        title: 'Probesitzen / Musterstuhl',
-        sub: 'VS-Stuhl kostenlos an der Schule testen',
-        topic: 'VS Möbel / Produktauswahl',
-        prompt: 'Wir möchten gerne einen VS-Musterstuhl zum Probesitzen an unserer Einrichtung testen. ',
+        title: 'Möbel & Produktauswahl',
+        sub: 'VS und weitere Hersteller für Ihren Raum',
+        topic: 'Möbel / Produktauswahl',
+        prompt: 'Wir möchten gerne die passenden Möbel für unsere Räume besprechen. ',
       },
       {
         title: 'Planung & Ausschreibung',
@@ -361,7 +381,7 @@ const de = {
   board: {
     wordmark: 'Trias Schule, zum Whiteboard',
     title: ['Lernräume', 'für Südtirol'],
-    description: ['Vom einzelnen Raum bis zum Neubau.', 'Seit über zehn Jahren im Land vor Ort,', 'geplant und montiert mit Möbeln von VS.'],
+    description: ['Vom einzelnen Raum bis zum Neubau.', 'Seit über zehn Jahren im Land vor Ort,', 'mit Möbeln von VS und weiteren Herstellern.'],
     cta: 'Projekt anfragen',
     second: 'oder erst Projekte ansehen',
     pathSr: 'Ihr Projektweg mit Trias Schule: Idee, Planung, Auswahl, Montage und Begleitung.',
@@ -455,13 +475,18 @@ const de = {
   },
   faq: {
     eyebrow: 'Häufige Fragen',
-    title: 'Kurz geklärt zu Planung, VS Möbel & Ablauf.',
+    title: 'Kurz geklärt zu Planung, Möbelauswahl & Ablauf.',
     lead: 'Die wichtigsten Antworten für Schulführungen, Kindergärten, Gemeinden und Planungsbüros in Südtirol.',
     items: [
       {
         question: 'Wer vertritt VS Möbel in Südtirol?',
         answer:
           'Trias Schule, ein Geschäftsbereich der Trias KG der Anders GmbH, ist Exklusivpartner von VS Vereinigte Spezialmöbelfabriken in Südtirol. Simon Brugger begleitet Schulen, Kindergärten und Gemeinden persönlich von den Standorten Meran und Brixen aus.',
+      },
+      {
+        question: 'Arbeitet Trias Schule nur mit VS Möbel?',
+        answer:
+          'Nein. VS ist unser Exklusivpartner in Südtirol, daneben arbeiten wir mit weiteren Möbelherstellern zusammen und haben deren Produkte im Sortiment. So stellen wir für jeden Raum, jedes Budget und jede Ausschreibung die passende Einrichtung zusammen, herstellerübergreifend und aus einer Hand.',
       },
       {
         question: 'Wie viele Schulen und Kindergärten hat Trias Schule bereits eingerichtet?',
@@ -471,7 +496,7 @@ const de = {
       {
         question: 'Wie läuft ein Einrichtungsprojekt ab, auch bei Ausschreibungen?',
         answer:
-          'Meist beginnt es mit einem persönlichen Termin vor Ort an der Schule, im Kindergarten oder direkt mit Gemeinde und Architekturbüro. Darauf folgen Raum- und Möblierungskonzept, auf Wunsch klare Leistungsverzeichnisse für Ausschreibungen, Bemusterung aus dem VS-System, termingerechte Montage durch unser eigenes Team und langfristige Betreuung danach.',
+          'Meist beginnt es mit einem persönlichen Termin vor Ort an der Schule, im Kindergarten oder direkt mit Gemeinde und Architekturbüro. Darauf folgen Raum- und Möblierungskonzept, auf Wunsch klare Leistungsverzeichnisse für Ausschreibungen, Bemusterung aus unserem Sortiment von VS und weiteren Herstellern, termingerechte Montage durch unser eigenes Team und langfristige Betreuung danach.',
       },
       {
         question: 'Erfüllen die VS-Schulmöbel die Normen EN 1729 und CAM für öffentliche Ausschreibungen?',
@@ -486,11 +511,12 @@ const de = {
       {
         question: 'Wo befinden sich die Standorte und wie erreicht man Trias Schule direkt?',
         answer:
-          'Trias ist in Meran (Romstraße 77, 39012 Meran) und Brixen (Julius-Durst-Straße 70, 39042 Brixen) vor Ort. Für Beratungen, Vor-Ort-Termine oder Musteranfragen erreichen Sie Simon Brugger direkt unter +39 338 9342398 oder simon.brugger@trias.it sowie unser Büro unter beratung@trias.it und +39 0472 971 206.',
+          'Trias ist in Meran (Romstraße 77, 39012 Meran) und Brixen (Julius-Durst-Straße 70, 39042 Brixen) vor Ort. Für Beratungen, Vor-Ort-Termine oder Projektanfragen erreichen Sie Simon direkt unter +39 338 9342398 oder simon.brugger@trias.it sowie unser Büro unter beratung@trias.it und +39 0472 971 206.',
       },
     ],
     ctas: [
-      { label: 'Musterstuhl oder VS-Beratung anfragen', topic: 'VS Möbel / Produktauswahl' },
+      { label: 'Beratung zu VS Möbel anfragen', topic: 'VS Möbel / Produktauswahl' },
+      { label: 'Möbelauswahl für Ihr Projekt besprechen', topic: 'Möbel / Produktauswahl' },
       { label: 'Passendes Referenzprojekt besprechen', topic: 'Referenzprojekt Südtirol' },
       { label: 'Ausschreibung oder Begehung klären', topic: 'Ausschreibung / Gemeindeprojekt' },
       { label: 'Unterlagen zu EN 1729, CAM oder Ausschreibung anfragen', topic: 'Normen / Ausschreibung (EN 1729 / CAM)' },
@@ -541,7 +567,7 @@ const it: LernraumCopy = {
     deliverables: [
       'Sopralluogo in Alto Adige',
       'Concetto di spazio e arredo',
-      'Scelta dal sistema VS',
+      'Scelta arredi: VS e altri produttori',
       'Ordine e montaggio a data fissa',
       'Un referente anche dopo la consegna',
     ],
@@ -560,7 +586,7 @@ const it: LernraumCopy = {
       {
         audience: 'Comune e committente',
         title: 'Affidabili in gara e in montaggio.',
-        text: 'Capitolati chiari, la qualità duratura di VS e una fornitura con montaggio ben coordinati, in accordo con il cronoprogramma dei lavori e le vacanze scolastiche.',
+        text: 'Capitolati chiari, la qualità duratura di VS e di altri produttori e una fornitura con montaggio ben coordinati, in accordo con il cronoprogramma dei lavori e le vacanze scolastiche.',
         deliverable: 'Capitolato e montaggio nelle vacanze',
         cta: 'Chiarire gara e tempi',
         phase: 3,
@@ -568,9 +594,9 @@ const it: LernraumCopy = {
       },
       {
         audience: 'Architettura e progettazione',
-        title: 'Progettazione con il sistema modulare VS.',
-        text: 'Traduciamo la vostra pianta in piani di arredo, zone e soluzioni acustiche concrete, come partner diretto di VS Möbel in Alto Adige.',
-        deliverable: 'Zonizzazione e campionatura VS',
+        title: 'Progettazione oltre i confini di marca.',
+        text: 'Traduciamo la vostra pianta in piani di arredo, zone e soluzioni acustiche concrete: come partner esclusivo di VS Möbel in Alto Adige e con altri produttori affidabili in assortimento.',
+        deliverable: 'Zonizzazione e campionatura',
         cta: 'Coordinare il progetto',
         phase: 1,
         topic: 'Progettazione / architettura',
@@ -583,8 +609,8 @@ const it: LernraumCopy = {
     note: '… e nell’ora successiva?',
     boardBadge: 'Provare dal vivo sulla pianta',
     title: 'Un’aula, tanti modi di imparare.',
-    intro: 'Un clic trasforma l’aula: gli stessi tavoli e le stesse sedie passano dalle file alla disposizione a U e alle isole di gruppo. Altri arredi VS creano spazio per il raccoglimento o il movimento.',
-    mobileIntro: 'Sette disposizioni per la lezione, il lavoro di gruppo e la concentrazione.',
+    intro: 'Un clic trasforma l’aula: scoprite quattro diverse disposizioni degli stessi dodici tavoli Tano e come altri arredi VS creano spazio per il raccoglimento o il movimento.',
+    mobileIntro: 'Otto disposizioni per la lezione, il lavoro di gruppo e la concentrazione.',
     expand: 'Esplora le disposizioni',
     collapse: 'Nascondi le disposizioni',
     previous: 'Disposizione precedente',
@@ -621,12 +647,21 @@ const it: LernraumCopy = {
       },
       {
         name: 'Lavoro di gruppo',
-        short: 'Isole per 4–6 bambini',
-        text: 'I tavoli poligonali su ruote si accostano in pochi istanti in grandi isole di lavoro e si separano di nuovo per il lavoro individuale.',
+        short: 'Isole compatte da 4',
+        text: 'Quattro tavoli Tano si uniscono in pochi istanti in isole compatte da quattro posti, dove ogni studente guarda i compagni.',
         benefit: 'Passaggio rapido e silenzioso tra plenaria e lavoro in squadra.',
         setup: 'Cambio in circa 2 minuti',
         product: 'VS Tano & PantoSwing-LuPo',
         topic: 'Lavoro di gruppo (VS Tano)',
+      },
+      {
+        name: 'Tavoli di progetto',
+        short: '2 grandi tavoli da 6',
+        text: 'Accostati lungo il lato inclinato di 18°, i tavoli Tano formano due grandi piani rettangolari dritti per sei persone ciascuno.',
+        benefit: 'Ampia superficie continua per cartelloni, modelli e laboratori di gruppo.',
+        setup: 'Piano rettangolare continuo',
+        product: 'VS Tano & PantoSwing-LuPo',
+        topic: 'Tavoli di progetto (VS Tano)',
       },
       {
         name: 'Imparare in movimento',
@@ -760,11 +795,22 @@ const it: LernraumCopy = {
   vs: {
     direct: 'Richiedere direttamente',
     kgTopic: 'Arredo per la scuola dell’infanzia',
-    sample: 'Richiedere una sedia campione o una consulenza sul posto',
+    sample: 'Richiedere una consulenza VS Möbel',
     sampleTopic: 'VS Möbel / scelta dei prodotti',
     catalogBadge: 'Catalogo scuola VS 2026',
-    catalogSub: 'Sfogliate il catalogo scuola VS 2026 (PDF) oppure fatevi portare da Simon una sedia campione direttamente a scuola.',
+    catalogSub: 'Sfogliate il catalogo scuola VS 2026 (PDF) oppure parlate del vostro progetto direttamente con Simon.',
     catalogPdf: 'Aprire il catalogo scuola VS 2026 (PDF)',
+    jumper: {
+      kicker: 'Design · Jean Nouvel',
+      title: 'JUMPER di VS',
+      sub: 'La sedia scolastica che fa onore al suo nome: sei misure secondo EN 1729, a quattro gambe, a slitta o girevole.',
+      cta: 'Consulenza sulla JUMPER',
+      topic: 'VS JUMPER',
+      hint: 'Cliccami!',
+      button: 'Far saltare la sedia JUMPER',
+      says: ['Hop!', 'Più in alto!', 'Salto!'],
+      alt: 'Sedia scolastica JUMPER di VS disegnata in giallo ginestra, vista frontale',
+    },
   },
   stations: {
     phase: 'Fase',
@@ -778,7 +824,7 @@ const it: LernraumCopy = {
     ],
   },
   talk: {
-    directEyebrow: 'Il vostro contatto diretto',
+    directEyebrow: 'Diretto a Simon',
     directTitle: 'Chiamatemi pure.',
     call: 'Chiamare',
     mail: 'Scrivere un’e-mail',
@@ -793,20 +839,20 @@ const it: LernraumCopy = {
     quickTopics: [
       { label: 'Incontro sul posto', topic: 'Incontro sul posto' },
       { label: 'Nuova scuola e gara', topic: 'Nuova scuola / gara d’appalto' },
-      { label: 'Sedia campione', topic: 'Sedia campione in prova' },
+      { label: 'Progetto e scelta arredi', topic: 'Arredi / scelta dei prodotti' },
     ],
     mailSubject: (topic?: string) => (topic ? `Richiesta: ${topic}` : 'Richiesta da trias-schule.it'),
     photoAlt: (name: string) => `${name}, referente di Trias Schule`,
-    stepsHeading: 'Ecco come proseguiamo, in modo semplice:',
+    stepsHeading: 'Ecco come proseguiamo:',
     steps: [
       'Raccontatemi in breve di cosa si tratta: dalla singola aula alla nuova scuola o alla gara d’appalto.',
-      'Su richiesta vengo direttamente nella vostra scuola, scuola dell’infanzia o in Comune, volentieri con una sedia campione.',
-      'Insieme al nostro team di Merano e Bressanone prepariamo progetto, campionatura o documenti chiari per il capitolato.',
+      'Quando vi fa comodo, passo volentieri da voi a scuola, alla scuola dell’infanzia o in Comune.',
+      'Insieme al nostro team di Merano e Bressanone ci occupiamo di progettazione, scelta degli arredi e documentazione di gara.',
     ],
     direct: 'Preferite scrivere direttamente?',
     you: 'Il vostro posto al tavolo',
     phaseContext: 'Fase del progetto',
-    responsePromise: 'Contatto diretto e risposta rapida, personalmente con Simon.',
+    responsePromise: 'Contatto diretto, risposta veloce. In tutta semplicità.',
     cardNote: 'Contatto diretto Alto Adige',
   },
   form: {
@@ -825,10 +871,10 @@ const it: LernraumCopy = {
         prompt: 'Vorremmo valutare i nostri spazi insieme a voi con un sopralluogo. ',
       },
       {
-        title: 'Sedia campione in prova',
-        sub: 'Provare gratuitamente una sedia VS a scuola',
-        topic: 'VS Möbel / scelta dei prodotti',
-        prompt: 'Vorremmo ricevere una sedia campione VS in prova presso la nostra struttura. ',
+        title: 'Arredi e scelta prodotti',
+        sub: 'VS e altri produttori per i vostri spazi',
+        topic: 'Arredi / scelta dei prodotti',
+        prompt: 'Vorremmo valutare insieme gli arredi adatti ai nostri spazi. ',
       },
       {
         title: 'Progetto e gara d’appalto',
@@ -856,7 +902,7 @@ const it: LernraumCopy = {
   board: {
     wordmark: 'Trias Schule, alla lavagna',
     title: ['Spazi per imparare', 'in Alto Adige'],
-    description: ['Dalla singola aula alla nuova scuola.', 'Da oltre dieci anni presenti sul territorio,', 'progetto e montaggio con i mobili di VS.'],
+    description: ['Dalla singola aula alla nuova scuola.', 'Da oltre dieci anni presenti sul territorio,', 'con arredi di VS e di altri produttori.'],
     cta: 'Richiedi un progetto',
     second: 'o prima guardare i progetti',
     pathSr: 'Il vostro percorso di progetto con Trias Schule: idea, progettazione, scelta, montaggio e assistenza.',
@@ -949,13 +995,18 @@ const it: LernraumCopy = {
   },
   faq: {
     eyebrow: 'Domande frequenti',
-    title: 'Risposte rapide su progettazione, mobili VS e tempi.',
+    title: 'Risposte rapide su progettazione, scelta arredi e tempi.',
     lead: 'Le informazioni principali per direzioni scolastiche, scuole dell’infanzia, Comuni e studi di architettura in Alto Adige.',
     items: [
       {
         question: 'Chi rappresenta VS Möbel in Alto Adige?',
         answer:
           'Trias Schule, un settore di Trias KG der Anders GmbH, è rappresentanza esclusiva di VS Vereinigte Spezialmöbelfabriken in Alto Adige. Simon Brugger segue personalmente scuole, scuole dell’infanzia e Comuni dalle sedi di Merano e Bressanone.',
+      },
+      {
+        question: 'Trias Schule lavora solo con VS Möbel?',
+        answer:
+          'No. VS è il nostro partner esclusivo in Alto Adige, ma collaboriamo anche con altri produttori di arredi e abbiamo i loro prodotti in assortimento. Così componiamo per ogni spazio, budget e gara l’arredo più adatto, senza vincoli di marca e da un unico interlocutore.',
       },
       {
         question: 'Quante scuole e scuole dell’infanzia ha già arredato Trias Schule?',
@@ -965,7 +1016,7 @@ const it: LernraumCopy = {
       {
         question: 'Come si svolge un progetto di arredo, anche in caso di gara d’appalto?',
         answer:
-          'Di norma si inizia con un incontro personale sul posto a scuola, alla scuola dell’infanzia o direttamente con Comune e studio di architettura. Seguono il concetto di spazio e arredo, su richiesta capitolati chiari per gare pubbliche, la campionatura dal sistema VS, il montaggio puntuale con la nostra squadra interna e l’assistenza nel tempo.',
+          'Di norma si inizia con un incontro personale sul posto a scuola, alla scuola dell’infanzia o direttamente con Comune e studio di architettura. Seguono il concetto di spazio e arredo, su richiesta capitolati chiari per gare pubbliche, la campionatura dal nostro assortimento di VS e di altri produttori, il montaggio puntuale con la nostra squadra interna e l’assistenza nel tempo.',
       },
       {
         question: 'Gli arredi scolastici VS rispettano la norma EN 1729 e i criteri CAM per le gare pubbliche?',
@@ -980,11 +1031,12 @@ const it: LernraumCopy = {
       {
         question: 'Dove si trovano le sedi e come contattare direttamente Trias Schule?',
         answer:
-          'Trias è presente a Merano (Via Roma 77, 39012 Merano) e Bressanone (Via Julius Durst 70, 39042 Bressanone). Per consulenze, sopralluoghi o campioni potete contattare direttamente Simon Brugger al +39 338 9342398 o a simon.brugger@trias.it, oppure l’ufficio a beratung@trias.it e al +39 0472 971 206.',
+          'Trias è presente a Merano (Via Roma 77, 39012 Merano) e Bressanone (Via Julius Durst 70, 39042 Bressanone). Per consulenze, sopralluoghi o richieste di progetto potete contattare direttamente Simon al +39 338 9342398 o a simon.brugger@trias.it, oppure l’ufficio a beratung@trias.it e al +39 0472 971 206.',
       },
     ],
     ctas: [
-      { label: 'Richiedere sedia campione o consulenza VS', topic: 'VS Möbel / scelta dei prodotti' },
+      { label: 'Richiedere una consulenza VS Möbel', topic: 'VS Möbel / scelta dei prodotti' },
+      { label: 'Parlare della scelta degli arredi', topic: 'Arredi / scelta dei prodotti' },
       { label: 'Parlare di un progetto di riferimento adatto', topic: 'Progetto di riferimento Alto Adige' },
       { label: 'Chiarire gara d’appalto o sopralluogo', topic: 'Gara d’appalto / progetto comunale' },
       { label: 'Richiedere documentazione EN 1729, CAM o capitolato', topic: 'Normative / gara pubblica (EN 1729 / CAM)' },
