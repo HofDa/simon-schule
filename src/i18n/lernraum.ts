@@ -11,7 +11,7 @@ import type { Lang } from './ui';
 const de = {
   narrative: {
     eyebrow: 'Warum kein Lernraum wie der andere ist',
-    title: 'Ein Lernraum beginnt nicht im Möbelkatalog – sondern im Alltag.',
+    title: 'Ein Lernraum beginnt nicht im Möbelkatalog, sondern im Alltag.',
     tensionLabel: 'Die Realität vor Ort',
     tensionText:
       'Zwischen Morgenkreis, ruhiger Einzelarbeit und Gruppenphase wechseln Räume heute mehrmals am Tag. Gleichzeitig müssen Gemeindebudgets, Ausschreibungen und kurze Sommerferien-Fenster exakt zusammenpassen. Einzelne Möbel von der Stange lösen diesen Spagat selten.',
@@ -19,13 +19,13 @@ const de = {
     answerText:
       'Wir starten nicht beim Prospekt, sondern bei den Menschen im Raum. Vom ersten Gespräch vor Ort über Grundrissplanung und Leistungsverzeichnis bis zur pünktlichen Montage begleiten Simon Brugger und unser Team aus Meran und Brixen Ihr Projekt aus einer Hand.',
     proof: {
-      countLabel: 'eingerichtete Bildungsräume & Einrichtungen in Südtirol – von Grund- und Mittelschulen bis zu Kindergärten und Bibliotheken',
+      countLabel: 'eingerichtete Bildungsräume & Einrichtungen in Südtirol, von Grund- und Mittelschulen bis zu Kindergärten und Bibliotheken',
       projectsCta: 'Referenzschulen ansehen',
       localTitle: 'Meran & Brixen',
       localBadge: 'HOUSE70 · Brixen & Meran',
       localText: 'persönliche Beratung vor Ort, Bemusterung im Haus und eigenes Montageteam in ganz Südtirol',
       vsTitle: 'VS Möbel',
-      vsText: 'Exklusivpartner in Südtirol – modulare Systeme für bewegtes Lernen, Rückzug und offene Lernlandschaften',
+      vsText: 'Exklusivpartner in Südtirol: modulare Systeme für bewegtes Lernen, Rückzug und offene Lernlandschaften',
       vsCta: 'VS-System & Katalog',
     },
     bridgeLead: 'Wie sieht das konkret aus, wenn ein einziger Raum sich innerhalb von zwei Minuten verwandelt?',
@@ -64,7 +64,7 @@ const de = {
       {
         audience: 'Gemeinde & Auftraggeber',
         title: 'Verlässlich in Ausschreibung & Montage.',
-        text: 'Klare Leistungsverzeichnisse, langlebige VS-Qualität und eine sauber koordinierte Lieferung und Montage – abgestimmt auf Bauzeitpläne und Schulferien.',
+        text: 'Klare Leistungsverzeichnisse, langlebige VS-Qualität und eine sauber koordinierte Lieferung und Montage, abgestimmt auf Bauzeitpläne und Schulferien.',
         deliverable: 'Leistungsverzeichnis & Ferienmontage',
         cta: 'Ausschreibung & Ablauf klären',
         phase: 3,
@@ -73,7 +73,7 @@ const de = {
       {
         audience: 'Architektur & Planung',
         title: 'Fachplanung mit dem VS-Systembaukasten.',
-        text: 'Wir übersetzen Ihren Grundriss in konkrete Möblierungspläne, Zonierungen und Akustiklösungen – als direkter Südtiroler Partner von VS Möbel.',
+        text: 'Wir übersetzen Ihren Grundriss in konkrete Möblierungspläne, Zonierungen und Akustiklösungen, als direkter Südtiroler Partner von VS Möbel.',
         deliverable: 'CAD-Zonierung & VS-Bemusterung',
         cta: 'Planung abstimmen',
         phase: 1,
@@ -87,7 +87,7 @@ const de = {
     note: '… und in der nächsten Stunde?',
     boardBadge: 'Live am Grundriss testen',
     title: 'Ein Raum, viele Arten zu lernen.',
-    intro: 'Ein Klick stellt den Raum um: Sehen Sie, wie dieselben Tische und Stühle von Reihen zur offenen U-Form und zu Gruppeninseln wechseln – und wie weitere VS-Möbel Raum für Rückzug oder Bewegung schaffen.',
+    intro: 'Ein Klick stellt den Raum um: Sehen Sie, wie dieselben Tische und Stühle von Reihen zur offenen U-Form und zu Gruppeninseln wechseln und wie weitere VS-Möbel Raum für Rückzug oder Bewegung schaffen.',
     mobileIntro: 'Sieben Aufstellungen für Unterricht, Gruppenarbeit und Rückzug.',
     expand: 'Raumaufstellungen ansehen',
     collapse: 'Raumaufstellungen ausblenden',
@@ -98,7 +98,7 @@ const de = {
     step: 'Aufstellung',
     benefit: 'Mehrwert im Alltag',
     system: 'VS-Systembaukasten',
-    reserve: 'Für Ihr Projekt vormerken',
+    reserve: 'Mit Simon besprechen',
     referencesLink: 'Eingerichtete Schulen in Südtirol ansehen',
     next: (name: string) => `Nächste Aufstellung (${name})`,
     alt: (name: string, product: string) => `Isometrische Darstellung: ${name} mit ${product}`,
@@ -135,7 +135,7 @@ const de = {
       {
         name: 'Bewegtes Lernen',
         short: 'Sitzen, Stehen & Wippen',
-        text: 'Freiformtische und bewegliche Wackelhocker fördern den natürlichen Haltungswechsel – Kinder bleiben wacher und konzentrierter.',
+        text: 'Freiformtische und bewegliche Wackelhocker fördern den natürlichen Haltungswechsel. Kinder bleiben wacher und konzentrierter.',
         benefit: 'Körperliche Aktivität wird Teil des Unterrichts, statt ihn zu stören.',
         setup: 'Frei kombinierbare Kurvenform',
         product: 'VS Puzzle & Hokki',
@@ -162,7 +162,7 @@ const de = {
       {
         name: 'Lernen am Boden',
         short: 'Matten, Teppiche & Sitzrollen',
-        text: 'Polstermatten, Teppiche und Rückenrollen machen den Boden zum vollwertigen Lern- und Spielort – im Kindergarten ebenso wie in der Grundschule.',
+        text: 'Polstermatten, Teppiche und Rückenrollen machen den Boden zum vollwertigen Lern- und Spielort, im Kindergarten ebenso wie in der Grundschule.',
         benefit: 'Auf Augenhöhe mit den Kindern, schnell verstaut wenn Platz gebraucht wird.',
         setup: 'Stapel- & rollbar',
         product: 'VS Shift+ Landscape Boden',
@@ -187,7 +187,7 @@ const de = {
       lernlandschaft: 'ms-sterzing',
     } as Record<string, string>,
     referencesTitle: 'Ausgewählte Referenzprojekte in Südtirol',
-    referencesSub: 'Einblicke in eingerichtete Schulen, Kindergärten und Bibliotheken – klicken Sie auf ein Projekt, um die Fotos anzusehen.',
+    referencesSub: 'Einblicke aus Südtiroler Schulen, Kindergärten und Bibliotheken, vom einzelnen Klassenraum bis zur Gesamteinrichtung im Neubau.',
     photosCount: (n: number) => `${n} Fotos`,
     referenceHighlights: {
       'gs-gais': 'U-Form, offene Lernzone & Fenstersitze',
@@ -209,7 +209,7 @@ const de = {
         pins: [
           { title: 'Dynamisches Sitzen', detail: 'Freischwingende Schalenstühle geben bei Gewichtsverlagerung nach und unterstützen langes Konzentrieren.' },
           { title: 'Leichte Einzeltische', detail: 'Lassen sich ohne Kraftaufwand von Reihen zu Gruppeninseln oder einem freien Stuhlkreis umstellen.' },
-          { title: 'Freie Raummitte & Sichtachsen', detail: 'Stauraum und Medien rücken an die Wand – der Raum bleibt offen für Bewegung und Wechsel.' },
+          { title: 'Freie Raummitte & Sichtachsen', detail: 'Stauraum und Medien rücken an die Wand. So bleibt der Raum offen für Bewegung und Wechsel.' },
         ],
       },
       'kindergarten-spielraum': {
@@ -235,9 +235,9 @@ const de = {
   voices: {
     eyebrow: 'Stimmen aus der Praxis',
     title: 'Was Kunden & Partner über uns sagen.',
-    lead: 'Echte Briefe von Schuldirektionen, Kindergärten, Architekturbüros und unserem Partner VS – Wort für Wort aus unserer Feedback-Runde.',
+    lead: 'Rückmeldungen von Schuldirektionen, Kindergärten, Architekturbüros und unserem Partner VS aus langjähriger Zusammenarbeit in Südtirol.',
     tags: [
-      'Schuldirektion · >10 Jahre Partner',
+      'Schuldirektion · über 10 Jahre',
       'Schuldirektion · Beratung & Tempo',
       'Architektur · Neue Lernkonzepte',
       'Kindergarten · Montage & Team',
@@ -268,7 +268,7 @@ const de = {
     sample: 'Musterstuhl oder Beratung vor Ort anfragen',
     sampleTopic: 'VS Möbel / Produktauswahl',
     catalogBadge: 'VS-Schulkatalog 2026',
-    catalogSub: 'Blättern Sie im aktuellen VS-Schulkatalog 2026 (PDF) oder bestellen Sie ein Musterstück zum Probesitzen an Ihre Schule.',
+    catalogSub: 'Blättern Sie im aktuellen VS-Schulkatalog 2026 (PDF) oder lassen Sie sich von Simon einen Musterstuhl direkt an Ihre Schule mitbringen.',
     catalogPdf: 'VS-Schulkatalog 2026 öffnen (PDF)',
   },
   stations: {
@@ -296,22 +296,22 @@ const de = {
     clearTopic: 'Thema entfernen',
     quickTopicsLabel: 'Betreff für E-Mail vorbereiten',
     quickTopics: [
-      { label: 'Vor-Ort-Begehung', topic: 'Vor-Ort-Begehung' },
+      { label: 'Termin vor Ort', topic: 'Termin vor Ort' },
+      { label: 'Neubau & Ausschreibung', topic: 'Neubau / Ausschreibung' },
       { label: 'Musterstuhl testen', topic: 'Musterstuhl / Probesitzen' },
-      { label: 'Ausschreibung', topic: 'Ausschreibung / Gemeindeprojekt' },
     ],
     mailSubject: (topic?: string) => (topic ? `Anfrage: ${topic}` : 'Anfrage über trias-schule.it'),
     photoAlt: (name: string) => `${name}, Ansprechpartner von Trias Schule`,
-    stepsHeading: 'Was nach Ihrem Anruf oder Ihrer E-Mail passiert:',
+    stepsHeading: 'So unkompliziert geht’s weiter:',
     steps: [
-      'Simon Brugger hört sich persönlich an, worum es geht – ganz ohne Formular.',
-      'Auf Wunsch kommen wir direkt an Ihre Schule, in Ihren Kindergarten oder in die Gemeinde nach Südtirol.',
-      'Gemeinsam klären wir Raumbedarf, VS-Bemusterung oder die nächsten Schritte für Ihre Ausschreibung.',
+      'Kurz schildern, worum es geht: vom einzelnen Raum bis zum Neubau oder zur Ausschreibung.',
+      'Auf Wunsch komme ich direkt an Ihre Schule, in den Kindergarten oder zur Gemeinde, gern mit Musterstuhl.',
+      'Gemeinsam mit unserem Team in Meran und Brixen erstellen wir Raumkonzept, Bemusterung oder klare LV-Unterlagen.',
     ],
     direct: 'Lieber direkt per E-Mail?',
     you: 'Ihr Platz am Tisch',
     phaseContext: 'Projektphase',
-    responsePromise: 'Persönliche Rückmeldung in der Regel innerhalb von 1 Werktag',
+    responsePromise: 'Kurzer Weg, rasche Antwort. Direkt bei Simon.',
     cardNote: 'Direktkontakt Südtirol',
   },
   form: {
@@ -361,7 +361,7 @@ const de = {
   board: {
     wordmark: 'Trias Schule, zum Whiteboard',
     title: ['Lernräume', 'für Südtirol'],
-    description: ['Schule und Kindergarten einrichten.', 'Persönlich begleitet. Von der ersten Idee', 'bis zur Montage. Mit Möbeln von VS.'],
+    description: ['Vom einzelnen Raum bis zum Neubau.', 'Seit über zehn Jahren im Land vor Ort,', 'geplant und montiert mit Möbeln von VS.'],
     cta: 'Projekt anfragen',
     second: 'oder erst Projekte ansehen',
     pathSr: 'Ihr Projektweg mit Trias Schule: Idee, Planung, Auswahl, Montage und Begleitung.',
@@ -408,7 +408,7 @@ const de = {
     arrowHint: 'Das Lineal anklicken und vom Startpunkt zum Ziel ziehen, um einen geraden Pfeil zu zeichnen. Beim Loslassen bleibt der Pfeil auf dem Board. Das Lineal erneut anklicken oder Escape drücken, um wieder zu navigieren. Der Schwamm löscht auch die Pfeile.',
     reader: { back: 'Zurück zum Whiteboard', page: 'Im Seitenverlauf ansehen', topics: 'Weitere Themen auf dem Whiteboard' },
     topics: { leistungen: 'Leistungen', lernformen: 'Lernformen', projekte: 'Schule & Kindergarten', menschen: 'Ansprechpartner', 'vs-moebel': 'VS Möbel', phasen: 'Ihr Projektweg', kontakt: 'Kontakt' },
-    card: { eyebrow: 'Ihr Ansprechpartner', magnet: 'Ansprechpartner', leadNote: 'Direkt zu Simon', note: 'Persönlich für Sie da.', cta: 'Projekt anfragen', portrait: (name: string) => `Porträt von ${name}` },
+    card: { eyebrow: 'Ihr Ansprechpartner', magnet: 'Ansprechpartner', leadNote: 'Direkt zu Simon', note: 'Im ganzen Land vor Ort.', cta: 'Projekt anfragen', portrait: (name: string) => `Porträt von ${name}` },
     feedback: {
       magnet: 'Feedback',
       move: 'Feedback-Magnet verschieben',
@@ -461,22 +461,22 @@ const de = {
       {
         question: 'Wer vertritt VS Möbel in Südtirol?',
         answer:
-          'Trias Schule – ein Geschäftsbereich der Trias KG der Anders GmbH – ist Exklusivpartner von VS Vereinigte Spezialmöbelfabriken in Südtirol. Simon Brugger begleitet Schulen, Kindergärten und Gemeinden persönlich von den Standorten Meran und Brixen aus.',
+          'Trias Schule, ein Geschäftsbereich der Trias KG der Anders GmbH, ist Exklusivpartner von VS Vereinigte Spezialmöbelfabriken in Südtirol. Simon Brugger begleitet Schulen, Kindergärten und Gemeinden persönlich von den Standorten Meran und Brixen aus.',
       },
       {
         question: 'Wie viele Schulen und Kindergärten hat Trias Schule bereits eingerichtet?',
         answer:
-          'Zwischen 2015 und 2026 hat Trias 234 Bildungseinrichtungen in ganz Südtirol eingerichtet: 112 Grundschulen, 53 Mittelschulen, 23 Oberschulen, 23 Berufs- & Fachschulen, 15 Kindergärten, 5 Kitas sowie 3 Bibliotheken – unter anderem in Meran, Brixen, Leifers, Lana, Sterzing, Sarnthein, Gais, Gsies, Tisens, Riffian und Terlan.',
+          'Zwischen 2015 und 2026 hat Trias 234 Bildungseinrichtungen in ganz Südtirol eingerichtet: 112 Grundschulen, 53 Mittelschulen, 23 Oberschulen, 23 Berufs- & Fachschulen, 15 Kindergärten, 5 Kitas sowie 3 Bibliotheken, unter anderem in Meran, Brixen, Leifers, Lana, Sterzing, Sarnthein, Gais, Gsies, Tisens, Riffian und Terlan.',
       },
       {
-        question: 'Wie läuft ein Einrichtungsprojekt – auch bei Ausschreibungen – ab?',
+        question: 'Wie läuft ein Einrichtungsprojekt ab, auch bei Ausschreibungen?',
         answer:
-          'Jedes Projekt beginnt mit einer Vor-Ort-Begehung in Südtirol. Darauf folgen Raum- und Möblierungskonzept sowie bei Bedarf klare Leistungsverzeichnisse für Gemeinden und Ausschreibungen, die Auswahl aus dem VS-Systembaukasten mit Bemusterung, termingerechte Montage und feste Betreuung danach.',
+          'Meist beginnt es mit einem persönlichen Termin vor Ort an der Schule, im Kindergarten oder direkt mit Gemeinde und Architekturbüro. Darauf folgen Raum- und Möblierungskonzept, auf Wunsch klare Leistungsverzeichnisse für Ausschreibungen, Bemusterung aus dem VS-System, termingerechte Montage durch unser eigenes Team und langfristige Betreuung danach.',
       },
       {
         question: 'Erfüllen die VS-Schulmöbel die Normen EN 1729 und CAM für öffentliche Ausschreibungen?',
         answer:
-          'Ja. Schulstühle und Schülertische von VS sind nach DIN EN 1729 ergonomisch abgestuft und zertifiziert (unter anderem GS und Blauer Engel) und erfüllen die Anforderungen an öffentliche Ausschreibungen in Italien – einschließlich CAM-Kriterien (Criteri Ambientali Minimi) sowie Ausschreibungsunterlagen für Südtiroler Gemeinden und das Landesportal ISOV.',
+          'Ja. Schulstühle und Schülertische von VS sind nach DIN EN 1729 ergonomisch abgestuft und zertifiziert (unter anderem GS und Blauer Engel) und erfüllen die Anforderungen an öffentliche Ausschreibungen in Italien, einschließlich CAM-Kriterien (Criteri Ambientali Minimi) sowie Ausschreibungsunterlagen für Südtiroler Gemeinden und das Landesportal ISOV.',
       },
       {
         question: 'Wann findet die Montage statt und lassen sich bestehende Möbel integrieren?',
@@ -507,7 +507,7 @@ export type LernraumCopy = typeof de;
 const it: LernraumCopy = {
   narrative: {
     eyebrow: 'Perché nessuno spazio per imparare è uguale all’altro',
-    title: 'Uno spazio per imparare non nasce da un catalogo – ma dalla vita di ogni giorno.',
+    title: 'Uno spazio per imparare non nasce da un catalogo, ma dalla vita di ogni giorno.',
     tensionLabel: 'La realtà quotidiana',
     tensionText:
       'Tra cerchio del mattino, lavoro individuale silenzioso e fasi di gruppo, oggi gli spazi cambiano uso più volte al giorno. Allo stesso tempo devono combaciare budget comunali, gare d’appalto e finestre brevi delle vacanze estive. Ordinare singoli mobili a catalogo risolve raramente questo equilibrio.',
@@ -515,13 +515,13 @@ const it: LernraumCopy = {
     answerText:
       'Non partiamo dal prospetto, ma dalle persone che vivono l’aula. Dal primo sopralluogo ai piani d’arredo e al capitolato fino al montaggio puntuale, Simon Brugger e il nostro team di Merano e Bressanone seguono il progetto da un unico referente.',
     proof: {
-      countLabel: 'strutture formative arredate in Alto Adige – dalle scuole primarie e medie fino a scuole dell’infanzia e biblioteche',
+      countLabel: 'strutture formative arredate in Alto Adige, dalle scuole primarie e medie fino a scuole dell’infanzia e biblioteche',
       projectsCta: 'Vedere le scuole di riferimento',
       localTitle: 'Merano e Bressanone',
       localBadge: 'HOUSE70 · Bressanone e Merano',
       localText: 'consulenza personale sul posto, campionatura dedicata e squadra di montaggio interna in tutto l’Alto Adige',
       vsTitle: 'VS Möbel',
-      vsText: 'partner esclusivo in Alto Adige – sistemi modulari per movimento, raccoglimento e paesaggi didattici',
+      vsText: 'partner esclusivo in Alto Adige: sistemi modulari per movimento, raccoglimento e paesaggi didattici',
       vsCta: 'Sistema e catalogo VS',
     },
     bridgeLead: 'Come funziona concretamente quando una sola aula cambia assetto in due minuti?',
@@ -594,7 +594,7 @@ const it: LernraumCopy = {
     step: 'Disposizione',
     benefit: 'Vantaggio quotidiano',
     system: 'Sistema modulare VS',
-    reserve: 'Segnare per il vostro progetto',
+    reserve: 'Parlarne con Simon',
     referencesLink: 'Vedere le scuole arredate in Alto Adige',
     next: (name: string) => `Disposizione successiva (${name})`,
     alt: (name: string, product: string) => `Vista isometrica: ${name} con ${product}`,
@@ -683,7 +683,7 @@ const it: LernraumCopy = {
       lernlandschaft: 'ms-sterzing',
     },
     referencesTitle: 'Progetti di riferimento selezionati in Alto Adige',
-    referencesSub: 'Uno sguardo a scuole, scuole dell’infanzia e biblioteche arredate – cliccate su un progetto per vedere le foto.',
+    referencesSub: 'Uno sguardo a scuole, scuole dell’infanzia e biblioteche in Alto Adige, dalla singola aula all’arredo completo di nuovi edifici.',
     photosCount: (n: number) => `${n} foto`,
     referenceHighlights: {
       'gs-gais': 'Disposizione a U, area aperta e sedute alla finestra',
@@ -731,9 +731,9 @@ const it: LernraumCopy = {
   voices: {
     eyebrow: 'Voci dalla pratica',
     title: 'Cosa dicono di noi clienti e partner.',
-    lead: 'Lettere reali di direzioni scolastiche, scuole dell’infanzia, architetti e del nostro partner VS – parola per parola.',
+    lead: 'Pareri di direzioni scolastiche, scuole dell’infanzia, studi di architettura e del nostro partner VS, frutto di anni di collaborazione in Alto Adige.',
     tags: [
-      'Direzione scolastica · >10 anni partner',
+      'Direzione scolastica · oltre 10 anni',
       'Direzione scolastica · Consulenza e rapidità',
       'Architettura · Nuovi concetti didattici',
       'Scuola dell’infanzia · Montaggio e team',
@@ -763,7 +763,7 @@ const it: LernraumCopy = {
     sample: 'Richiedere una sedia campione o una consulenza sul posto',
     sampleTopic: 'VS Möbel / scelta dei prodotti',
     catalogBadge: 'Catalogo scuola VS 2026',
-    catalogSub: 'Sfogliate il catalogo scuola VS 2026 (PDF) o richiedete un campione in prova nella vostra scuola.',
+    catalogSub: 'Sfogliate il catalogo scuola VS 2026 (PDF) oppure fatevi portare da Simon una sedia campione direttamente a scuola.',
     catalogPdf: 'Aprire il catalogo scuola VS 2026 (PDF)',
   },
   stations: {
@@ -791,22 +791,22 @@ const it: LernraumCopy = {
     clearTopic: 'Rimuovere il tema',
     quickTopicsLabel: 'Preparare l’oggetto dell’e-mail',
     quickTopics: [
-      { label: 'Sopralluogo', topic: 'Sopralluogo' },
+      { label: 'Incontro sul posto', topic: 'Incontro sul posto' },
+      { label: 'Nuova scuola e gara', topic: 'Nuova scuola / gara d’appalto' },
       { label: 'Sedia campione', topic: 'Sedia campione in prova' },
-      { label: 'Gara d’appalto', topic: 'Gara d’appalto / progetto comunale' },
     ],
     mailSubject: (topic?: string) => (topic ? `Richiesta: ${topic}` : 'Richiesta da trias-schule.it'),
     photoAlt: (name: string) => `${name}, referente di Trias Schule`,
-    stepsHeading: 'Che cosa succede dopo la vostra chiamata o e-mail:',
+    stepsHeading: 'Ecco come proseguiamo, in modo semplice:',
     steps: [
-      'Simon Brugger ascolta personalmente di che cosa si tratta, senza alcun modulo.',
-      'Se lo desiderate veniamo direttamente nella vostra scuola, scuola dell’infanzia o nel vostro Comune, in tutto l’Alto Adige.',
-      'Insieme chiariamo il fabbisogno di spazi, la campionatura VS o i prossimi passi per la vostra gara.',
+      'Raccontatemi in breve di cosa si tratta: dalla singola aula alla nuova scuola o alla gara d’appalto.',
+      'Su richiesta vengo direttamente nella vostra scuola, scuola dell’infanzia o in Comune, volentieri con una sedia campione.',
+      'Insieme al nostro team di Merano e Bressanone prepariamo progetto, campionatura o documenti chiari per il capitolato.',
     ],
     direct: 'Preferite scrivere direttamente?',
     you: 'Il vostro posto al tavolo',
     phaseContext: 'Fase del progetto',
-    responsePromise: 'Risposta personale di norma entro 1 giorno lavorativo',
+    responsePromise: 'Contatto diretto e risposta rapida, personalmente con Simon.',
     cardNote: 'Contatto diretto Alto Adige',
   },
   form: {
@@ -854,12 +854,12 @@ const it: LernraumCopy = {
   },
   nav: { board: 'Lavagna', toBoard: 'Alla lavagna', backToBoard: 'Torna alla lavagna' },
   board: {
-    wordmark: 'Trias Scuola, alla lavagna',
+    wordmark: 'Trias Schule, alla lavagna',
     title: ['Spazi per imparare', 'in Alto Adige'],
-    description: ['Arredare scuole e scuole dell’infanzia.', 'Seguiti personalmente. Dalla prima idea', 'al montaggio. Con i mobili di VS.'],
+    description: ['Dalla singola aula alla nuova scuola.', 'Da oltre dieci anni presenti sul territorio,', 'progetto e montaggio con i mobili di VS.'],
     cta: 'Richiedi un progetto',
     second: 'o prima guardare i progetti',
-    pathSr: 'Il vostro percorso di progetto con Trias Scuola: idea, progettazione, scelta, montaggio e assistenza.',
+    pathSr: 'Il vostro percorso di progetto con Trias Schule: idea, progettazione, scelta, montaggio e assistenza.',
     steps: ['Idea', 'Progetto', 'Scelta', 'Montaggio'],
     objects: 'Da scoprire sulla lavagna',
     house: {
@@ -903,7 +903,7 @@ const it: LernraumCopy = {
     arrowHint: 'Cliccare il righello e trascinare dal punto di partenza alla destinazione per disegnare una freccia diritta. Al rilascio la freccia resta sulla lavagna. Cliccare di nuovo il righello o premere Esc per tornare a navigare. La spugna cancella anche le frecce.',
     reader: { back: 'Torna alla lavagna', page: 'Vedere nella pagina', topics: 'Altri temi sulla lavagna' },
     topics: { leistungen: 'Servizi', lernformen: 'Modi di imparare', projekte: 'Scuola e infanzia', menschen: 'Referente', 'vs-moebel': 'VS Möbel', phasen: 'Il vostro percorso', kontakt: 'Contatto' },
-    card: { eyebrow: 'Il vostro referente', magnet: 'Referente', leadNote: 'Diretto a Simon', note: 'Personalmente a vostra disposizione.', cta: 'Richiedi un progetto', portrait: (name: string) => `Ritratto di ${name}` },
+    card: { eyebrow: 'Il vostro referente', magnet: 'Referente', leadNote: 'Diretto a Simon', note: 'Sul posto in tutto l’Alto Adige.', cta: 'Richiedi un progetto', portrait: (name: string) => `Ritratto di ${name}` },
     feedback: {
       magnet: 'Feedback',
       move: 'Spostare il magnete del feedback',
@@ -955,17 +955,17 @@ const it: LernraumCopy = {
       {
         question: 'Chi rappresenta VS Möbel in Alto Adige?',
         answer:
-          'Trias Schule – un settore di Trias KG der Anders GmbH – è rappresentanza esclusiva di VS Vereinigte Spezialmöbelfabriken in Alto Adige. Simon Brugger segue personalmente scuole, scuole dell’infanzia e Comuni dalle sedi di Merano e Bressanone.',
+          'Trias Schule, un settore di Trias KG der Anders GmbH, è rappresentanza esclusiva di VS Vereinigte Spezialmöbelfabriken in Alto Adige. Simon Brugger segue personalmente scuole, scuole dell’infanzia e Comuni dalle sedi di Merano e Bressanone.',
       },
       {
         question: 'Quante scuole e scuole dell’infanzia ha già arredato Trias Schule?',
         answer:
-          'Tra il 2015 e il 2026 Trias ha arredato 234 strutture formative in tutto l’Alto Adige: 112 scuole primarie, 53 scuole medie, 23 scuole superiori, 23 scuole professionali e di specializzazione, 15 scuole dell’infanzia, 5 asili nido e 3 biblioteche – tra cui a Merano, Bressanone, Laives, Lana, Vipiteno, Sarentino, Gais, Casies, Tesimo, Rifiano e Terlano.',
+          'Tra il 2015 e il 2026 Trias ha arredato 234 strutture formative in tutto l’Alto Adige: 112 scuole primarie, 53 scuole medie, 23 scuole superiori, 23 scuole professionali e di specializzazione, 15 scuole dell’infanzia, 5 asili nido e 3 biblioteche, tra cui a Merano, Bressanone, Laives, Lana, Vipiteno, Sarentino, Gais, Casies, Tesimo, Rifiano e Terlano.',
       },
       {
         question: 'Come si svolge un progetto di arredo, anche in caso di gara d’appalto?',
         answer:
-          'Ogni progetto inizia con un sopralluogo in Alto Adige. Seguono il concetto di spazio e arredo (e, su richiesta, capitolati chiari per Comuni e gare pubbliche), la scelta dal sistema modulare VS con campionatura, la consegna e il montaggio puntuale e l’assistenza diretta anche dopo la consegna.',
+          'Di norma si inizia con un incontro personale sul posto a scuola, alla scuola dell’infanzia o direttamente con Comune e studio di architettura. Seguono il concetto di spazio e arredo, su richiesta capitolati chiari per gare pubbliche, la campionatura dal sistema VS, il montaggio puntuale con la nostra squadra interna e l’assistenza nel tempo.',
       },
       {
         question: 'Gli arredi scolastici VS rispettano la norma EN 1729 e i criteri CAM per le gare pubbliche?',

@@ -9,19 +9,19 @@ export interface Service {
 }
 
 const de: Service[] = [
-  { title: 'Beratung vor Ort', text: 'Simon Brugger kommt zu Ihnen – überall in Südtirol.' },
-  { title: 'Planung', text: 'Raumaufteilung, Ergonomie und Akustik – mit klaren Unterlagen.' },
-  { title: 'VS Möbel', text: 'Langlebige Tische, Stühle und Stauraum – gern mit Musterstuhl zum Probesitzen.' },
-  { title: 'Lieferung & Montage', text: 'Unser eigenes Team liefert zum Termin und baut bezugsfertig auf.' },
-  { title: 'Betreuung im Land', text: 'Aus Meran und Brixen auch Jahre später für Sie da.' },
+  { title: 'Beratung vor Ort', text: 'Simon Brugger kennt den Schulalltag im Land aus erster Hand und kommt persönlich zu Ihnen.' },
+  { title: 'Planung', text: 'Raumkonzepte, Grundrisse und klare Unterlagen, auch für Gemeinden, Architekten und Ausschreibungen.' },
+  { title: 'VS Möbel', text: 'Durchdachte Systeme für Unterricht, Ganztag und Rückzug, gern mit Musterstuhl zum Probesitzen.' },
+  { title: 'Lieferung & Montage', text: 'Unser eigenes Team baut sauber und termingerecht auf, abgestimmt auf Bauzeiten und Ferien.' },
+  { title: 'Betreuung im Land', text: 'Aus Meran und Brixen auch Jahre später erreichbar, für Erweiterungen, Nachbestellungen und neue Bauabschnitte.' },
 ];
 
 const it: Service[] = [
-  { title: 'Consulenza sul posto', text: 'Simon Brugger viene da voi, ovunque in Alto Adige.' },
-  { title: 'Progettazione', text: 'Distribuzione degli spazi, ergonomia e acustica, con documenti chiari.' },
-  { title: 'VS Möbel', text: 'Tavoli, sedie e contenitori durevoli, anche con sedia campione da provare.' },
-  { title: 'Consegna e montaggio', text: 'La nostra squadra consegna alla data concordata e monta tutto pronto all’uso.' },
-  { title: 'Assistenza sul territorio', text: 'Da Merano e Bressanone restiamo a disposizione anche anni dopo.' },
+  { title: 'Consulenza sul posto', text: 'Simon Brugger conosce da vicino la realtà delle scuole in Alto Adige e viene personalmente da voi.' },
+  { title: 'Progettazione', text: 'Concetti di spazio, piante e documenti chiari, anche per Comuni, architetti e gare d’appalto.' },
+  { title: 'VS Möbel', text: 'Sistemi studiati per la lezione, il tempo pieno e la concentrazione, anche con sedia campione in prova.' },
+  { title: 'Consegna e montaggio', text: 'La nostra squadra interna monta con cura e puntualità, in accordo con il cantiere e le vacanze.' },
+  { title: 'Assistenza sul territorio', text: 'Da Merano e Bressanone sempre raggiungibili anche anni dopo, per ampliamenti, riordini e nuovi lotti.' },
 ];
 
 export const servicesFor = (lang: Lang): Service[] => (lang === 'de' ? de : it);

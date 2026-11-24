@@ -4,8 +4,8 @@ import type { Lang } from '../i18n/ui';
 export const experience = {
   period: '2015–2026',
   heading: {
-    de: 'Von uns eingerichtete Einrichtungen',
-    it: 'Strutture arredate da noi',
+    de: 'Einrichtungen in Südtirol',
+    it: 'Strutture in Alto Adige',
   } satisfies Record<Lang, string>,
   categories: [
     { count: 112, label: { de: 'Grundschulen', it: 'Scuole primarie' } },

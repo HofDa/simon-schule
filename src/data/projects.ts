@@ -107,7 +107,7 @@ const sources: ProjectSource[] = [
     type: { de: 'Kindergarten', it: 'Scuola dell’infanzia' },
     services: [service.concept, service.sampling, service.furnishing, service.assembly],
     description: {
-      de: 'Geschützte Bodeninseln, kippsichere Sitzmöbel und offene Regale, die Kinder selbstständig erreichen – für Morgenkreis, Freispiel und ruhige Rückzugsorte im Kindergarten.',
+      de: 'Geschützte Bodeninseln, kippsichere Sitzmöbel und offene Regale, die Kinder selbstständig erreichen. Ideal für Morgenkreis, Freispiel und ruhige Rückzugsorte im Kindergarten.',
       it: 'Isole morbide a pavimento, sedute antiribaltamento e scaffali aperti a portata di bambino, per il cerchio del mattino, il gioco libero e i momenti di quiete.',
     },
     images: [
@@ -137,7 +137,7 @@ const sources: ProjectSource[] = [
     type: { de: 'Schule & Ganztag', it: 'Scuola e tempo pieno' },
     services: [service.consulting, service.planning, service.furnishing, service.assembly],
     description: {
-      de: 'Tischinseln für gemeinsames Arbeiten, abgeschirmte Plätze für konzentrierte Phasen und klare Laufwege – damit offene Flächen ruhig und strukturiert funktionieren.',
+      de: 'Tischinseln für gemeinsames Arbeiten, abgeschirmte Plätze für konzentrierte Phasen und klare Laufwege, damit offene Flächen ruhig und strukturiert funktionieren.',
       it: 'Isole di tavoli per lavorare insieme, zone schermate per la concentrazione e percorsi chiari per far funzionare gli spazi aperti con ordine e tranquillità.',
     },
     images: [

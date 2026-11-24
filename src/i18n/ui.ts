@@ -48,9 +48,9 @@ const de = {
   },
   hero: {
     headline: 'Lernräume für Südtirol.',
-    sub: 'Trias Schule ist in ganz Südtirol bekannt als verlässlicher Partner für die Einrichtung von Schulen und Kindergärten. Persönlich betreut von Simon Brugger – von der Planung bis zur pünktlichen Montage, mit Möbeln von VS.',
+    sub: 'Seit über zehn Jahren richtet Trias Schule Schulen, Kindergärten und Bildungseinrichtungen in ganz Südtirol ein. Vom einzelnen Raum bis zum Neubau, persönlich betreut von Simon Brugger mit Möbeln von VS.',
     /** the short line under the handwritten claim (Whiteboard) */
-    subShort: 'Wir richten Schulen und Kindergärten in ganz Südtirol ein – persönlich betreut von Simon Brugger, von der Planung bis zur Montage, mit Möbeln von VS.',
+    subShort: 'Vom einzelnen Raum bis zum Neubau: Wir richten Schulen und Kindergärten in ganz Südtirol ein, persönlich betreut von Simon Brugger und mit Möbeln von VS.',
     primary: 'Raumlösungen ansehen',
     secondary: 'Projekt anfragen',
     notes: { flex: 'Flexibilität', acoustics: 'Akustik?', groups: 'Gruppenarbeit' },
@@ -63,7 +63,7 @@ const de = {
   services: {
     title: 'So läuft ein Projekt mit uns.',
     intro:
-      'Am Anfang steht ein Gespräch vor Ort: Wer nutzt den Raum, wofür und zu welchen Zeiten? Daraus entsteht der Plan. Danach liefern und montieren wir.',
+      'Ob einzelner Klassenraum, Umbau oder ganzer Schulneubau: Am Anfang steht ein Termin vor Ort. Daraus entstehen Raumkonzept, klare Unterlagen und eine termingerechte Montage.',
     step: 'Schritt',
     of: 'von',
     plan: { title: 'Grundriss', zones: ['Gruppentische', 'Ruhe', 'Sitzkreis'], later: 'und später?' },
@@ -77,7 +77,7 @@ const de = {
   },
   projects: {
     title: 'Raumlösungen für Schule, Kindergarten und mehr',
-    sub: 'Wie zeitgemäße Lern- und Gruppenräume in Südtirol funktionieren – geplant, geliefert und montiert von Trias Schule mit Systemmöbeln von VS.',
+    sub: 'Wie zeitgemäße Lern- und Gruppenräume in Südtirol funktionieren: geplant, geliefert und montiert von Trias Schule mit Systemmöbeln von VS.',
     placeholder: 'Raumlösung · VS Möbel',
     meta: { location: 'Ort', type: 'Bereich', services: 'Leistungen', year: 'Jahr', architect: 'Architektur', client: 'Auftraggeber' },
   },
@@ -98,7 +98,7 @@ const de = {
   },
   people: {
     title: 'Ein verlässlicher Partner im Land.',
-    intro: 'Gemeinden, Direktionen und Architekturbüros in ganz Südtirol schätzen kurze Wege und Handschlagqualität. Simon Brugger begleitet Ihr Projekt persönlich – vom ersten Gespräch vor Ort bis weit nach der Montage.',
+    intro: 'Gemeinden, Direktionen und Architekturbüros in ganz Südtirol schätzen kurze Wege und Handschlagqualität. Simon Brugger begleitet Ihr Projekt persönlich, vom ersten Gespräch vor Ort bis weit nach der Montage.',
     portraitAlt: (name: string) => `Portrait von ${name}`,
     teamTitle: 'Trias Meran & Brixen',
     teamRole: 'Planung, Bemusterung & eigenes Montageteam in ganz Südtirol',
@@ -113,7 +113,7 @@ const de = {
   },
   vs: {
     title: 'Möbel für Schulen und Kindergärten in Bewegung.',
-    intro: 'Als Exklusivvertretung von VS Möbel in Südtirol verbinden wir eines der führenden europäischen Möbelsysteme für Bildungsbauten mit regionaler Planung und eigener Montage.',
+    intro: 'Als langjähriger Exklusivpartner von VS Möbel in Südtirol verbinden wir bewährte Schul- und Kindergartenmöbel mit durchdachter Planung, Ausschreibungskompetenz und eigener Montage.',
     caption: 'Schulstuhl von VS in Ginstergelb · schematische Darstellung',
     newTab: '(öffnet vs.de in neuem Tab)',
     all: 'Gesamtes VS Sortiment entdecken',
@@ -129,7 +129,7 @@ const de = {
   },
   contact: {
     title: 'Sprechen wir über Ihre Schule oder Ihren Kindergarten.',
-    lead: 'Ein Anruf oder eine kurze E-Mail genügt. Simon Brugger kümmert sich persönlich um Ihr Projekt.',
+    lead: 'Ob einzelner Raum, Umbau oder Schulneubau: Ein kurzer Anruf oder eine Mail genügt. Simon Brugger kommt persönlich bei Ihnen vorbei.',
     chat: '… und die Gruppentische ans Fenster?',
     cta: 'Projekt anfragen',
     call: 'Direkt anrufen',
@@ -153,7 +153,7 @@ const de = {
     /** Whiteboard form: an extra choice next to the phases, for orders without a project */
     orderOption: 'Bestellung / Nachbestellung',
     /** Whiteboard form: e-mail or phone is enough */
-    reach: { hint: 'E-Mail oder Telefon – eines von beiden genügt.', error: 'Bitte eine gültige E-Mail-Adresse oder eine Telefonnummer angeben, damit wir Sie erreichen.', callback: '(für einen Rückruf)' },
+    reach: { hint: 'E-Mail oder Telefon: eines von beiden genügt.', error: 'Bitte eine gültige E-Mail-Adresse oder eine Telefonnummer angeben, damit wir Sie erreichen.', callback: '(für einen Rückruf)' },
     reassure: 'Unverbindlich. Simon Brugger meldet sich persönlich bei Ihnen.',
     submit: 'Anfrage senden',
     status: {
@@ -225,9 +225,9 @@ const it: UI = {
   },
   hero: {
     headline: 'Spazi per imparare in Alto Adige.',
-    sub: 'Trias Schule è il partner affidabile in tutto l’Alto Adige per l’arredo di scuole e scuole dell’infanzia. Con Simon Brugger seguiamo il vostro progetto dalla consulenza al montaggio puntuale, con i mobili di VS.',
+    sub: 'Da oltre dieci anni Trias Schule arreda scuole, scuole dell’infanzia e strutture formative in tutto l’Alto Adige. Dalla singola aula alla nuova scuola, seguiti personalmente da Simon Brugger con i mobili di VS.',
     /** the short line under the handwritten claim (Whiteboard) */
-    subShort: 'Arrediamo scuole e scuole dell’infanzia in tutto l’Alto Adige – seguiti personalmente da Simon Brugger, dalla progettazione al montaggio, con i mobili di VS.',
+    subShort: 'Dalla singola aula alla nuova scuola: arrediamo scuole e scuole dell’infanzia in tutto l’Alto Adige, seguiti personalmente da Simon Brugger e con i mobili di VS.',
     primary: 'Vedi le soluzioni',
     secondary: 'Richiedi un progetto',
     notes: { flex: 'Flessibilità', acoustics: 'Acustica?', groups: 'Lavoro di gruppo' },
@@ -240,7 +240,7 @@ const it: UI = {
   services: {
     title: 'Come funziona un progetto con noi.',
     intro:
-      'Tutto inizia con un incontro sul posto: chi usa lo spazio, per cosa e in quali orari? Da lì nasce il progetto. Poi consegniamo e montiamo.',
+      'Che si tratti di una singola aula, di una ristrutturazione o di una nuova scuola: tutto inizia con un incontro sul posto. Da lì nascono il progetto, documenti chiari e un montaggio puntuale.',
     step: 'Passo',
     of: 'di',
     plan: { title: 'Pianta', zones: ['Tavoli di gruppo', 'Quiete', 'Cerchio'], later: 'e più avanti?' },
@@ -254,7 +254,7 @@ const it: UI = {
   },
   projects: {
     title: 'Soluzioni per scuola, infanzia e altro',
-    sub: 'Come funzionano spazi moderni per scuole e scuole dell’infanzia in Alto Adige – progettati, forniti e montati da Trias Schule con i mobili di VS.',
+    sub: 'Come funzionano spazi moderni per scuole e scuole dell’infanzia in Alto Adige: progettati, forniti e montati da Trias Schule con i mobili di VS.',
     placeholder: 'Soluzione · VS Möbel',
     meta: { location: 'Luogo', type: 'Ambito', services: 'Servizi', year: 'Anno', architect: 'Architettura', client: 'Committente' },
   },
@@ -289,7 +289,7 @@ const it: UI = {
   },
   vs: {
     title: 'Mobili per scuole e scuole dell’infanzia in movimento.',
-    intro: 'Come rappresentanza esclusiva di VS Möbel in Alto Adige uniamo uno dei principali sistemi europei per l’edilizia scolastica alla progettazione locale e al montaggio interno.',
+    intro: 'Come storico partner esclusivo di VS Möbel in Alto Adige uniamo arredi collaudati per scuole e scuole dell’infanzia a progettazione dedicata, competenza nelle gare e montaggio interno.',
     caption: 'Sedia scolastica VS in giallo ginestra · rappresentazione schematica',
     newTab: '(apre vs.de in una nuova scheda)',
     all: 'Scopri l’assortimento VS completo',
@@ -304,7 +304,7 @@ const it: UI = {
   },
   contact: {
     title: 'Parliamo della vostra scuola o scuola dell’infanzia.',
-    lead: 'Basta una telefonata o una breve e-mail. Simon Brugger segue personalmente il vostro progetto.',
+    lead: 'Che si tratti di una singola aula, di una ristrutturazione o di una nuova scuola: basta una chiamata o una breve e-mail. Simon Brugger passa volentieri di persona.',
     chat: '… e i tavoli di gruppo vicino alla finestra?',
     cta: 'Richiedi un progetto',
     call: 'Chiamateci',
