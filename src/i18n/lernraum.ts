@@ -233,7 +233,7 @@ const de = {
     } as Record<string, { topic: string; callout: string; pins: { title: string; detail: string }[] }>,
   },
   voices: {
-    eyebrow: 'Stimmen aus der Praxis',
+    eyebrow: 'Feedback',
     title: 'Was Kunden & Partner über uns sagen.',
     lead: 'Rückmeldungen von Schuldirektionen, Kindergärten, Architekturbüros und unserem Partner VS aus langjähriger Zusammenarbeit in Südtirol.',
     tags: [
@@ -729,7 +729,7 @@ const it: LernraumCopy = {
     },
   },
   voices: {
-    eyebrow: 'Voci dalla pratica',
+    eyebrow: 'Feedback',
     title: 'Cosa dicono di noi clienti e partner.',
     lead: 'Pareri di direzioni scolastiche, scuole dell’infanzia, studi di architettura e del nostro partner VS, frutto di anni di collaborazione in Alto Adige.',
     tags: [
