@@ -24,7 +24,7 @@ const symbols: StepKind[] = ['pen', 'plan', 'chair', 'hammer', 'phone'];
 
     <ol class="desks" data-lr-desks>
       {services.map((service, index) => (
-        <li class="desk" style={`--wb-d: ${index * 80}ms`} data-wb-reveal>
+        <li class="desk" style={`--wb-d: ${index * 70}ms; --step-d: ${560 + index * 660}ms`} data-wb-reveal>
           <div class="desk-art" aria-hidden="true">
             <StepSymbol kind={symbols[index]} />
           </div>
@@ -92,37 +92,106 @@ const symbols: StepKind[] = ['pen', 'plan', 'chair', 'hammer', 'phone'];
       transform: scale(1.1);
     }
 
-    /* each symbol does its job once when it comes into view: the pen writes, the hammer strikes, the phone rings */
+    /* Sequential 1 -> 5 choreography after the strip enters:
+       1 pen writes -> 2 plan furnishes -> 3 VS chair rocks -> 4 hammer strikes -> 5 phone rings */
+    .desk.is-in .desk-n {
+      animation: step-badge-pulse 520ms cubic-bezier(0.34, 1.55, 0.64, 1) var(--step-d, 560ms) 1;
+    }
+
+    /* 1. Beratung vor Ort: pen glides across notepad drawing the ink scribble */
     :global(html.js) .desk:not(.is-in) :global(.scribble) { stroke-dasharray: 1; stroke-dashoffset: 1; }
     .desk.is-in :global(.scribble) {
       stroke-dasharray: 1;
-      animation: step-write 900ms var(--ease-draw) calc(var(--wb-d, 0ms) + 350ms) both;
+      animation: step-write 740ms var(--ease-draw) var(--step-d, 560ms) both;
     }
     .desk.is-in :global(.pen) {
       transform-origin: 60px 96px;
-      animation: step-pen 900ms ease-in-out calc(var(--wb-d, 0ms) + 350ms) both;
+      animation: step-pen 740ms ease-in-out var(--step-d, 560ms) both;
     }
+
+    /* 2. Planung: blueprint furniture pieces pop into place one by one */
+    :global(html.js) .desk:not(.is-in) :global(.plan-item) { opacity: 0; scale: 0.2; }
+    .desk.is-in :global(.plan-item-1) { animation: step-plan-pop 340ms cubic-bezier(0.34, 1.55, 0.64, 1) calc(var(--step-d, 1220ms) + 0ms) both; }
+    .desk.is-in :global(.plan-item-2) { animation: step-plan-pop 340ms cubic-bezier(0.34, 1.55, 0.64, 1) calc(var(--step-d, 1220ms) + 120ms) both; }
+    .desk.is-in :global(.plan-item-3) { animation: step-plan-pop 340ms cubic-bezier(0.34, 1.55, 0.64, 1) calc(var(--step-d, 1220ms) + 240ms) both; }
+    .desk.is-in :global(.plan-item-4) { animation: step-plan-pop 340ms cubic-bezier(0.34, 1.55, 0.64, 1) calc(var(--step-d, 1220ms) + 360ms) both; }
+
+    /* 3. VS Möbel: school chair gives a lively ergonomic rock/bounce */
+    .desk.is-in :global(.chair-body) {
+      transform-origin: 80px 112px;
+      animation: step-chair-rock 720ms cubic-bezier(0.28, 0.85, 0.35, 1) var(--step-d, 1880ms) both;
+    }
+
+    /* 4. Lieferung & Montage: hammer strikes twice, driving the nail with sparks */
     .desk.is-in :global(.hammer) {
       transform-origin: 34px 104px;
-      animation: step-strike 520ms ease-in calc(var(--wb-d, 0ms) + 350ms) 2 both;
+      animation: step-strike 380ms ease-in var(--step-d, 2540ms) 2 both;
     }
+    .desk.is-in :global(.nail) {
+      animation: step-nail 760ms ease-out var(--step-d, 2540ms) both;
+    }
+    .desk.is-in :global(.impact) {
+      transform-origin: 118px 86px;
+      animation: step-spark 380ms ease-out var(--step-d, 2540ms) 2 both;
+    }
+
+    /* 5. Betreuung im Land: handset rings twice while sound waves ripple out */
     .desk.is-in :global(.handset) {
       transform-origin: 70px 66px;
-      animation: step-ring 700ms ease-in-out calc(var(--wb-d, 0ms) + 350ms) 2 both;
+      animation: step-ring 420ms ease-in-out var(--step-d, 3200ms) 2 both;
+    }
+    .desk.is-in :global(.wave-1) {
+      transform-origin: 88px 54px;
+      animation: step-wave 420ms ease-out var(--step-d, 3200ms) 2 both;
+    }
+    .desk.is-in :global(.wave-2) {
+      transform-origin: 88px 54px;
+      animation: step-wave 420ms ease-out calc(var(--step-d, 3200ms) + 90ms) 2 both;
+    }
+
+    @keyframes step-badge-pulse {
+      0%, 100% { transform: scale(1); }
+      45% { transform: scale(1.22); }
     }
     @keyframes step-write { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
     @keyframes step-pen {
       0% { translate: -30px 0; }
       100% { translate: 0 0; }
     }
+    @keyframes step-plan-pop {
+      0% { opacity: 0; scale: 0.2; }
+      100% { opacity: 1; scale: 1; }
+    }
+    @keyframes step-chair-rock {
+      0%, 100% { rotate: 0deg; translate: 0 0; }
+      22% { rotate: -6deg; translate: 0 -4px; }
+      52% { rotate: 4.5deg; translate: 0 -2px; }
+      78% { rotate: -1.8deg; translate: 0 0; }
+    }
     @keyframes step-strike {
       0%, 100% { rotate: 0deg; }
-      45% { rotate: -16deg; }
+      48% { rotate: -18deg; }
+      82% { rotate: 2deg; }
+    }
+    @keyframes step-nail {
+      0%, 38% { translate: 0 -3px; }
+      44%, 85% { translate: 0 -1.5px; }
+      92%, 100% { translate: 0 0; }
+    }
+    @keyframes step-spark {
+      0%, 70% { opacity: 0.2; scale: 0.7; }
+      85% { opacity: 1; scale: 1.15; }
+      100% { opacity: 1; scale: 1; }
     }
     @keyframes step-ring {
       0%, 100% { rotate: 0deg; }
-      20%, 60% { rotate: -7deg; }
-      40%, 80% { rotate: 7deg; }
+      20%, 60% { rotate: -8deg; }
+      40%, 80% { rotate: 8deg; }
+    }
+    @keyframes step-wave {
+      0% { opacity: 0.25; scale: 0.85; }
+      50% { opacity: 1; scale: 1.12; }
+      100% { opacity: 1; scale: 1; }
     }
   }
 
@@ -137,7 +206,7 @@ const symbols: StepKind[] = ['pen', 'plan', 'chair', 'hammer', 'phone'];
 
   @media (max-width: 639px) {
     .desks { grid-template-columns: 1fr; gap: 22px; }
-    .desk { flex-direction: row; align-items: flex-start; gap: 14px; }
+    .desk { --step-d: 320ms !important; flex-direction: row; align-items: flex-start; gap: 14px; }
     .desk-art { flex: none; width: 76px; margin: 0; }
     .desk-card { flex: 1; min-width: 0; margin-top: 0; }
   }
@@ -163,6 +232,19 @@ const symbols: StepKind[] = ['pen', 'plan', 'chair', 'hammer', 'phone'];
 
   const section = document.querySelector<HTMLElement>('[data-lr-services]');
   if (section) {
-    revealOnce(section.querySelectorAll('[data-wb-reveal]'));
+    const head = section.querySelector<HTMLElement>('.head[data-wb-reveal]');
+    const list = section.querySelector<HTMLElement>('[data-lr-desks]');
+    const desks = Array.from(section.querySelectorAll<HTMLElement>('.desk[data-wb-reveal]'));
+    if (head) revealOnce([head]);
+    if (list && desks.length) {
+      if (window.matchMedia('(min-width: 640px)').matches) {
+        // Horizontal strip: trigger all 5 together on entry so steps 1 -> 5 animate strictly sequentially.
+        revealOnce([list], '0px 0px -10% 0px', () => {
+          desks.forEach((desk) => desk.classList.add('is-in'));
+        });
+      } else {
+        revealOnce(desks);
+      }
+    }
   }
 </script>

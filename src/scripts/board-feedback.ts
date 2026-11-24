@@ -56,7 +56,7 @@ if (board && canvas && item) {
     letter.classList.toggle('is-paging', paging);
   };
 
-  const setOpen = (next: boolean, restoreFocus = true) => {
+  const setOpen = (next: boolean, restoreFocus = true, notify = false) => {
     if (next === open) return;
     open = next;
     if (open) {
@@ -72,14 +72,15 @@ if (board && canvas && item) {
     } else {
       window.setTimeout(() => { if (!open) letter.classList.remove('is-live', 'is-paging'); }, reduceMotion.matches ? 0 : 900);
       if (restoreFocus) openButton.focus({ preventScroll: true });
+      if (notify && desktop.matches) board.dispatchEvent(new CustomEvent('whiteboard:feedback-closed'));
     }
   };
 
   openButton.addEventListener('click', () => setOpen(true));
   item.querySelector('[data-feedback-caption]')?.addEventListener('click', () => setOpen(true));
-  closeButton.addEventListener('click', () => setOpen(false));
+  closeButton.addEventListener('click', () => setOpen(false, true, true));
   inquire?.addEventListener('click', () => setOpen(false, false));
-  backdrop?.addEventListener('click', () => setOpen(false));
+  backdrop?.addEventListener('click', () => setOpen(false, true, true));
   item.querySelectorAll<HTMLButtonElement>('[data-feedback-step]').forEach((button) =>
     button.addEventListener('click', () => show(index + Number(button.dataset.feedbackStep), true)),
   );
@@ -88,7 +89,7 @@ if (board && canvas && item) {
     if (!open) return;
     if (event.key === 'Escape') {
       event.preventDefault();
-      setOpen(false);
+      setOpen(false, true, true);
     } else if ((event.key === 'ArrowRight' || event.key === 'ArrowLeft') && item.contains(document.activeElement)) {
       event.preventDefault();
       show(index + (event.key === 'ArrowRight' ? 1 : -1), true);

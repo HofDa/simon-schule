@@ -33,14 +33,14 @@ const { kind } = Astro.props;
 
   {kind === 'plan' && (
     <g>
-      <g transform="rotate(-4 74 62)">
+      <g class="plan-sheet" transform="rotate(-4 74 62)">
         <rect class="blueprint" x="20" y="24" width="104" height="78" rx="2" />
         <path class="wall" d="M34 36 H110 V90 H34 Z M74 36 V58 M74 72 V90 M34 64 H54" />
-        <path class="door" d="M74 58 A14 14 0 0 1 88 72" />
-        <circle class="ginster" cx="50" cy="50" r="6" />
-        <rect class="ginster" x="86" y="44" width="16" height="9" rx="1.5" />
-        <rect class="ginster" x="86" y="76" width="16" height="9" rx="1.5" />
-        <rect class="ginster" x="42" y="74" width="20" height="9" rx="1.5" />
+        <path class="door" pathLength="1" d="M74 58 A14 14 0 0 1 88 72" />
+        <circle class="ginster plan-item plan-item-1" cx="50" cy="50" r="6" />
+        <rect class="ginster plan-item plan-item-2" x="86" y="44" width="16" height="9" rx="1.5" />
+        <rect class="ginster plan-item plan-item-3" x="42" y="74" width="20" height="9" rx="1.5" />
+        <rect class="ginster plan-item plan-item-4" x="86" y="76" width="16" height="9" rx="1.5" />
       </g>
       <rect class="roll" x="120" y="18" width="18" height="88" rx="9" />
       <ellipse class="roll-end" cx="129" cy="20" rx="9" ry="3.5" />
@@ -48,7 +48,7 @@ const { kind } = Astro.props;
   )}
 
   {kind === 'chair' && (
-    <g>
+    <g class="chair-body">
       <path class="chair-legs" d="M54 74 L48 112 M106 74 L112 112 M64 78 L66 104 M96 78 L94 104" />
       <path class="chair-post" d="M80 56 V66" />
       <path class="ginster" fill-rule="evenodd" d="M52 12 H108 Q116 12 115 21 L111 50 Q109 58 100 58 H60 Q51 58 49 50 L45 21 Q44 12 52 12 Z M72 24 A8 5 0 1 0 88 24 A8 5 0 1 0 72 24 Z" />
@@ -61,8 +61,10 @@ const { kind } = Astro.props;
       <!-- a plank with a nail half driven in, sparks where the face meets it -->
       <rect class="plank" x="86" y="96" width="64" height="12" rx="2" />
       <path class="plank-grain" d="M94 101 H112 M120 104 H142 M100 106 H108" />
-      <path class="nail-shaft" d="M118 88 V97" />
-      <rect class="steel" x="111" y="85" width="14" height="4" rx="1.2" />
+      <g class="nail">
+        <path class="nail-shaft" d="M118 88 V97" />
+        <rect class="steel" x="111" y="85" width="14" height="4" rx="1.2" />
+      </g>
       <path class="impact" d="M104 90 L97 91 M131 81 L137 76 M133 89 L140 90" />
       <!-- drawn upright (handle end at 60 113, face to the right), then turned onto the nail -->
       <g class="hammer"><g transform="translate(-26 -9) rotate(55 60 113)">
@@ -81,7 +83,8 @@ const { kind } = Astro.props;
 
   {kind === 'phone' && (
     <g>
-      <path class="waves" d="M90 30 A22 22 0 0 1 112 52 M92 16 A36 36 0 0 1 126 50" />
+      <path class="waves wave-1" d="M90 30 A22 22 0 0 1 112 52" />
+      <path class="waves wave-2" d="M92 16 A36 36 0 0 1 126 50" />
       <g class="handset">
         <path class="ginster" d="M48 28 C40 28 32 38 34 52 C38 78 60 100 86 104 C98 106 108 98 108 90 V82 C108 78 104 75 100 75 H88 C84 75 81 77 80 82 C68 78 60 70 56 60 C61 58 63 56 63 51 V39 C63 34 59 28 54 28 Z" />
       </g>
@@ -120,5 +123,6 @@ const { kind } = Astro.props;
   .steel-edge { fill: none; stroke: #6f7472; stroke-width: 1.4; stroke-linecap: round; }
   .steel-shine { fill: none; stroke: #fff; stroke-opacity: 0.7; stroke-width: 2; stroke-linecap: round; }
 
-  .pen, .hammer, .handset, .waves, .impact { transform-box: view-box; }
+  .pen, .hammer, .handset, .waves, .impact, .chair-body, .nail { transform-box: view-box; }
+  .plan-item { transform-box: fill-box; transform-origin: center; }
 </style>

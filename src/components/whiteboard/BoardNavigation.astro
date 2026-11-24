@@ -8,7 +8,7 @@ import ResponsiveImage from './ResponsiveImage.astro';
 import { trias } from '../../data/site';
 import { experience } from '../../data/experience';
 import vsLogoMagnet from '../../assets/whiteboard/vs-logo-kitchen-magnet.webp';
-import vsCatalogCover from '../../assets/whiteboard/vs-school-catalog-cover-2026.webp';
+import vsCatalogCover from '../../assets/whiteboard/vs-school-catalog-cover-2026-nomark.webp';
 import vsCatalogInsideCover from '../../assets/whiteboard/vs-school-catalog-inside-cover-2026.webp';
 import vsCatalogFirstPage from '../../assets/whiteboard/vs-school-catalog-first-page-2026.webp';
 import '../../styles/board-navigation.css';
@@ -21,7 +21,7 @@ const lang = getLang(Astro.currentLocale);
 const t = useTranslations(lang);
 const B = lernraumCopy(lang).board;
 const totalFacilities = experience.categories.reduce((sum, category) => sum + category.count, 0);
-const proofLines = B.proofNote(totalFacilities);
+const proofText = B.proofNote(totalFacilities);
 
 // Taken off the board for now: the Leistungen note, Lernformen, Ansprechpartner, Kontakt and the Projektweg timeline.
 // Set to true to put them back (their sections stay reachable from the reader's topic links).
@@ -32,10 +32,10 @@ const hasLearning = isHome(Astro.url.pathname, lang) || /\/(lernraum|whiteboard-
 const vsSchoolCatalog = 'https://web-media.vs.de/file/p1/pdf/45-057-49_V2026-01_DE_Basics--Der-Katalog-fuer-die-Schule.archiv.pdf';
 // whiteboard marker colours for the pen and the ruler's arrows; the first is the default
 const penPalette = [
-  { key: 'black', value: '#20201d' },
-  { key: 'blue', value: '#2b4f9e' },
-  { key: 'red', value: '#c23a2c' },
-  { key: 'green', value: '#2f7a4c' },
+  { key: 'ink', value: '#20201d' },
+  { key: 'ginster', value: '#e2a300' },
+  { key: 'ochre', value: '#8a6300' },
+  { key: 'navy', value: '#22305f' },
 ] as const;
 const penColors = penPalette.map((entry, i) => ({ ...entry, name: B.tools.colourNames[i] }));
 const topics = (['projekte', ...(hasLearning ? ['lernformen'] : []), 'leistungen', 'vs-moebel', 'kontakt'] as (keyof typeof B.topics)[]).map((id) => ({ id, label: B.topics[id] }));
@@ -52,7 +52,7 @@ const topics = (['projekte', ...(hasLearning ? ['lernformen'] : []), 'leistungen
             <span class="board-parent-arrow" aria-hidden="true">↗</span>
           </a>
         </div>
-        <h1 id="board-title" class="board-title">{B.title[0]}<br />{B.title[1]}<span>.</span></h1>
+        <h1 id="board-title" class="board-title" data-board-title>{B.title[0]}<br /><span class="board-title-line2" data-board-title-line2>{B.title[1]}</span></h1>
         <p class="board-description">{B.description[0]}<br />{' '}{B.description[1]}<br />{' '}{B.description[2]}</p>
         <div class="board-cta" data-path-node="1">
           <a class="board-cta-main" href="#anfrage" data-open-form>{B.cta} <span aria-hidden="true">→</span></a>
@@ -80,7 +80,7 @@ const topics = (['projekte', ...(hasLearning ? ['lernformen'] : []), 'leistungen
                 <path d="m78 30 9 8 21-18" stroke-width="3" />
               </svg>
               <span class="note-title">Von der Idee<br />zum fertigen Raum.</span>
-              <span class="object-caption">Unsere Leistungen <span aria-hidden="true">↗</span></span>
+              <span class="object-caption">Unsere Leistungen</span>
             </span>
           </a>
           <BoardMagnet label="Leistungen" />
@@ -94,7 +94,7 @@ const topics = (['projekte', ...(hasLearning ? ['lernformen'] : []), 'leistungen
               <g stroke-width="1.5"><rect x="32" y="26" width="34" height="28" rx="2" /><rect x="99" y="26" width="34" height="28" rx="2" /><path d="M38 20h22m-22 40h22m56-40h22m-22 40h22" /></g>
               <g fill="var(--color-ginster)" stroke="none"><circle cx="82" cy="84" r="10" /><circle cx="108" cy="84" r="10" /><circle cx="134" cy="84" r="10" /></g>
             </svg>
-            <span class="object-caption">Ein Raum, viele Lernformen <span aria-hidden="true">↗</span></span>
+            <span class="object-caption">Ein Raum, viele Lernformen</span>
           </a>
           <BoardMagnet label="Lernformen" />
         </div>}
@@ -110,14 +110,14 @@ const topics = (['projekte', ...(hasLearning ? ['lernformen'] : []), 'leistungen
               <canvas class="catalog-curl-canvas" data-catalog-curl-canvas aria-hidden="true"></canvas>
             </span>
           </a>
-          <div class="board-vs-note" aria-hidden="true">
+          <div class="board-vs-note" data-vs-note aria-hidden="true">
             <span class="proof-note-text"><strong>{B.catalog.plaqueStrong}</strong><br />{B.catalog.plaqueRest}</span>
-            <svg class="vs-note-arrow" viewBox="0 0 72 34" fill="none">
-              <path d="M64 6 Q34 8 10 26" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" />
-              <path d="M22 26 L9 27 L14 15" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
+            <svg class="vs-note-arrow" data-vs-arrow viewBox="0 0 72 34" fill="none">
+              <path data-vs-arrow-shaft d="M64 6 Q34 8 10 26" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" />
+              <path data-vs-arrow-head d="M22 26 L9 27 L14 15" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
           </div>
-          <a class="object-caption catalog-caption" href="#vs-moebel" data-board-topic="vs-moebel">{B.catalog.caption} <span aria-hidden="true">↗</span></a>
+          <a class="object-caption catalog-caption" href="#vs-moebel" data-board-topic="vs-moebel">{B.catalog.caption}</a>
           <button class="vs-logo-magnet catalog-magnet" type="button" data-board-handle data-label={B.catalog.magnetLabel} aria-label={B.catalog.move} aria-describedby="board-drag-hint" title={B.catalog.title}>
             <ResponsiveImage desktopOnly={!responsive} avif={false} src={vsLogoMagnet} alt={B.catalog.magnetAlt} width={180} widths={[90, 135, 180, 270]} sizes="(max-width: 1023px) 44px, 90px" quality={90} loading="eager" draggable="false" />
           </button>
@@ -133,7 +133,7 @@ const topics = (['projekte', ...(hasLearning ? ['lernformen'] : []), 'leistungen
               <path d="M52 33c0-16 38-21 39 1l-3 21c-2 24-31 25-34 0zm0 0c5 4 13-1 17-8 4 8 14 11 22 9M28 124c1-35 14-48 43-49 28 0 43 17 43 49m-64-19-2 19m42-19 3 19M112 16h55v34h-21l-12 12V50h-22z" />
               <path d="M125 29h29m-29 9h18" />
             </svg>
-            <span class="object-caption">Simon Brugger & Team <span aria-hidden="true">↗</span></span>
+            <span class="object-caption">Simon Brugger & Team</span>
             <span class="object-small">Persönlich für Sie da.</span>
           </a>
           <BoardMagnet label="Ansprechpartner" />
@@ -148,7 +148,7 @@ const topics = (['projekte', ...(hasLearning ? ['lernformen'] : []), 'leistungen
               <path d="m14 22 88 57 81-63M17 115l58-54m110 48-60-45" />
               <rect x="148" y="28" width="23" height="27" fill="var(--color-ginster)" stroke="none" />
             </svg>
-            <span class="object-caption">Ihr Projekt beginnt hier. <span aria-hidden="true">↗</span></span>
+            <span class="object-caption">Ihr Projekt beginnt hier.</span>
             <span class="object-small">Lassen Sie uns sprechen.</span>
           </a>
           <BoardMagnet label="Kontakt" />
@@ -160,18 +160,15 @@ const topics = (['projekte', ...(hasLearning ? ['lernformen'] : []), 'leistungen
           <a class="board-object-link" href="#phasen" data-board-topic="phasen" draggable="false">
             <span class="phase-line" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
             <span class="phase-labels" aria-hidden="true"><span>Idee</span><span>Planung</span><span>Auswahl</span><span>Montage</span><span>Begleitung</span></span>
-            <span class="object-caption">Ihr Projektweg <span aria-hidden="true">↗</span></span>
+            <span class="object-caption">Ihr Projektweg</span>
           </a>
           <BoardMagnet label="Ihr Projektweg" />
         </div>
         )}
       </nav>
-      <div class="board-proof-note" aria-hidden="true">
-        <span class="proof-note-text"><strong>{proofLines[0]}</strong><br />{proofLines[1]}</span>
-        <svg class="proof-note-arrow" viewBox="0 0 84 36" fill="none">
-          <path d="M6 24 Q42 4 74 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" />
-          <path d="M63 10 L76 18.5 L64 26" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
+      <div class="board-proof-layer" data-board-proof aria-hidden="true">
+        <svg class="board-proof-svg" data-board-proof-svg fill="none"></svg>
+        <span class="board-proof-text proof-note-text" data-board-proof-text><strong>{proofText}</strong></span>
       </div>
       <span class="board-corner-note" aria-hidden="true">{B.corner[0]}<br />{B.corner[1]}</span>
       <svg id="board-drawing" class="board-drawing" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true" data-board-drawing></svg>
@@ -235,6 +232,7 @@ const topics = (['projekte', ...(hasLearning ? ['lernformen'] : []), 'leistungen
   import '../../scripts/board-drawing';
   import '../../scripts/board-navigation';
   import '../../scripts/board-path';
+  import '../../scripts/board-proof';
 
   // Lazy-load the Inter match sheet easter egg only when the 5-click tool sequence is entered.
   const board = document.querySelector<HTMLElement>('[data-board-home]');

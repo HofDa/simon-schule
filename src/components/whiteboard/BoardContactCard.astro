@@ -56,9 +56,9 @@ const phoneHref = directPhone ? `tel:${directPhone.replace(/[^\d+]/g, '')}` : nu
     ></button>
   </div>
   <span class="card-lead-note" aria-hidden="true">{C.leadNote}</span>
-  <svg class="card-lead-arrow" viewBox="0 0 64 36" fill="none" aria-hidden="true">
-    <path d="M4 22 Q28 4 56 18" stroke="var(--color-ginster-deep)" stroke-width="2.6" stroke-linecap="round" />
-    <path d="M46 11 L57 18.5 L47 26" stroke="var(--color-ginster-deep)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" />
+  <svg class="card-lead-arrow" data-card-arrow viewBox="0 0 64 36" fill="none" aria-hidden="true">
+    <path data-card-arrow-shaft d="M4 22 Q28 4 56 18" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" />
+    <path data-card-arrow-head d="M46 11 L57 18.5 L47 26" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" />
   </svg>
   <div class="business-card" data-path-node="5">
     <p class="card-eyebrow">{C.eyebrow}</p>
@@ -132,8 +132,11 @@ const phoneHref = directPhone ? `tel:${directPhone.replace(/[^\d+]/g, '')}` : nu
     top: 26%;
     width: clamp(32px, 3.2cqw, 48px);
     height: auto;
+    color: var(--color-ginster-deep);
+    overflow: visible;
     pointer-events: none;
-    transform: rotate(6deg);
+    rotate: 6deg;
+    transform-origin: 8% 60%;
   }
 
   /* a business card: white card stock, a Ginstergelb edge on the left, a soft shadow */
@@ -176,6 +179,8 @@ const phoneHref = directPhone ? `tel:${directPhone.replace(/[^\d+]/g, '')}` : nu
   .card-lines a:hover { text-decoration-color: var(--color-ginster); }
   .card-lines a span { color: var(--color-ginster-deep); text-decoration: none; }
   .card-cta {
+    position: relative;
+    overflow: hidden;
     display: inline-flex;
     align-items: center;
     gap: 8px;
@@ -190,10 +195,64 @@ const phoneHref = directPhone ? `tel:${directPhone.replace(/[^\d+]/g, '')}` : nu
     box-shadow: 0 8px 18px -8px rgba(184, 132, 0, 0.6);
     transition: background-color 150ms ease, translate 150ms ease, box-shadow 150ms ease;
   }
+  .card-cta::after {
+    content: '';
+    position: absolute;
+    inset: -40% -25%;
+    background: linear-gradient(110deg, transparent 36%, rgba(255, 255, 255, 0.55) 50%, transparent 64%);
+    transform: translateX(-115%);
+    pointer-events: none;
+  }
   .card-cta span { display: inline-block; color: var(--color-ink); transition: translate 200ms ease; }
-  .card-cta:hover { background: var(--color-ginster-light); translate: 0 -1px; box-shadow: 0 10px 20px -8px rgba(184, 132, 0, 0.75); }
-  .card-cta:hover span { translate: 3px 0; }
+  .card-cta:hover { background: var(--color-ginster-light); translate: 0 -2px; box-shadow: 0 12px 22px -8px rgba(184, 132, 0, 0.8); }
+  .card-cta:hover span { translate: 4px 0; }
   .card-lines a:focus-visible, .card-cta:focus-visible { outline: 2px dashed var(--color-ginster-deep); outline-offset: 3px; }
+
+  /* Hovering Simon's card beckons attention toward the CTA button */
+  @media (hover: hover) and (pointer: fine) {
+    .object-card:not(.is-dragging) .business-card:hover .card-cta {
+      background: var(--color-ginster-light);
+      translate: 0 -1.5px;
+      box-shadow: 0 12px 22px -8px rgba(184, 132, 0, 0.8), 0 0 0 3px rgba(226, 163, 0, 0.22);
+    }
+    .object-card:not(.is-dragging) .business-card:hover .card-cta span {
+      translate: 3px 0;
+    }
+    .object-card:not(.is-dragging) .business-card:hover .card-cta:hover {
+      translate: 0 -2.5px;
+      box-shadow: 0 14px 24px -8px rgba(184, 132, 0, 0.9), 0 0 0 3px rgba(226, 163, 0, 0.28);
+    }
+    .object-card:not(.is-dragging) .business-card:hover .card-cta:hover span {
+      translate: 5px 0;
+    }
+  }
+  @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .object-card:not(.is-dragging) .business-card:hover .card-cta {
+      animation: card-cta-nudge 640ms cubic-bezier(.22, 1.25, .36, 1) both;
+    }
+    .object-card:not(.is-dragging) .business-card:hover .card-cta::after {
+      animation: card-cta-sheen 720ms cubic-bezier(.22, .8, .2, 1) 60ms both;
+    }
+    .object-card:not(.is-dragging) .business-card:hover .card-cta span {
+      animation: card-cta-arrow 700ms cubic-bezier(.22, 1, .36, 1) 80ms both;
+    }
+  }
+  @keyframes card-cta-nudge {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.045); }
+    72% { transform: scale(0.99); }
+    100% { transform: scale(1); }
+  }
+  @keyframes card-cta-sheen {
+    from { transform: translateX(-115%); }
+    to { transform: translateX(115%); }
+  }
+  @keyframes card-cta-arrow {
+    0% { transform: translateX(0); }
+    38% { transform: translateX(4px); }
+    64% { transform: translateX(-1px); }
+    100% { transform: translateX(0); }
+  }
 
   /* narrow boards: stay safely anchored to the right edge */
   @container (max-width: 1050px) {
@@ -201,8 +260,13 @@ const phoneHref = directPhone ? `tel:${directPhone.replace(/[^\d+]/g, '')}` : nu
     .card-lead-note, .card-lead-arrow { right: calc(100% + 0.5cqw); }
   }
 
+  /* wide boards: keep Simon's card balanced with the rest of the bottom row instead of hugging the right edge */
+  @container (min-width: 1450px) {
+    .object-card { left: 67.5%; right: auto; top: 58%; }
+  }
+
   @media (max-height: 800px) {
-    .object-card { right: 3.5%; left: auto; top: 53.5%; }
+    .object-card { top: 53.5%; }
   }
   @media (prefers-reduced-motion: reduce) {
     .card-cta, .card-cta span { transition: none; }

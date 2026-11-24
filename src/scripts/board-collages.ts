@@ -491,7 +491,13 @@ if (roots.length && gallery && galleryUrl) {
     if (!readerOpen) document.documentElement.classList.remove('whiteboard-reading');
     // the project seen last goes on top of its own stack
     stacks.find((st) => st.has(slugs[project]))?.bringToTop(slugs[project]);
-    if (!closingForInquiry) opener.focus({ preventScroll: true });
+    if (!closingForInquiry) {
+      opener.focus({ preventScroll: true });
+      const boardHome = opener.closest<HTMLElement>('[data-board-home]');
+      if (boardHome && desktop.matches) {
+        boardHome.dispatchEvent(new CustomEvent('whiteboard:gallery-closed'));
+      }
+    }
     closingForInquiry = false;
   });
   // a click on the backdrop (outside the dialog box) closes it

@@ -70,8 +70,8 @@ if (board && surface && pen && ruler && eraser && hint && hintText && announceme
     if (length < 4) { path.setAttribute('d', ''); return; }
     const ux = dx / length;
     const uy = dy / length;
-    const head = Math.min(24, length * .35);
-    const wing = head * .5;
+    const head = Math.min(16, length * .35);
+    const wing = head * .52;
     // Calculate the head in screen pixels, so diagonal arrows keep their shape on wide boards.
     const left = { x: end.x + (-ux * head - uy * wing) * 1000 / rect.width, y: end.y + (-uy * head + ux * wing) * 1000 / rect.height };
     const right = { x: end.x + (-ux * head + uy * wing) * 1000 / rect.width, y: end.y + (-uy * head - ux * wing) * 1000 / rect.height };

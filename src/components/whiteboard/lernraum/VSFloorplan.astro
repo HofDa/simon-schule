@@ -8,7 +8,7 @@ import { vs } from '../../../data/site';
 import { getLang, useTranslations } from '../../../i18n/ui';
 import ResponsiveImage from '../ResponsiveImage.astro';
 import vsLogoMagnet from '../../../assets/whiteboard/vs-logo-kitchen-magnet.webp';
-import vsCatalogCover from '../../../assets/whiteboard/vs-school-catalog-cover-2026.webp';
+import vsCatalogCover from '../../../assets/whiteboard/vs-school-catalog-cover-2026-nomark.webp';
 import { lernraumCopy } from '../../../i18n/lernraum';
 
 const lang = getLang(Astro.currentLocale);
@@ -47,10 +47,6 @@ const areas = ['sit', 'tab', 'store', 'flex', 'kg'];
           <span class="catalog-cover">
             <ResponsiveImage src={vsCatalogCover} alt={L.vs.catalogBadge} width={200} widths={[140, 200]} sizes="104px" quality={88} loading="lazy" draggable="false" />
             <span class="catalog-pdf-tag" aria-hidden="true">PDF ↗</span>
-          </span>
-          <span class="catalog-plaque">
-            <strong>{L.board.catalog.plaqueStrong}</strong>
-            <span>{L.board.catalog.plaqueRest}</span>
           </span>
         </a>
         <div class="catalog-meta">
@@ -197,27 +193,6 @@ const areas = ['sit', 'tab', 'store', 'flex', 'kg'];
     width: 100%;
     height: auto;
   }
-  .catalog-plaque {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: -6px;
-    padding: 3px 8px 4px;
-    border-radius: 4px;
-    background: linear-gradient(#fffdf6, #f3eedf);
-    box-shadow: 0 0 0 1px #fbf7ec, 0 1.5px 0 1px #d6cfbd, 1px 4px 7px -2px rgba(32, 32, 29, 0.26);
-    font-size: 0.6rem;
-    line-height: 1.2;
-    color: #4d4b45;
-    rotate: 3deg;
-    text-align: center;
-  }
-  .catalog-plaque strong {
-    font-weight: 800;
-    color: var(--color-ink);
-  }
   .catalog-meta {
     min-width: 0;
   }
@@ -347,7 +322,6 @@ const areas = ['sit', 'tab', 'store', 'flex', 'kg'];
     .catalog-magnet { width: 42px; margin-bottom: -10px; }
     .catalog-cover { width: 76px; }
     .catalog-pdf-tag { right: -8px; top: 6px; font-size: 0.56rem; }
-    .catalog-plaque { padding: 2px 6px 3px; font-size: 0.52rem; }
     .catalog-badge { font-size: 1.45rem; line-height: 1; }
     .catalog-sub { margin: 6px 0 10px; font-size: 0.8rem; line-height: 1.45; }
 

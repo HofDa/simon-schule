@@ -38,7 +38,7 @@
   }
   html.site-menu-fit.site-menu-push .board-canvas { transform: scale(var(--board-menu-scale)); }
   .board-drawing { position: absolute; inset: 0; z-index: 2147483647; display: block; width: 100%; height: 100%; overflow: hidden; pointer-events: none; }
-  .board-drawing path { fill: none; stroke: var(--color-ink); stroke-width: 7; stroke-linecap: round; stroke-linejoin: round; }
+  .board-drawing path { fill: none; stroke: var(--color-ink); stroke-width: 4.2; stroke-linecap: round; stroke-linejoin: round; }
   .is-drawing .board-drawing { pointer-events: auto; cursor: crosshair; touch-action: none; user-select: none; }
 }
 
@@ -109,8 +109,6 @@
   }
   /* the Italian claim is longer: written smaller, so it stays clear of the prints and the path */
   :root[lang='it'] & .board-intro .board-title { font-size: clamp(32px, min(3.7cqw, 8.4cqh), 64px); }
-  .board-intro .board-title::after { content: ''; display: block; height: 5px; margin-top: -6px; background: var(--color-ginster); border-radius: 50%; transform: rotate(-1deg); }
-  .board-intro .board-title > span { color: var(--color-ginster-deep); }
   .board-description { margin-top: 2.8cqh; font-size: clamp(12px, 1.05cqw, 17px); line-height: 1.65; color: #5c5c54; }
   /* the board's call to action: a hand-drawn Ginstergelb marker sign, and a quiet second way in */
   .board-cta { display: flex; flex-wrap: nowrap; align-items: center; gap: 10px 20px; width: max-content; margin-top: 3cqh; }
@@ -190,8 +188,6 @@
   .board-magnet:hover .magnet, .board-magnet:focus-visible .magnet { box-shadow: inset 0 -1px 1px #78500059, 0 2px 2px #20201d38, 0 5px 12px #20201d40; }
   .board-object.is-dragging { filter: drop-shadow(0 10px 10px #20201d25); }
   .object-caption { display: block; font-family: var(--font-marker); font-size: clamp(20px, 2cqw, 32px); font-weight: 600; line-height: 1.02; }
-  .object-caption > span[aria-hidden] { display: inline-block; color: var(--color-ginster-deep); transition: translate 200ms; }
-  .board-object:hover .object-caption > span[aria-hidden] { translate: 3px -3px; }
   .object-small { display: block; font-size: clamp(11px, .9cqw, 14px); color: #6e6c65; margin-top: 6px; }
   .object-services { left: 6%; top: 49%; width: 22%; rotate: -3deg; }
   .board-note { position: relative; display: block; width: 100%; max-width: 310px; padding: 2.7cqh 1.5cqw 2.5cqh; background: #f6dc78; box-shadow: 1px 9px 14px -10px #20201d70; text-align: left; }
@@ -264,17 +260,41 @@
   .phase-line i { display: block; width: 9px; height: 9px; background: var(--color-ginster); border: 2px solid #fafbf9; border-radius: 50%; transform: translateY(-4px); box-sizing: content-box; }
   .phase-labels { display: flex; justify-content: space-between; margin-top: 9px; font-size: clamp(10px, .9cqw, 14px); }
   .object-phases .object-caption { margin-top: 5px; font-size: clamp(19px, 1.6cqw, 25px); }
-  .board-proof-note {
+  .board-proof-layer {
     position: absolute;
-    left: 39%;
-    top: 16%;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 5px;
-    color: #5c5a52;
-    rotate: -3deg;
+    inset: 0;
+    z-index: 2;
     pointer-events: none;
+    transition: opacity 180ms ease;
+  }
+  .board-proof-layer:not(.is-ready) { opacity: 0; }
+  .board-proof-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    color: var(--color-ginster);
+  }
+  .board-proof-svg path {
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .board-proof-svg .proof-shaft { stroke-width: 4.2; }
+  .board-proof-svg .proof-head { stroke-width: 3.6; }
+  .board-proof-svg .proof-pass { stroke-width: 1.6; opacity: .28; }
+  .board-proof-svg path.is-animating {
+    stroke-dasharray: 1.02;
+    stroke-dashoffset: 1.02;
+    animation: proof-draw var(--draw-dur, 700ms) var(--draw-ease, cubic-bezier(.35, .05, .25, 1)) var(--draw-delay, 0ms) both;
+  }
+  .board-proof-svg .proof-pass.is-animating {
+    animation-name: proof-draw-pass;
+  }
+  .board-proof-text.is-animating {
+    animation: proof-text-in var(--text-dur, 520ms) cubic-bezier(.25, .1, .3, 1) var(--text-delay, 0ms) both;
   }
   .proof-note-text {
     font-family: var(--font-marker);
@@ -282,6 +302,16 @@
     font-weight: 600;
     line-height: 1.05;
     white-space: nowrap;
+  }
+  .board-proof-text {
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-size: clamp(17px, min(1.5cqw, 2.9cqh), 25px);
+    color: #5c5a52;
+    rotate: -3deg;
+    translate: -50% -50%;
+    pointer-events: none;
   }
   .proof-note-text strong {
     font-weight: 700;
@@ -291,12 +321,7 @@
     text-decoration-thickness: 2.5px;
     text-underline-offset: 3px;
   }
-  .proof-note-arrow {
-    width: clamp(54px, 5.2cqw, 82px);
-    height: auto;
-    margin-left: 18px;
-    color: var(--color-ginster-deep);
-  }
+  .board-proof-text strong { text-decoration: none; }
   .board-vs-note {
     position: absolute;
     left: calc(100% + 12px);
@@ -315,11 +340,11 @@
     height: auto;
     margin-left: -6px;
     color: var(--color-ginster-deep);
+    overflow: visible;
+    transform-origin: 90% 18%;
   }
   @container (max-width: 1080px) {
-    .board-proof-note { left: 37.5%; top: 16.5%; }
-    .proof-note-text { font-size: clamp(13px, 1.3cqw, 16px); }
-    .proof-note-arrow { width: 44px; margin-left: 8px; }
+    .proof-note-text { font-size: clamp(14px, 1.35cqw, 17px); }
     .board-vs-note { left: calc(100% + 8px); top: 4%; }
     .vs-note-arrow { width: 34px; margin-left: -4px; }
   }
@@ -380,6 +405,21 @@ html.hero-skip .board-object {
   from { opacity: 0; scale: 0.96; }
   to { opacity: 1; scale: 1; }
 }
+@keyframes proof-draw {
+  0% { stroke-dashoffset: 1.02; opacity: 0; }
+  2% { opacity: 1; }
+  100% { stroke-dashoffset: 0; opacity: 1; }
+}
+@keyframes proof-draw-pass {
+  0% { stroke-dashoffset: 1.02; opacity: 0; }
+  2% { opacity: .28; }
+  100% { stroke-dashoffset: 0; opacity: .28; }
+}
+@keyframes proof-text-in {
+  0% { clip-path: inset(-30% 100% -30% 0); opacity: 0; transform: translateY(4px); }
+  6% { clip-path: inset(-30% 96% -30% 0); opacity: 1; transform: translateY(3px); }
+  100% { clip-path: inset(-30% 0% -30% 0); opacity: 1; transform: translateY(0); }
+}
 
 @media (prefers-reduced-motion: reduce) {
   .board-cta-main, .board-cta-main span { animation: none; transition: none; }
@@ -423,10 +463,10 @@ html.hero-skip .board-object {
     --cur-zoom: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Ccircle cx='12' cy='12' r='8.2' fill='%23ffffff' fill-opacity='.85' stroke='%2320201d' stroke-width='2.2'/%3E%3Cpath d='M18.2 18.2L27.5 27.5' stroke='%2320201d' stroke-width='4.2' stroke-linecap='round'/%3E%3Cpath d='M12 8.2v7.6M8.2 12h7.6' stroke='%23b88400' stroke-width='2.2' stroke-linecap='round'/%3E%3C/svg%3E") 12 12, zoom-in;
     --cur-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpath d='M16 3v9M16 20v9M3 16h9M20 16h9' stroke='%23ffffff' stroke-width='4' stroke-linecap='round'/%3E%3Cpath d='M16 3v9M16 20v9M3 16h9M20 16h9' stroke='%2320201d' stroke-width='1.8' stroke-linecap='round'/%3E%3Ccircle cx='16' cy='16' r='2.2' fill='%23e2a300' stroke='%2320201d' stroke-width='1'/%3E%3C/svg%3E") 16 16, crosshair;
   }
-  .board-home[data-pen-color='black'] { --cur-pen: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cg transform='rotate(-45 3 29)'%3E%3Cpath d='M3 29L9.5 26.2V31.8Z' fill='%2320201d' stroke='%2320201d' stroke-width='1' stroke-linejoin='round'/%3E%3Crect x='9.5' y='25.6' width='4' height='6.8' fill='%2320201d'/%3E%3Crect x='13.5' y='25' width='17' height='8' rx='1.6' fill='%23ffffff' stroke='%2320201d' stroke-width='1.4'/%3E%3Crect x='15.5' y='27.2' width='12' height='3.6' rx='.8' fill='%23e2a300'/%3E%3Crect x='30.5' y='25.4' width='3.4' height='7.2' rx='1' fill='%2320201d' stroke='%2320201d' stroke-width='1'/%3E%3C/g%3E%3C/svg%3E") 3 29, crosshair; }
-  .board-home[data-pen-color='blue'] { --cur-pen: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cg transform='rotate(-45 3 29)'%3E%3Cpath d='M3 29L9.5 26.2V31.8Z' fill='%232b4f9e' stroke='%2320201d' stroke-width='1' stroke-linejoin='round'/%3E%3Crect x='9.5' y='25.6' width='4' height='6.8' fill='%2320201d'/%3E%3Crect x='13.5' y='25' width='17' height='8' rx='1.6' fill='%23ffffff' stroke='%2320201d' stroke-width='1.4'/%3E%3Crect x='15.5' y='27.2' width='12' height='3.6' rx='.8' fill='%23e2a300'/%3E%3Crect x='30.5' y='25.4' width='3.4' height='7.2' rx='1' fill='%232b4f9e' stroke='%2320201d' stroke-width='1'/%3E%3C/g%3E%3C/svg%3E") 3 29, crosshair; }
-  .board-home[data-pen-color='red'] { --cur-pen: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cg transform='rotate(-45 3 29)'%3E%3Cpath d='M3 29L9.5 26.2V31.8Z' fill='%23c23a2c' stroke='%2320201d' stroke-width='1' stroke-linejoin='round'/%3E%3Crect x='9.5' y='25.6' width='4' height='6.8' fill='%2320201d'/%3E%3Crect x='13.5' y='25' width='17' height='8' rx='1.6' fill='%23ffffff' stroke='%2320201d' stroke-width='1.4'/%3E%3Crect x='15.5' y='27.2' width='12' height='3.6' rx='.8' fill='%23e2a300'/%3E%3Crect x='30.5' y='25.4' width='3.4' height='7.2' rx='1' fill='%23c23a2c' stroke='%2320201d' stroke-width='1'/%3E%3C/g%3E%3C/svg%3E") 3 29, crosshair; }
-  .board-home[data-pen-color='green'] { --cur-pen: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cg transform='rotate(-45 3 29)'%3E%3Cpath d='M3 29L9.5 26.2V31.8Z' fill='%232f7a4c' stroke='%2320201d' stroke-width='1' stroke-linejoin='round'/%3E%3Crect x='9.5' y='25.6' width='4' height='6.8' fill='%2320201d'/%3E%3Crect x='13.5' y='25' width='17' height='8' rx='1.6' fill='%23ffffff' stroke='%2320201d' stroke-width='1.4'/%3E%3Crect x='15.5' y='27.2' width='12' height='3.6' rx='.8' fill='%23e2a300'/%3E%3Crect x='30.5' y='25.4' width='3.4' height='7.2' rx='1' fill='%232f7a4c' stroke='%2320201d' stroke-width='1'/%3E%3C/g%3E%3C/svg%3E") 3 29, crosshair; }
+  .board-home[data-pen-color='ink'] { --cur-pen: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cg transform='rotate(-45 3 29)'%3E%3Cpath d='M3 29L9.5 26.2V31.8Z' fill='%2320201d' stroke='%2320201d' stroke-width='1' stroke-linejoin='round'/%3E%3Crect x='9.5' y='25.6' width='4' height='6.8' fill='%2320201d'/%3E%3Crect x='13.5' y='25' width='17' height='8' rx='1.6' fill='%23ffffff' stroke='%2320201d' stroke-width='1.4'/%3E%3Crect x='15.5' y='27.2' width='12' height='3.6' rx='.8' fill='%23e2a300'/%3E%3Crect x='30.5' y='25.4' width='3.4' height='7.2' rx='1' fill='%2320201d' stroke='%2320201d' stroke-width='1'/%3E%3C/g%3E%3C/svg%3E") 3 29, crosshair; }
+  .board-home[data-pen-color='ginster'] { --cur-pen: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cg transform='rotate(-45 3 29)'%3E%3Cpath d='M3 29L9.5 26.2V31.8Z' fill='%23e2a300' stroke='%2320201d' stroke-width='1' stroke-linejoin='round'/%3E%3Crect x='9.5' y='25.6' width='4' height='6.8' fill='%2320201d'/%3E%3Crect x='13.5' y='25' width='17' height='8' rx='1.6' fill='%23ffffff' stroke='%2320201d' stroke-width='1.4'/%3E%3Crect x='15.5' y='27.2' width='12' height='3.6' rx='.8' fill='%23e2a300'/%3E%3Crect x='30.5' y='25.4' width='3.4' height='7.2' rx='1' fill='%23e2a300' stroke='%2320201d' stroke-width='1'/%3E%3C/g%3E%3C/svg%3E") 3 29, crosshair; }
+  .board-home[data-pen-color='ochre'] { --cur-pen: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cg transform='rotate(-45 3 29)'%3E%3Cpath d='M3 29L9.5 26.2V31.8Z' fill='%238a6300' stroke='%2320201d' stroke-width='1' stroke-linejoin='round'/%3E%3Crect x='9.5' y='25.6' width='4' height='6.8' fill='%2320201d'/%3E%3Crect x='13.5' y='25' width='17' height='8' rx='1.6' fill='%23ffffff' stroke='%2320201d' stroke-width='1.4'/%3E%3Crect x='15.5' y='27.2' width='12' height='3.6' rx='.8' fill='%23e2a300'/%3E%3Crect x='30.5' y='25.4' width='3.4' height='7.2' rx='1' fill='%238a6300' stroke='%2320201d' stroke-width='1'/%3E%3C/g%3E%3C/svg%3E") 3 29, crosshair; }
+  .board-home[data-pen-color='navy'] { --cur-pen: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cg transform='rotate(-45 3 29)'%3E%3Cpath d='M3 29L9.5 26.2V31.8Z' fill='%2322305f' stroke='%2320201d' stroke-width='1' stroke-linejoin='round'/%3E%3Crect x='9.5' y='25.6' width='4' height='6.8' fill='%2320201d'/%3E%3Crect x='13.5' y='25' width='17' height='8' rx='1.6' fill='%23ffffff' stroke='%2320201d' stroke-width='1.4'/%3E%3Crect x='15.5' y='27.2' width='12' height='3.6' rx='.8' fill='%23e2a300'/%3E%3Crect x='30.5' y='25.4' width='3.4' height='7.2' rx='1' fill='%2322305f' stroke='%2320201d' stroke-width='1'/%3E%3C/g%3E%3C/svg%3E") 3 29, crosshair; }
   .board-home .board-canvas [data-board-handle] { cursor: var(--cur-grab); }
   .board-home .board-canvas :is(a[href], .board-cta-second),
   .board-home .board-tray button,
@@ -504,7 +544,7 @@ html.whiteboard-reading { overflow: hidden; }
   .board-home-responsive .board-bottom > span,
   .board-home-responsive .board-reset,
   .board-home-responsive .board-corner-note,
-  .board-home-responsive .board-proof-note,
+  .board-home-responsive .board-proof-layer,
   .board-home-responsive .board-vs-note,
   .board-home-responsive :is(.house70-handle, .card-house70-magnet, .card-lead-arrow, .card-lead-note),
   .board-home-responsive :is(.feedback-backdrop, .feedback-caption, .letter-open, .face-in, .catalog-first-page) {
@@ -515,6 +555,15 @@ html.whiteboard-reading { overflow: hidden; }
     max-width: 100%;
     margin-top: 0;
     font-size: clamp(38px, 12cqw, 74px);
+  }
+  .board-home-responsive .board-intro .board-title::after {
+    content: '';
+    display: block;
+    height: 5px;
+    margin-top: -6px;
+    background: var(--color-ginster);
+    border-radius: 50%;
+    transform: rotate(-1deg);
   }
   :root[lang='it'] .board-home-responsive .board-intro .board-title {
     font-size: clamp(30px, 8.8cqw, 58px);
