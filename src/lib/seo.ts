@@ -149,6 +149,7 @@ const projectGroupLabel: Record<string, Record<Lang, string>> = {
   'gs-st-jakob': { de: 'Grundschule', it: 'Scuola primaria' },
   'gs-st-martin-gsies': { de: 'Grundschule', it: 'Scuola primaria' },
   'gs-riffian': { de: 'Grundschule', it: 'Scuola primaria' },
+  'gs-sinich': { de: 'Grundschule', it: 'Scuola primaria' },
   'ms-lana': { de: 'Mittelschule', it: 'Scuola media' },
   'ms-sterzing': { de: 'Mittelschule', it: 'Scuola media' },
   'musikschule-brixen': { de: 'Musikschule', it: 'Scuola di musica' },

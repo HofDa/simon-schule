@@ -10,6 +10,7 @@ const groupOf: Record<string, 'gs' | 'ms' | 'kb'> = {
   'gs-st-jakob': 'gs',
   'gs-st-martin-gsies': 'gs',
   'gs-riffian': 'gs',
+  'gs-sinich': 'gs',
   'ms-lana': 'ms',
   'ms-sterzing': 'ms',
   'musikschule-brixen': 'ms',

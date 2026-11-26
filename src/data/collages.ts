@@ -41,6 +41,7 @@ const projectLocations: Record<string, Record<Lang, string>> = {
   'gs-st-jakob': { de: 'St. Jakob, Leifers, Südtirol', it: 'San Giacomo, Laives, Alto Adige' },
   'gs-st-martin-gsies': { de: 'St. Martin in Gsies, Südtirol', it: 'San Martino in Casies, Alto Adige' },
   'gs-riffian': { de: 'Riffian, Südtirol', it: 'Rifiano, Alto Adige' },
+  'gs-sinich': { de: 'Sinich, Meran, Südtirol', it: 'Sinigo, Merano, Alto Adige' },
   'bibliothek-terlan': { de: 'Terlan, Südtirol', it: 'Terlano, Alto Adige' },
 };
 
@@ -185,6 +186,19 @@ const source: { slug: string; name: string; alt: string; credit?: string; photos
     ],
   },
   {
+    slug: 'gs-sinich',
+    name: 'Grundschule Sinich, Meran',
+    alt: 'Collage Grundschule Sinich in Meran: Neubau, offene Lernlandschaft mit VS Hokki, Lerninsel mit VS Shift+ Landscape, Lesezelt und Klassenzimmer mit digitaler Tafel.',
+    photos: [
+      { alt: 'Offene Lernlandschaft mit Gruppentischen, Bewegungshockern und Sitzinsel', vs: ['VS Hokki', 'VS Shift+ Landscape'] },
+      { alt: 'Lerninsel mit Lochblechwand, Sitzpolstern und geschwungenem Tisch', vs: ['VS Shift+ Landscape'] },
+      { alt: 'Lesezelt mit Sitzpolstern und Bewegungshockern', vs: ['VS Hokki'] },
+      { alt: 'Klassenzimmer mit fahrbaren Tischen, mobilen Regalen und digitaler Tafel' },
+      { alt: 'Außenansicht des Schulgebäudes' },
+      { alt: 'Lichthof über drei Geschosse mit Eingang' },
+    ],
+  },
+  {
     slug: 'bibliothek-terlan',
     name: 'Bibliothek Terlan',
     alt: 'Collage Bibliothek Terlan: Gebäude mit Glasfassade, Lesebereich, fahrbare Bibliotheksregale und Kinderecke.',
@@ -307,6 +321,18 @@ const italian: Record<string, { name: string; alt: string; photos: string[] }> =
       'Biblioteca scolastica con scaffali curvi su ruote',
       'Area studio vicino al guardaroba con sgabelli oscillanti',
       'Tavolo di gruppo con sedie in legno colorate davanti alla vetrata',
+    ],
+  },
+  'gs-sinich': {
+    name: 'Scuola primaria di Sinigo, Merano',
+    alt: 'Collage della scuola primaria di Sinigo a Merano: nuovo edificio, paesaggio di apprendimento aperto con VS Hokki, isola didattica VS Shift+ Landscape, tenda lettura e aula con lavagna digitale.',
+    photos: [
+      'Paesaggio di apprendimento aperto con tavoli di gruppo, sgabelli oscillanti e isola imbottita',
+      'Isola didattica con parete forata, sedute imbottite e tavolo curvo',
+      'Tenda lettura con sedute imbottite e sgabelli oscillanti',
+      'Aula con tavoli su ruote, scaffali mobili e lavagna digitale',
+      'Vista esterna dell’edificio scolastico',
+      'Atrio a tutta altezza su tre piani con ingresso',
     ],
   },
   'bibliothek-terlan': {

@@ -209,6 +209,7 @@ const de = {
       'gs-st-jakob': 'Offene Halle, Leseecke & Einzeltische',
       'gs-st-martin-gsies': 'Klassenzimmer in Holz, Garderobe & Lernflur',
       'gs-riffian': 'Bibliothek mit runden Regalen, Garderobe & Gruppentische',
+      'gs-sinich': 'Offene Lernlandschaft, Lerninsel & Lesezelt',
       'bibliothek-terlan': 'Lesetische, fahrbare Regale & Kinderecke',
     } as Record<string, string>,
     annotations: {
@@ -731,6 +732,7 @@ const it: LernraumCopy = {
       'gs-st-jakob': 'Atrio aperto, angolo lettura e banchi singoli',
       'gs-st-martin-gsies': 'Aule in legno, guardaroba e corridoio didattico',
       'gs-riffian': 'Biblioteca con scaffali rotondi, guardaroba e tavoli di gruppo',
+      'gs-sinich': 'Paesaggio di apprendimento aperto, isola didattica e tenda lettura',
       'bibliothek-terlan': 'Tavoli di lettura, scaffali mobili e angolo bambini',
     },
     annotations: {

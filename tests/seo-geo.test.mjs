@@ -122,7 +122,7 @@ for (const page of homepages) {
     }
 
     const projects = graph.find((n) => n['@id']?.endsWith('#reference-projects'));
-    assert.equal(projects?.numberOfItems, 11);
+    assert.equal(projects?.numberOfItems, 12);
     for (const entry of projects.itemListElement) {
       const imageUrl = new URL(entry.item.image);
       assert.ok(fs.existsSync(path.join(DIST, imageUrl.pathname)), `project image exists: ${imageUrl.pathname}`);

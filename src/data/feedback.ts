@@ -42,6 +42,13 @@ export const feedback: Feedback[] = [
   },
   {
     quote:
+      'Sehr gute Zusammenarbeit und erstklassige Betreuung! Wir wurden von Anfang an kompetent, freundlich und zuverlässig beraten und begleitet. Die Lieferung erfolgte reibungslos und die Qualität der Möbel überzeugt absolut.',
+    name: 'Gerd Zuegg',
+    role: '3D Designer',
+    organisation: 'Torggler GmbH',
+  },
+  {
+    quote:
       'Ich sage DANKE☺️… Alles richtig toll/ schön geworden🍀🤗😊… tolles freundliches, geduldiges Team🤗Großartig und sauber gemacht🤩',
     name: 'Brigitte Trienbacher',
     role: 'Kindergartenleiterin',
@@ -80,6 +87,11 @@ const italian: { quote: string; role: string }[] = [
     quote:
       'Come architetto apprezzo in particolare la consulenza competente, personale e affidabile di TRIAS e il supporto tecnico su cui posso contare in ogni momento. Soprattutto nello sviluppo di nuovi concetti scolastici e di apprendimento, TRIAS è per me un partner prezioso che sostiene forme di insegnamento moderne con soluzioni d’arredo innovative e nuove idee.',
     role: 'Architetto',
+  },
+  {
+    quote:
+      'Un’ottima collaborazione e un’assistenza di prim’ordine! Fin dall’inizio siamo stati consigliati e seguiti con competenza, cordialità e affidabilità. La consegna è avvenuta senza intoppi e la qualità dei mobili convince pienamente.',
+    role: 'Designer 3D',
   },
   {
     quote:

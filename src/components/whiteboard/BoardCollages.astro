@@ -23,7 +23,7 @@ const collages = collagesFor(lang);
 const tilts = [-2.4, 1.6, -1.1, 2.3, -1.8, 0.9, -2.8, 1.9, -0.6, 2.7];
 // three stacks by kind of building, side by side in the board's upper right corner
 const groupOf: Record<string, string> = {
-  'gs-gais': 'gs', 'gs-deflorian-meran': 'gs', 'gs-sarnthein': 'gs', 'gs-st-jakob': 'gs', 'gs-st-martin-gsies': 'gs', 'gs-riffian': 'gs',
+  'gs-gais': 'gs', 'gs-deflorian-meran': 'gs', 'gs-sarnthein': 'gs', 'gs-st-jakob': 'gs', 'gs-st-martin-gsies': 'gs', 'gs-riffian': 'gs', 'gs-sinich': 'gs',
   'ms-lana': 'ms', 'ms-sterzing': 'ms', 'musikschule-brixen': 'ms',
   'kiga-tisens': 'kb', 'bibliothek-terlan': 'kb',
 };
@@ -48,6 +48,7 @@ const schoolPins: Record<string, [number, number]> = {
   'gs-st-jakob': [53.6, 55.8],
   'gs-st-martin-gsies': [94.4, 30.9],
   'gs-riffian': [46.2, 39.0],
+  'gs-sinich': [45.8, 42.4],
   'bibliothek-terlan': [49.4, 50.4],
 };
 const firstPin = schoolPins[dealt[0].slug] ?? [54.5, 43.0];
