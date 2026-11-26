@@ -15,6 +15,7 @@ import '../../styles/board-navigation.css';
 import { getLang, useTranslations } from '../../i18n/ui';
 import { lernraumCopy } from '../../i18n/lernraum';
 import { isHome } from '../../lib/paths';
+import { VS_SCHOOL_CATALOG_PDF } from '../../lib/seo';
 
 const { responsive = false } = Astro.props;
 const lang = getLang(Astro.currentLocale);
@@ -28,8 +29,8 @@ const proofText = B.proofNote(totalFacilities);
 const showTopicObjects = false;
 // Temporarily hide the numbered process arrows and labels between board objects.
 const showProjectPath = false;
-const hasLearning = isHome(Astro.url.pathname, lang) || /\/(lernraum|whiteboard-ruhig|it)\/?$/.test(Astro.url.pathname);
-const vsSchoolCatalog = 'https://web-media.vs.de/file/p1/pdf/45-057-49_V2026-01_DE_Basics--Der-Katalog-fuer-die-Schule.archiv.pdf';
+const hasLearning = isHome(Astro.url.pathname, lang);
+const vsSchoolCatalog = VS_SCHOOL_CATALOG_PDF;
 // whiteboard marker colours for the pen and the ruler's arrows; the first is the default
 const penPalette = [
   { key: 'ink', value: '#20201d' },
@@ -52,7 +53,7 @@ const topics = (['projekte', ...(hasLearning ? ['lernformen'] : []), 'leistungen
             <span class="board-parent-arrow" aria-hidden="true">↗</span>
           </a>
         </div>
-        <h1 id="board-title" class="board-title" data-board-title>{B.title[0]}<br /><span class="board-title-line2" data-board-title-line2>{B.title[1]}</span></h1>
+        <h1 id="board-title" class="board-title" data-board-title>{B.title[0]}{' '}<br /><span class="board-title-line2" data-board-title-line2>{B.title[1]}</span></h1>
         <p class="board-description">{B.description[0]}<br />{' '}{B.description[1]}<br />{' '}{B.description[2]}</p>
         <div class="board-cta" data-path-node="1">
           <a class="board-cta-main" href="#anfrage" data-open-form>{B.cta} <span aria-hidden="true">→</span></a>
@@ -111,7 +112,7 @@ const topics = (['projekte', ...(hasLearning ? ['lernformen'] : []), 'leistungen
             </span>
           </a>
           <div class="board-vs-note" data-vs-note aria-hidden="true">
-            <span class="proof-note-text"><strong>{B.catalog.plaqueStrong}</strong><br />{B.catalog.plaqueRest}</span>
+            <span class="proof-note-text"><strong>{B.catalog.plaqueStrong}</strong>{' '}<br />{B.catalog.plaqueRest}</span>
             <svg class="vs-note-arrow" data-vs-arrow viewBox="0 0 72 34" fill="none">
               <path data-vs-arrow-shaft d="M64 6 Q34 8 10 26" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" />
               <path data-vs-arrow-head d="M22 26 L9 27 L14 15" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
@@ -170,7 +171,7 @@ const topics = (['projekte', ...(hasLearning ? ['lernformen'] : []), 'leistungen
         <svg class="board-proof-svg" data-board-proof-svg fill="none"></svg>
         <span class="board-proof-text proof-note-text" data-board-proof-text><strong>{proofText}</strong></span>
       </div>
-      <span class="board-corner-note" aria-hidden="true">{B.corner[0]}<br />{B.corner[1]}</span>
+      <span class="board-corner-note" aria-hidden="true">{B.corner[0]}{' '}<br />{B.corner[1]}</span>
       <svg id="board-drawing" class="board-drawing" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true" data-board-drawing></svg>
     </div>
     <div class="board-tray">

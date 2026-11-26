@@ -14,7 +14,7 @@ const canonical = Astro.site ? new URL(target, Astro.site).href : undefined;
   <head>
     <meta charset="utf-8" />
     <title>Trias Schule | Schulmöbel & Kindergärten einrichten in Südtirol</title>
-    <meta name="robots" content="noindex" />
+    <meta name="robots" content="noindex, follow" />
     {canonical && <link rel="canonical" href={canonical} />}
     <meta http-equiv="refresh" content={`0;url=${target}`} />
     <script is:inline define:vars={{ target }}>location.replace(target + location.hash);</script>

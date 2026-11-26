@@ -9,6 +9,7 @@
     "dev": "astro dev",
     "check": "astro check",
     "test:layouts": "node --test tests/tano-layouts.test.mjs",
+    "test:seo": "node --test tests/seo-geo.test.mjs",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro"

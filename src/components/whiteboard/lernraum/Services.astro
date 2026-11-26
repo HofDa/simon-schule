@@ -29,7 +29,7 @@ const symbols: StepKind[] = ['pen', 'plan', 'chair', 'hammer', 'phone'];
             <StepSymbol kind={symbols[index]} />
           </div>
           <div class="desk-card">
-            <h3><span class="desk-n" aria-hidden="true">{index + 1}</span>{service.title}</h3>
+            <h3><span class="desk-n" aria-hidden="true">{index + 1}</span>{' '}{service.title}</h3>
             <p>{service.text}</p>
           </div>
         </li>

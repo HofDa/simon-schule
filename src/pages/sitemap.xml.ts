@@ -1,7 +1,9 @@
 import type { APIRoute } from 'astro';
 import { asset, homeFor, legalFor } from '../lib/paths';
-import { useTranslations, type Lang } from '../i18n/ui';
+import { type Lang } from '../i18n/ui';
 import { collagesFor } from '../data/collages';
+import { people } from '../data/site';
+import { hreflangEntries, siteLastModified } from '../lib/seo';
 
 const pagePairs: { pair: Record<Lang, string>; homepage?: boolean }[] = [
   { pair: { de: homeFor('de'), it: homeFor('it') }, homepage: true },
@@ -10,44 +12,35 @@ const pagePairs: { pair: Record<Lang, string>; homepage?: boolean }[] = [
 ];
 
 const xmlEscape = (value: string) =>
-  value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+  value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
 
 export const GET: APIRoute = ({ site }) => {
-  const lastmod = new Date().toISOString().slice(0, 10);
+  const lastmod = siteLastModified();
 
   const renderHomeImages = (lang: Lang) => {
     if (!site) return '';
-    const previewTitle = lang === 'it'
-      ? 'Trias Schule – Spazi per imparare in Alto Adige'
-      : 'Trias Schule – Lernräume für Südtirol';
-    const previewCaption = lang === 'it'
-      ? 'Spazio di apprendimento aperto con tavoli, sedie e aree di lavoro'
-      : 'Offene Lernlandschaft mit Tischgruppen und verschiedenen Arbeitsbereichen';
-    const previewGeo = lang === 'it' ? 'Alto Adige, Italia' : 'Südtirol, Italien';
+    const resolve = (path: string) => new URL(path, site).href;
+    const teamPhotos = people
+      .filter((person) => Boolean(person.photo))
+      .map((person) => resolve(asset(`images/team/${person.photo}.webp`)));
 
-    const items = [
-      {
-        loc: new URL(asset('images/social-preview.jpg'), site).href,
-        title: previewTitle,
-        caption: previewCaption,
-        geo: previewGeo,
-      },
-      ...collagesFor(lang).map((project) => ({
-        loc: new URL(project.collage.src, site).href,
-        title: project.name,
-        caption: project.vsProducts.length ? `${project.alt} (${project.vsProducts.join(', ')})` : project.alt,
-        geo: project.location,
-      })),
+    const locs = [
+      resolve(asset('images/social-preview.jpg')),
+      resolve(asset('images/trias-schule-logo.png')),
+      ...teamPhotos,
+      ...collagesFor(lang).map((project) => resolve(project.collage.src)),
     ];
 
-    return items
+    return [...new Set(locs)]
       .map(
-        (img) =>
+        (loc) =>
           `    <image:image>\n` +
-          `      <image:loc>${xmlEscape(img.loc)}</image:loc>\n` +
-          `      <image:title>${xmlEscape(img.title)}</image:title>\n` +
-          `      <image:caption>${xmlEscape(img.caption)}</image:caption>\n` +
-          `      <image:geo_location>${xmlEscape(img.geo)}</image:geo_location>\n` +
+          `      <image:loc>${xmlEscape(loc)}</image:loc>\n` +
           `    </image:image>`,
       )
       .join('\n');
@@ -56,24 +49,24 @@ export const GET: APIRoute = ({ site }) => {
   const urls = site
     ? pagePairs
         .flatMap(({ pair, homepage }) => {
-          const alternates = (Object.entries(pair) as [Lang, string][])
+          const resolve = (path: string) => new URL(path, site).href;
+          const alternates = hreflangEntries(pair, resolve)
             .map(
-              ([lang, path]) =>
-                `    <xhtml:link rel="alternate" hreflang="${useTranslations(lang).hreflang}" href="${xmlEscape(new URL(path, site).href)}" />`,
+              ({ hreflang, href }) =>
+                `    <xhtml:link rel="alternate" hreflang="${hreflang}" href="${xmlEscape(href)}" />`,
             )
             .join('\n');
-          const xDefault = `    <xhtml:link rel="alternate" hreflang="x-default" href="${xmlEscape(new URL(pair.de, site).href)}" />`;
 
           return (Object.entries(pair) as [Lang, string][]).map(([lang, path]) => {
             const images = homepage ? `\n${renderHomeImages(lang)}` : '';
-            return `  <url>\n    <loc>${xmlEscape(new URL(path, site).href)}</loc>\n    <lastmod>${lastmod}</lastmod>\n${alternates}\n${xDefault}${images}\n  </url>`;
+            return `  <url>\n    <loc>${xmlEscape(resolve(path))}</loc>\n    <lastmod>${lastmod}</lastmod>\n${alternates}${images}\n  </url>`;
           });
         })
         .join('\n')
     : '';
 
   return new Response(
-    `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n${urls}\n</urlset>`,
+    `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n${urls}\n</urlset>\n`,
     { headers: { 'Content-Type': 'application/xml; charset=utf-8' } },
   );
 };

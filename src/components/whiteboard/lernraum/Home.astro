@@ -1,18 +1,18 @@
 ---
 /**
- * "Der Lernraum" – Streamlined, low-cognitive-load landing page:
- * - WhiteboardHero (interactive whiteboard with stroke-by-stroke claim, draggable magnets, photo collages & letters)
- * - AnnotatedProjects (#projekte: 234 South Tyrol proof bar + the real reference collages grouped by whiteboard magnet icons)
- * - InteractiveScenes (#lernformen: whiteboard-framed 3D/SVG room transformation)
- * - Services (#leistungen: 5 compact project steps + 3 pinned decision-maker role cards)
- * - VSFloorplan (#vs-moebel: pinned VS 2026 Catalog & Kitchen Magnet + 5 compact VS system tiles)
- * - FeedbackQuotes (#stimmen: 4 compact lined-paper customer letters with the speech-bubble magnet)
- * - TalkContact (#kontakt / #menschen / #anfrage: Simon's pinned card, HOUSE70 Meran & Brixen, FAQ drawer & low-friction form)
+ * "Der Lernraum" – Production landing page:
+ * - BoardNavigation (interactive whiteboard with draggable magnets, photo collages, feedback & contact card)
+ * - AnnotatedProjects (#projekte: 234 South Tyrol proof bar + real reference collages grouped by category)
+ * - InteractiveScenes (#lernformen: 3D/SVG room transformation across 8 arrangements)
+ * - Services (#leistungen: 5-step process strip with custom symbols)
+ * - VSFloorplan (#vs-moebel: pinned VS 2026 Catalog, JUMPER & 5 VS system zones)
+ * - FeedbackQuotes (#stimmen: lined-paper customer & partner letters)
+ * - TalkContact (#kontakt / #menschen / #anfrage: Simon's direct line, HOUSE70 Meran & Brixen, FAQ drawer)
  */
 import Layout from '../../../layouts/WhiteboardLayout.astro';
 import Navbar from '../shared/Navbar.astro';
 import Footer from '../shared/Footer.astro';
-import WhiteboardHero from '../WhiteboardHero.astro';
+import BoardNavigation from '../BoardNavigation.astro';
 import InteractiveScenes from './InteractiveScenes.astro';
 import AnnotatedProjects from './AnnotatedProjects.astro';
 import FeedbackQuotes from '../FeedbackQuotes.astro';
@@ -29,7 +29,12 @@ const alternates = { de: homeFor('de'), it: homeFor('it') };
 <Layout canonical={alternates[lang]} alternates={alternates} homepage>
   <Navbar alternates={alternates} />
   <main id="inhalt">
-    <WhiteboardHero responsiveBoard />
+    <script is:inline>
+      // Arriving at a place further down the page (a link with an anchor): no intro to wait for.
+      if (location.hash && location.hash !== '#top') document.documentElement.classList.add('hero-skip');
+    </script>
+    <div id="top"></div>
+    <BoardNavigation responsive />
     <AnnotatedProjects />
     <InteractiveScenes />
     <Services />

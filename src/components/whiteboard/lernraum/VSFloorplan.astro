@@ -10,6 +10,7 @@ import ResponsiveImage from '../ResponsiveImage.astro';
 import vsLogoMagnet from '../../../assets/whiteboard/vs-logo-kitchen-magnet.webp';
 import vsCatalogCover from '../../../assets/whiteboard/vs-school-catalog-cover-2026-nomark.webp';
 import { lernraumCopy } from '../../../i18n/lernraum';
+import { VS_SCHOOL_CATALOG_PDF } from '../../../lib/seo';
 import JumperChair from '../art/JumperChair.astro';
 
 const lang = getLang(Astro.currentLocale);
@@ -18,7 +19,7 @@ const L = lernraumCopy(lang);
 const J = L.vs.jumper;
 const categories: { name: string; text: string; url?: string }[] = t.categories;
 const catalogUrl = vs.catalogUrl[lang];
-const vsSchoolCatalog = 'https://web-media.vs.de/file/p1/pdf/45-057-49_V2026-01_DE_Basics--Der-Katalog-fuer-die-Schule.archiv.pdf';
+const vsSchoolCatalog = VS_SCHOOL_CATALOG_PDF;
 const areas = ['sit', 'tab', 'store', 'flex', 'kg'];
 ---
 

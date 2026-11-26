@@ -30,16 +30,18 @@ const simonPhone = people[0]?.phone;
 
       <div class="md:col-span-3">
         <h2 class="mb-4 text-meta font-semibold tracking-normal">{f.contact}</h2>
-        <ul class="touch-list space-y-2 text-muted">
-          <li class="text-ink font-medium">Simon Brugger</li>
-          <li><a class="link-line text-ink" href={`mailto:${contact.directEmail}`}>{contact.directEmail}</a></li>
-          {simonPhone && <li><a class="link-line text-ink" href={`tel:${simonPhone.replace(/\s/g, '')}`}>{simonPhone}</a></li>}
-          <li><a class="link-line text-ink" href={`mailto:${contact.email}`}>{contact.email}</a></li>
-          {contact.phone && contact.phone !== simonPhone && <li><a class="link-line text-ink" href={`tel:${contact.phone.replace(/\s/g, '')}`}>{contact.phone}</a></li>}
-          {locations.map((loc) => (
-            <li>{loc.city[lang]} · {loc.street[lang]}</li>
-          ))}
-        </ul>
+        <address class="not-italic">
+          <ul class="touch-list space-y-2 text-muted">
+            <li class="text-ink font-medium">Simon Brugger</li>
+            <li><a class="link-line text-ink" href={`mailto:${contact.directEmail}`}>{contact.directEmail}</a></li>
+            {simonPhone && <li><a class="link-line text-ink" href={`tel:${simonPhone.replace(/\s/g, '')}`}>{simonPhone}</a></li>}
+            <li><a class="link-line text-ink" href={`mailto:${contact.email}`}>{contact.email}</a></li>
+            {contact.phone && contact.phone !== simonPhone && <li><a class="link-line text-ink" href={`tel:${contact.phone.replace(/\s/g, '')}`}>{contact.phone}</a></li>}
+            {locations.map((loc) => (
+              <li>{loc.city[lang]} · {loc.street[lang]}</li>
+            ))}
+          </ul>
+        </address>
       </div>
 
       <div class="md:col-span-2">

@@ -1,8 +1,7 @@
 ---
 import '../styles/whiteboard.css';
-import { asset, homeFor } from '../lib/paths';
-import { getLang, langs, useTranslations, type Lang } from '../i18n/ui';
-import { buildStructuredData } from '../lib/seo';
+import { getLang, useTranslations, type Lang } from '../i18n/ui';
+import SeoHead from '../components/shared/SeoHead.astro';
 import archivoUrl from '../assets/fonts/whiteboard/archivo-latin-var.woff2?url';
 import kalamUrl from '../assets/fonts/whiteboard/kalam-700-latin.woff2?url';
 import caveatUrl from '../assets/fonts/whiteboard/caveat-latin-var.woff2?url';
@@ -16,82 +15,33 @@ interface Props {
   canonical?: string;
   /** Add full entity & FAQ structured data to the home pages. */
   homepage?: boolean;
-  /** A design exploration: kept out of search engines and without language alternates. */
+  /** Keep page out of search engines and without language alternates. */
   noindex?: boolean;
-  /** Show the floating chooser on a design variant or the entry page. */
-  variantSwitcher?: boolean;
 }
 
 const lang = getLang(Astro.currentLocale);
 const t = useTranslations(lang);
-const { title = t.meta.title, description = t.meta.description } = Astro.props;
-const alternates = Astro.props.alternates ?? { de: homeFor('de'), it: homeFor('it') };
-const site = Astro.site;
-const absolute = (path: string) => (site ? new URL(path, site).href : path);
-const canonicalPath = Astro.props.canonical ?? homeFor(lang);
-const canonical = site ? absolute(canonicalPath) : undefined;
-const socialImage = site ? absolute(asset('images/social-preview.jpg')) : undefined;
-const logoImage = site ? absolute(asset('images/trias-schule-logo.png')) : undefined;
-const socialImageAlt = lang === 'it'
-  ? 'Spazio di apprendimento aperto con tavoli, sedie e aree di lavoro'
-  : 'Offene Lernlandschaft mit Tischgruppen und verschiedenen Arbeitsbereichen';
-const structuredData = !Astro.props.noindex
-  ? buildStructuredData({
-      site,
-      lang,
-      canonicalPath,
-      title,
-      description,
-      socialImage,
-      logoImage,
-      homepage: Astro.props.homepage,
-    })
-  : undefined;
 ---
 
 <!doctype html>
 <html lang={t.htmlLang}>
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content={description} />
-    {Astro.props.noindex && <meta name="robots" content="noindex" />}
-    <meta name="theme-color" content="#ffffff" />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:locale" content={t.ogLocale} />
-    <meta property="og:locale:alternate" content={lang === 'de' ? 'it_IT' : 'de_IT'} />
-    <meta property="og:site_name" content="Trias Schule" />
-    <meta property="og:type" content="website" />
-    {canonical && <link rel="canonical" href={canonical} />}
-    {canonical && <meta property="og:url" content={canonical} />}
-    {socialImage && <meta property="og:image" content={socialImage} />}
-    {socialImage && <meta property="og:image:width" content="1200" />}
-    {socialImage && <meta property="og:image:height" content="630" />}
-    {socialImage && <meta property="og:image:type" content="image/jpeg" />}
-    {socialImage && <meta property="og:image:alt" content={socialImageAlt} />}
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={description} />
-    {socialImage && <meta name="twitter:image" content={socialImage} />}
-    {socialImage && <meta name="twitter:image:alt" content={socialImageAlt} />}
-    {!Astro.props.noindex && langs.map((l) => <link rel="alternate" hreflang={useTranslations(l).hreflang} href={absolute(alternates[l])} />)}
-    {!Astro.props.noindex && <link rel="alternate" hreflang="x-default" href={absolute(alternates.de)} />}
-    {!Astro.props.noindex && site && <link rel="alternate" type="text/plain" href={absolute(asset('llms.txt'))} title="LLM Summary (llms.txt)" />}
-    {!Astro.props.noindex && site && <link rel="alternate" type="text/plain" href={absolute(asset('llms-full.txt'))} title="LLM Full Context (llms-full.txt)" />}
-    <link rel="icon" type="image/svg+xml" href={asset('favicon.svg')} />
-    <meta name="generator" content={Astro.generator} />
-    <title>{title}</title>
-    {structuredData && <script type="application/ld+json" set:html={structuredData}></script>}
+    <SeoHead
+      title={Astro.props.title}
+      description={Astro.props.description}
+      alternates={Astro.props.alternates}
+      canonical={Astro.props.canonical}
+      homepage={Astro.props.homepage}
+      noindex={Astro.props.noindex}
+      themeColor="#ffffff"
+    />
     <script is:inline>document.documentElement.classList.add('js');</script>
     <link rel="preload" href={archivoUrl} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={kalamUrl} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={caveatUrl} as="font" type="font/woff2" crossorigin />
-    {Astro.props.variantSwitcher && <link rel="stylesheet" href={asset('variant-switcher.css')} />}
   </head>
   <body>
     <a href="#inhalt" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[200] focus:bg-paper focus:px-4 focus:py-2">{t.skip}</a>
     <slot />
-    {Astro.props.variantSwitcher && <script is:inline src={asset('variant-switcher.js')} data-variant-switcher></script>}
   </body>
 </html>
