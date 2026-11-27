@@ -197,6 +197,13 @@ const de = {
     } as Record<string, string>,
     referencesTitle: 'Ausgewählte Referenzprojekte in Südtirol',
     referencesSub: 'Einblicke aus Südtiroler Schulen, Kindergärten und Bibliotheken, vom einzelnen Klassenraum bis zur Gesamteinrichtung im Neubau.',
+    featuredTitle: 'Drei Projekte im Detail',
+    featuredPhotos: 'Projektfotos ansehen',
+    featuredProjects: {
+      'gs-sinich': 'Der Neubau in Meran bietet Platz für Unterricht im Klassenzimmer und für Gruppenarbeit in einer offenen Lernlandschaft. Trias stattete die Klassenräume mit fahrbaren Tischen und Regalen aus. Im offenen Bereich ergänzen Gruppentische und eine gepolsterte VS Shift+ Landscape Lerninsel die Einrichtung. Ein Lesezelt mit Sitzpolstern bietet einen geschützten Platz zum Lesen.',
+      'ms-lana': 'Trias richtete in der Mittelschule Lana unterschiedliche Räume ein, vom EDV-Raum bis zur Aula. Drehstühle ergänzen die Computerarbeitsplätze, vor der Bühne stehen Stühle in Reihen. Fahrbare VS Shift+ ThumbPrint Tische und mobile Regale ermöglichen im Klassenraum verschiedene Aufstellungen, etwa Gruppentische oder einen Kreis.',
+      'kiga-tisens': 'In der KiTa und im Kindergarten Tisens haben Spielen, Vorlesen und gemeinsame Aktivitäten jeweils ihren Platz. Trias stattete den Lesebereich mit offenen Bücherregalen, Sofas und Poufs aus. Am Fenster laden Sitzpoufs zum Spielen und Erzählen ein, am runden Tisch sitzen die Kinder auf niedrigen Holzstühlen zusammen.',
+    },
     photosCount: (n: number) => `${n} Fotos`,
     referenceHighlights: {
       'gs-gais': 'U-Form, offene Lernzone & Fenstersitze',
@@ -720,6 +727,13 @@ const it: LernraumCopy = {
     },
     referencesTitle: 'Progetti di riferimento selezionati in Alto Adige',
     referencesSub: 'Uno sguardo a scuole, scuole dell’infanzia e biblioteche in Alto Adige, dalla singola aula all’arredo completo di nuovi edifici.',
+    featuredTitle: 'Tre progetti da vicino',
+    featuredPhotos: 'Guarda le foto del progetto',
+    featuredProjects: {
+      'gs-sinich': 'Il nuovo edificio a Merano offre spazi per le lezioni in aula e per il lavoro di gruppo in un ambiente aperto. Trias ha arredato le aule con tavoli e scaffali su ruote. Nello spazio aperto, l’arredo comprende tavoli di gruppo e un’isola imbottita VS Shift+ Landscape. Una tenda con sedute imbottite offre un angolo raccolto per leggere.',
+      'ms-lana': 'Trias ha arredato diversi ambienti della scuola media di Lana, dall’aula informatica all’aula magna. Le postazioni al computer sono dotate di sedie girevoli, mentre davanti al palco le sedie sono disposte in file. I tavoli su ruote VS Shift+ ThumbPrint e gli scaffali mobili permettono di organizzare l’aula in modi diversi, ad esempio con tavoli di gruppo o in cerchio.',
+      'kiga-tisens': 'Nel nido e nella scuola dell’infanzia di Tesimo ci sono spazi dedicati al gioco, alla lettura ad alta voce e alle attività di gruppo. Trias ha arredato l’angolo lettura con scaffali aperti, divani e pouf. Vicino alla finestra i pouf invitano a giocare e a raccontare, mentre attorno al tavolo rotondo i bambini si siedono su seggioline di legno.',
+    },
     photosCount: (n: number) => `${n} foto`,
     referenceHighlights: {
       'gs-gais': 'Disposizione a U, area aperta e sedute alla finestra',

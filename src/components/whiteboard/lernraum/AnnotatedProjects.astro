@@ -29,6 +29,10 @@ const statGroups = [
 const L = lernraumCopy(lang);
 const P = L.projects;
 const G = L.board.collages;
+const featured = Object.entries(P.featuredProjects).flatMap(([slug, summary]) => {
+  const project = collages.find((collage) => collage.slug === slug);
+  return project ? [{ project, summary }] : [];
+});
 
 const groupOf: Record<string, 'gs' | 'ms' | 'kb'> = {
   'gs-gais': 'gs',
@@ -79,6 +83,27 @@ const tilts = [-1.4, 1.1, -0.8, 1.5, -1.1];
         </ul>
       </div>
     </div>
+
+    <section class="featured-projects" aria-labelledby="featured-projects-title">
+      <h3 id="featured-projects-title" class="featured-title">{P.featuredTitle}</h3>
+      <div class="featured-grid">
+        {featured.map(({ project, summary }) => (
+          <article class="featured-project">
+            <h4>{project.name}</h4>
+            <p>{summary}</p>
+            <button
+              type="button"
+              class="link-line featured-photos"
+              data-open-project={project.slug}
+              aria-haspopup="dialog"
+              aria-label={`${P.featuredPhotos} · ${project.name}`}
+            >
+              {P.featuredPhotos} <span aria-hidden="true">↗</span>
+            </button>
+          </article>
+        ))}
+      </div>
+    </section>
 
     <div class="projects-browse">
       <SwipeControls railId="project-gallery" labelId="projects-title" />
@@ -155,6 +180,45 @@ const tilts = [-1.4, 1.1, -0.8, 1.5, -1.1];
     color: var(--color-muted);
     font-size: var(--text-body);
     line-height: 1.55;
+  }
+
+  .featured-projects {
+    margin-bottom: clamp(28px, 5vw, 64px);
+  }
+  .featured-title {
+    margin: 0 0 12px;
+    font-size: var(--text-meta);
+    font-weight: 700;
+  }
+  .featured-grid {
+    display: grid;
+    gap: 16px 24px;
+  }
+  .featured-project {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    gap: 8px;
+    border-top: 1px solid var(--color-ink);
+    padding-top: 12px;
+  }
+  .featured-project h4 {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 700;
+  }
+  .featured-project p {
+    margin: 0;
+    color: var(--color-muted);
+    line-height: 1.55;
+  }
+  .featured-photos {
+    justify-self: start;
+    min-height: 44px;
+    text-align: start;
+    font-weight: 600;
+  }
+  @media (min-width: 768px) {
+    .featured-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   }
 
   .experience-strip {
